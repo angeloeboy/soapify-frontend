@@ -1,7 +1,7 @@
 let Login = () => {
 	return (
 		<div>
-			<h1>Home Page</h1>
+			<h1>This is the landing page</h1>
 		</div>
 	);
 };

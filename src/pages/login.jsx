@@ -1,7 +1,3 @@
-
-
-
-
 let Login = () => {
 	return (
 		<div>
@@ -10,4 +6,4 @@ let Login = () => {
 	);
 };
 
-export default Home;
+export default Login;

@@ -1,6 +1,7 @@
 import { styled } from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
+import { useState } from "react";
 
 let TopBarContainer = styled.div`
 	padding: 20px 50px;
@@ -37,7 +38,6 @@ const TopBar = (props) => {
 	return (
 		<TopBarContainer>
 			<h2>{props.pageName}</h2>
-
 			<div className="alert-container">
 				<FontAwesomeIcon icon={faBell} />
 				<div className="profile"></div>

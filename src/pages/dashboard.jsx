@@ -1,4 +1,4 @@
-import Sidebar from "./../components/sidebar";
+import Sidebar from "../components/sidebar";
 import { styled } from "styled-components";
 
 const DashboardContainer = styled.div`

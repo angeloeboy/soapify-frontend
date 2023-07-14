@@ -2,11 +2,12 @@ import Button from "@/components/button";
 import React from "react";
 import styled from "styled-components";
 import { useState } from "react";
-import { login, logout, test } from "@/api/auth";
+import { logout, test, register } from "@/api/auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import Link from "next/link";
 
-const LoginContainer = styled.div`
+const RegisterContainer = styled.div`
 	height: 100vh;
 	width: 100%;
 	max-width: 770px;
@@ -42,6 +43,9 @@ const Form = styled.form`
 			display: block;
 			margin-top: 29px;
 			background-color: transparent;
+		}
+
+		input {
 		}
 
 		.loginBtn {
@@ -85,25 +89,20 @@ const Error = styled.p`
 	margin-top: 10px;
 `;
 
-let Login = () => {
+let Register = () => {
 	const [credentials, setCredentials] = useState({ username: "", password: "" });
 	const [loggingIn, setIsLoggingIn] = useState(false);
+
 	const [errorMessages, setErrorMessages] = useState({
 		username: "",
 		password: "",
 	});
 
-	const handleLogin = (e) => {
+	const handleRegister = (e) => {
 		e.preventDefault();
 		setIsLoggingIn(true);
-		login(credentials).then((res) => {
+		register(credentials).then((res) => {
 			setIsLoggingIn(false);
-
-			if (res.status == "Success") {
-				//do actions here
-				console.log("success");
-				return;
-			}
 
 			if (!res.errors) return;
 			console.log(res.errors);
@@ -121,12 +120,14 @@ let Login = () => {
 
 	return (
 		<>
-			<LoginContainer>
+			<RegisterContainer>
 				<h2 className="appTitle">Soapify</h2>
 
 				<Form onSubmit={(e) => handleLogin(e)}>
-					<h3>Log In</h3>
-					<p>Enter your username and password to sign in!</p>
+					<h3>Test Register</h3>
+					<p>
+						Enter your username and password to register. Then <Link href="/login"> Login </Link>
+					</p>
 
 					<div className="formsContainer">
 						<label htmlFor="username">Username</label>
@@ -157,17 +158,17 @@ let Login = () => {
 						/>
 						{errorMessages.password && <Error>{errorMessages.password}</Error>}
 
-						<a href="/">Forgot Password</a>
-
-						<Button className="loginBtn" width="100%" onClick={(e) => handleLogin(e)}>
-							{loggingIn ? <FontAwesomeIcon icon={faSpinner} spin /> : "Log In"}
+						<Button className="loginBtn" width="100%" onClick={(e) => handleRegister(e)}>
+							{loggingIn ? <FontAwesomeIcon icon={faSpinner} spin /> : "Register"}
 						</Button>
 					</div>
 				</Form>
 
-			</LoginContainer>
+				{/* <Button onClick={(e) => handleTest(e)}>Test</Button>
+				<Button onClick={() => handleLogout()}>Logout</Button> */}
+			</RegisterContainer>
 		</>
 	);
 };
 
-export default Login;
+export default Register;

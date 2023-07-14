@@ -28,7 +28,7 @@ export const login = async (credentials) => {
 
 export const register = async (userInfo) => {
 	try {
-		const response = await fetch(auth_link + "/test", {
+		const response = await fetch(auth_link + "/register", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -43,18 +43,16 @@ export const register = async (userInfo) => {
 };
 
 export const logout = async () => {
-    try {
-        const response = await fetch(auth_link + "/logout", {
+	try {
+		const response = await fetch(auth_link + "/logout", {
 			method: "GET",
 			credentials: "include",
 		});
 
 		const data = await response.json();
 		return data;
-    } catch (error) {
-        
-    }
-}
+	} catch (error) {}
+};
 
 export const test = async () => {
 	try {

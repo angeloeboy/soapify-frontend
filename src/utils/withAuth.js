@@ -1,31 +1,18 @@
-import { useRouter } from "next/router";
-import { useEffect } from "react";
+// Function to check if the user is logged in
+export async function isLoggedIn() {
+	// Check if the JWT token is present in the cookies
 
-const checkAuthStatus = async () => {
-	// Implement the logic to check the user's authentication status
-	// Make a request to your API endpoint, e.g., /auth/check-auth
-	// Return true if the user is authenticated, or false if not
-	// You can use localStorage, cookies, or JWTs to store and check authentication status
-};
+	// Send a request to your backend API to verify the JWT token
+	const response = await fetch(process.env.NEXT_PUBLIC_API_LINK + "/auth/verify-token", {
+		credentials: "include", // Send cookies along with the request
+	});
 
-const withAuth = (WrappedComponent) => {
-	return function WithAuth(props) {
-		const router = useRouter();
+	console.log(response.ok);
+	if (response.ok) {
+		// The token is valid, the user is logged in
+		return true;
+	}
 
-		useEffect(() => {
-			async function handleAuthCheck() {
-				const isAuthenticated = await checkAuthStatus();
-
-				if (!isAuthenticated) {
-					router.push("/login");
-				}
-			}
-
-			handleAuthCheck();
-		}, []);
-
-		return <WrappedComponent {...props} />;
-	};
-};
-
-export default withAuth;
+	// The token is invalid or expired, the user is not logged in
+	return false;
+}

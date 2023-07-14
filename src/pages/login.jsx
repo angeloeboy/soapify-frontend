@@ -6,6 +6,7 @@ import { login, logout, test } from "@/api/auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 const LoginContainer = styled.div`
 	height: 100vh;
@@ -94,6 +95,7 @@ let Login = () => {
 		password: "",
 	});
 
+	let router = useRouter();
 	const handleLogin = (e) => {
 		e.preventDefault();
 		setIsLoggingIn(true);
@@ -103,6 +105,7 @@ let Login = () => {
 			if (res.status == "Success") {
 				//do actions here
 				console.log("success");
+				router.push("/dashboard");
 				return;
 			}
 
@@ -165,6 +168,14 @@ let Login = () => {
 						</Button>
 					</div>
 				</Form>
+
+				<Button
+					onClick={() => {
+						test().then((res) => console.log(res));
+					}}
+				>
+					Click
+				</Button>
 			</LoginContainer>
 		</>
 	);

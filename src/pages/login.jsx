@@ -5,6 +5,7 @@ import { useState } from "react";
 import { login, logout, test } from "@/api/auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import Link from "next/link";
 
 const LoginContainer = styled.div`
 	height: 100vh;
@@ -157,14 +158,13 @@ let Login = () => {
 						/>
 						{errorMessages.password && <Error>{errorMessages.password}</Error>}
 
-						<a href="/">Forgot Password</a>
+						<Link href="/">Forgot Password</Link>
 
 						<Button className="loginBtn" width="100%" onClick={(e) => handleLogin(e)}>
 							{loggingIn ? <FontAwesomeIcon icon={faSpinner} spin /> : "Log In"}
 						</Button>
 					</div>
 				</Form>
-
 			</LoginContainer>
 		</>
 	);

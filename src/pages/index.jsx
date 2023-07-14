@@ -9,7 +9,7 @@ let HomeContainer = styled.div`
 const Home = () => {
 	return (
 		<HomeContainer>
-			<h1>Testing this is home</h1>;
+			<h1>this is not Home</h1>;
 		
 		</HomeContainer>
 	);

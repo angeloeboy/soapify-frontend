@@ -1,18 +1,13 @@
 import { styled } from "styled-components";
-
-let HomeContainer = styled.div`
-	h1 {
-		background-color: pink;
-	}
-`;
+import Sidebar from "@/components/sidebar";
+let HomeContainer = styled.div``;
 
 const Home = () => {
-	return (
-		<HomeContainer>
-			<h1>Testing this is home</h1>;
-		
-		</HomeContainer>
-	);
+  return (
+    <HomeContainer>
+      <h1>Testing this is home</h1>;<Sidebar></Sidebar>
+    </HomeContainer>
+  );
 };
 
 export default Home;

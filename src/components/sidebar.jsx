@@ -24,29 +24,26 @@ const SubMenu = styled.div`
 `;
 
 const Sidebar = () => {
-  const [isPosSubMenuOpen, setIsPosSubMenuOpen] = useState(false);
-  const [isInventorySubMenuOpen, setIsInventorySubMenuOpen] = useState(false);
-  const [isSettingsSubMenuOpen, setIsSettingsSubMenuOpen] = useState(false);
+  const initialSubmenuState = Array(3).fill(false);
 
-  const handlePosSubMenuToggle = () => {
-    setIsPosSubMenuOpen(!isPosSubMenuOpen);
-  };
+  const [submenuOpen, setSubmenuOpen] = useState(initialSubmenuState);
 
-  const handleInventorySubMenuToggle = () => {
-    setIsInventorySubMenuOpen(!isInventorySubMenuOpen);
-  };
-
-  const handleSettingsSubMenuToggle = () => {
-    setIsSettingsSubMenuOpen(!isSettingsSubMenuOpen);
+  const handleSubMenuToggle = (index) => {
+    setSubmenuOpen((prevState) =>
+      prevState.map((isOpen, i) => (i === index ? !isOpen : isOpen))
+    );
   };
 
   return (
     <SidebarContainer className="sidebar">
       <h1>SOAPIFY</h1>
       <Menu className="home-menu">Home</Menu>
-      <Menu className="pos-with with-submenu" onClick={handlePosSubMenuToggle}>
+      <Menu
+        className="pos-with with-submenu"
+        onClick={() => handleSubMenuToggle(0)}
+      >
         POS
-        {isPosSubMenuOpen && (
+        {submenuOpen[0] && (
           <SubMenu>
             <div className="pos-sub-sales">Sales</div>
           </SubMenu>
@@ -54,10 +51,10 @@ const Sidebar = () => {
       </Menu>
       <Menu
         className="inventory-menu with-submenu"
-        onClick={handleInventorySubMenuToggle}
+        onClick={() => handleSubMenuToggle(1)}
       >
         Inventory
-        {isInventorySubMenuOpen && (
+        {submenuOpen[1] && (
           <SubMenu>
             <div className="inventory-sub-products">Products</div>
             <div className="inventory-sub-purchase-orders">Purchase Orders</div>
@@ -67,10 +64,10 @@ const Sidebar = () => {
       </Menu>
       <Menu
         className="settings-menu with-submenu"
-        onClick={handleSettingsSubMenuToggle}
+        onClick={() => handleSubMenuToggle(2)}
       >
         Settings
-        {isSettingsSubMenuOpen && (
+        {submenuOpen[2] && (
           <SubMenu>
             <div className="settings-sub-users">Users</div>
           </SubMenu>

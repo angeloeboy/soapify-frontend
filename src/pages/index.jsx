@@ -3,15 +3,14 @@ import Sidebar from "@/components/sidebar";
 let HomeContainer = styled.div``;
 
 const Home = () => {
+  return (
+    // <HomeContainer>
+    // 	<h1>this is not Home</h1>;
 
+    // </HomeContainer>
 
-	return (
-		<HomeContainer>
-			<h1>this is not Home</h1>;
-		
-		</HomeContainer>
-	);
-
+    <Sidebar></Sidebar>
+  );
 };
 
 export default Home;

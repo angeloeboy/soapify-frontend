@@ -5,8 +5,8 @@ import { useState } from "react";
 
 let TopBarContainer = styled.div`
 	padding: 20px 50px;
-	width: 90%;
-	max-width: 1117px;
+	width: 100%;
+	/* max-width: 1117px; */
 	border-radius: 12px;
 	background: #fff;
 	box-shadow: 0px 4px 4px 0px rgba(224, 224, 224, 0.25);

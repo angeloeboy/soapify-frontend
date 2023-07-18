@@ -5,8 +5,8 @@ export async function middleware(req) {
 		const auth_link = process.env.NEXT_PUBLIC_API_LINK + "/auth";
 
 		const token = req.cookies.get("token");
+		console.log(token);
 
-		// Check for token
 		if (!token) {
 			const url = req.nextUrl.clone();
 			url.pathname = "/login";
@@ -22,5 +22,5 @@ export async function middleware(req) {
 		return response.ok ? NextResponse.next() : NextResponse.redirect("/login");
 	}
 
-	return NextResponse.next();
+	// return NextResponse.next();
 }

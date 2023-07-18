@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 
 export async function middleware(req) {
 	if (req.nextUrl.pathname.startsWith("/dashboard")) {
+		const auth_link = process.env.NEXT_PUBLIC_API_LINK + "/auth";
+
 		const token = req.cookies.get("token");
 
 		// Check for token
@@ -11,7 +13,7 @@ export async function middleware(req) {
 			return NextResponse.rewrite(url);
 		}
 
-		const response = await fetch("http://localhost:3001/auth/verify-token", {
+		const response = await fetch(auth_link + "/verify-token", {
 			headers: {
 				Cookie: `token=${token.value}`,
 			},

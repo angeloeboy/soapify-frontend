@@ -12,7 +12,7 @@ let TopBarContainer = styled.div`
 	box-shadow: 0px 4px 4px 0px rgba(224, 224, 224, 0.25);
 	/* position: fixed; */
 	/* top: 30px;
-	right: 5%; */
+	right: 5%;												 */
 	display: flex;
 	align-items: center;
 	justify-content: space-between;

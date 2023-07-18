@@ -10,12 +10,13 @@ let TopBarContainer = styled.div`
 	border-radius: 12px;
 	background: #fff;
 	box-shadow: 0px 4px 4px 0px rgba(224, 224, 224, 0.25);
-	position: fixed;
-	top: 30px;
-	right: 5%;
+	/* position: fixed; */
+	/* top: 30px;
+	right: 5%; */
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+	margin-top: 20px;
 	h2 {
 		font-size: 24px;
 	}

@@ -1,5 +1,4 @@
 import TopBar from "@/components/topbar";
-import { withAuth } from "./../../hoc/withAuth.hoc";
 import Button from "@/components/button";
 import { logout } from "@/api/auth";
 import { useRouter } from "next/router";
@@ -28,4 +27,4 @@ const Dashboard = () => {
 	);
 };
 
-export default withAuth(Dashboard);
+export default Dashboard;

@@ -56,7 +56,7 @@ export const logout = async () => {
 
 export const test = async () => {
 	try {
-		const response = await fetch(auth_link + "/test", {
+		const response = await fetch(auth_link + "/verify-token", {
 			method: "GET",
 			headers: {
 				"Content-Type": "application/json",

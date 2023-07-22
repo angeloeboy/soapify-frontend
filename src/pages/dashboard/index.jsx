@@ -1,27 +1,30 @@
 import TopBar from "@/components/topbar";
-
-import { withAuth } from "./../../hoc/withAuth.hoc";
 import Button from "@/components/button";
 import { logout } from "@/api/auth";
 import { useRouter } from "next/router";
+import DashboardLayout from "../../components/dashboardLayout";
 
 const Dashboard = () => {
-  let router = useRouter();
+	let router = useRouter();
 
-  return (
-    <div>
-      <TopBar pageName="Home" />
-      <Button
-        onClick={() => {
-          logout().then(() => {
-            router.push("/login");
-          });
-        }}
-      >
-        Log out{" "}
-      </Button>
-    </div>
-  );
+	return (
+		<DashboardLayout>
+			<TopBar pageName="Home" />
+			<Button
+				onClick={() => {
+					logout()
+						.then((res) => {
+							console.log(res);
+						})
+						.then(() => {
+							router.push("/login");
+						});
+				}}
+			>
+				Log out{" "}
+			</Button>
+		</DashboardLayout>
+	);
 };
 
-export default withAuth(Dashboard);
+export default Dashboard;

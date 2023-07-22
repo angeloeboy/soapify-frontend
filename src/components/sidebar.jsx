@@ -41,13 +41,24 @@ const Spacer = styled.div`
 `;
 
 const Menu = styled.div`
+  display: flex;
+  align-items: center;
   margin-left: 5px;
-  padding: 8px;
+  padding: 8px 0;
   cursor: pointer;
+  position: relative;
+
+  /* Add margin to the FontAwesomeIcon to create the gap */
+  & > svg {
+    margin-right: 8px; /* Adjust this value to control the gap size */
+  }
 `;
 
 const SubMenu = styled.div`
   margin-left: 25px;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
 `;
 
 const Sidebar = () => {
@@ -62,53 +73,42 @@ const Sidebar = () => {
   };
 
   return (
-    <SidebarContainer className="sidebar">
+    <SidebarContainer>
       <h1>SOAPIFY</h1>
       <Line />
       <Spacer />
       <MenuContainer>
-        <Menu className="home-menu">
+        <Menu>
           <FontAwesomeIcon icon={faHouse} />
           Home
         </Menu>
-        <Menu
-          className="pos-with with-submenu"
-          onClick={() => handleSubMenuToggle(0)}
-        >
+        <Menu onClick={() => handleSubMenuToggle(0)}>
           <FontAwesomeIcon icon={faHouse} />
           POS
           {submenuOpen[0] && (
             <SubMenu>
-              <div className="pos-sub-possytem">POS System</div>
-              <div className="pos-sub-sales">Sales</div>
+              <div>POS System</div>
+              <div>Sales</div>
             </SubMenu>
           )}
         </Menu>
-        <Menu
-          className="inventory-menu with-submenu"
-          onClick={() => handleSubMenuToggle(1)}
-        >
+        <Menu onClick={() => handleSubMenuToggle(1)}>
           <FontAwesomeIcon icon={faHouse} />
           Inventory
           {submenuOpen[1] && (
             <SubMenu>
-              <div className="inventory-sub-products">Products</div>
-              <div className="inventory-sub-purchase-orders">
-                Purchase Orders
-              </div>
-              <div className="inventory-sub-returns">Returns</div>
+              <div>Products</div>
+              <div>Purchase Orders</div>
+              <div>Returns</div>
             </SubMenu>
           )}
         </Menu>
-        <Menu
-          className="settings-menu with-submenu"
-          onClick={() => handleSubMenuToggle(2)}
-        >
+        <Menu onClick={() => handleSubMenuToggle(2)}>
           <FontAwesomeIcon icon={faHouse} />
           Settings
           {submenuOpen[2] && (
             <SubMenu>
-              <div className="settings-sub-users">Users</div>
+              <div>Users</div>
             </SubMenu>
           )}
         </Menu>

@@ -10,7 +10,7 @@ const Dashboard = () => {
 	return (
 		<DashboardLayout>
 			<TopBar pageName="Home" />
-			{/* <Button
+			<Button
 				onClick={() => {
 					logout()
 						.then((res) => {
@@ -22,7 +22,7 @@ const Dashboard = () => {
 				}}
 			>
 				Log out{" "}
-			</Button> */}
+			</Button>
 		</DashboardLayout>
 	);
 };

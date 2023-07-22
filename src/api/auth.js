@@ -56,7 +56,7 @@ export const test = async () => {
 			headers: {
 				"Content-Type": "application/json",
 			},
-			credentials: "include", // This is important for the response cookies to be saved
+			credentials: "include",
 		});
 
 		const data = await response.json();

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 export async function middleware(req) {
 	if (req.nextUrl.pathname.startsWith("/dashboard")) {
-		const auth_link = process.env.NEXT_PUBLIC_API_LINK + "/auth";
+		const auth_link = "https://iamangelo.tech/api" + "/auth";
 
 		const token = req.cookies.get("token");
 		console.log(token);

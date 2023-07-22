@@ -15,11 +15,6 @@ export const login = async (credentials) => {
 
 		const data = await response.json();
 
-		// Save the bearer token in localStorage
-		if (response.ok) {
-			localStorage.setItem("token", data.token);
-		}
-
 		return data;
 	} catch (error) {
 		// Handle error
@@ -61,7 +56,7 @@ export const test = async () => {
 			headers: {
 				"Content-Type": "application/json",
 			},
-			credentials: "include", // This is important for the response cookies to be saved
+			credentials: "include",
 		});
 
 		const data = await response.json();

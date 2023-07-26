@@ -1,10 +1,8 @@
 // api/auth.js
 
-const auth_link = process.env.NEXT_PUBLIC_API_LINK + "/auth";
-
 export const login = async (credentials) => {
 	try {
-		const response = await fetch(auth_link + "/login", {
+		const response = await fetch("/api/auth/login", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -23,7 +21,7 @@ export const login = async (credentials) => {
 
 export const register = async (userInfo) => {
 	try {
-		const response = await fetch(auth_link + "/register", {
+		const response = await fetch("/api/auth/register", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -39,7 +37,7 @@ export const register = async (userInfo) => {
 
 export const logout = async () => {
 	try {
-		const response = await fetch(auth_link + "/logout", {
+		const response = await fetch("/api/auth/logout", {
 			method: "GET",
 			credentials: "include",
 		});
@@ -51,7 +49,7 @@ export const logout = async () => {
 
 export const test = async () => {
 	try {
-		const response = await fetch(auth_link + "/verify-token", {
+		const response = await fetch("/api/auth/verify-token", {
 			method: "GET",
 			headers: {
 				"Content-Type": "application/json",

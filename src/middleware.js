@@ -5,7 +5,7 @@ export async function middleware(req) {
 		const auth_link = "https://iamangelo.tech/api" + "/auth";
 
 		const token = req.cookies.get("token");
-		console.log(token);
+		// console.log(token);
 
 		if (!token) {
 			const url = req.nextUrl.clone();

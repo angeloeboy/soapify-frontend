@@ -32,9 +32,25 @@ let TopBarContainer = styled.div`
 	}
 `;
 const TopBar = () => {
+	const getDate = () => {
+		let date = new Date();
+		let month = date.getMonth();
+		let day = date.getDate();
+		let year = date.getFullYear();
+
+		const monthIndex = date.getMonth(); // get the month as a number
+
+		const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+		const monthName = monthNames[monthIndex];
+
+		let fullDate = `${monthName} ${day} ${year}`;
+		return fullDate;
+	};
+
 	return (
 		<TopBarContainer>
-			<h3>January 10 2020</h3>
+			<h3>{getDate()}</h3>
 			<div className="alert-container">
 				<FontAwesomeIcon icon={faBell} />
 				<div className="profile"></div>

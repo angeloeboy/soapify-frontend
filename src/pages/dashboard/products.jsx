@@ -10,8 +10,19 @@ import Button from "@/components/button";
 import PageTitle from "@/components/pageTitle";
 import TableControlPanel from "@/components/styled-components/TableControlPanel";
 import StyledPanel from "@/components/styled-components/StyledPanel";
+import { useEffect, useState } from "react";
+import { getProducts } from "@/api/products";
 
 const Products = () => {
+	const [products, setProducts] = useState([]);
+
+	useEffect(() => {
+		getProducts().then((res) => {
+			console.log(res);
+			setProducts(res.products);
+		});
+	}, []);
+
 	return (
 		<DashboardLayout>
 			<PageTitle title="Products" />
@@ -23,7 +34,7 @@ const Products = () => {
 						<input type="text" placeholder="Search" />
 					</div>
 				</TableControlPanel>
-				<Table>
+				{/* <Table>
 					<tbody>
 						<tr className="tableHeadings">
 							<th>Name</th>
@@ -44,59 +55,39 @@ const Products = () => {
 								<FontAwesomeIcon icon={faTrash} />
 							</td>
 						</tr>
+					</tbody>
+				</Table> */}
 
-						<tr>
-							<td className="imgContainer">
-								<Image src="/product_img.png" alt="My Image" width="40" height="40" /> Max Glow Yellow
-							</td>
-							<td>20ABCDHJ1200</td>
-							<td>30</td>
-							<td>LOW</td>
-							<td>
-								<FontAwesomeIcon icon={faPen} />
-								<FontAwesomeIcon icon={faTrash} />
-							</td>
+				<Table>
+					<tbody>
+						<tr className="tableHeadings">
+							<th>Name</th>
+							<th>ID</th>
+							<th>Stock</th>
+							<th>Price</th>
+							<th>Status</th>
+							<th>Actions</th>
 						</tr>
 
-						<tr>
-							<td className="imgContainer">
-								<Image src="/product_img.png" alt="My Image" width="40" height="40" /> Max Glow Yellow
-							</td>
-							<td>20ABCDHJ1200</td>
-							<td>30</td>
-							<td>LOW</td>
-							<td>
-								<FontAwesomeIcon icon={faPen} />
-								<FontAwesomeIcon icon={faTrash} />
-							</td>
-						</tr>
-
-						<tr>
-							<td className="imgContainer">
-								<Image src="/product_img.png" alt="My Image" width="40" height="40" /> Max Glow Yellow
-							</td>
-							<td>20ABCDHJ1200</td>
-							<td>30</td>
-							<td>LOW</td>
-							<td>
-								<FontAwesomeIcon icon={faPen} />
-								<FontAwesomeIcon icon={faTrash} />
-							</td>
-						</tr>
-
-						<tr>
-							<td className="imgContainer">
-								<Image src="/product_img.png" alt="My Image" width="40" height="40" /> Max Glow Yellow
-							</td>
-							<td>20ABCDHJ1200</td>
-							<td>30</td>
-							<td>LOW</td>
-
-							<td>
-								<FontAwesomeIcon icon={faPen} />
-								<FontAwesomeIcon icon={faTrash} />
-							</td>
-						</tr>
+						{products
+							? products.map((product) => {
+									return (
+										<tr key={product.product_id}>
+											<td className="imgContainer">
+												<Image src="/product_img.png" alt="My Image" width="40" height="40" /> {product.product_name}
+											</td>
+											<td>{product.product_id}</td>
+											<td>{product.quantity_in_stock}</td>
+											<td>{product.product_price}</td>
+											<td>LOW</td>
+											<td>
+												<FontAwesomeIcon icon={faPen} />
+												<FontAwesomeIcon icon={faTrash} />
+											</td>
+										</tr>
+									);
+							  })
+							: "Loading..."}
 					</tbody>
 				</Table>
 

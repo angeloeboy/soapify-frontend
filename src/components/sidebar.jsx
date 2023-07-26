@@ -12,7 +12,7 @@ const SidebarContainer = styled.div`
 	height: 100vh;
 	top: 0px;
 	left: 0px;
-	background-color: white;
+	background-color: #002056;
 	width: 256px;
 `;
 

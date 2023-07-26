@@ -4,19 +4,15 @@ import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 
 let TopBarContainer = styled.div`
-	padding: 20px 50px;
+	padding: 16px 48px;
 	width: 100%;
-	/* max-width: 1117px; */
-	border-radius: 12px;
 	background: #fff;
-	box-shadow: 0px 4px 4px 0px rgba(224, 224, 224, 0.25);
-	/* position: fixed; */
-	/* top: 30px;
-	right: 5%;												 */
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	margin-top: 20px;
+	border-bottom: 1px solid #dddddd;
+	background-color: white;
+
 	h2 {
 		font-size: 24px;
 	}
@@ -35,10 +31,10 @@ let TopBarContainer = styled.div`
 		}
 	}
 `;
-const TopBar = (props) => {
+const TopBar = () => {
 	return (
 		<TopBarContainer>
-			<h2>{props.pageName}</h2>
+			<h3>January 10 2020</h3>
 			<div className="alert-container">
 				<FontAwesomeIcon icon={faBell} />
 				<div className="profile"></div>

@@ -3,7 +3,7 @@ import styled from "styled-components";
 const Table = styled.table`
 	width: 100%;
 	table-layout: fixed;
-
+	margin-top: 32px;
 	th {
 		text-align: center;
 		color: #cdcdcd;

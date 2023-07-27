@@ -3,28 +3,12 @@ import Button from "@/components/button";
 import { logout } from "@/api/auth";
 import { useRouter } from "next/router";
 import DashboardLayout from "../../components/dashboardLayout";
+import PageTitle from "@/components/pageTitle";
 
 const Dashboard = () => {
 	let router = useRouter();
 
-	return (
-		<DashboardLayout>
-			<TopBar pageName="Home" />
-			<Button
-				onClick={() => {
-					logout()
-						.then((res) => {
-							console.log(res);
-						})
-						.then(() => {
-							router.push("/login");
-						});
-				}}
-			>
-				Log out{" "}
-			</Button>
-		</DashboardLayout>
-	);
+	return <DashboardLayout></DashboardLayout>;
 };
 
 export default Dashboard;

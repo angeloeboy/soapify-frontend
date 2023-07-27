@@ -41,15 +41,11 @@ const MenuContainer = styled.div`
 	width: 100%;
 	padding-left: 5px;
 
-	:hover {
-		background-color: #0141ae;
-
-		transition: 0.3s;
-	}
-	:active {
-		background-color: rgba(26, 105, 240, 1);
-		transition: 0.05s;
-	}
+	/* :hover {
+    background-color: #0141ae;
+    color: black;
+    transition: 0.3s;
+  } */
 `;
 
 const Line = styled.div`
@@ -62,7 +58,7 @@ const Line = styled.div`
 `;
 
 const Menu = styled.div`
-	color: white;
+	color: white !important;
 	align-items: center;
 	margin-left: 5px;
 	padding: 8px 0;
@@ -76,25 +72,37 @@ const Menu = styled.div`
 		vertical-align: middle;
 		display: inline-block;
 	}
-`;
 
-const SubMenu = styled.div`
-	margin-left: 50px;
-	display: block;
-	/* width: 100%; */
-	/* color: white; */
-	p {
+	div {
 		color: white;
 	}
 `;
 
-const Sidebar = () => {
+const SubMenu = styled.div`
+	display: block;
+	/* width: 100%; */
+	/* color: white; */
+	p {
+		/* background-color: green; */
+		padding-left: 50px;
+
+		color: white;
+		transition: all 0.3s ease;
+
+		&:hover {
+			background-color: rgba(26, 105, 240, 1);
+		}
+	}
+`;
+
+const Sidebar = (props) => {
 	const initialSubmenuState = Array(3).fill(false);
 	const [submenuOpen, setSubmenuOpen] = useState(initialSubmenuState);
 	const [sidebarVisible, setSidebarVisible] = useState(true);
 
 	const handleToggleSidebar = () => {
 		setSidebarVisible((prevVisible) => !prevVisible);
+		props.setIsSidebarOpen(!sidebarVisible);
 	};
 
 	const handleSubMenuToggle = (index) => {
@@ -116,9 +124,12 @@ const Sidebar = () => {
 						Home
 					</Menu>
 
-					<Menu onClick={() => handleSubMenuToggle(0)}>
-						<img src="/pos-icon.png" alt="Home" />
-						POS
+					<Menu>
+						<div onClick={() => handleSubMenuToggle(0)}>
+							<img src="/pos-icon.png" alt="Home" />
+							POS
+						</div>
+
 						{submenuOpen[0] && (
 							<SubMenu>
 								<p>POS System</p>

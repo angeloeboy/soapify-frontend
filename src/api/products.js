@@ -15,3 +15,21 @@ export const getProducts = async () => {
 		console.log(error);
 	}
 };
+
+//get specfic product from api
+export const getProduct = async (id) => {
+	try {
+		const response = await fetch(`/api/product/${id}`, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			credentials: "include",
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};

@@ -13,15 +13,18 @@ import { getProducts } from "@/api/products";
 import { useRouter } from "next/router";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import Button from "@/components/button";
 
 const Products = () => {
 	const [products, setProducts] = useState([]);
+	const [productsLoading, setProductsLoading] = useState(true);
 	const router = useRouter();
 
 	useEffect(() => {
 		getProducts().then((res) => {
 			console.log(res);
-			setProducts(res.products);
+			res ? setProducts(res.products) : setProducts([]);
+			setProductsLoading(false);
 		});
 	}, []);
 
@@ -50,8 +53,9 @@ const Products = () => {
 							<th>Status</th>
 						</tr>
 
-						{products.length === 0
-							? Array.from({ length: 8 }, (_, index) => (
+						{products.length === 0 ? (
+							productsLoading ? (
+								Array.from({ length: 8 }, (_, index) => (
 									<tr key={index}>
 										<td className="imgContainer">
 											<Skeleton circle={true} height={40} width={40} />
@@ -70,18 +74,23 @@ const Products = () => {
 											<Skeleton width={50} height={20} />
 										</td>
 									</tr>
-							  ))
-							: products.map((product) => (
-									<tr key={product.product_id} onClick={() => navigateToProduct(product.product_id)}>
-										<td className="imgContainer">
-											<Image src="/product_img.png" alt="My Image" width="40" height="40" /> {product.product_name}
-										</td>
-										<td>{product.product_id}</td>
-										<td>{product.quantity_in_stock}</td>
-										<td>{product.product_price}</td>
-										<td>LOW</td>
-									</tr>
-							  ))}
+								))
+							) : (
+								<Button onClick={() => router.push("/dashboard/products/add")}>Add Product</Button>
+							)
+						) : (
+							products.map((product) => (
+								<tr key={product.product_id} onClick={() => navigateToProduct(product.product_id)}>
+									<td className="imgContainer">
+										<Image src="/product_img.png" alt="My Image" width="40" height="40" /> {product.product_name}
+									</td>
+									<td>{product.product_id}</td>
+									<td>{product.quantity_in_stock}</td>
+									<td>{product.product_price}</td>
+									<td>LOW</td>
+								</tr>
+							))
+						)}
 					</tbody>
 				</Table>
 			</StyledPanel>

@@ -19,7 +19,9 @@ export async function middleware(req) {
 			},
 		});
 
-		return response.ok ? NextResponse.next() : NextResponse.redirect("/login");
+		const url = req.nextUrl.clone();
+		url.pathname = "/login";
+		return response.ok ? NextResponse.next() : NextResponse.rewrite(url);
 	}
 
 	// return NextResponse.next();

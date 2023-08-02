@@ -13,41 +13,71 @@ let ProductView = () => {
 	const { id } = router.query;
 
 	const [product, setProduct] = useState({});
+	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
 		if (!id) return;
 
 		getProduct(id).then((res) => {
 			res ? setProduct(res.product) : setProduct({});
+			setLoading(false);
 			console.log(res.product);
 		});
 	}, [id]);
 	return (
 		<DashboardLayout>
-			{product.product_name ? <PageTitle title={product.product_name} /> : <Skeleton width={160} height={40} />}
+			{!loading ? product ? <PageTitle title={product.product_name} /> : <PageTitle title="Product not found" /> : <Skeleton width={160} height={40} />}
 
 			<StyledPanel>
 				<BigTitle>Product Details</BigTitle>
 				<InfoContainer>
-					<InputContainer>
-						<FieldTitle>Profile Picture</FieldTitle>
-						<Input type="text" />
-					</InputContainer>
+					{!loading ? (
+						product ? (
+							<>
+								<InputContainer>
+									<FieldTitle>Product Picture</FieldTitle>
+									<Input type="text" readOnly />
+								</InputContainer>
 
-					<InputContainer>
-						<FieldTitle>Minimum Stock</FieldTitle>
-						<Input type="text" />
-					</InputContainer>
+								<InputContainer>
+									<FieldTitle>Minimum Stock</FieldTitle>
+									<Input type="number" />
+								</InputContainer>
 
-					<InputContainer>
-						<FieldTitle>Price</FieldTitle>
-						<Input type="text" />
-					</InputContainer>
+								<InputContainer>
+									<FieldTitle>Price</FieldTitle>
+									<Input type="text" />
+								</InputContainer>
 
-					<InputContainer>
-						<FieldTitle>Category</FieldTitle>
-						<Input type="text" />
-					</InputContainer>
+								<InputContainer>
+									<FieldTitle>Category</FieldTitle>
+									<Input type="text" />
+								</InputContainer>
+							</>
+						) : null
+					) : (
+						<>
+							<InputContainer>
+								<Skeleton width={100} height={20} />
+								<Skeleton width={300} height={40} />
+							</InputContainer>
+
+							<InputContainer>
+								<Skeleton width={100} height={20} />
+								<Skeleton width={300} height={40} />
+							</InputContainer>
+
+							<InputContainer>
+								<Skeleton width={100} height={20} />
+								<Skeleton width={300} height={40} />
+							</InputContainer>
+
+							<InputContainer>
+								<Skeleton width={100} height={20} />
+								<Skeleton width={300} height={40} />
+							</InputContainer>
+						</>
+					)}
 				</InfoContainer>
 			</StyledPanel>
 		</DashboardLayout>

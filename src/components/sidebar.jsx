@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { useState } from "react";
 import styled from "styled-components";
 
@@ -73,8 +74,9 @@ const Menu = styled.div`
 		display: inline-block;
 	}
 
-	div {
+	.menuTextContainer {
 		color: white;
+		background-color: ${({ isOpen }) => (isOpen ? "blue" : "transparent")};
 	}
 `;
 
@@ -82,10 +84,11 @@ const SubMenu = styled.div`
 	display: block;
 	/* width: 100%; */
 	/* color: white; */
-	p {
+	p,
+	a {
 		/* background-color: green; */
 		padding-left: 50px;
-
+		display: block;
 		color: white;
 		transition: all 0.3s ease;
 
@@ -106,7 +109,7 @@ const Sidebar = (props) => {
 	};
 
 	const handleSubMenuToggle = (index) => {
-		setSubmenuOpen((prevState) => prevState.map((isOpen, i) => (i === index ? !isOpen : isOpen)));
+		setSubmenuOpen((prevState) => prevState.map((isOpen, i) => (i === index ? !isOpen : false)));
 	};
 
 	return (
@@ -124,8 +127,8 @@ const Sidebar = (props) => {
 						Home
 					</Menu>
 
-					<Menu>
-						<div onClick={() => handleSubMenuToggle(0)}>
+					<Menu isOpen={submenuOpen[0]}>
+						<div className="menuTextContainer" onClick={() => handleSubMenuToggle(0)}>
 							<img src="/pos-icon.png" alt="Home" />
 							POS
 						</div>
@@ -143,20 +146,17 @@ const Sidebar = (props) => {
 						Inventory
 						{submenuOpen[1] && (
 							<SubMenu>
-								<p>Products</p>
-								<p>Purchase Orders</p>
+								<Link href="/dashboard/products">Products</Link>
+								<Link href="/dashboard">Purchase Orders</Link>
 								<p>Returns</p>
 							</SubMenu>
 						)}
 					</Menu>
-					<Menu onClick={() => handleSubMenuToggle(2)}>
-						<img src="/settings-icon.png" alt="Home" />
-						Settings
-						{submenuOpen[2] && (
-							<SubMenu>
-								<p>Users</p>
-							</SubMenu>
-						)}
+					<Menu isOpen={submenuOpen[2]} onClick={() => handleSubMenuToggle(2)}>
+						<div className="menuTextContainer" onClick={() => handleSubMenuToggle(0)}>
+							<img src="/settings-icon.png" alt="Home" />
+							Settings
+						</div>
 					</Menu>
 				</MenuContainer>
 			</SidebarContainer>

@@ -1,6 +1,8 @@
-import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
+// import React, { useState, useEffect } from "react";
+// import {  } from "react";
+import Link from "next/link";
 
 const SidebarContainer = styled.div`
 	position: fixed;
@@ -15,7 +17,6 @@ const SidebarContainer = styled.div`
 	flex-direction: column;
 
 	h1 {
-		/* font-family: DM Sans; */
 		color: white;
 		text-align: center;
 		margin-bottom: 20px;
@@ -38,15 +39,9 @@ const MenuContainer = styled.div`
 	justify-content: flex-start;
 	align-items: center;
 	flex-grow: 1;
-	/* margin-top: 80px; */
+
 	width: 100%;
 	padding-left: 5px;
-
-	/* :hover {
-    background-color: #0141ae;
-    color: black;
-    transition: 0.3s;
-  } */
 `;
 
 const Line = styled.div`
@@ -59,13 +54,13 @@ const Line = styled.div`
 `;
 
 const Menu = styled.div`
+	font-weight: 400;
 	color: white !important;
 	align-items: center;
-	margin-left: 5px;
+	margin: 8px;
 	padding: 8px 0;
 	cursor: pointer;
 	position: relative;
-	/* display: flex; */
 
 	img {
 		margin-right: 13px;
@@ -76,7 +71,13 @@ const Menu = styled.div`
 
 	.menuTextContainer {
 		color: white;
-		background-color: ${({ isOpen }) => (isOpen ? "blue" : "transparent")};
+		background-color: ${({ isOpen }) => (isOpen ? "rgba(26, 105, 240, 1)" : "transparent")};
+		&:hover {
+			background-color: rgba(26, 105, 240, 1);
+		}
+		&.active {
+			background-color: #ffbb00;
+		}
 	}
 `;
 
@@ -84,33 +85,70 @@ const SubMenu = styled.div`
 	display: block;
 	/* width: 100%; */
 	/* color: white; */
-	p,
-	a {
+	p {
 		/* background-color: green; */
 		padding-left: 50px;
-		display: block;
+
 		color: white;
 		transition: all 0.3s ease;
 
 		&:hover {
-			background-color: rgba(26, 105, 240, 1);
+			background-color: #0c3885;
+			text-decoration: none;
 		}
 	}
+	/* Updated part: Apply background color for the active submenu */
+	background-color: ${({ isOpen }) => (isOpen ? "#1af045" : "transparent")};
+	/* .linkTextContainer {
+    background-color: ${({ isOpen }) => (isOpen ? "rgba(26, 105, 240, 1)" : "transparent")};
+    &.active {
+      background-color: #00ffa6;
+    }
+  } */
 `;
 
 const Sidebar = (props) => {
-	const initialSubmenuState = Array(3).fill(false);
+	const initialSubmenuState = [false, false, false, false];
 	const [submenuOpen, setSubmenuOpen] = useState(initialSubmenuState);
 	const [sidebarVisible, setSidebarVisible] = useState(true);
+	const [activeMenuIndex, setActiveMenuIndex] = useState(-1);
 
+	// Load active menu index and submenu state from local storage on component mount
+	useEffect(() => {
+		const storedActiveMenuIndex = localStorage.getItem("activeMenuIndex");
+		if (storedActiveMenuIndex !== null) {
+			setActiveMenuIndex(parseInt(storedActiveMenuIndex));
+		}
+
+		const storedSubmenuState = localStorage.getItem("submenuOpen");
+		if (storedSubmenuState !== null) {
+			setSubmenuOpen(JSON.parse(storedSubmenuState));
+		}
+	}, []);
+
+	// Toggle SideBar
 	const handleToggleSidebar = () => {
 		setSidebarVisible((prevVisible) => !prevVisible);
 		props.setIsSidebarOpen(!sidebarVisible);
 	};
 
+	// Toggle SubmenuState
 	const handleSubMenuToggle = (index) => {
-		setSubmenuOpen((prevState) => prevState.map((isOpen, i) => (i === index ? !isOpen : false)));
+		if (index === activeMenuIndex) {
+			// Clicked on the currently active menu, so toggle its submenu
+			setSubmenuOpen((prevState) => prevState.map((isOpen, i) => (i === index ? !isOpen : isOpen)));
+		} else {
+			// Clicked on a different menu item, set it as active and open its submenu
+			setActiveMenuIndex(index);
+			setSubmenuOpen((prevState) => prevState.map((isOpen, i) => (i === index ? true : false)));
+		}
 	};
+
+	// Save active menu index and submenu state to local storage whenever they change
+	useEffect(() => {
+		localStorage.setItem("activeMenuIndex", activeMenuIndex.toString());
+		localStorage.setItem("submenuOpen", JSON.stringify(submenuOpen));
+	}, [activeMenuIndex, submenuOpen]);
 
 	return (
 		<div>
@@ -118,25 +156,24 @@ const Sidebar = (props) => {
 				<ToggleButton visible={sidebarVisible} onClick={handleToggleSidebar}>
 					{sidebarVisible ? <img src="/toggle-sidebar-icon.png" alt="Close Sidebar" /> : <img src="/toggle-sidebar-icon.png" alt="Open Sidebar" />}
 				</ToggleButton>
-				<h1>SOAPIFY</h1>
-				<Line />
-
 				<MenuContainer>
 					<Menu>
-						<img src="/home-icon.png" alt="Home" />
-						Home
+						<div className={`menuTextContainer ${activeMenuIndex === -1 ? "active" : ""}`} onClick={() => handleSubMenuToggle(-1)}>
+							<img src="/home-icon.png" alt="Home" />
+							Home
+						</div>
 					</Menu>
 
-					<Menu isOpen={submenuOpen[0]}>
-						<div className="menuTextContainer" onClick={() => handleSubMenuToggle(0)}>
+					<Menu>
+						<div className={`menuTextContainer ${activeMenuIndex === 0 ? "active" : ""}`} onClick={() => handleSubMenuToggle(0)}>
 							<img src="/pos-icon.png" alt="Home" />
 							POS
 						</div>
 
 						{submenuOpen[0] && (
 							<SubMenu>
-								<p>POS System</p>
-								<p>Sales</p>
+								<Link href="/">POS System</Link>
+								<Link href="/">Sales</Link>
 							</SubMenu>
 						)}
 					</Menu>
@@ -146,17 +183,20 @@ const Sidebar = (props) => {
 						Inventory
 						{submenuOpen[1] && (
 							<SubMenu>
-								<Link href="/dashboard/products">Products</Link>
-								<Link href="/dashboard">Purchase Orders</Link>
+								<p>Products</p>
+								<p>Purchase Orders</p>
 								<p>Returns</p>
 							</SubMenu>
 						)}
 					</Menu>
-					<Menu isOpen={submenuOpen[2]} onClick={() => handleSubMenuToggle(2)}>
-						<div className="menuTextContainer" onClick={() => handleSubMenuToggle(0)}>
-							<img src="/settings-icon.png" alt="Home" />
-							Settings
-						</div>
+					<Menu onClick={() => handleSubMenuToggle(2)}>
+						<img src="/settings-icon.png" alt="Home" />
+						Settings
+						{submenuOpen[2] && (
+							<SubMenu>
+								<p>Users</p>
+							</SubMenu>
+						)}
 					</Menu>
 				</MenuContainer>
 			</SidebarContainer>

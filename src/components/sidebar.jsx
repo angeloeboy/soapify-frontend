@@ -85,10 +85,11 @@ const SubMenu = styled.div`
 	display: block;
 	/* width: 100%; */
 	/* color: white; */
-	p {
+	p,
+	a {
 		/* background-color: green; */
 		padding-left: 50px;
-
+		display: block;
 		color: white;
 		transition: all 0.3s ease;
 
@@ -178,25 +179,25 @@ const Sidebar = (props) => {
 						)}
 					</Menu>
 
-					<Menu onClick={() => handleSubMenuToggle(1)}>
-						<img src="/inventory-icon.png" alt="Home" />
-						Inventory
+					<Menu>
+						<div className={`menuTextContainer ${activeMenuIndex === 1 ? "active" : ""}`} onClick={() => handleSubMenuToggle(1)}>
+							<img src="/inventory-icon.png" alt="Home" />
+							Inventory
+						</div>
+
 						{submenuOpen[1] && (
 							<SubMenu>
-								<p>Products</p>
-								<p>Purchase Orders</p>
+								<Link href="/dashboard/products">Products</Link>
+								<Link href="/dashboard">Purchase Orders</Link>
 								<p>Returns</p>
 							</SubMenu>
 						)}
 					</Menu>
-					<Menu onClick={() => handleSubMenuToggle(2)}>
-						<img src="/settings-icon.png" alt="Home" />
-						Settings
-						{submenuOpen[2] && (
-							<SubMenu>
-								<p>Users</p>
-							</SubMenu>
-						)}
+					<Menu isOpen={submenuOpen[2]} onClick={() => handleSubMenuToggle(2)}>
+						<div className="menuTextContainer" onClick={() => handleSubMenuToggle(0)}>
+							<img src="/settings-icon.png" alt="Home" />
+							Settings
+						</div>
 					</Menu>
 				</MenuContainer>
 			</SidebarContainer>

@@ -17,19 +17,28 @@ const StyledPanel = styled.div`
 export const BigTitle = styled.h2`
 	color: rgba(0, 32, 86, 0.85);
 	font-family: DM Sans;
-	font-size: 20px;
+	font-size: 24px;
 	font-style: normal;
 	font-weight: 700;
+	padding: 15px;
+	margin-top: 23.52px;
+	margin-bottom: 23.52px;
+	margin-left:24.37px ;
 	line-height: normal;
 `;
 
 export const FieldTitle = styled.h3`
-	color: #4e4e4e;
+	color: rgba(0, 32, 86, 0.50);
 	font-family: DM Sans;
 	font-size: 14px;
 	font-style: normal;
-	font-weight: 700;
+	margin-left: 15px;
+	font-weight: 500;
 	line-height: normal;
+ 	padding: 15px;
+	margin-top: 28px;
+	
+	 
 `;
 
 export const InfoContainer = styled.div`
@@ -41,12 +50,13 @@ export const InputContainer = styled.div`
 `;
 
 export const Input = styled.input`
-	border-radius: 8px;
-	border: 1px solid #e1e1e1;
-	font-size: 16px;
+	border-radius: 11px;
+	border: 1px solid #EEE;
 	padding: 8px 16px;
-	margin-top: 8px;
-	width: 100%;
+	margin-left: 24.37px;
+	width: 780.824px;
+	height: 41px;
+	flex-shrink: 0;
 	&:focus {
 		outline: 1px solid #0070f3;
 	}

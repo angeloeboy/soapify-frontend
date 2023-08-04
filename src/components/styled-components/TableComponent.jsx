@@ -95,7 +95,7 @@ export const ActionContainer = styled.div`
 	}
 `;
 
-export const Status = styled.span`
+export let Status = styled.span`
 	display: inline-block;
 	padding: 8px;
 	border-radius: 6px;

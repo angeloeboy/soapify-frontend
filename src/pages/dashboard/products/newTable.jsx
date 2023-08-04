@@ -1,6 +1,6 @@
 import DashboardLayout from "@/components/dashboardLayout";
 import PageTitle from "@/components/pageTitle";
-import Table, { ActionContainer, Status, TableData, TableHeadings, TableRows } from "@/components/styled-components/table";
+import Table, { ActionContainer, Status, TableData, TableHeadings, TableRows } from "@/components/styled-components/TableComponent";
 import StyledPanel from "@/components/styled-components/StyledPanel";
 import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -14,21 +14,21 @@ const NewTablePage = () => {
 			category: "Individual",
 			price: "45.00",
 			stock: "23",
-			status: "Low",
+			Status: "Low",
 		},
 		{
 			name: "Blue Soap box",
 			category: "BOX",
 			price: "45.00",
 			stock: "23",
-			status: "Low",
+			Status: "Low",
 		},
 		{
 			name: "Blue Soap box",
 			category: "BOX",
 			price: "45.00",
 			stock: "23",
-			status: "Low",
+			Status: "Low",
 		},
 	]);
 
@@ -74,7 +74,7 @@ const NewTablePage = () => {
 									<TableData>{product.stock}</TableData>
 									<TableData>
 										<Status bgColor={"rgba(255, 116, 116, 0.49)"} color={"#EA0000"}>
-											{product.status}
+											{product.Status}
 										</Status>
 									</TableData>
 									<TableData>

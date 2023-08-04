@@ -14,7 +14,7 @@ import { useRouter } from "next/router";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import Button from "@/components/button";
-import Table, { ActionContainer, TableData, TableHeadings, TableRows, Status } from "@/components/styled-components/table";
+import Table, { ActionContainer, TableData, TableHeadings, TableRows, Status } from "@/components/styled-components/TableComponent";
 import styled from "styled-components";
 
 const AddProduct = styled.div``;

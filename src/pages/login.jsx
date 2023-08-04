@@ -96,6 +96,7 @@ let Login = () => {
 	});
 
 	let router = useRouter();
+
 	const handleLogin = (e) => {
 		e.preventDefault();
 		setIsLoggingIn(true);

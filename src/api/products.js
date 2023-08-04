@@ -33,3 +33,18 @@ export const getProduct = async (id) => {
 		console.log(error);
 	}
 };
+
+export const addProduct = async (product) => {
+	try {
+		const response = await fetch("/api/product/create", {
+			method: "POST",
+			body: product,
+			credentials: "include",
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};

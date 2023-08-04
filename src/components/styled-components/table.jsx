@@ -2,96 +2,106 @@ import styled from "styled-components";
 
 const Table = styled.table`
 	width: 100%;
-	table-layout: fixed;
-	margin-top: 32px;
-	border-spacing: 0;
+	border: none;
 	border-collapse: collapse;
+	table-layout: fixed;
+	min-width: 1000px;
+	width: 100%;
+	margin-top: 32px;
+`;
 
-	th {
-		text-align: center;
-		color: #cdcdcd;
-		font-size: 14px;
-		font-weight: 700;
-	}
+export const TableHeadings = styled.th`
+	color: #000;
+	font-size: 14px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: normal;
+	padding: 18px 0px;
+`;
 
-	tr:not(.tableHeadings) {
-		cursor: pointer;
-		padding: 0px 16px;
+export const TableData = styled.td`
+	color: ${(props) => (props.bold ? "#002056" : "rgba(0, 32, 86, 0.7)")};
+	text-align: center;
+	font-size: 14px;
+	font-style: normal;
+	font-weight: ${(props) => (props.bold ? "bold" : "400")};
+	line-height: normal;
+	padding: 32px 0px;
+	border-bottom: 1px solid #dfdfdf;
+	position: relative;
 
+	${(props) =>
+		props.withImage &&
+		`
+        display: flex;
+        align-items: center;
+        img {
+            margin-right: 18px;
+            margin-left: 18px
+        }
+        
+    `}
+`;
+
+export const TableRows = styled.tr`
+	border-radius: 4px;
+	border-radius: 4px;
+	border: ${(props) => (props.heading ? "1px solid #dfdfdf" : "none")};
+	background: ${(props) => (props.heading ? "#f9f9f9" : "transparent")};
+	cursor: ${(props) => (props.heading ? "default" : "pointer")};
+	.ellipsis {
+		width: 16px;
+		height: 16px;
+		padding: 8px;
+		border-radius: 20px;
 		&:hover {
-			background-color: #f8f8f8;
+			background-color: #f9f9f9;
 		}
 	}
+`;
 
-	td {
-		text-align: center;
-		color: #002056;
-		font-size: 16px;
-		font-style: normal;
-		font-weight: 700;
-		line-height: normal;
-	}
-
-	tr td:first-child,
-	tr th:first-child {
-		text-align: left;
-		padding-left: 16px;
-	}
-	tr td:last-child,
-	tr th:last-child {
-		text-align: right;
-		padding-right: 16px;
-	}
-
-	.tableHeadings {
-		th {
-			padding-bottom: 20px;
-		}
-	}
-
-	td {
-		padding: 15px 0px;
-	}
-
-	.imgContainer {
+export const ActionContainer = styled.div`
+	display: flex;
+	/* justify-content: center; */
+	/* align-items: center; */
+	flex-direction: column;
+	/* gap: 16px; */
+	cursor: pointer;
+	color: #002056;
+	font-size: 14px;
+	font-style: normal;
+	font-weight: 700;
+	border-radius: 4px;
+	border: 1px solid #dfdfdf;
+	background: #ffffff;
+	width: 100px;
+	/* height: 40px; */
+	text-align: left;
+	position: absolute;
+	left: 50%;
+	bottom: 0px;
+	transform: translate(-50%, 40%);
+	z-index: 2;
+	p {
+		padding: 8px 16px;
 		display: flex;
 		align-items: center;
-		img {
-			margin-right: 18px;
-		}
-	}
-
-	.actionsContainer {
-		position: relative;
 		svg {
-			margin-right: 21px;
-			cursor: pointer;
-			opacity: 0.3;
-			transition: all 0.3s ease;
-			padding: 5px;
-			border-radius: 50%;
-
-			&:hover {
-				opacity: 1;
-				background-color: #f7f7f7;
-			}
+			margin-right: 8px;
 		}
-
-		.actions {
-			position: absolute;
-			top: 0px;
-			right: 0px;
-			transform: translateY(calc(100% - 10px));
-			background-color: #fff;
-			padding: 10px 8px;
-			z-index: 5;
-			border: 1px solid #fdfdfd;
-			p {
-				margin: 2px 0px;
-				cursor: pointer;
-			}
+		&:hover {
+			background: #f9f9f9;
 		}
 	}
+`;
+
+export const Status = styled.span`
+	display: inline-block;
+	padding: 8px;
+	border-radius: 6px;
+	background-color: ${(props) => (props.bgColor ? props.bgColor : "transparent")};
+	color: ${(props) => (props.color ? props.color : "#fff")};
+	font-weight: bold;
 `;
 
 export default Table;

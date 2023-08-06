@@ -72,10 +72,6 @@ const Products = () => {
 			formData.append(key, product[key]);
 		}
 
-		for (let pair of formData.entries()) {
-			console.log(pair[0] + ", " + pair[1]);
-		}
-
 		addProduct(formData).then((res) => {
 			console.log(res);
 		});

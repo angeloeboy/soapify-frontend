@@ -22,11 +22,12 @@ const ProductCategories = () => {
 
 	const addCategoryfunc = () => {
 		addCategory({
-			name: "testsdfsdf",
+			name: "Category 2",
 			number_of_products: 0,
 			isActive: true,
 		}).then((res) => {
 			console.log(res);
+			getCategoryFunction();
 		});
 	};
 

@@ -202,13 +202,13 @@ export const ButtonsContainer = styled.div`
 export const PopupOverlay = styled.div`
     position: fixed;
     top: 0;
-    left: 0;
-    width: 100%;
+  	left:0;
+	width: 100%;
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
     display: flex;
-    justify-content: center;
     align-items: center;
+ 
 `;
 
 export const PopupContent = styled.div`
@@ -223,6 +223,11 @@ export const PopupContent = styled.div`
     flex-shrink: 0;
     margin: 0 auto;
     padding: 0 auto;
+    right: 0; 
+    transform: translateX(40%);  
+    flex-direction: column;  
+
+
 `;
 
 

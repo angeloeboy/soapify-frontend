@@ -1,7 +1,6 @@
 import TopBar from "@/components/topbar";
 import DashboardLayout from "@/components/dashboardLayout";
 
-// import Table from "@/components/styled-components/table";
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faTrash, faEllipsis } from "@fortawesome/free-solid-svg-icons";
@@ -13,32 +12,49 @@ import { addProduct, getProducts } from "@/api/products";
 import { useRouter } from "next/router";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import Button from "@/components/button";
+// import Button from "@/components/button";
 import Table, { ActionContainer, TableData, TableHeadings, TableRows, Status } from "@/components/styled-components/TableComponent";
-import styled from "styled-components";
 
-const AddProduct = styled.div``;
+import {
+	Button,
+	Select,
+	LabelContainer,
+	Label,
+	Option,
+	FieldContainer,
+	ProfilePictureContainer,
+	FileInput,
+	Centered,
+	SecondaryButton,
+	CloseButton,
+	ButtonsContainer,
+	PopupOverlay,
+	PopupContent,
+	HeaderTitle,
+	FieldTitleLabel,
+	InputHolder,
+} from "@/components/styled-components/ItemActionModal";
+import AddProductComponent from "@/components/product/addProduct";
 
 const Products = () => {
 	const [products, setProducts] = useState([]);
 	const [productsLoading, setProductsLoading] = useState(true);
+	const [isPopupOpen, setPopupOpen] = useState(false);
+	const [activeActionContainer, setActiveActionContainer] = useState(-1);
 
 	const router = useRouter();
 
 	useEffect(() => {
+		GetProducts();
+	}, []);
+
+	const GetProducts = () => {
 		getProducts().then((res) => {
 			console.log(res);
 			res ? setProducts(res.products) : setProducts([]);
 			setProductsLoading(false);
 		});
-	}, []);
-
-	let navigateToProduct = (id) => {
-		router.push(`/dashboard/products/${id}`);
 	};
-
-	const [activeActionContainer, setActiveActionContainer] = useState(-1);
-
 	const handleClickOutside = (event) => {
 		if (!event.target.closest(".action-container") && !event.target.closest(".ellipsis")) {
 			setActiveActionContainer(null);
@@ -81,6 +97,18 @@ const Products = () => {
 		});
 	};
 
+	const handleOpenPopup = () => {
+		setPopupOpen(true);
+	};
+
+	const handleClosePopup = () => {
+		setPopupOpen(false);
+	};
+
+	const onButtonClick = () => {
+		fileInput.current.click();
+	};
+
 	return (
 		<DashboardLayout>
 			<form onSubmit={(e) => AddProduct(e)} enctype="multipart/form-data">
@@ -95,6 +123,8 @@ const Products = () => {
 					<div className="searchBar">
 						<p>Search for Product</p>
 						<input type="text" placeholder="Search" />
+
+						<Button onClick={handleOpenPopup}>Add Products</Button>
 					</div>
 				</TableControlPanel>
 				<Table>
@@ -176,6 +206,7 @@ const Products = () => {
 					</tbody>
 				</Table>
 			</StyledPanel>
+			{isPopupOpen && <AddProductComponent onClose={handleClosePopup} onButtonClick={onButtonClick} GetProducts={GetProducts} />}
 		</DashboardLayout>
 	);
 };

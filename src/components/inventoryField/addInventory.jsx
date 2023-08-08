@@ -67,7 +67,7 @@ const AddInventoryComponent = ({ onClose, onButtonClick, GetProducts }) => {
 							<Label>General Information</Label>{" "}
 						</LabelContainer>
 						<div>
-							<FieldTitleLabel> Product   </FieldTitleLabel>
+							<FieldTitleLabel> Product Name   </FieldTitleLabel>
 							<InputHolder
 								type="text"
 								placeholder="Enter your Product Name"
@@ -78,16 +78,20 @@ const AddInventoryComponent = ({ onClose, onButtonClick, GetProducts }) => {
 							/>
 						</div>
 						<div>
-							<FieldTitleLabel notFirst>Price</FieldTitleLabel>
+							<FieldTitleLabel notFirst>SKU</FieldTitleLabel>
 							<InputHolder
 								type="number"
-								placeholder="Enter your Price"
+								placeholder=""
 								 
 							/>
 						</div>
 						<div>
-							<FieldTitleLabel notFirst>Minimum Stock</FieldTitleLabel>
+							<FieldTitleLabel notFirst>Quantity</FieldTitleLabel>
 							<InputHolder type="text" placeholder="Enter your minimum stock" />
+						</div>
+						<div>
+							<FieldTitleLabel notFirst>Quantity Remaining</FieldTitleLabel>
+							<InputHolder type="text" placeholder="Enter your Quantity Remaining" />
 						</div>
 						<div>
 							<FieldTitleLabel notFirst>Image (optional)</FieldTitleLabel>
@@ -100,6 +104,10 @@ const AddInventoryComponent = ({ onClose, onButtonClick, GetProducts }) => {
 									<input type="file" name="product_image" required />
 								</Centered>
 							</ProfilePictureContainer>
+						</div>
+						<div>
+							<FieldTitleLabel notFirst>Date Received</FieldTitleLabel>
+							<InputHolder type="date" placeholder="Enter your Quantity Remaining" />
 						</div>
 
 						<LabelContainer>

@@ -19,7 +19,43 @@ import {
 } from "@/components/styled-components/ItemActionModal";
 
 import { useEffect, useState } from "react";
- 
+import { addProduct, getProducts } from "@/api/products";
+
+const AddInventoryComponent = ({ onClose, onButtonClick, GetProducts }) => {
+	const [fileUploaded, setFileUploaded] = useState(false);
+	const [product, setProduct] = useState({
+		product_name: "",
+		product_desc: "",
+		product_price: 0,
+		category_id: 0,
+		supplier_id: 0,
+		quantity_in_stock: 0,
+	});
+
+	let AddProduct = (e) => {
+		e.preventDefault();
+
+		const formData = new FormData();
+		formData.append("product_image", e.target.elements.product_image.files[0]);
+
+		// Append each property in the product object to formData
+		for (let key in product) {
+			formData.append(key, product[key]);
+		}
+
+		for (let pair of formData.entries()) {
+			console.log(pair[0] + ", " + pair[1]);
+		}
+
+		addProduct(formData)
+			.then((res) => {
+				console.log(res);
+			})
+			.then(() => {
+				GetProducts();
+				console.log("fdsafdasf");
+			});
+	};
 
 	return (
 		<PopupOverlay>
@@ -31,10 +67,14 @@ import { useEffect, useState } from "react";
 							<Label>General Information</Label>{" "}
 						</LabelContainer>
 						<div>
-							<FieldTitleLabel> Product  </FieldTitleLabel>
+							<FieldTitleLabel> Product   </FieldTitleLabel>
 							<InputHolder
 								type="text"
 								placeholder="Enter your Product Name"
+								onChange={(e) => {
+									setProduct({ ...product, product_name: e.target.value });
+								}}
+								value={product.product_name}
 							/>
 						</div>
 						<div>
@@ -42,6 +82,7 @@ import { useEffect, useState } from "react";
 							<InputHolder
 								type="number"
 								placeholder="Enter your Price"
+								 
 							/>
 						</div>
 						<div>
@@ -62,12 +103,12 @@ import { useEffect, useState } from "react";
 						</div>
 
 						<LabelContainer>
-							<Label>Product Category</Label>
+							<Label>Category</Label>
 						</LabelContainer>
 						<div>
 							<FieldTitleLabel notFirst>Category</FieldTitleLabel>
 							<Select>
-								<Option value="Dishwashing Liquid">Dishwashing Liquid</Option>
+								<Option value="Dishawashing Liquid">Dishawashing Liquid</Option>
 								<Option value="Soap">Soap</Option>
 								<Option value="General Items">General Items</Option>
 							</Select>
@@ -82,6 +123,6 @@ import { useEffect, useState } from "react";
 			</PopupContent>
 		</PopupOverlay>
 	);
-;
+};
 
 export default AddInventoryComponent;

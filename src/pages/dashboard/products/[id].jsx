@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import PageTitle from "./../../../components/pageTitle";
 import { getProduct } from "@/api/products";
 import { useEffect, useState } from "react";
-import StyledPanel, { BigTitle, FieldTitle, InfoContainer, Input, InputContainer } from "@/components/styled-components/StyledPanel";
+import StyledPanel, { BigTitle, FieldTitle, InfoContainer, Input, InputContainer } from "@/styled-components/StyledPanel";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 

@@ -16,7 +16,7 @@ import {
 	HeaderTitle,
 	FieldTitleLabel,
 	InputHolder,
-} from "@/components/styled-components/ItemActionModal";
+} from "@/styled-components/ItemActionModal";
 
 import { useEffect, useState } from "react";
 import { addProduct, getProducts } from "@/api/products";

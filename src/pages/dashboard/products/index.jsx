@@ -5,15 +5,15 @@ import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faTrash, faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import PageTitle from "@/components/pageTitle";
-import TableControlPanel from "@/components/styled-components/TableControlPanel";
-import StyledPanel from "@/components/styled-components/StyledPanel";
+import TableControlPanel from "@/styled-components/TableControlPanel";
+import StyledPanel from "@/styled-components/StyledPanel";
 import { useEffect, useState } from "react";
 import { addProduct, getProducts } from "@/api/products";
 import { useRouter } from "next/router";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 // import Button from "@/components/button";
-import Table, { ActionContainer, TableData, TableHeadings, TableRows, Status } from "@/components/styled-components/TableComponent";
+import Table, { ActionContainer, TableData, TableHeadings, TableRows, Status } from "@/styled-components/TableComponent";
 
 import {
 	Button,
@@ -33,7 +33,7 @@ import {
 	HeaderTitle,
 	FieldTitleLabel,
 	InputHolder,
-} from "@/components/styled-components/ItemActionModal";
+} from "@/styled-components/ItemActionModal";
 import AddProductComponent from "@/components/product/addProduct";
 
 const Products = () => {

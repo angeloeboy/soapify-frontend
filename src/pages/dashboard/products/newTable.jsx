@@ -1,7 +1,7 @@
 import DashboardLayout from "@/components/dashboardLayout";
 import PageTitle from "@/components/pageTitle";
-import Table, { ActionContainer, Status, TableData, TableHeadings, TableRows } from "@/components/styled-components/TableComponent";
-import StyledPanel from "@/components/styled-components/StyledPanel";
+import Table, { ActionContainer, Status, TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
+import StyledPanel from "@/styled-components/StyledPanel";
 import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";

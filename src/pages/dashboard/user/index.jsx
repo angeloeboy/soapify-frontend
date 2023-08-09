@@ -19,8 +19,8 @@ import ItemActionModal, {
 	HeaderTitle,
 	FieldTitleLabel,
 	InputHolder,
-} from "@/components/styled-components/ItemActionModal";
-import StyledPanel from "@/components/styled-components/StyledPanel";
+} from "@/styled-components/ItemActionModal";
+import StyledPanel from "@/styled-components/StyledPanel";
 
 const Popup = ({ onClose, onButtonClick, fileInput }) => {
 	const [fileUploaded, setFileUploaded] = useState(false);

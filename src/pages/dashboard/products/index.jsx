@@ -1,10 +1,10 @@
-import TopBar from "@/components/topbar";
-import DashboardLayout from "@/components/dashboardLayout";
+import TopBar from "@/components/misc/topbar";
+import DashboardLayout from "@/components/misc/dashboardLayout";
 
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faTrash, faEllipsis } from "@fortawesome/free-solid-svg-icons";
-import PageTitle from "@/components/pageTitle";
+import PageTitle from "@/components/misc/pageTitle";
 import TableControlPanel from "@/styled-components/TableControlPanel";
 import StyledPanel from "@/styled-components/StyledPanel";
 import { useEffect, useState } from "react";
@@ -12,28 +12,11 @@ import { addProduct, getProducts } from "@/api/products";
 import { useRouter } from "next/router";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-// import Button from "@/components/button";
+// import Button from "@/components/misc/button";
 import Table, { ActionContainer, TableData, TableHeadings, TableRows, Status } from "@/styled-components/TableComponent";
 
-import {
-	Button,
-	Select,
-	LabelContainer,
-	Label,
-	Option,
-	FieldContainer,
-	ProfilePictureContainer,
-	FileInput,
-	Centered,
-	SecondaryButton,
-	CloseButton,
-	ButtonsContainer,
-	PopupOverlay,
-	PopupContent,
-	HeaderTitle,
-	FieldTitleLabel,
-	InputHolder,
-} from "@/styled-components/ItemActionModal";
+import { Button } from "@/styled-components/ItemActionModal";
+
 import AddProductComponent from "@/components/product/addProduct";
 
 const Products = () => {
@@ -67,35 +50,6 @@ const Products = () => {
 			document.removeEventListener("click", handleClickOutside);
 		};
 	}, []);
-
-	let AddProduct = (e) => {
-		e.preventDefault();
-
-		let product = {
-			product_name: "test",
-			product_desc: "test",
-			product_price: 10000,
-			category_id: 23,
-			supplier_id: 2,
-			quantity_in_stock: 0,
-		};
-
-		const formData = new FormData();
-		formData.append("product_image", e.target.elements.product_image.files[0]);
-
-		// Append each property in the product object to formData
-		for (let key in product) {
-			formData.append(key, product[key]);
-		}
-
-		for (let pair of formData.entries()) {
-			console.log(pair[0] + ", " + pair[1]);
-		}
-
-		addProduct(formData).then((res) => {
-			console.log(res);
-		});
-	};
 
 	const handleOpenPopup = () => {
 		setPopupOpen(true);
@@ -174,7 +128,7 @@ const Products = () => {
 									</TableData>
 									<TableData>{product.product_id}</TableData>
 									<TableData>{product.quantity_in_stock}</TableData>
-									<TableData>{product.product_price}</TableData>
+									<TableData>{product.product_price / 100}</TableData>
 									<TableData>
 										<Status bgColor={"rgba(255, 116, 116, 0.49)"} color={"#EA0000"}>
 											LOW

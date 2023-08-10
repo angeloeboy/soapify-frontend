@@ -1,5 +1,5 @@
-import DashboardLayout from "@/components/dashboardLayout";
-import PageTitle from "@/components/pageTitle";
+import DashboardLayout from "@/components/misc/dashboardLayout";
+import PageTitle from "@/components/misc/pageTitle";
 import Table, { ActionContainer, Status, TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
 import StyledPanel from "@/styled-components/StyledPanel";
 import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";

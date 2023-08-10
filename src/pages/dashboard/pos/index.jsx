@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import StyledPanel, { BigTitle, FieldTitle } from "@/styled-components/StyledPanel";
 import { styled } from "styled-components";
-import Sidebar from "@/components/sidebar";
-import DashboardLayout from "@/components/dashboardLayout";
+import DashboardLayout from "@/components/misc/dashboardLayout";
 import Image from "next/image";
-import Button from "@/components/button";
+import Button from "@/components/misc/button";
 import POSactions from "@/components/pos/posActions";
+import { getProducts } from "@/api/products";
 
 const SearchBarContainer = styled.div`
 	display: flex;
@@ -140,30 +140,35 @@ const Home = () => {
 	const [cart, setCart] = useState([]);
 
 	useEffect(() => {
-		const products = Array.from({ length: 7 }, () => {
-			return {
-				id: Math.floor(Math.random() * 1000),
-				name: "Max Glow Yellow BOX",
-				stock: Math.floor(Math.random() * 100),
-				price: Math.floor(Math.random() * 100),
-				image: "/sabon.png",
-			};
-		});
+		// const products = Array.from({ length: 7 }, () => {
+		// 	return {
+		// 		id: Math.floor(Math.random() * 1000),
+		// 		name: "Max Glow Yellow BOX",
+		// 		stock: Math.floor(Math.random() * 100),
+		// 		price: Math.floor(Math.random() * 100),
+		// 		image: "/sabon.png",
+		// 	};
+		// });
 
-		setProducts(products);
+		// setProducts(products);
+		getProductsFunc();
 	}, []);
 
-	useEffect(() => {
-		console.log(cart);
-	}, [cart]);
+	const getProductsFunc = () => {
+		getProducts().then((res) => {
+			console.log(res);
+			res ? setProducts(res.products) : setProducts([]);
+			// setProductsLoading(false);
+		});
+	};
 
 	// create an array with 7 products object with random price and random stock and random name
 	const addToCart = (product) => {
-		const existingProduct = cart.find((item) => item.id === product.id);
+		const existingProduct = cart.find((item) => item.product_id === product.product_id);
 
 		if (existingProduct) {
 			const updatedCart = cart.map((item) => {
-				if (item.id === product.id) {
+				if (item.product_id === product.product_id) {
 					return {
 						...item,
 						quantity: item.quantity + 1,
@@ -177,6 +182,8 @@ const Home = () => {
 		} else {
 			setCart([...cart, { ...product, quantity: 1 }]);
 		}
+
+		console.log(cart);
 	};
 	const router = useRouter();
 
@@ -200,15 +207,15 @@ const Home = () => {
 					<ProductsList>
 						{products.map((product) => {
 							return (
-								<Product key={product.id}>
+								<Product key={product.product_id}>
 									<Image src="/sabon.png" width={200} height={200} alt="Product image" />
 
 									<InfoContainer>
 										<ProductNameAndStock>
-											<p>{product.name}</p>
-											<p>Stock: {product.stock}</p>
+											<p>{product.product_name}</p>
+											<p>Stock: {product.quantity_in_stock}</p>
 										</ProductNameAndStock>
-										<Price>P{product.price}</Price>
+										<Price>P{product.product_price / 100}</Price>
 									</InfoContainer>
 									<Button onClick={() => addToCart(product)} width={"100%"}>
 										Add

@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import StyledPanel, { BigTitle, FieldTitle } from "@/styled-components/StyledPanel";
 import { styled } from "styled-components";
-import Sidebar from "@/components/sidebar";
-import DashboardLayout from "@/components/dashboardLayout";
+import Sidebar from "@/components/misc/sidebar";
+import DashboardLayout from "@/components/misc/dashboardLayout";
 
 const SearchBarContainer = styled.div`
 	display: flex;
@@ -148,94 +148,7 @@ const Home = () => {
 
 	return (
 		<DashboardLayout>
-			<BigTitle>POS</BigTitle>
-
-			<StyledPanel>
-				<FieldTitle>Search for Product</FieldTitle>
-
-				<SearchBarContainer>
-					<SearchIcon src="search.png" alt="Search Icon" />
-					<SearchBar type="text" placeholder="Search" value={searchQuery} onChange={handleSearchChange} />
-					<CategoriesButton onClick={() => router.push("/categories")}>
-						<FilterIcon src="Filter.PNG" alt="Filter Icon" />
-						<AllText>All</AllText>
-					</CategoriesButton>
-				</SearchBarContainer>
-
-				<GridContainer>
-					<ImageLabelContainer>
-						<Image src="sabon.png" />
-						<InfoContainer>
-							<div>
-								<FieldTitle>Max Glow Yellow BOX</FieldTitle>
-								<FieldTitle>Stock: 90</FieldTitle>
-							</div>
-							<Label>P50.00</Label>
-						</InfoContainer>
-						<Button onClick={() => router.push("/dashboard")}>Add</Button>
-					</ImageLabelContainer>
-
-					<ImageLabelContainer>
-						<Image src="sabon.png" />
-						<InfoContainer>
-							<div>
-								<FieldTitle>Max Glow Yellow BOX</FieldTitle>
-								<FieldTitle>Stock: 90</FieldTitle>
-							</div>
-							<Label>P50.00</Label>
-						</InfoContainer>
-						<Button onClick={() => router.push("/dashboard")}>Add</Button>
-					</ImageLabelContainer>
-
-					<ImageLabelContainer>
-						<Image src="sabon.png" />
-						<InfoContainer>
-							<div>
-								<FieldTitle>Max Glow Yellow BOX</FieldTitle>
-								<FieldTitle>Stock: 90</FieldTitle>
-							</div>
-							<Label>P50.00</Label>
-						</InfoContainer>
-						<Button onClick={() => router.push("/dashboard")}>Add</Button>
-					</ImageLabelContainer>
-
-					<ImageLabelContainer>
-						<Image src="sabon.png" />
-						<InfoContainer>
-							<div>
-								<FieldTitle>Max Glow Yellow BOX</FieldTitle>
-								<FieldTitle>Stock: 90</FieldTitle>
-							</div>
-							<Label>P50.00</Label>
-						</InfoContainer>
-						<Button onClick={() => router.push("/dashboard")}>Add</Button>
-					</ImageLabelContainer>
-
-					<ImageLabelContainer>
-						<Image src="sabon.png" />
-						<InfoContainer>
-							<div>
-								<FieldTitle>Max Glow Yellow BOX</FieldTitle>
-								<FieldTitle>Stock: 90</FieldTitle>
-							</div>
-							<Label>P50.00</Label>
-						</InfoContainer>
-						<Button onClick={() => router.push("/dashboard")}>Add</Button>
-					</ImageLabelContainer>
-
-					<ImageLabelContainer>
-						<Image src="sabon.png" />
-						<InfoContainer>
-							<div>
-								<FieldTitle>Max Glow Yellow BOX</FieldTitle>
-								<FieldTitle>Stock: 90</FieldTitle>
-							</div>
-							<Label>P50.00</Label>
-						</InfoContainer>
-						<Button onClick={() => router.push("/dashboard")}>Add</Button>
-					</ImageLabelContainer>
-				</GridContainer>
-			</StyledPanel>
+			
 		</DashboardLayout>
 	);
 };

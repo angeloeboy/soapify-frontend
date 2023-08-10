@@ -16,7 +16,7 @@ import {
 	HeaderTitle,
 	FieldTitleLabel,
 	InputHolder,
-} from "@/components/styled-components/ItemActionModal";
+} from "@/styled-components/ItemActionModal";
 
 import { useEffect, useState } from "react";
 import { addProduct, getProducts } from "@/api/products";
@@ -67,7 +67,7 @@ const AddInventoryComponent = ({ onClose, onButtonClick, GetProducts }) => {
 							<Label>General Information</Label>{" "}
 						</LabelContainer>
 						<div>
-							<FieldTitleLabel> Product Name   </FieldTitleLabel>
+							<FieldTitleLabel> Product Name </FieldTitleLabel>
 							<InputHolder
 								type="text"
 								placeholder="Enter your Product Name"
@@ -79,11 +79,7 @@ const AddInventoryComponent = ({ onClose, onButtonClick, GetProducts }) => {
 						</div>
 						<div>
 							<FieldTitleLabel notFirst>SKU</FieldTitleLabel>
-							<InputHolder
-								type="number"
-								placeholder=""
-								 
-							/>
+							<InputHolder type="number" placeholder="" />
 						</div>
 						<div>
 							<FieldTitleLabel notFirst>Quantity</FieldTitleLabel>

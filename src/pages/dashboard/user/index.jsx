@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import styled from "styled-components";
-import DashboardLayout from "@/components/dashboardLayout";
+import DashboardLayout from "@/components/misc/dashboardLayout";
 import ItemActionModal, {
 	Button,
 	Select,
@@ -19,8 +19,8 @@ import ItemActionModal, {
 	HeaderTitle,
 	FieldTitleLabel,
 	InputHolder,
-} from "@/components/styled-components/ItemActionModal";
-import StyledPanel from "@/components/styled-components/StyledPanel";
+} from "@/styled-components/ItemActionModal";
+import StyledPanel from "@/styled-components/StyledPanel";
 
 const Popup = ({ onClose, onButtonClick, fileInput }) => {
 	const [fileUploaded, setFileUploaded] = useState(false);

@@ -130,6 +130,63 @@ export const FileInput = styled.input.attrs({ type: "file" })`
 	display: none;
 	width: 100%;
 `;
+export const ButtonAddInventory = styled.button`
+    color: white;
+	border-radius: 12px;
+	padding: 10px 20px;
+	border: none;
+	margin: 5px;
+	font-size: 16px;
+	cursor: pointer;
+	width: 149.027px;
+    height: 40.2px;
+    flex-shrink: 0;
+	font-family: Arial;
+	background-color: #1a69f0;
+	font-style: normal;
+	font-weight: 700;
+	line-height: normal;
+	
+	
+
+
+
+`;
+export const ButtonAddAccountType = styled.button`
+    color: black;
+	border-radius: 12px;
+	padding: 10px 20px;
+	border: none;
+	margin: 5px;
+	font-size: 16px;
+	cursor: pointer;
+	width: 149.027px;
+    height: 40.2px;
+    flex-shrink: 0;
+	font-family: Arial;
+	background-color: #F8F8F8;
+	font-style: normal;
+	font-weight: 700;
+	line-height: normal;
+`;
+export const ButtonAddStatus = styled.button`
+    color: black;
+	border-radius: 12px;
+	padding: 10px 20px;
+	border: none;
+	margin: 5px;
+	font-size: 16px;
+	cursor: pointer;
+	width: 149.027px;
+    height: 40.2px;
+    flex-shrink: 0;
+	font-family: Arial;
+	background-color: #F8F8F8;
+	font-style: normal;
+	font-weight: 700;
+	line-height: normal;
+`;
+
 
 export const Centered = styled.div`
 	margin-top: 10px;

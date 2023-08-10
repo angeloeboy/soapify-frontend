@@ -4,10 +4,10 @@ import DashboardLayout from "@/components/dashboardLayout";
 import PageTitle from "@/components/pageTitle";
 import Table, { ActionContainer, Status, TableData, TableHeadings, TableRows } from "@/components/styled-components/TableComponent";
 import StyledPanel from "@/components/styled-components/StyledPanel";
-import { faEllipsis, faFilter, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsis, faFilter, faPen, faPlus, faPlusCircle, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TableControlPanel from "@/components/styled-components/TableControlPanel";
-import { Button, ButtonAddInventory, ButtonAddAccountType,ButtonAddStatus} from "@/components/styled-components/ItemActionModal";
+import { Button, ButtonAddInventory, ButtonAddAccountType,ButtonAddStatus, StyledFontAwesomeIcon} from "@/components/styled-components/ItemActionModal";
 import AddInventoryComponent from "@/components/inventoryField/addInventory"; // Import your popup content component
 
 const InventoryPage = () => {
@@ -37,6 +37,14 @@ const InventoryPage = () => {
            dateReceived: "8/8/2023"  
         
     },
+    {
+        name: "Yellow Soap Ind..",
+        sku: "RC1D2D3",
+        quantity: "23",
+        quantityRemaining:"3",
+        dateReceived: "8/8/2023"  
+     
+ },
   ]);
 
   const [activeActionContainer, setActiveActionContainer] = useState(-1);
@@ -82,30 +90,32 @@ const InventoryPage = () => {
 
     <StyledPanel>
     <TableControlPanel>
-  <div className="searchBar" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-    <div>
-      <p>Search for Product</p>
-      <input type="text" placeholder="Search" />
+    <div className="searchBar" style={{ display: "flex", alignItems: "center" }}>
+  <div>
+    <p>Search for Product</p>
+    <input type="text" placeholder="Search" />
+  </div>
+  <div style={{ display: "flex", marginLeft: "16px" }}>
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginRight: "36px" }}>
+      <p style={{ marginBottom: "0", textAlign: "center" }}>Account Type</p>
+      <ButtonAddAccountType>
+        <FontAwesomeIcon icon={faFilter}/>All
+      </ButtonAddAccountType>
+    </div>
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginRight: "11px" }}>
+      <p style={{ marginBottom: "0", textAlign: "center" }}>Status</p>
+      <ButtonAddStatus>
+        <FontAwesomeIcon icon={faFilter}/>All
+      </ButtonAddStatus>
     </div>
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-    <p style={{ marginBottom: "0", textAlign: "center" }}>Account Type</p>
-      <ButtonAddAccountType><FontAwesomeIcon icon={faFilter}/>All</ButtonAddAccountType>
-     </div>
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-    <p style={{ marginBottom: "0", textAlign: "center" }}> Status</p>
-      <ButtonAddStatus><FontAwesomeIcon icon={faFilter}/>All</ButtonAddStatus>
-     </div>
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-    <p style={{ marginBottom: "0", textAlign: "center" }}>Add Inventory</p>
-      <ButtonAddInventory onClick={handleOpenPopup}>Add Inventory</ButtonAddInventory>
-     </div>
+      <p style={{ marginBottom: "0", textAlign: "center" }}>Add Inventory</p>
+      <ButtonAddInventory onClick={handleOpenPopup}> + Add Inventory</ButtonAddInventory>
+    </div>
   </div>
+</div>
+
 </TableControlPanel>
-
-
-
-
-
       <Table>
         <tbody>
           <TableRows heading>

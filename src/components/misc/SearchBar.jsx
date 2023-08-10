@@ -1,4 +1,3 @@
-import { SearchBar } from 'styled-components';
 
 const SearchBar = styled.SearchBar`
 	padding: 10px 20px;

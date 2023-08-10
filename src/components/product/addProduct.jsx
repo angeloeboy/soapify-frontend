@@ -16,7 +16,7 @@ import {
 	HeaderTitle,
 	FieldTitleLabel,
 	InputHolder,
-} from "@/components/styled-components/ItemActionModal";
+} from "@/styled-components/ItemActionModal";
 
 import { useEffect, useState } from "react";
 import { addProduct, getProducts } from "@/api/products";
@@ -42,18 +42,12 @@ const AddProductComponent = ({ onClose, onButtonClick, GetProducts }) => {
 		for (let key in product) {
 			formData.append(key, product[key]);
 		}
-
-		for (let pair of formData.entries()) {
-			console.log(pair[0] + ", " + pair[1]);
-		}
-
 		addProduct(formData)
 			.then((res) => {
 				console.log(res);
 			})
 			.then(() => {
 				GetProducts();
-				console.log("fdsafdasf");
 			});
 	};
 
@@ -74,6 +68,7 @@ const AddProductComponent = ({ onClose, onButtonClick, GetProducts }) => {
 								onChange={(e) => {
 									setProduct({ ...product, product_name: e.target.value });
 								}}
+								required
 								value={product.product_name}
 							/>
 						</div>
@@ -83,14 +78,15 @@ const AddProductComponent = ({ onClose, onButtonClick, GetProducts }) => {
 								type="number"
 								placeholder="Enter your Price"
 								onChange={(e) => {
-									setProduct({ ...product, product_price: e.target.value });
+									setProduct({ ...product, product_price: parseInt(e.target.value, 10) });
 								}}
+								required
 								value={product.product_price}
 							/>
 						</div>
 						<div>
 							<FieldTitleLabel notFirst>Minimum Stock</FieldTitleLabel>
-							<InputHolder type="text" placeholder="Enter your minimum stock" />
+							<InputHolder type="number" placeholder="Enter your minimum stock" required />
 						</div>
 						<div>
 							<FieldTitleLabel notFirst>Image (optional)</FieldTitleLabel>

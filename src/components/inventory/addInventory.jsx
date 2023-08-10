@@ -32,31 +32,19 @@ const AddInventoryComponent = ({ onClose, onButtonClick, GetProducts }) => {
 		quantity_in_stock: 0,
 	});
 
-	let AddProduct = (e) => {
-		e.preventDefault();
+	const [products, setProducts] = useState([]);
 
-		const formData = new FormData();
-		formData.append("product_image", e.target.elements.product_image.files[0]);
-
-		// Append each property in the product object to formData
-		for (let key in product) {
-			formData.append(key, product[key]);
-		}
-
-		for (let pair of formData.entries()) {
-			console.log(pair[0] + ", " + pair[1]);
-		}
-
-		addProduct(formData)
-			.then((res) => {
-				console.log(res);
-			})
-			.then(() => {
-				GetProducts();
-				console.log("fdsafdasf");
-			});
+	const getProductsFunc = () => {
+		getProducts().then((res) => {
+			console.log(res);
+			res ? setProducts(res.products) : setProducts([]);
+			// setProductsLoading(false);
+		});
 	};
 
+	useEffect(() => {
+		getProductsFunc();
+	}, []);
 	return (
 		<PopupOverlay>
 			<PopupContent>
@@ -67,15 +55,20 @@ const AddInventoryComponent = ({ onClose, onButtonClick, GetProducts }) => {
 							<Label>General Information</Label>{" "}
 						</LabelContainer>
 						<div>
-							<FieldTitleLabel> Product Name </FieldTitleLabel>
-							<InputHolder
-								type="text"
-								placeholder="Enter your Product Name"
-								onChange={(e) => {
-									setProduct({ ...product, product_name: e.target.value });
-								}}
-								value={product.product_name}
-							/>
+							<FieldTitleLabel notFirst>Product</FieldTitleLabel>
+							<Select>
+								{/* <Option value="Dishawashing Liquid">Dishawashing Liquid</Option>
+								<Option value="Soap">Soap</Option>
+								<Option value="General Items">General Items</Option> */}
+
+								{products.map((product) => {
+									return (
+										<Option value="General Items" key={product.product_id}>
+											{product.product_name}
+										</Option>
+									);
+								})}
+							</Select>
 						</div>
 						<div>
 							<FieldTitleLabel notFirst>SKU</FieldTitleLabel>
@@ -87,19 +80,7 @@ const AddInventoryComponent = ({ onClose, onButtonClick, GetProducts }) => {
 						</div>
 						<div>
 							<FieldTitleLabel notFirst>Quantity Remaining</FieldTitleLabel>
-							<InputHolder type="text" placeholder="Enter your Quantity Remaining" />
-						</div>
-						<div>
-							<FieldTitleLabel notFirst>Image (optional)</FieldTitleLabel>
-							<ProfilePictureContainer>
-								<Centered>
-									{/* <SecondaryButton onClick={onButtonClick}>
-										{fileUploaded ? "You've uploaded a file" : "Click to Upload or Drag and drop an Image"}
-									</SecondaryButton> */}
-									{/* <FileInput ref={fileInput} onChange={handleFileUpload} /> */}
-									<input type="file" name="product_image" required />
-								</Centered>
-							</ProfilePictureContainer>
+							<InputHolder type="text" placeholder="Quantity received" />
 						</div>
 						<div>
 							<FieldTitleLabel notFirst>Date Received</FieldTitleLabel>

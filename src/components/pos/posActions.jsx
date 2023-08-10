@@ -5,15 +5,14 @@ const POSactionsContainer = styled.div`
 	width: 100%;
 	margin-top: 24px;
 	max-width: 500px;
-	position: -webkit-sticky;
-	position: sticky;
-	top: 0;
+	/* background-color: #f8f8f8; */
+	height: 100%;
 `;
 
-const POSactions = ({ cart }) => {
+const POSactions = (props) => {
 	return (
 		<POSactionsContainer>
-			<Cart cart={cart} />
+			<Cart cart={props.cart} minusToCart={props.minusToCart} addToCart={props.addToCart} />
 		</POSactionsContainer>
 	);
 };

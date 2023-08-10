@@ -138,20 +138,22 @@ export const ButtonAddInventory = styled.button`
 	margin: 5px;
 	font-size: 16px;
 	cursor: pointer;
-	width: 149.027px;
-    height: 40.2px;
+     height: 45.2px;
     flex-shrink: 0;
 	font-family: Arial;
 	background-color: #1a69f0;
 	font-style: normal;
 	font-weight: 700;
 	line-height: normal;
+   
 	
-	
-
-
-
+	 
 `;
+
+
+ 
+ 
+
 export const ButtonAddAccountType = styled.button`
     color: black;
 	border-radius: 12px;
@@ -160,8 +162,8 @@ export const ButtonAddAccountType = styled.button`
 	margin: 5px;
 	font-size: 16px;
 	cursor: pointer;
-	width: 149.027px;
-    height: 40.2px;
+	width: 130.027px;
+    height: 45.2px;
     flex-shrink: 0;
 	font-family: Arial;
 	background-color: #F8F8F8;
@@ -177,8 +179,8 @@ export const ButtonAddStatus = styled.button`
 	margin: 5px;
 	font-size: 16px;
 	cursor: pointer;
-	width: 149.027px;
-    height: 40.2px;
+	width: 115px;
+    height: 45.2px;
     flex-shrink: 0;
 	font-family: Arial;
 	background-color: #F8F8F8;

@@ -18,10 +18,12 @@ const CartTable = styled.table`
 		padding-bottom: 25px;
 		&:first-child {
 			text-align: left;
+			padding-left: 16px;
 		}
 
 		&:last-child {
 			text-align: right;
+			padding-right: 16px;
 		}
 	}
 
@@ -32,14 +34,14 @@ const CartTable = styled.table`
 		font-weight: 400;
 		line-height: normal;
 		padding-bottom: 16px;
-
 		&:first-child {
 			text-align: left;
-			color: #536686;
+			padding-left: 16px;
 		}
 
 		&:last-child {
 			text-align: right;
+			padding-right: 16px;
 		}
 	}
 
@@ -52,13 +54,22 @@ const CartTable = styled.table`
 			opacity: 1;
 		}
 	}
+
+	.bold {
+		border-top: 1px solid #c7c7c7;
+		background-color: #f1f1f181;
+		td {
+			font-weight: bold;
+			padding: 16px;
+		}
+	}
 `;
 
 const CartList = styled.div`
 	margin-top: 24px;
 `;
 
-const Cart = ({ cart }) => {
+const Cart = ({ cart, minusToCart, addToCart }) => {
 	const getTotal = () => {
 		let total = 0;
 
@@ -66,8 +77,9 @@ const Cart = ({ cart }) => {
 			total += (item.quantity / 100) * item.product_price;
 		});
 
-		return total;
+		return parseFloat(total).toFixed(2);
 	};
+
 	return (
 		<div>
 			<ComponentTitle>Cart</ComponentTitle>
@@ -88,11 +100,11 @@ const Cart = ({ cart }) => {
 
 							<td>
 								<p>
-									<span>
+									<span onClick={() => minusToCart(item)}>
 										<FontAwesomeIcon icon={faMinus} />
 									</span>{" "}
 									{item.quantity}{" "}
-									<span>
+									<span onClick={() => addToCart(item)}>
 										<FontAwesomeIcon icon={faPlus} />
 									</span>
 								</p>
@@ -104,10 +116,11 @@ const Cart = ({ cart }) => {
 						</tr>
 					))}
 
-					<tr>
+					<tr className="bold">
 						<td>
 							<p>Total</p>
 						</td>
+						<td></td>
 						<td>
 							<p>{getTotal()}</p>
 						</td>

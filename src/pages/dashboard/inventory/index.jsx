@@ -6,9 +6,9 @@ import Table, { ActionContainer, Status, TableData, TableHeadings, TableRows } f
 import StyledPanel from "@/components/styled-components/StyledPanel";
 import { faEllipsis, faFilter, faPen, faPlus, faPlusCircle, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import TableControlPanel from "@/components/styled-components/TableControlPanel";
-import { Button, ButtonAddInventory, ButtonAddAccountType, ButtonAddStatus, StyledFontAwesomeIcon } from "@/components/styled-components/ItemActionModal";
-import AddInventoryComponent from "@/components/inventoryField/addInventory"; // Import your popup content component
+import TableControlPanel from "@/styled-components/TableControlPanel";
+import { Button, ButtonAddInventory, ButtonAddAccountType, ButtonAddStatus } from "@/styled-components/ItemActionModal";
+import AddInventoryComponent from "@/components/inventory/addInventory"; // Import your popup content component
 
 const InventoryPage = () => {
 	const [products, setProducts] = useState([

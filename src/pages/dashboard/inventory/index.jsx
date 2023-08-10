@@ -8,7 +8,7 @@ import { faEllipsis, faFilter, faPen, faTrash } from "@fortawesome/free-solid-sv
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TableControlPanel from "@/styled-components/TableControlPanel";
 import { Button, ButtonAddInventory, ButtonAddAccountType, ButtonAddStatus } from "@/styled-components/ItemActionModal";
-import AddInventoryComponent from "@/components/inventoryField/addInventory"; // Import your popup content component
+import AddInventoryComponent from "@/components/inventory/addInventory"; // Import your popup content component
 
 const InventoryPage = () => {
 	const [products, setProducts] = useState([

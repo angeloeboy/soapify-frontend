@@ -132,27 +132,17 @@ const ProductNameAndStock = styled.div`
 
 const Home = () => {
 	const [searchQuery, setSearchQuery] = useState("");
-	const handleSearchChange = (event) => {
-		setSearchQuery(event.target.value);
-	};
-
 	const [products, setProducts] = useState([]);
 	const [cart, setCart] = useState([]);
+	const [productDisplay, setProductDisplay] = useState([]);
 
 	useEffect(() => {
-		// const products = Array.from({ length: 7 }, () => {
-		// 	return {
-		// 		id: Math.floor(Math.random() * 1000),
-		// 		name: "Max Glow Yellow BOX",
-		// 		stock: Math.floor(Math.random() * 100),
-		// 		price: Math.floor(Math.random() * 100),
-		// 		image: "/sabon.png",
-		// 	};
-		// });
-
-		// setProducts(products);
 		getProductsFunc();
 	}, []);
+
+	useEffect(() => {
+		setProductDisplay(products);
+	}, [products]);
 
 	const getProductsFunc = () => {
 		getProducts().then((res) => {
@@ -162,7 +152,20 @@ const Home = () => {
 		});
 	};
 
-	// create an array with 7 products object with random price and random stock and random name
+	const searchProduct = (e) => {
+		setSearchQuery(e.target.value);
+
+		if (e.target.value.length > 0) {
+			const filteredProducts = products.filter((product) => {
+				return product.product_name.toLowerCase().includes(e.target.value.toLowerCase());
+			});
+
+			setProductDisplay(filteredProducts);
+		} else {
+			getProductsFunc();
+		}
+	};
+
 	const addToCart = (product) => {
 		const existingProduct = cart.find((item) => item.product_id === product.product_id);
 
@@ -182,10 +185,35 @@ const Home = () => {
 		} else {
 			setCart([...cart, { ...product, quantity: 1 }]);
 		}
-
-		console.log(cart);
 	};
-	const router = useRouter();
+
+	//minus to cart
+	const minusToCart = (product) => {
+		const existingProduct = cart.find((item) => item.product_id === product.product_id);
+
+		if (existingProduct.quantity === 1) {
+			const updatedCart = cart.filter((item) => item.product_id !== product.product_id);
+			setCart(updatedCart);
+		} else {
+			console.log(cart);
+
+			console.log(product.product_id);
+			const updatedCart = cart.map((item) => {
+				if (item.product_id === product.product_id) {
+					return {
+						...item,
+						quantity: item.quantity - 1,
+					};
+				} else {
+					return item;
+				}
+			});
+
+			console.log(updatedCart);
+
+			setCart(updatedCart);
+		}
+	};
 
 	return (
 		<DashboardLayout>
@@ -196,16 +224,16 @@ const Home = () => {
 					<FieldTitle>Search for Product</FieldTitle>
 
 					<SearchBarContainer>
-						<SearchIcon src="search.png" alt="Search Icon" />
-						<SearchBar type="text" placeholder="Search" value={searchQuery} onChange={handleSearchChange} />
-						<CategoriesButton onClick={() => router.push("/categories")}>
-							<FilterIcon src="Filter.PNG" alt="Filter Icon" />
+						<SearchIcon src="./search.png" alt="Search Icon" />
+						<SearchBar type="text" placeholder="Search" value={searchQuery} onChange={(e) => searchProduct(e)} />
+						<CategoriesButton>
+							<FilterIcon src="./Filter.png" alt="Filter Icon" />
 							<AllText>All</AllText>
 						</CategoriesButton>
 					</SearchBarContainer>
 
 					<ProductsList>
-						{products.map((product) => {
+						{productDisplay.map((product) => {
 							return (
 								<Product key={product.product_id}>
 									<Image src="/sabon.png" width={200} height={200} alt="Product image" />
@@ -225,7 +253,7 @@ const Home = () => {
 						})}
 					</ProductsList>
 				</ProductsListContainer>
-				<POSactions cart={cart} />
+				<POSactions cart={cart} minusToCart={minusToCart} addToCart={addToCart} />
 			</StyledPanel>
 		</DashboardLayout>
 	);

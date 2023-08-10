@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import DashboardLayout from "@/components/dashboardLayout";
-import PageTitle from "@/components/pageTitle";
-import Table, { ActionContainer, Status, TableData, TableHeadings, TableRows } from "@/components/styled-components/TableComponent";
-import StyledPanel from "@/components/styled-components/StyledPanel";
+import DashboardLayout from "@/components/misc/dashboardLayout";
+import PageTitle from "@/components/misc/pageTitle";
+import Table, { ActionContainer, Status, TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
+import StyledPanel from "@/styled-components/StyledPanel";
 import { faEllipsis, faFilter, faPen, faPlus, faPlusCircle, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TableControlPanel from "@/styled-components/TableControlPanel";

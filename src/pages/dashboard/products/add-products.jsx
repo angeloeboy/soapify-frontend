@@ -1,5 +1,5 @@
-import DashboardLayout from "@/components/dashboardLayout";
-import TopBar from "@/components/topbar";
+import DashboardLayout from "@/components/misc/dashboardLayout";
+import TopBar from "@/components/misc/topbar";
 
 let AddProducts = () => {
 	return (

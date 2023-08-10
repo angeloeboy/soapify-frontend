@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import styled from "styled-components";
-import DashboardLayout from "@/components/dashboardLayout";
+import DashboardLayout from "@/components/misc/dashboardLayout";
 import ItemActionModal, {
 	Button,
 	Select,

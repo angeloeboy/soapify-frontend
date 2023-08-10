@@ -2,10 +2,9 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import StyledPanel, { BigTitle, FieldTitle } from "@/styled-components/StyledPanel";
 import { styled } from "styled-components";
-import Sidebar from "@/components/sidebar";
-import DashboardLayout from "@/components/dashboardLayout";
+import DashboardLayout from "@/components/misc/dashboardLayout";
 import Image from "next/image";
-import Button from "@/components/button";
+import Button from "@/components/misc/button";
 import POSactions from "@/components/pos/posActions";
 
 const SearchBarContainer = styled.div`

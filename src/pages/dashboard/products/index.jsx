@@ -1,10 +1,10 @@
-import TopBar from "@/components/topbar";
-import DashboardLayout from "@/components/dashboardLayout";
+import TopBar from "@/components/misc/topbar";
+import DashboardLayout from "@/components/misc/dashboardLayout";
 
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faTrash, faEllipsis } from "@fortawesome/free-solid-svg-icons";
-import PageTitle from "@/components/pageTitle";
+import PageTitle from "@/components/misc/pageTitle";
 import TableControlPanel from "@/styled-components/TableControlPanel";
 import StyledPanel from "@/styled-components/StyledPanel";
 import { useEffect, useState } from "react";
@@ -12,7 +12,7 @@ import { addProduct, getProducts } from "@/api/products";
 import { useRouter } from "next/router";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-// import Button from "@/components/button";
+// import Button from "@/components/misc/button";
 import Table, { ActionContainer, TableData, TableHeadings, TableRows, Status } from "@/styled-components/TableComponent";
 
 import {

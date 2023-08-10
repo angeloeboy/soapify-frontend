@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import StyledPanel, { BigTitle, FieldTitle } from "@/styled-components/StyledPanel";
 import { styled } from "styled-components";
-import Sidebar from "@/components/sidebar";
-import DashboardLayout from "@/components/dashboardLayout";
+import Sidebar from "@/components/misc/sidebar";
+import DashboardLayout from "@/components/misc/dashboardLayout";
 
 const SearchBarContainer = styled.div`
 	display: flex;

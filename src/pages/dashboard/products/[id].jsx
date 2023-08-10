@@ -1,4 +1,4 @@
-import DashboardLayout from "@/components/dashboardLayout";
+import DashboardLayout from "@/components/misc/dashboardLayout";
 import { useRouter } from "next/router";
 import PageTitle from "./../../../components/pageTitle";
 import { getProduct } from "@/api/products";

@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { ComponentTitle } from "./../../styled-components/pos";
 import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Button from "../misc/button";
 
 const CartTable = styled.table`
 	width: 100%;
@@ -9,6 +10,7 @@ const CartTable = styled.table`
 	padding: 0px 24px;
 	border-collapse: collapse;
 	table-layout: fixed;
+
 	th {
 		color: #000;
 		font-size: 14px;
@@ -81,7 +83,7 @@ const Cart = ({ cart, minusToCart, addToCart }) => {
 	};
 
 	return (
-		<div>
+		<>
 			<ComponentTitle>Cart</ComponentTitle>
 
 			<CartTable>
@@ -127,7 +129,8 @@ const Cart = ({ cart, minusToCart, addToCart }) => {
 					</tr>
 				</tbody>
 			</CartTable>
-		</div>
+			<Button width={"100%"}>Confirm</Button>
+		</>
 	);
 };
 

@@ -42,6 +42,7 @@ const AddProductComponent = ({ onClose, onButtonClick, GetProducts }) => {
 		for (let key in product) {
 			formData.append(key, product[key]);
 		}
+
 		addProduct(formData)
 			.then((res) => {
 				console.log(res);

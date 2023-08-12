@@ -7,6 +7,8 @@ import Image from "next/image";
 import Button from "@/components/misc/button";
 import POSactions from "@/components/pos/posActions";
 import { getProducts } from "@/api/products";
+import PageTitle from "@/components/misc/pageTitle";
+import Sticky from "react-stickynode";
 
 const SearchBarContainer = styled.div`
 	display: flex;
@@ -89,7 +91,6 @@ const Product = styled.div`
 `;
 
 const ProductsListContainer = styled.div`
-	border-right: 1px solid #dddd;
 	margin-right: 16px;
 `;
 
@@ -130,6 +131,17 @@ const ProductNameAndStock = styled.div`
 	}
 `;
 
+const POSWrapper = styled.div`
+	display: flex;
+	justify-content: space-between;
+`;
+
+const StickyContainer = styled.div`
+	position: relative;
+	width: 100%;
+	max-width: 500px;
+	margin-top: 48px;
+`;
 const Home = () => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [products, setProducts] = useState([]);
@@ -217,10 +229,10 @@ const Home = () => {
 
 	return (
 		<DashboardLayout>
-			<BigTitle>POS</BigTitle>
+			<PageTitle title="POS" />
 
-			<StyledPanel flex>
-				<ProductsListContainer>
+			<POSWrapper>
+				<StyledPanel pos>
 					<FieldTitle>Search for Product</FieldTitle>
 
 					<SearchBarContainer>
@@ -241,7 +253,7 @@ const Home = () => {
 									<InfoContainer>
 										<ProductNameAndStock>
 											<p>{product.product_name}</p>
-											<p>Stock: {product.quantity_in_stock}</p>
+											<p>Stock: 100</p>
 										</ProductNameAndStock>
 										<Price>P{product.product_price / 100}</Price>
 									</InfoContainer>
@@ -252,9 +264,15 @@ const Home = () => {
 							);
 						})}
 					</ProductsList>
-				</ProductsListContainer>
-				<POSactions cart={cart} minusToCart={minusToCart} addToCart={addToCart} />
-			</StyledPanel>
+				</StyledPanel>
+				<StickyContainer>
+					<Sticky enabled={true} top={20}>
+						<POSactions cart={cart} minusToCart={minusToCart} addToCart={addToCart} />
+					</Sticky>
+				</StickyContainer>
+
+				{/* <POSactions cart={cart} minusToCart={minusToCart} addToCart={addToCart} /> */}
+			</POSWrapper>
 		</DashboardLayout>
 	);
 };

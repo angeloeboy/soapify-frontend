@@ -30,6 +30,7 @@ const AddProductComponent = ({ onClose, onButtonClick, GetProducts }) => {
 		category_id: 0,
 		supplier_id: 0,
 		quantity_in_stock: 0,
+		minimum_reorder_level: 1,
 	});
 
 	let AddProduct = (e) => {
@@ -87,7 +88,15 @@ const AddProductComponent = ({ onClose, onButtonClick, GetProducts }) => {
 						</div>
 						<div>
 							<FieldTitleLabel notFirst>Minimum Stock</FieldTitleLabel>
-							<InputHolder type="number" placeholder="Enter your minimum stock" required />
+							<InputHolder
+								type="number"
+								placeholder="Enter your minimum stock"
+								onChange={(e) => {
+									setProduct({ ...product, minimum_reorder_level: parseInt(e.target.value, 10) });
+								}}
+								required
+								value={product.minimum_reorder_level}
+							/>
 						</div>
 						<div>
 							<FieldTitleLabel notFirst>Image (optional)</FieldTitleLabel>

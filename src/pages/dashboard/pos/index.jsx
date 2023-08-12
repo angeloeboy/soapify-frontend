@@ -159,7 +159,7 @@ const Home = () => {
 	const getProductsFunc = () => {
 		getProducts().then((res) => {
 			console.log(res);
-			res ? setProducts(res.products) : setProducts([]);
+			res.products ? setProducts(res.products) : setProducts([]);
 			// setProductsLoading(false);
 		});
 	};
@@ -253,7 +253,7 @@ const Home = () => {
 									<InfoContainer>
 										<ProductNameAndStock>
 											<p>{product.product_name}</p>
-											<p>Stock: 100</p>
+											<p>Stock: {product.quantity_in_stock}</p>
 										</ProductNameAndStock>
 										<Price>P{product.product_price / 100}</Price>
 									</InfoContainer>

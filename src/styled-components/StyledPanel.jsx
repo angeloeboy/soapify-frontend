@@ -14,6 +14,22 @@ const StyledPanel = styled.div`
 		margin-top: 78px;
 		font-weight: bold;
 	}
+
+	${(props) =>
+		props.flex &&
+		`	
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+	`}
+
+	${(props) =>
+		props.pos &&
+		`	
+		width: calc(100% - 520px);
+		display: inline-block;
+
+	`}
 `;
 
 export const BigTitle = styled.h2`
@@ -25,22 +41,21 @@ export const BigTitle = styled.h2`
 	padding: 15px;
 	margin-top: 23.52px;
 	margin-bottom: 23.52px;
-	margin-left:24.37px ;
+	margin-left: 24.37px;
 	line-height: normal;
 `;
 
 export const FieldTitle = styled.h3`
-	color: rgba(0, 32, 86, 0.50);
+	color: rgba(0, 32, 86, 0.5);
 	font-family: DM Sans;
 	font-size: 14px;
 	font-style: normal;
-	margin-left: 15px;
+	/* margin-left: 15px; */
 	font-weight: 500;
 	line-height: normal;
- 	padding: 15px;
+	padding: 15px;
+	padding-left: 0px;
 	margin-top: 28px;
-	
-	 
 `;
 
 export const InfoContainer = styled.div`
@@ -53,7 +68,7 @@ export const InputContainer = styled.div`
 
 export const Input = styled.input`
 	border-radius: 11px;
-	border: 1px solid #EEE;
+	border: 1px solid #eee;
 	padding: 8px 16px;
 	margin-left: 24.37px;
 	width: 780.824px;

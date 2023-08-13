@@ -35,12 +35,12 @@ img {
 /* width */
 ::-webkit-scrollbar {
 	height: 5px;
-	width: 3px;
+	width: 5px;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
-	background: #f1f1f1;
+	background: #fff;
 }
 
 /* Handle */

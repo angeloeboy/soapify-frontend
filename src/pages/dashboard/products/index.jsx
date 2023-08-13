@@ -34,7 +34,7 @@ const Products = () => {
 	const GetProducts = () => {
 		getProducts().then((res) => {
 			console.log(res);
-			res ? setProducts(res.products) : setProducts([]);
+			res.products ? setProducts(res.products) : setProducts([]);
 			setProductsLoading(false);
 		});
 	};

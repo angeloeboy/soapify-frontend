@@ -7,9 +7,7 @@ import Image from "next/image";
 import Button from "@/components/misc/button";
 import POSactions from "@/components/pos/posActions";
 import { getProducts } from "@/api/products";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFilter, faMagnifyingGlass, faSearch } from "@fortawesome/free-solid-svg-icons";
-import { ButtonAddAccountType } from "@/styled-components/ItemActionModal";
+
 const SearchBarContainer = styled.div`
 	display: flex;
 	align-items: center;
@@ -112,7 +110,6 @@ const Product = styled.div`
 `;
 
 const ProductsListContainer = styled.div`
-	border-right: 1px solid #dddd;
 	margin-right: 16px;
 `;
 
@@ -153,55 +150,6 @@ const ProductNameAndStock = styled.div`
 	}
 `;
 
-const ProductTitle = styled.p`
-margin-top: 27px;
-font-family: DM Sans;
-font-size: 18px;
-font-weight: 500;
-line-height: 23px;
-letter-spacing: 0em;
-text-align: left;
-width: 180px;
-height: 23px;
-top: 943px;
-left: 127px;
-color: rgba(0, 0, 0, 1);
-
-
-
-`;
-const StockTitle = styled.p`
-font-family: DM Sans;
-font-size: 14px;
-font-weight: 400;
-line-height: 27px; 
-letter-spacing: 0em;
-text-align: center;
-color: white;
-margin: 0; 
-
-`;
-const StockTitleContainer = styled.div`
- border-radius: 8px;
- width: 87.55px;
- height: 27.29px;
- background-color: #1A69F0;
- margin-top: 30px;
- justify-content: center;  
- align-items: center;  
-`;
-const PriceTitle = styled.p`
-color: #005EFF;
-font-family: DM Sans;
-font-size: 18px;
-font-weight: 500;
-line-height: 23px;
-letter-spacing: 0em;
-text-align: left;
-margin-top: 8px;
- `;
-
- 
 const Home = () => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [products, setProducts] = useState([]);
@@ -219,7 +167,7 @@ const Home = () => {
 	const getProductsFunc = () => {
 		getProducts().then((res) => {
 			console.log(res);
-			res ? setProducts(res.products) : setProducts([]);
+			res.products ? setProducts(res.products) : setProducts([]);
 			// setProductsLoading(false);
 		});
 	};
@@ -289,26 +237,20 @@ const Home = () => {
 
 	return (
 		<DashboardLayout>
-			<BigTitle>POS</BigTitle>
+			<PageTitle title="POS" />
 
 			<StyledPanel flex>
 				<ProductsListContainer>
-                  <div className="searchBar" style={{ display: "flex", alignItems: "center" }}>
-						<div>
-							<p>Search for Product</p>
-							<SearchBar type="text" placeholder="Search" value={searchQuery} onChange={(e) => searchProduct(e)} />  
-						</div>
-						<div style={{ display: "flex", marginLeft: "16px" }}>
-							<div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginRight: "36px" }}>
-								<p style={{ marginBottom: "0", textAlign: "center" }}>Categories</p>
-								<ButtonFilter>
-									<FontAwesomeIcon icon={faFilter} />
-								All
-								</ButtonFilter>
-							</div>
-                       </div>
-					</div>
+					<FieldTitle>Search for Product</FieldTitle>
 
+					<SearchBarContainer>
+						<SearchIcon src="./search.png" alt="Search Icon" />
+						<SearchBar type="text" placeholder="Search" value={searchQuery} onChange={(e) => searchProduct(e)} />
+						<CategoriesButton>
+							<FilterIcon src="./Filter.png" alt="Filter Icon" />
+							<AllText>All</AllText>
+						</CategoriesButton>
+					</SearchBarContainer>
 
 					<ProductsList>
 						{productDisplay.map((product) => {
@@ -329,9 +271,15 @@ const Home = () => {
 							);
 						})}
 					</ProductsList>
-				</ProductsListContainer>
-				<POSactions cart={cart} minusToCart={minusToCart} addToCart={addToCart} />
-			</StyledPanel>
+				</StyledPanel>
+				<StickyContainer>
+					<Sticky enabled={true} top={20}>
+						<POSactions cart={cart} minusToCart={minusToCart} addToCart={addToCart} />
+					</Sticky>
+				</StickyContainer>
+
+				{/* <POSactions cart={cart} minusToCart={minusToCart} addToCart={addToCart} /> */}
+			</POSWrapper>
 		</DashboardLayout>
 	);
 };

@@ -22,6 +22,14 @@ const StyledPanel = styled.div`
 		justify-content: space-between;
 		align-items: flex-start;
 	`}
+
+	${(props) =>
+		props.pos &&
+		`	
+		width: calc(100% - 520px);
+		display: inline-block;
+
+	`}
 `;
 
 export const BigTitle = styled.h2`

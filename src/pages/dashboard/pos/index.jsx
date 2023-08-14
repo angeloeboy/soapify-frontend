@@ -7,7 +7,8 @@ import Image from "next/image";
 import Button from "@/components/misc/button";
 import POSactions from "@/components/pos/posActions";
 import { getProducts } from "@/api/products";
-
+import PageTitle from "@/components/misc/pageTitle";
+ 
 const SearchBarContainer = styled.div`
 	display: flex;
 	align-items: center;
@@ -33,7 +34,6 @@ const SearchBar = styled.input`
 	border-radius: 4px;
 	font-size: 14px;
 	border-radius: 12px;
-	margin: 0;
 `;
 
 const CategoriesButton = styled.button`
@@ -55,24 +55,8 @@ const FilterIcon = styled.img`
 	width: 20px;
 	height: 20px;
 `;
-const ButtonFilter = styled.button`
- color: black;
-	border-radius: 12px;
-	padding: 10px 20px;
-	border: none;
-	margin: 5px;
-	font-size: 16px;
-	cursor: pointer;
-	width: 130.027px;
-    height: 45.2px;
-    flex-shrink: 0;
-	font-family: Arial;
-	background-color: #F8F8F8;
-	font-style: normal;
-	font-weight: 700;
-	line-height: normal;
-`;
 
+ 
 
 const ProductsList = styled.div`
 	display: flex;
@@ -95,12 +79,10 @@ const Product = styled.div`
 	img {
 		margin: 0 auto;
 		/* width: 100%; */
-		background-color: rgba(248, 248, 248, 1);
-		width: 247.36px;
-        height: 180.34px;
-        top: 347px;
-        left: 692.53px;
-        border-radius: 8px;
+		background-color: #F8F8F8;
+		width: 247px;
+        height: 180px;
+        border-radius:8px;
 
 	}
 
@@ -108,49 +90,62 @@ const Product = styled.div`
 		margin-top: 27px;
 	}
 `;
-
-const ProductsListContainer = styled.div`
-	border-right: 1px solid #dddd;
-	margin-right: 16px;
+ 
+const InfoContainer = styled.div`
+display: flex;
+flex-direction: column; /* Align items vertically */
+justify-content: space-between;
+align-items: left; /* Align items to the left */
+width: 100%;
+margin-top: 16px;
+@media (max-width: 768px) {
+	flex-direction: column;
+	align-items: center; /* Adjust as per your design needs */
+	padding: 10px 16px;
+}
 `;
 
-// const InfoContainer = styled.div`
-// 	display: flex;
-// 	align-items: center;
-// 	justify-content: space-between; /* Add this property to create space between the two elements */
-// 	width: 100%;
-// 	margin-top: 16px;
-// 	@media (max-width: 768px) {
-// 		flex-direction: column;
-// 		align-items: center; /* Adjust as per your design needs */
-// 		padding: 10px 16px;
-// 	}
-// `;
-
-const Price = styled.p`
-	font-size: 14px;
-	font-weight: bold;
-	color: #005eff;
-
-	@media (max-width: 768px) {
-		margin-top: 10px;
-	}
+  
+const POSWrapper = styled.div`
+	display: flex;
+	justify-content: space-between;
 `;
 
-const ProductNameAndStock = styled.div`
-	max-width: 70%;
-	p {
-		color: rgba(0, 32, 86, 0.5);
-		font-family: DM Sans;
-		font-size: 14px;
-		font-style: normal;
-		font-weight: 500;
-		line-height: normal;
-		/* padding: 15px; */
-		margin-bottom: 6px;
-	}
+const StockTitleContainer = styled.div`
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  margin-top: 30px; 
+  width: 87.54px;
+  height: 27.29px;
+  background-color: #1A69F0;
+  border-radius: 8px;
 `;
 
+const StockTitle = styled.p`
+  font-size: 14px;
+  font-weight: normal;
+  margin: 0;
+  color: #FFFFFF;
+ 
+`;
+
+const PriceTitle = styled.p`
+  font-size: 16px;
+  font-weight: bold;
+  color: #005eff;
+  margin-top: 8px;
+  margin: 0;
+`;
+
+const ProductTitle = styled.h2`
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 32px;
+  color: #000000;
+`;
+
+ 
 const Home = () => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [products, setProducts] = useState([]);
@@ -168,7 +163,7 @@ const Home = () => {
 	const getProductsFunc = () => {
 		getProducts().then((res) => {
 			console.log(res);
-			res ? setProducts(res.products) : setProducts([]);
+			res.products ? setProducts(res.products) : setProducts([]);
 			// setProductsLoading(false);
 		});
 	};
@@ -238,14 +233,10 @@ const Home = () => {
 
 	return (
 		<DashboardLayout>
-			<BigTitle>POS</BigTitle>
+			<PageTitle title="POS" />
 
-			<StyledPanel flex>
-<<<<<<< HEAD
-				<POSWrapper>
-=======
-				<ProductsListContainer>
->>>>>>> parent of 03f0a05 (Merge pull request #39 from angeloeboy/dashboard/inventory)
+			<POSWrapper>
+				<StyledPanel pos>
 					<FieldTitle>Search for Product</FieldTitle>
 
 					<SearchBarContainer>
@@ -253,7 +244,7 @@ const Home = () => {
 						<SearchBar type="text" placeholder="Search" value={searchQuery} onChange={(e) => searchProduct(e)} />
 						<CategoriesButton>
 							<FilterIcon src="./Filter.png" alt="Filter Icon" />
-							<AllText>All</AllText>
+							<h3>All</h3>
 						</CategoriesButton>
 					</SearchBarContainer>
 
@@ -263,37 +254,25 @@ const Home = () => {
 								<Product key={product.product_id}>
 									<Image src="/sabon.png" width={200} height={200} alt="Product image" />
 
-									
- 										<ProductTitle>{product.product_name} </ProductTitle>  
+									<InfoContainer>
+										 
+										<ProductTitle>	{product.product_name}</ProductTitle>
 										<PriceTitle>P{product.product_price / 100}</PriceTitle>
-									    <StockTitleContainer><StockTitle>Stock: {product.quantity_in_stock} </StockTitle></StockTitleContainer>	 	 
- 										 
-									
-									<Button onClick={() => addToCart(product)} width={"100%"}>
-										Add
-									</Button>
+										<StockTitleContainer><StockTitle> Stock: {product.quantity_in_stock} </StockTitle> </StockTitleContainer>	  
+										 
+									</InfoContainer>
+									 
 								</Product>
 							);
 						})}
 					</ProductsList>
-<<<<<<< HEAD
-					</POSWrapper>
-
 				</StyledPanel>
-				<StickyContainer>
-					<Sticky enabled={true} top={20}>
-						<POSactions cart={cart} minusToCart={minusToCart} addToCart={addToCart} />
-					</Sticky>
-				</StickyContainer>
 
+ 						<POSactions cart={cart} minusToCart={minusToCart} addToCart={addToCart} />
+ 
 				{/* <POSactions cart={cart} minusToCart={minusToCart} addToCart={addToCart} /> */}
- 		</DashboardLayout>
-=======
-				</ProductsListContainer>
-				<POSactions cart={cart} minusToCart={minusToCart} addToCart={addToCart} />
-			</StyledPanel>
+			</POSWrapper>
 		</DashboardLayout>
->>>>>>> parent of 03f0a05 (Merge pull request #39 from angeloeboy/dashboard/inventory)
 	);
 };
 

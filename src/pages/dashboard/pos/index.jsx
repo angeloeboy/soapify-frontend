@@ -240,7 +240,7 @@ const Home = () => {
 			<PageTitle title="POS" />
 
 			<StyledPanel flex>
-				<ProductsListContainer>
+				<POSWrapper>
 					<FieldTitle>Search for Product</FieldTitle>
 
 					<SearchBarContainer>
@@ -271,6 +271,8 @@ const Home = () => {
 							);
 						})}
 					</ProductsList>
+					</POSWrapper>
+
 				</StyledPanel>
 				<StickyContainer>
 					<Sticky enabled={true} top={20}>
@@ -279,8 +281,7 @@ const Home = () => {
 				</StickyContainer>
 
 				{/* <POSactions cart={cart} minusToCart={minusToCart} addToCart={addToCart} /> */}
-			</POSWrapper>
-		</DashboardLayout>
+ 		</DashboardLayout>
 	);
 };
 

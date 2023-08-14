@@ -7,7 +7,9 @@ import Image from "next/image";
 import Button from "@/components/misc/button";
 import POSactions from "@/components/pos/posActions";
 import { getProducts } from "@/api/products";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFilter, faMagnifyingGlass, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { ButtonAddAccountType } from "@/styled-components/ItemActionModal";
 const SearchBarContainer = styled.div`
 	display: flex;
 	align-items: center;
@@ -33,6 +35,7 @@ const SearchBar = styled.input`
 	border-radius: 4px;
 	font-size: 14px;
 	border-radius: 12px;
+	margin: 0;
 `;
 
 const CategoriesButton = styled.button`
@@ -54,11 +57,24 @@ const FilterIcon = styled.img`
 	width: 20px;
 	height: 20px;
 `;
-
-const AllText = styled.span`
+const ButtonFilter = styled.button`
+ color: black;
+	border-radius: 12px;
+	padding: 10px 20px;
+	border: none;
+	margin: 5px;
 	font-size: 16px;
-	font-weight: bold;
+	cursor: pointer;
+	width: 130.027px;
+    height: 45.2px;
+    flex-shrink: 0;
+	font-family: Arial;
+	background-color: #F8F8F8;
+	font-style: normal;
+	font-weight: 700;
+	line-height: normal;
 `;
+
 
 const ProductsList = styled.div`
 	display: flex;
@@ -81,6 +97,13 @@ const Product = styled.div`
 	img {
 		margin: 0 auto;
 		/* width: 100%; */
+		background-color: rgba(248, 248, 248, 1);
+		width: 247.36px;
+        height: 180.34px;
+        top: 347px;
+        left: 692.53px;
+        border-radius: 8px;
+
 	}
 
 	button {
@@ -93,18 +116,18 @@ const ProductsListContainer = styled.div`
 	margin-right: 16px;
 `;
 
-const InfoContainer = styled.div`
-	display: flex;
-	align-items: center;
-	justify-content: space-between; /* Add this property to create space between the two elements */
-	width: 100%;
-	margin-top: 16px;
-	@media (max-width: 768px) {
-		flex-direction: column;
-		align-items: center; /* Adjust as per your design needs */
-		padding: 10px 16px;
-	}
-`;
+// const InfoContainer = styled.div`
+// 	display: flex;
+// 	align-items: center;
+// 	justify-content: space-between; /* Add this property to create space between the two elements */
+// 	width: 100%;
+// 	margin-top: 16px;
+// 	@media (max-width: 768px) {
+// 		flex-direction: column;
+// 		align-items: center; /* Adjust as per your design needs */
+// 		padding: 10px 16px;
+// 	}
+// `;
 
 const Price = styled.p`
 	font-size: 14px;
@@ -130,6 +153,55 @@ const ProductNameAndStock = styled.div`
 	}
 `;
 
+const ProductTitle = styled.p`
+margin-top: 27px;
+font-family: DM Sans;
+font-size: 18px;
+font-weight: 500;
+line-height: 23px;
+letter-spacing: 0em;
+text-align: left;
+width: 180px;
+height: 23px;
+top: 943px;
+left: 127px;
+color: rgba(0, 0, 0, 1);
+
+
+
+`;
+const StockTitle = styled.p`
+font-family: DM Sans;
+font-size: 14px;
+font-weight: 400;
+line-height: 27px; 
+letter-spacing: 0em;
+text-align: center;
+color: white;
+margin: 0; 
+
+`;
+const StockTitleContainer = styled.div`
+ border-radius: 8px;
+ width: 87.55px;
+ height: 27.29px;
+ background-color: #1A69F0;
+ margin-top: 30px;
+ justify-content: center;  
+ align-items: center;  
+`;
+const PriceTitle = styled.p`
+color: #005EFF;
+font-family: DM Sans;
+font-size: 18px;
+font-weight: 500;
+line-height: 23px;
+letter-spacing: 0em;
+text-align: left;
+margin-top: 8px;
+ `;
+
+ 
 const Home = () => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [products, setProducts] = useState([]);
@@ -221,16 +293,22 @@ const Home = () => {
 
 			<StyledPanel flex>
 				<ProductsListContainer>
-					<FieldTitle>Search for Product</FieldTitle>
+                  <div className="searchBar" style={{ display: "flex", alignItems: "center" }}>
+						<div>
+							<p>Search for Product</p>
+							<SearchBar type="text" placeholder="Search" value={searchQuery} onChange={(e) => searchProduct(e)} />  
+						</div>
+						<div style={{ display: "flex", marginLeft: "16px" }}>
+							<div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginRight: "36px" }}>
+								<p style={{ marginBottom: "0", textAlign: "center" }}>Categories</p>
+								<ButtonFilter>
+									<FontAwesomeIcon icon={faFilter} />
+								All
+								</ButtonFilter>
+							</div>
+                       </div>
+					</div>
 
-					<SearchBarContainer>
-						<SearchIcon src="./search.png" alt="Search Icon" />
-						<SearchBar type="text" placeholder="Search" value={searchQuery} onChange={(e) => searchProduct(e)} />
-						<CategoriesButton>
-							<FilterIcon src="./Filter.png" alt="Filter Icon" />
-							<AllText>All</AllText>
-						</CategoriesButton>
-					</SearchBarContainer>
 
 					<ProductsList>
 						{productDisplay.map((product) => {
@@ -238,13 +316,12 @@ const Home = () => {
 								<Product key={product.product_id}>
 									<Image src="/sabon.png" width={200} height={200} alt="Product image" />
 
-									<InfoContainer>
-										<ProductNameAndStock>
-											<p>{product.product_name}</p>
-											<p>Stock: {product.quantity_in_stock}</p>
-										</ProductNameAndStock>
-										<Price>P{product.product_price / 100}</Price>
-									</InfoContainer>
+									
+ 										<ProductTitle>{product.product_name} </ProductTitle>  
+										<PriceTitle>P{product.product_price / 100}</PriceTitle>
+									    <StockTitleContainer><StockTitle>Stock: {product.quantity_in_stock} </StockTitle></StockTitleContainer>	 	 
+ 										 
+									
 									<Button onClick={() => addToCart(product)} width={"100%"}>
 										Add
 									</Button>

@@ -9,41 +9,38 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TableControlPanel from "@/styled-components/TableControlPanel";
 import { Button, ButtonAddInventory, ButtonAddAccountType, ButtonAddStatus } from "@/styled-components/ItemActionModal";
 import AddInventoryComponent from "@/components/inventory/addInventory"; // Import your popup content component
-import { getInventory } from "@/api/inventory";
 
 const InventoryPage = () => {
-	// const [products, setProducts] = useState([
-	// 	{
-	// 		name: "Yellow Soap Ind..",
-	// 		sku: " RC1D2D3",
-	// 		quantity: "23",
-	// 		quantityRemaining: "3",
-	// 		dateReceived: "8/8/2023",
-	// 	},
-	// 	{
-	// 		name: "Yellow Soap Ind..",
-	// 		sku: " RC1D2D3",
-	// 		quantity: "344",
-	// 		quantityRemaining: "230",
-	// 		dateReceived: "8/8/2023",
-	// 	},
-	// 	{
-	// 		name: "Yellow Soap Ind..",
-	// 		sku: "RC1D2D3",
-	// 		quantity: "23",
-	// 		quantityRemaining: "3",
-	// 		dateReceived: "8/8/2023",
-	// 	},
-	// 	{
-	// 		name: "Yellow Soap Ind..",
-	// 		sku: "RC1D2D3",
-	// 		quantity: "23",
-	// 		quantityRemaining: "3",
-	// 		dateReceived: "8/8/2023",
-	// 	},
-	// ]);
-
-	const [inventory, setInventory] = useState([]);
+	const [products, setProducts] = useState([
+		{
+			name: "Yellow Soap Ind..",
+			sku: " RC1D2D3",
+			quantity: "23",
+			quantityRemaining: "3",
+			dateReceived: "8/8/2023",
+		},
+		{
+			name: "Yellow Soap Ind..",
+			sku: " RC1D2D3",
+			quantity: "344",
+			quantityRemaining: "230",
+			dateReceived: "8/8/2023",
+		},
+		{
+			name: "Yellow Soap Ind..",
+			sku: "RC1D2D3",
+			quantity: "23",
+			quantityRemaining: "3",
+			dateReceived: "8/8/2023",
+		},
+		{
+			name: "Yellow Soap Ind..",
+			sku: "RC1D2D3",
+			quantity: "23",
+			quantityRemaining: "3",
+			dateReceived: "8/8/2023",
+		},
+	]);
 
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
 	const [isPopupOpen, setPopupOpen] = useState(false);
@@ -63,8 +60,6 @@ const InventoryPage = () => {
 	};
 
 	useEffect(() => {
-		getInventoryFunc();
-
 		document.addEventListener("click", handleClickOutside);
 		return () => {
 			document.removeEventListener("click", handleClickOutside);
@@ -72,33 +67,16 @@ const InventoryPage = () => {
 	}, []);
 
 	const [currentPage, setCurrentPage] = useState(1);
-	// const itemsPerPage = 10; // Adjust the number of items per page
+	const itemsPerPage = 10; // Adjust the number of items per page
 
-	// // Calculate the index range for the current page
-	// const indexOfLastItem = currentPage * itemsPerPage;
-	// const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-	// const currentItems = products.slice(indexOfFirstItem, indexOfLastItem);
+	// Calculate the index range for the current page
+	const indexOfLastItem = currentPage * itemsPerPage;
+	const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+	const currentItems = products.slice(indexOfFirstItem, indexOfLastItem);
 
-	// // Handle page change
-	// const handlePageChange = (pageNumber) => {
-	// 	setCurrentPage(pageNumber);
-	// };
-
-	const getInventoryFunc = () => {
-		getInventory().then((res) => {
-			console.log(res);
-			res.inventory ? setInventory(res.inventory) : setInventory([]);
-		});
-	};
-
-	const convertToDateFormat = (date) => {
-		let newDate = new Date(date);
-		let formattedDate = newDate.toLocaleDateString("en-US", {
-			year: "numeric",
-			month: "long",
-			day: "numeric",
-		});
-		return formattedDate;
+	// Handle page change
+	const handlePageChange = (pageNumber) => {
+		setCurrentPage(pageNumber);
 	};
 
 	return (
@@ -144,18 +122,16 @@ const InventoryPage = () => {
 							<TableHeadings>Date Received</TableHeadings>
 							<TableHeadings>Actions</TableHeadings>
 						</TableRows>
-						{inventory.map((inventory, index) => (
+						{products.map((product, index) => (
 							<TableRows key={index}>
 								<TableData bold withImage>
-									{/* <Image src="/product_img2.png" width={40} height={40} alt={"Product image"} /> */}
 									<Image src="/product_img2.png" width={40} height={40} alt={"Product image"} />
-
-									{inventory.Product.product_name}
+									{product.name}
 								</TableData>
-								<TableData>test</TableData>
-								<TableData>{inventory.quantity}</TableData>
-								<TableData>{inventory.quantity}</TableData>
-								<TableData>{convertToDateFormat(inventory.date_added)}</TableData>
+								<TableData>{product.sku}</TableData>
+								<TableData>{product.quantity}</TableData>
+								<TableData>{product.quantityRemaining}</TableData>
+								<TableData>{product.dateReceived}</TableData>
 								<TableData>
 									<FontAwesomeIcon
 										className="ellipsis"
@@ -181,7 +157,7 @@ const InventoryPage = () => {
 					</tbody>
 				</Table>
 
-				{/* <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", marginTop: "1rem" }}>
+				<div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", marginTop: "1rem" }}>
 					<Button
 						style={{
 							width: "80px",
@@ -234,7 +210,7 @@ const InventoryPage = () => {
 					>
 						2
 					</Button>
-			
+					{/* Repeat for other buttons */}
 					<Button
 						style={{
 							width: "50px",
@@ -252,9 +228,9 @@ const InventoryPage = () => {
 					>
 						Next
 					</Button>
-				</div> */}
+				</div>
 			</StyledPanel>
-			{isPopupOpen && <AddInventoryComponent onClose={handleClosePopup} getInventoryFunc={getInventoryFunc} />}
+			{isPopupOpen && <AddInventoryComponent onClose={handleClosePopup} /* other props if needed */ />}
 		</DashboardLayout>
 	);
 };

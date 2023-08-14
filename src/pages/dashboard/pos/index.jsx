@@ -110,6 +110,7 @@ const Product = styled.div`
 `;
 
 const ProductsListContainer = styled.div`
+	border-right: 1px solid #dddd;
 	margin-right: 16px;
 `;
 
@@ -167,7 +168,7 @@ const Home = () => {
 	const getProductsFunc = () => {
 		getProducts().then((res) => {
 			console.log(res);
-			res.products ? setProducts(res.products) : setProducts([]);
+			res ? setProducts(res.products) : setProducts([]);
 			// setProductsLoading(false);
 		});
 	};
@@ -237,10 +238,14 @@ const Home = () => {
 
 	return (
 		<DashboardLayout>
-			<PageTitle title="POS" />
+			<BigTitle>POS</BigTitle>
 
 			<StyledPanel flex>
+<<<<<<< HEAD
 				<POSWrapper>
+=======
+				<ProductsListContainer>
+>>>>>>> parent of 03f0a05 (Merge pull request #39 from angeloeboy/dashboard/inventory)
 					<FieldTitle>Search for Product</FieldTitle>
 
 					<SearchBarContainer>
@@ -271,6 +276,7 @@ const Home = () => {
 							);
 						})}
 					</ProductsList>
+<<<<<<< HEAD
 					</POSWrapper>
 
 				</StyledPanel>
@@ -282,6 +288,12 @@ const Home = () => {
 
 				{/* <POSactions cart={cart} minusToCart={minusToCart} addToCart={addToCart} /> */}
  		</DashboardLayout>
+=======
+				</ProductsListContainer>
+				<POSactions cart={cart} minusToCart={minusToCart} addToCart={addToCart} />
+			</StyledPanel>
+		</DashboardLayout>
+>>>>>>> parent of 03f0a05 (Merge pull request #39 from angeloeboy/dashboard/inventory)
 	);
 };
 

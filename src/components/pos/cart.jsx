@@ -2,8 +2,6 @@ import styled from "styled-components";
 import { ComponentTitle } from "./../../styled-components/pos";
 import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Button from "../misc/button";
-import Image from "next/image";
 
 const CartTable = styled.table`
 	width: 100%;
@@ -11,7 +9,6 @@ const CartTable = styled.table`
 	padding: 0px 24px;
 	border-collapse: collapse;
 	table-layout: fixed;
-	display: none;
 	th {
 		color: #000;
 		font-size: 14px;
@@ -72,126 +69,65 @@ const CartList = styled.div`
 	margin-top: 24px;
 `;
 
-const Product = styled.div`
-	display: flex;
-	margin-bottom: 38px;
-
-	img {
-		background-color: white;
-	}
-
-	.productInformation {
-		margin-left: 16px;
-
-		.productName {
-			color: #536686;
-			font-size: 16px;
-			font-weight: 700;
-		}
-
-		.productPrice {
-			color: #005eff;
-			font-size: 14px;
-			font-weight: 700;
-		}
-	}
-
-	.quantity {
-		display: inline-flex;
-		margin-left: auto;
-		align-items: center;
-		align-self: flex-end;
-		font-size: 16px;
-		p {
-			padding: 0px 16px;
-		}
-		span {
-			border-radius: 4px;
-			background: #1a69f0;
-			width: 21px;
-			height: 21px;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			padding: 8px;
-			font-size: 10px;
-			cursor: pointer;
-			svg {
-				color: #ffffff;
-
-				path {
-					color: #ffffff;
-				}
-			}
-		}
-	}
-
-	.minus {
-		opacity: ${(props) => (props.active ? "1" : "0.5")};
-	}
-`;
-
-const ItemsContainer = styled.div`
-	margin-top: 48px;
-`;
-
-const Total = styled.div`
-	display: flex;
-	justify-content: space-between;
-	margin: 24px 0px;
-	border-top: 1px solid #dddd;
-	padding-top: 24px;
-	p {
-		text-transform: uppercase;
-		font-weight: bold;
-	}
-`;
-
-const Cart = ({ cart, minusToCart, addToCart, setActiveAction }) => {
+const Cart = ({ cart, minusToCart, addToCart }) => {
 	const getTotal = () => {
 		let total = 0;
 
 		cart.forEach((item) => {
-			total += item.quantity * (item.product_price / 100);
+			total += (item.quantity / 100) * item.product_price;
 		});
 
 		return parseFloat(total).toFixed(2);
 	};
 
 	return (
-		<>
-			<ComponentTitle>Order Details</ComponentTitle>
+		<div>
+			<ComponentTitle>Cart</ComponentTitle>
 
-			<ItemsContainer>
-				{cart.map((item) => {
-					return (
-						<Product key={item.product_id} active={item.quantity > 1}>
-							<Image src="/sabon.png" width={60} height={60} alt="Product image" />
-							<div className="productInformation">
-								<p className="productName">{item.product_name}</p>
-								<p className="productPrice">P{item.product_price / 100}</p>
-							</div>
-							<div className="quantity">
-								<span onClick={() => minusToCart(item)} className="minus">
-									<FontAwesomeIcon icon={faMinus} />
-								</span>
-								<p>{item.quantity}</p>
-								<span onClick={() => addToCart(item)}>
-									<FontAwesomeIcon icon={faPlus} />
-								</span>
-							</div>
-						</Product>
-					);
-				})}
-			</ItemsContainer>
-			<Total>
-				<p>Total</p>
-				<p>{getTotal()}</p>
-			</Total>
-			<Button width={"100%"} onClick={() => setActiveAction("payment")}>
-				Confirm
-			</Button>
-		</>
+			<CartTable>
+				<tbody>
+					<tr>
+						<th>Product</th>
+						<th>Quantity</th>
+						<th>Price</th>
+					</tr>
+
+					{cart.map((item) => (
+						<tr key={item.id}>
+							<td>
+								<p>{item.product_name}</p>
+							</td>
+
+							<td>
+								<p>
+									<span onClick={() => minusToCart(item)}>
+										<FontAwesomeIcon icon={faMinus} />
+									</span>{" "}
+									{item.quantity}{" "}
+									<span onClick={() => addToCart(item)}>
+										<FontAwesomeIcon icon={faPlus} />
+									</span>
+								</p>
+							</td>
+
+							<td>
+								<p>{(item.quantity / 100) * item.product_price}</p>
+							</td>
+						</tr>
+					))}
+
+					<tr className="bold">
+						<td>
+							<p>Total</p>
+						</td>
+						<td></td>
+						<td>
+							<p>{getTotal()}</p>
+						</td>
+					</tr>
+				</tbody>
+			</CartTable>
+		</div>
 	);
 };
 

@@ -144,6 +144,7 @@ const InventoryPage = () => {
 							<TableHeadings>Date Received</TableHeadings>
 							<TableHeadings>Actions</TableHeadings>
 						</TableRows>
+
 						{inventory.map((inventory, index) => (
 							<TableRows key={index}>
 								<TableData bold withImage>

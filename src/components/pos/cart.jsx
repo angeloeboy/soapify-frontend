@@ -4,6 +4,7 @@ import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "../misc/button";
 import Image from "next/image";
+import { useMemo } from "react";
 
 const CartTable = styled.table`
 	width: 100%;
@@ -148,45 +149,36 @@ const Total = styled.div`
 `;
 
 const Cart = ({ cart, minusToCart, addToCart, setActiveAction }) => {
-	const getTotal = () => {
-		let total = 0;
-
-		cart.forEach((item) => {
-			total += item.quantity * (item.product_price / 100);
-		});
-
-		return parseFloat(total).toFixed(2);
-	};
+	const total = useMemo(() => {
+		return cart.reduce((acc, item) => acc + item.quantity * (item.product_price / 100), 0).toFixed(2);
+	}, [cart]);
 
 	return (
 		<>
 			<ComponentTitle>Order Details</ComponentTitle>
-
 			<ItemsContainer>
-				{cart.map((item) => {
-					return (
-						<Product key={item.product_id} active={item.quantity > 1}>
-							<Image src="/sabon.png" width={60} height={60} alt="Product image" />
-							<div className="productInformation">
-								<p className="productName">{item.product_name}</p>
-								<p className="productPrice">P{item.product_price / 100}</p>
-							</div>
-							<div className="quantity">
-								<span onClick={() => minusToCart(item)} className="minus">
-									<FontAwesomeIcon icon={faMinus} />
-								</span>
-								<p>{item.quantity}</p>
-								<span onClick={() => addToCart(item)}>
-									<FontAwesomeIcon icon={faPlus} />
-								</span>
-							</div>
-						</Product>
-					);
-				})}
+				{cart.map((item) => (
+					<Product key={item.product_id} active={item.quantity > 1}>
+						<Image src="/sabon.png" width={60} height={60} alt="Product image" />
+						<div className="productInformation">
+							<p className="productName">{item.product_name}</p>
+							<p className="productPrice">P{item.product_price / 100}</p>
+						</div>
+						<div className="quantity">
+							<span onClick={() => minusToCart(item)} className="minus">
+								<FontAwesomeIcon icon={faMinus} />
+							</span>
+							<p>{item.quantity}</p>
+							<span onClick={() => addToCart(item)}>
+								<FontAwesomeIcon icon={faPlus} />
+							</span>
+						</div>
+					</Product>
+				))}
 			</ItemsContainer>
 			<Total>
 				<p>Total</p>
-				<p>{getTotal()}</p>
+				<p>{total}</p>
 			</Total>
 			<Button width={"100%"} onClick={() => setActiveAction("payment")}>
 				Confirm

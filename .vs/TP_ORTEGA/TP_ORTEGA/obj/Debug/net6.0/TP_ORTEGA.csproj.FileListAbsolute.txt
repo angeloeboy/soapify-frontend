@@ -1,0 +1,15 @@
+E:\Desktop\TP_ORTEGA\TP_ORTEGA\bin\Debug\net6.0\TP_ORTEGA.exe
+E:\Desktop\TP_ORTEGA\TP_ORTEGA\bin\Debug\net6.0\TP_ORTEGA.deps.json
+E:\Desktop\TP_ORTEGA\TP_ORTEGA\bin\Debug\net6.0\TP_ORTEGA.runtimeconfig.json
+E:\Desktop\TP_ORTEGA\TP_ORTEGA\bin\Debug\net6.0\TP_ORTEGA.dll
+E:\Desktop\TP_ORTEGA\TP_ORTEGA\bin\Debug\net6.0\TP_ORTEGA.pdb
+E:\Desktop\TP_ORTEGA\TP_ORTEGA\obj\Debug\net6.0\TP_ORTEGA.csproj.AssemblyReference.cache
+E:\Desktop\TP_ORTEGA\TP_ORTEGA\obj\Debug\net6.0\TP_ORTEGA.GeneratedMSBuildEditorConfig.editorconfig
+E:\Desktop\TP_ORTEGA\TP_ORTEGA\obj\Debug\net6.0\TP_ORTEGA.AssemblyInfoInputs.cache
+E:\Desktop\TP_ORTEGA\TP_ORTEGA\obj\Debug\net6.0\TP_ORTEGA.AssemblyInfo.cs
+E:\Desktop\TP_ORTEGA\TP_ORTEGA\obj\Debug\net6.0\TP_ORTEGA.csproj.CoreCompileInputs.cache
+E:\Desktop\TP_ORTEGA\TP_ORTEGA\obj\Debug\net6.0\TP_ORTEGA.dll
+E:\Desktop\TP_ORTEGA\TP_ORTEGA\obj\Debug\net6.0\refint\TP_ORTEGA.dll
+E:\Desktop\TP_ORTEGA\TP_ORTEGA\obj\Debug\net6.0\TP_ORTEGA.pdb
+E:\Desktop\TP_ORTEGA\TP_ORTEGA\obj\Debug\net6.0\TP_ORTEGA.genruntimeconfig.cache
+E:\Desktop\TP_ORTEGA\TP_ORTEGA\obj\Debug\net6.0\ref\TP_ORTEGA.dll

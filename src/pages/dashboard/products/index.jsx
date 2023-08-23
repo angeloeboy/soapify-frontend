@@ -1,325 +1,168 @@
-import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import StyledPanel, { BigTitle, FieldTitle } from "@/styled-components/StyledPanel";
-import { styled } from "styled-components";
+import TopBar from "@/components/misc/topbar";
 import DashboardLayout from "@/components/misc/dashboardLayout";
+
 import Image from "next/image";
-import Button from "@/components/misc/button";
-import POSactions from "@/components/pos/posActions";
-import { getProducts } from "@/api/products";
-import PageTitle from "@/components/misc/pageTitle";
-import Sticky from "react-stickynode";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFilter, faMagnifyingGlass, faSearch } from "@fortawesome/free-solid-svg-icons";
-import { ButtonAddAccountType } from "@/styled-components/ItemActionModal";
-const SearchBarContainer = styled.div`
-	display: flex;
-	align-items: center;
-	position: relative;
-	background-color: transparent; /* Make the background transparent */
-	margin-bottom: 20px; /* Add margin-bottom to create a gap between SearchBar and CategoriesButton */
-`;
+import { faPen, faTrash, faEllipsis } from "@fortawesome/free-solid-svg-icons";
+import PageTitle from "@/components/misc/pageTitle";
+import TableControlPanel from "@/styled-components/TableControlPanel";
+import StyledPanel from "@/styled-components/StyledPanel";
+import { useEffect, useState } from "react";
+import { addProduct, getProducts } from "@/api/products";
+import { useRouter } from "next/router";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+// import Button from "@/components/misc/button";
+import Table, { ActionContainer, TableData, TableHeadings, TableRows, Status } from "@/styled-components/TableComponent";
 
-const SearchIcon = styled.img`
-	position: absolute;
-	top: 50%;
-	left: 20px; /* Adjust the left position as needed */
-	transform: translateY(-50%);
-	width: 20px;
-	height: 20px;
-	cursor: pointer;
-`;
+import { Button } from "@/styled-components/ItemActionModal";
 
-const SearchBar = styled.input`
-	width: 592px;
-	padding: 10px 30px 10px 50px; /* Add padding on both sides for the icon */
-	border: 1px solid #dddd;
-	border-radius: 4px;
-	font-size: 14px;
-	border-radius: 12px;
-	margin: 0;
-`;
+import AddProductComponent from "@/components/product/addProduct";
 
-const CategoriesButton = styled.button`
-	color: black;
-	background-color: transparent; /* Make the background transparent */
-	border: 1px solid #dddd; /* Add a border around the button */
-	font-size: 6px;
-	cursor: pointer;
-	padding: 8px 15px;
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	border-radius: 12px;
-	margin-left: 16px;
-	min-width: 108px;
-`;
-
-const FilterIcon = styled.img`
-	width: 20px;
-	height: 20px;
-`;
-const ButtonFilter = styled.button`
-	color: black;
-	border-radius: 12px;
-	padding: 10px 20px;
-	border: none;
-	margin: 5px;
-	font-size: 16px;
-	cursor: pointer;
-	width: 130.027px;
-	height: 45.2px;
-	flex-shrink: 0;
-	font-family: Arial;
-	background-color: #f8f8f8;
-	font-style: normal;
-	font-weight: 700;
-	line-height: normal;
-`;
-
-const ProductsList = styled.div`
-	display: flex;
-	flex-wrap: wrap;
-	max-width: 1200px;
-	align-items: center;
-`;
-
-const Product = styled.div`
-	/* display: flex; */
-	align-items: center;
-	justify-content: center;
-	border: 1px solid #dddd;
-	flex-direction: column;
-	border-radius: 18px;
-	padding: 25px;
-	margin: 8px;
-	/* width: 262px; */
-	width: 31%;
-	img {
-		margin: 0 auto;
-		/* width: 100%; */
-		background-color: rgba(248, 248, 248, 1);
-		width: 247.36px;
-		height: 180.34px;
-		top: 347px;
-		left: 692.53px;
-		border-radius: 8px;
-	}
-
-	button {
-		margin-top: 27px;
-	}
-`;
-
-const ProductsListContainer = styled.div`
-	margin-right: 16px;
-`;
-
-// const InfoContainer = styled.div`
-// 	display: flex;
-// 	align-items: center;
-// 	justify-content: space-between; /* Add this property to create space between the two elements */
-// 	width: 100%;
-// 	margin-top: 16px;
-// 	@media (max-width: 768px) {
-// 		flex-direction: column;
-// 		align-items: center; /* Adjust as per your design needs */
-// 		padding: 10px 16px;
-// 	}
-// `;
-
-const Price = styled.p`
-	font-size: 14px;
-	font-weight: bold;
-	color: #005eff;
-
-	@media (max-width: 768px) {
-		margin-top: 10px;
-	}
-`;
-
-const ProductNameAndStock = styled.div`
-	max-width: 70%;
-	p {
-		color: rgba(0, 32, 86, 0.5);
-		font-family: DM Sans;
-		font-size: 14px;
-		font-style: normal;
-		font-weight: 500;
-		line-height: normal;
-		/* padding: 15px; */
-		margin-bottom: 6px;
-	}
-`;
-
-const ProductTitle = styled.p`
-	margin-top: 27px;
-	font-family: DM Sans;
-	font-size: 18px;
-	font-weight: 500;
-	line-height: 23px;
-	letter-spacing: 0em;
-	text-align: left;
-	width: 180px;
-	height: 23px;
-	top: 943px;
-	left: 127px;
-	color: rgba(0, 0, 0, 1);
-`;
-const StockTitle = styled.p`
-	font-family: DM Sans;
-	font-size: 14px;
-	font-weight: 400;
-	line-height: 27px;
-	letter-spacing: 0em;
-	text-align: center;
-	color: white;
-	margin: 0;
-`;
-const StockTitleContainer = styled.div`
-	border-radius: 8px;
-	width: 87.55px;
-	height: 27.29px;
-	background-color: #1a69f0;
-	margin-top: 30px;
-	justify-content: center;
-	align-items: center;
-`;
-const PriceTitle = styled.p`
-	color: #005eff;
-	font-family: DM Sans;
-	font-size: 18px;
-	font-weight: 500;
-	line-height: 23px;
-	letter-spacing: 0em;
-	text-align: left;
-	margin-top: 8px;
-`;
-
-const POSWrapper = styled.div`
-	display: flex;
-	justify-content: space-between;
-`;
-
-const StickyContainer = styled.div`
-	position: relative;
-	width: 100%;
-	max-width: 500px;
-	margin-top: 48px;
-`;
-
-const Pos = () => {
-	const [searchQuery, setSearchQuery] = useState("");
+const Products = () => {
 	const [products, setProducts] = useState([]);
-	const [cart, setCart] = useState([]);
-	const [productDisplay, setProductDisplay] = useState([]);
+	const [productsLoading, setProductsLoading] = useState(true);
+	const [isPopupOpen, setPopupOpen] = useState(false);
+	const [activeActionContainer, setActiveActionContainer] = useState(-1);
+
+	const router = useRouter();
 
 	useEffect(() => {
-		fetchProducts();
+		GetProducts();
 	}, []);
 
-	useEffect(() => {
-		setProductDisplay(products);
-	}, [products]);
-
-	const fetchProducts = async () => {
-		const response = await getProducts();
-		const productData = response.products || [];
-		setProducts(productData);
+	const GetProducts = () => {
+		getProducts().then((res) => {
+			console.log(res);
+			res.products ? setProducts(res.products) : setProducts([]);
+			setProductsLoading(false);
+		});
 	};
-
-	const handleSearch = (e) => {
-		const query = e.target.value;
-		setSearchQuery(query);
-
-		const filteredProducts = query ? products.filter((product) => product.product_name.toLowerCase().includes(query.toLowerCase())) : products;
-
-		setProductDisplay(filteredProducts);
-	};
-
-	const updateCart = (product, operation) => {
-		const existingProduct = cart.find((item) => item.product_id === product.product_id);
-
-		if (operation === "add") {
-			if (existingProduct) {
-				setCart(cart.map((item) => (item.product_id === product.product_id ? { ...item, quantity: item.quantity + 1 } : item)));
-			} else {
-				setCart([...cart, { ...product, quantity: 1 }]);
-			}
-		} else if (operation === "subtract") {
-			if (existingProduct?.quantity === 1) {
-				setCart(cart.filter((item) => item.product_id !== product.product_id));
-			} else {
-				setCart(cart.map((item) => (item.product_id === product.product_id ? { ...item, quantity: item.quantity - 1 } : item)));
-			}
+	const handleClickOutside = (event) => {
+		if (!event.target.closest(".action-container") && !event.target.closest(".ellipsis")) {
+			setActiveActionContainer(null);
 		}
+	};
+
+	useEffect(() => {
+		document.addEventListener("click", handleClickOutside);
+		return () => {
+			document.removeEventListener("click", handleClickOutside);
+		};
+	}, []);
+
+	const handleOpenPopup = () => {
+		setPopupOpen(true);
+	};
+
+	const handleClosePopup = () => {
+		setPopupOpen(false);
+	};
+
+	const onButtonClick = () => {
+		fileInput.current.click();
 	};
 
 	return (
 		<DashboardLayout>
-			<PageTitle title="POS" />
+			<form onSubmit={(e) => AddProduct(e)} enctype="multipart/form-data">
+				<input type="file" name="product_image" required />
+				<button type="submit">Upload</button>
+			</form>
 
-			<POSWrapper>
-				<StyledPanel pos>
-				<FieldTitle>Search for Product</FieldTitle>
-					<SearchBarContainer>
-  <div className="searchBar" style={{ display: "flex", alignItems: "center" }}>
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", marginRight: "16px" }} className="searchBarInput">
-      <p style={{ marginBottom: "8px", color: "black" }}>Search for Product</p>
-      <input
-        style={{
-          width: "592.5px",
-          padding: "8px 8px 8px 36px", // Add padding on the left for the icon
-          border: "1px solid #ddd",
-          borderRadius: "12px",
-          fontSize: "14px",
-          backgroundImage: `url("/Search.png")`,
-          backgroundPosition: "10px center", // Adjust position as needed
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "20px auto", // Adjust size as needed
-        }}
-        type="text"
-        placeholder="Search"
-      />
-    </div>
+			<PageTitle title="Products" />
 
-    <div style={{ display: "flex", marginLeft: "16px" }}>
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginRight: "36px" }}>
-        <p style={{ marginBottom: "0", textAlign: "center" }}>Categories</p>
-        <ButtonAll>
-          <FontAwesomeIcon icon={faFilter} />
-          All
-        </ButtonAll>
-      </div>
-    </div>
-  </div>
-</SearchBarContainer>	 					 
- 
-					<ProductsList>
-						{productDisplay.map((product) => (
-							<Product key={product.product_id}>
-								<Image src="/sabon.png" width={200} height={200} alt="Product image" />
-								<ProductTitle>{product.product_name}</ProductTitle>
-								<PriceTitle>P{product.product_price / 100}</PriceTitle>
-								<StockTitleContainer>
-									<StockTitle>Stock: {product.quantity_in_stock}</StockTitle>
-								</StockTitleContainer>
-								<Button onClick={() => updateCart(product, "add")} width={"100%"}>
-									Add
-								</Button>
-							</Product>
-						))}
-					</ProductsList>
-				</StyledPanel>
+			<StyledPanel>
+				<TableControlPanel>
+					<div className="searchBar">
+						<p>Search for Product</p>
+						<input type="text" placeholder="Search" />
 
-				<StickyContainer>
-					<Sticky enabled={true} top={20}>
-						<POSactions cart={cart} minusToCart={(product) => updateCart(product, "subtract")} addToCart={(product) => updateCart(product, "add")} />
-					</Sticky>
-				</StickyContainer>
-			</POSWrapper>
+						<Button onClick={handleOpenPopup}>Add Products</Button>
+					</div>
+				</TableControlPanel>
+				<Table>
+					<tbody>
+						<TableRows heading>
+							<TableHeadings>Name</TableHeadings>
+							<TableHeadings>ID</TableHeadings>
+							<TableHeadings>Stock</TableHeadings>
+							<TableHeadings>Price</TableHeadings>
+							<TableHeadings>Status</TableHeadings>
+							<TableHeadings>Actions</TableHeadings>
+						</TableRows>
+
+						{products.length === 0 ? (
+							productsLoading ? (
+								Array.from({ length: 8 }, (_, index) => (
+									<TableRows key={index}>
+										<TableData className="imgContainer">
+											<Skeleton circle={true} height={40} width={40} />
+											{/* <Skeleton width={100} height={20} /> */}
+										</TableData>
+										<TableData>
+											<Skeleton width={50} height={20} />
+										</TableData>
+										<TableData>
+											<Skeleton width={50} height={20} />
+										</TableData>
+										<TableData>
+											<Skeleton width={50} height={20} />
+										</TableData>
+										<TableData>
+											<Skeleton width={50} height={20} />
+										</TableData>
+										<TableData>
+											<Skeleton width={50} height={20} />
+										</TableData>
+									</TableRows>
+								))
+							) : (
+								<Button onClick={() => router.push("/dashboard/products/add")}>Add Product</Button>
+							)
+						) : (
+							products.map((product, index) => (
+								<TableRows key={product.product_id}>
+									<TableData bold withImage>
+										<Image src="/product_img.png" alt="My Image" width="40" height="40" /> {product.product_name}
+									</TableData>
+									<TableData>{product.product_id}</TableData>
+									<TableData>{product.quantity_in_stock}</TableData>
+									<TableData>{product.product_price / 100}</TableData>
+									<TableData>
+										<Status bgColor={"rgba(255, 116, 116, 0.49)"} color={"#EA0000"}>
+											LOW
+										</Status>
+									</TableData>
+									<TableData>
+										<FontAwesomeIcon
+											className="ellipsis"
+											icon={faEllipsis}
+											onClick={() => (activeActionContainer === index ? setActiveActionContainer(-1) : setActiveActionContainer(index))}
+										/>
+
+										{activeActionContainer === index && (
+											<ActionContainer onClick={() => setActiveActionContainer(-1)}>
+												<p>
+													{" "}
+													<FontAwesomeIcon icon={faPen} />
+													Edit
+												</p>
+												<p>
+													<FontAwesomeIcon icon={faTrash} /> Delete
+												</p>
+											</ActionContainer>
+										)}
+									</TableData>
+								</TableRows>
+							))
+						)}
+					</tbody>
+				</Table>
+			</StyledPanel>
+			{isPopupOpen && <AddProductComponent onClose={handleClosePopup} onButtonClick={onButtonClick} GetProducts={GetProducts} />}
 		</DashboardLayout>
 	);
 };
 
-export default Pos;
+export default Products;

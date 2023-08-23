@@ -1,22 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-<<<<<<< HEAD
-	output: "standalone",
-	async rewrites() {
-		 return [
-		 	{
-		 		source: "/api/:path*",
-		 		destination: "https://iamangelo.tech/api/:path*",
-		 	},
-		 ];
-		// return [
-		// 	{
-		// 		//source: "/api/:path*",
-		// 		//destination: "http://localhost:3001/:path*",
-		// 	},
-		// ];
-	},
-=======
   output: "standalone",
   async rewrites() {
     return [
@@ -32,7 +15,6 @@ const nextConfig = {
     //       },
     //     ];
   },
->>>>>>> main
 };
 
 module.exports = nextConfig;

@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+<<<<<<< HEAD
 	output: "standalone",
 	async rewrites() {
 		 return [
@@ -15,6 +16,23 @@ const nextConfig = {
 		// 	},
 		// ];
 	},
+=======
+  output: "standalone",
+  async rewrites() {
+    return [
+      {
+        source: "/api/:path*",
+        destination: "https://iamangelo.tech/api/:path*",
+      },
+    ];
+    //     return [
+    //       {
+    //         source: "/api/:path*",
+    //         destination: "http://localhost:3001/:path*",
+    //       },
+    //     ];
+  },
+>>>>>>> main
 };
 
 module.exports = nextConfig;

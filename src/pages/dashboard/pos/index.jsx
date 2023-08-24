@@ -9,7 +9,9 @@ import POSactions from "@/components/pos/posActions";
 import { getProducts } from "@/api/products";
 import PageTitle from "@/components/misc/pageTitle";
 import Sticky from "react-stickynode";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFilter, faMagnifyingGlass, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { ButtonAddAccountType } from "@/styled-components/ItemActionModal";
 const SearchBarContainer = styled.div`
 	display: flex;
 	align-items: center;
@@ -35,6 +37,7 @@ const SearchBar = styled.input`
 	border-radius: 4px;
 	font-size: 14px;
 	border-radius: 12px;
+	margin: 0;
 `;
 
 const CategoriesButton = styled.button`
@@ -56,10 +59,22 @@ const FilterIcon = styled.img`
 	width: 20px;
 	height: 20px;
 `;
-
-const AllText = styled.span`
+const ButtonFilter = styled.button`
+	color: black;
+	border-radius: 12px;
+	padding: 10px 20px;
+	border: none;
+	margin: 5px;
 	font-size: 16px;
-	font-weight: bold;
+	cursor: pointer;
+	width: 130.027px;
+	height: 45.2px;
+	flex-shrink: 0;
+	font-family: Arial;
+	background-color: #f8f8f8;
+	font-style: normal;
+	font-weight: 700;
+	line-height: normal;
 `;
 
 const ProductsList = styled.div`
@@ -83,6 +98,12 @@ const Product = styled.div`
 	img {
 		margin: 0 auto;
 		/* width: 100%; */
+		background-color: rgba(248, 248, 248, 1);
+		width: 247.36px;
+		height: 180.34px;
+		top: 347px;
+		left: 692.53px;
+		border-radius: 8px;
 	}
 
 	button {
@@ -94,18 +115,18 @@ const ProductsListContainer = styled.div`
 	margin-right: 16px;
 `;
 
-const InfoContainer = styled.div`
-	display: flex;
-	align-items: center;
-	justify-content: space-between; /* Add this property to create space between the two elements */
-	width: 100%;
-	margin-top: 16px;
-	@media (max-width: 768px) {
-		flex-direction: column;
-		align-items: center; /* Adjust as per your design needs */
-		padding: 10px 16px;
-	}
-`;
+// const InfoContainer = styled.div`
+// 	display: flex;
+// 	align-items: center;
+// 	justify-content: space-between; /* Add this property to create space between the two elements */
+// 	width: 100%;
+// 	margin-top: 16px;
+// 	@media (max-width: 768px) {
+// 		flex-direction: column;
+// 		align-items: center; /* Adjust as per your design needs */
+// 		padding: 10px 16px;
+// 	}
+// `;
 
 const Price = styled.p`
 	font-size: 14px;
@@ -131,6 +152,50 @@ const ProductNameAndStock = styled.div`
 	}
 `;
 
+const ProductTitle = styled.p`
+	margin-top: 27px;
+	font-family: DM Sans;
+	font-size: 18px;
+	font-weight: 500;
+	line-height: 23px;
+	letter-spacing: 0em;
+	text-align: left;
+	width: 180px;
+	height: 23px;
+	top: 943px;
+	left: 127px;
+	color: rgba(0, 0, 0, 1);
+`;
+const StockTitle = styled.p`
+	font-family: DM Sans;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 27px;
+	letter-spacing: 0em;
+	text-align: center;
+	color: white;
+	margin: 0;
+`;
+const StockTitleContainer = styled.div`
+	border-radius: 8px;
+	width: 87.55px;
+	height: 27.29px;
+	background-color: #1a69f0;
+	margin-top: 30px;
+	justify-content: center;
+	align-items: center;
+`;
+const PriceTitle = styled.p`
+	color: #005eff;
+	font-family: DM Sans;
+	font-size: 18px;
+	font-weight: 500;
+	line-height: 23px;
+	letter-spacing: 0em;
+	text-align: left;
+	margin-top: 8px;
+`;
+
 const POSWrapper = styled.div`
 	display: flex;
 	justify-content: space-between;
@@ -142,88 +207,51 @@ const StickyContainer = styled.div`
 	max-width: 500px;
 	margin-top: 48px;
 `;
-const Home = () => {
+
+const Pos = () => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [products, setProducts] = useState([]);
 	const [cart, setCart] = useState([]);
 	const [productDisplay, setProductDisplay] = useState([]);
 
 	useEffect(() => {
-		getProductsFunc();
+		fetchProducts();
 	}, []);
 
 	useEffect(() => {
 		setProductDisplay(products);
 	}, [products]);
 
-	const getProductsFunc = () => {
-		getProducts().then((res) => {
-			console.log(res);
-			res.products ? setProducts(res.products) : setProducts([]);
-			// setProductsLoading(false);
-		});
+	const fetchProducts = async () => {
+		const response = await getProducts();
+		const productData = response.products || [];
+		setProducts(productData);
 	};
 
-	const searchProduct = (e) => {
-		setSearchQuery(e.target.value);
+	const handleSearch = (e) => {
+		const query = e.target.value;
+		setSearchQuery(query);
 
-		if (e.target.value.length > 0) {
-			const filteredProducts = products.filter((product) => {
-				return product.product_name.toLowerCase().includes(e.target.value.toLowerCase());
-			});
+		const filteredProducts = query ? products.filter((product) => product.product_name.toLowerCase().includes(query.toLowerCase())) : products;
 
-			setProductDisplay(filteredProducts);
-		} else {
-			getProductsFunc();
-		}
+		setProductDisplay(filteredProducts);
 	};
 
-	const addToCart = (product) => {
+	const updateCart = (product, operation) => {
 		const existingProduct = cart.find((item) => item.product_id === product.product_id);
 
-		if (existingProduct) {
-			const updatedCart = cart.map((item) => {
-				if (item.product_id === product.product_id) {
-					return {
-						...item,
-						quantity: item.quantity + 1,
-					};
-				}
-
-				return item;
-			});
-
-			setCart(updatedCart);
-		} else {
-			setCart([...cart, { ...product, quantity: 1 }]);
-		}
-	};
-
-	//minus to cart
-	const minusToCart = (product) => {
-		const existingProduct = cart.find((item) => item.product_id === product.product_id);
-
-		if (existingProduct.quantity === 1) {
-			const updatedCart = cart.filter((item) => item.product_id !== product.product_id);
-			setCart(updatedCart);
-		} else {
-			console.log(cart);
-
-			console.log(product.product_id);
-			const updatedCart = cart.map((item) => {
-				if (item.product_id === product.product_id) {
-					return {
-						...item,
-						quantity: item.quantity - 1,
-					};
-				} else {
-					return item;
-				}
-			});
-
-			console.log(updatedCart);
-
-			setCart(updatedCart);
+		if (operation === "add") {
+			if (existingProduct) {
+				setCart(cart.map((item) => (item.product_id === product.product_id ? { ...item, quantity: item.quantity + 1 } : item)));
+			} else {
+				setCart([...cart, { ...product, quantity: 1 }]);
+			}
+		} else if (operation === "subtract") {
+			if (existingProduct?.quantity === 1) {
+				setCart(cart.filter((item) => item.product_id !== product.product_id));
+			} else {
+				setCart(cart.map((item) => (item.product_id === product.product_id ? { ...item, quantity: item.quantity - 1 } : item)));
+			}
 		}
 	};
 
@@ -234,47 +262,39 @@ const Home = () => {
 			<POSWrapper>
 				<StyledPanel pos>
 					<FieldTitle>Search for Product</FieldTitle>
-
 					<SearchBarContainer>
 						<SearchIcon src="./search.png" alt="Search Icon" />
-						<SearchBar type="text" placeholder="Search" value={searchQuery} onChange={(e) => searchProduct(e)} />
+						<SearchBar type="text" placeholder="Search" value={searchQuery} onChange={handleSearch} />
 						<CategoriesButton>
 							<FilterIcon src="./Filter.png" alt="Filter Icon" />
-							<AllText>All</AllText>
 						</CategoriesButton>
 					</SearchBarContainer>
 
 					<ProductsList>
-						{productDisplay.map((product) => {
-							return (
-								<Product key={product.product_id}>
-									<Image src="/sabon.png" width={200} height={200} alt="Product image" />
-
-									<InfoContainer>
-										<ProductNameAndStock>
-											<p>{product.product_name}</p>
-											<p>Stock: {product.quantity_in_stock}</p>
-										</ProductNameAndStock>
-										<Price>P{product.product_price / 100}</Price>
-									</InfoContainer>
-									<Button onClick={() => addToCart(product)} width={"100%"}>
-										Add
-									</Button>
-								</Product>
-							);
-						})}
+						{productDisplay.map((product) => (
+							<Product key={product.product_id}>
+								<Image src="/sabon.png" width={200} height={200} alt="Product image" />
+								<ProductTitle>{product.product_name}</ProductTitle>
+								<PriceTitle>P{product.product_price / 100}</PriceTitle>
+								<StockTitleContainer>
+									<StockTitle>Stock: {product.quantity_in_stock}</StockTitle>
+								</StockTitleContainer>
+								<Button onClick={() => updateCart(product, "add")} width={"100%"}>
+									Add
+								</Button>
+							</Product>
+						))}
 					</ProductsList>
 				</StyledPanel>
+
 				<StickyContainer>
 					<Sticky enabled={true} top={20}>
-						<POSactions cart={cart} minusToCart={minusToCart} addToCart={addToCart} />
+						<POSactions cart={cart} minusToCart={(product) => updateCart(product, "subtract")} addToCart={(product) => updateCart(product, "add")} />
 					</Sticky>
 				</StickyContainer>
-
-				{/* <POSactions cart={cart} minusToCart={minusToCart} addToCart={addToCart} /> */}
 			</POSWrapper>
 		</DashboardLayout>
 	);
 };
 
-export default Home;
+export default Pos;

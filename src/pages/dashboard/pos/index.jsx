@@ -207,7 +207,6 @@ const StickyContainer = styled.div`
 	max-width: 500px;
 	margin-top: 48px;
 `;
-
 const ButtonAll = styled.button`
     color: black;
 	border-radius: 12px;
@@ -227,6 +226,8 @@ const ButtonAll = styled.button`
    
 
 `
+ 
+
 
 const Pos = () => {
 	const [searchQuery, setSearchQuery] = useState("");
@@ -280,13 +281,13 @@ const Pos = () => {
 			<PageTitle title="POS" />
 
 			<POSWrapper>
-				<StyledPanel pos>
-				<SearchBarContainer>
-  <div className="searchBar" style={{ display: "flex", alignItems: "center" }}>
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", marginRight: "16px" }} className="searchBarInput">
-      <p style={{ marginBottom: "8px", color: "black" }}>Search for Product</p>
-      <input
-        style={{
+ 				<StyledPanel pos>   
+				 <SearchBarContainer>
+              <div className="searchBar" style={{ display: "flex", alignItems: "center" }}>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", marginRight: "16px" }} className="searchBarInput">
+                  <p style={{ marginBottom: "8px", color: "black" }}>Search for Product</p>
+              <input
+          style={{
           width: "592.5px",
           padding: "8px 8px 8px 36px", // Add padding on the left for the icon
           border: "1px solid #ddd",
@@ -299,6 +300,9 @@ const Pos = () => {
         }}
         type="text"
         placeholder="Search"
+        value={searchQuery} // Bind value to searchQuery
+        onChange={handleSearch} // Call handleSearch when the input changes
+
       />
     </div>
 
@@ -313,6 +317,10 @@ const Pos = () => {
     </div>
   </div>
 </SearchBarContainer>
+
+
+
+
 
 					<ProductsList>
 						{productDisplay.map((product) => (

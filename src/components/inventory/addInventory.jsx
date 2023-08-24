@@ -50,6 +50,7 @@ const AddInventoryComponent = ({ onClose, onButtonClick, getInventoryFunc }) => 
 	useEffect(() => {
 		getProductsFunc();
 	}, []);
+
 	return (
 		<PopupOverlay>
 			<PopupContent>

@@ -79,7 +79,7 @@ const PriceTitle = styled.p`
 `;
 
 const ProductComponent = ({ product, onClick }) => (
-	<Product key={product.product_id} onClick={onClick} unclickable={product.quantity_in_stock <= 0}>
+	<Product key={product.product_id} onClick={() => (product.quantity_in_stock <= 0 ? null : onClick())} unclickable={product.quantity_in_stock <= 0}>
 		<Image src="/sabon.png" width={200} height={200} alt="Product image" />
 		<ProductTitle>{product.product_name}</ProductTitle>
 		<PriceTitle>P{product.product_price / 100}</PriceTitle>

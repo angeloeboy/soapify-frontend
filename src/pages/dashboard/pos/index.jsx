@@ -207,7 +207,25 @@ const StickyContainer = styled.div`
 	max-width: 500px;
 	margin-top: 48px;
 `;
+const ButtonAll = styled.button`
+    color: black;
+	border-radius: 12px;
+	padding: 10px 20px;
+	border: none;
+	margin: 5px;
+	font-size: 16px;
+	cursor: pointer;
+     height:  40.2px;
+    flex-shrink: 0;
+	font-family: Arial;
+	background-color: #F8F8F8;
+	font-style: normal;
+	font-weight: 700;
+	line-height: normal;
+	width: 108.85px;
+   
 
+`
 const Pos = () => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [products, setProducts] = useState([]);
@@ -260,16 +278,42 @@ const Pos = () => {
 			<PageTitle title="POS" />
 
 			<POSWrapper>
-				<StyledPanel pos>
-					<FieldTitle>Search for Product</FieldTitle>
-					<SearchBarContainer>
-						<SearchIcon src="./search.png" alt="Search Icon" />
-						<SearchBar type="text" placeholder="Search" value={searchQuery} onChange={handleSearch} />
-						<CategoriesButton>
-							<FilterIcon src="./Filter.png" alt="Filter Icon" />
-						</CategoriesButton>
-					</SearchBarContainer>
+				<StyledPanel pos> 
+				<SearchBarContainer>
 
+       <div className="searchBar" style={{ display: "flex", alignItems: "center" }}>
+             <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", marginRight: "16px" }} className="searchBarInput">
+                <p style={{ marginBottom: "8px", color: "black" }}>Search for Product</p>
+        <input
+          style={{
+          width: "592.5px",
+          padding: "8px 8px 8px 36px", // Add padding on the left for the icon
+          border: "1px solid #ddd",
+          borderRadius: "12px",
+          fontSize: "14px",
+          backgroundImage: `url("/Search.png")`,
+          backgroundPosition: "10px center", // Adjust position as needed
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "20px auto", // Adjust size as needed
+           }}
+          type="text"
+          placeholder="Search"
+          value={searchQuery} 
+          onChange={handleSearch} 
+          />
+	</div>
+
+    <div style={{ display: "flex", marginLeft: "16px" }}>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginRight: "36px" }}>
+        <p style={{ marginBottom: "0", textAlign: "center" }}>Categories</p>
+        <ButtonAll>
+          <FontAwesomeIcon icon={faFilter} />
+          All
+        </ButtonAll>
+      </div>
+    </div>
+  </div>
+</SearchBarContainer>
 					<ProductsList>
 						{productDisplay.map((product) => (
 							<Product key={product.product_id}>

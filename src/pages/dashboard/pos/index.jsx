@@ -80,7 +80,7 @@ const ButtonFilter = styled.button`
 const ProductsList = styled.div`
 	display: flex;
 	flex-wrap: wrap;
-	max-width: 1200px;
+	/* max-width: 1200px; */
 	align-items: center;
 `;
 
@@ -95,6 +95,14 @@ const Product = styled.div`
 	margin: 8px;
 	/* width: 262px; */
 	width: 31%;
+	max-width: 269.31px;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	opacity: ${({ unclickable }) => (unclickable ? "0.5" : "1")};
+	&:hover {
+		border: 1px solid #005eff;
+		background-color: #f8f8f8b3;
+	}
 	img {
 		margin: 0 auto;
 		/* width: 100%; */
@@ -208,24 +216,185 @@ const StickyContainer = styled.div`
 	margin-top: 48px;
 `;
 const ButtonAll = styled.button`
-    color: black;
+	color: black;
 	border-radius: 12px;
 	padding: 10px 20px;
 	border: none;
 	margin: 5px;
 	font-size: 16px;
 	cursor: pointer;
-     height:  40.2px;
-    flex-shrink: 0;
+	height: 40.2px;
+	flex-shrink: 0;
 	font-family: Arial;
-	background-color: #F8F8F8;
+	background-color: #f8f8f8;
 	font-style: normal;
 	font-weight: 700;
 	line-height: normal;
 	width: 108.85px;
-   
+`;
+// const Pos = () => {
+// 	const [searchQuery, setSearchQuery] = useState("");
+// 	const [products, setProducts] = useState([]);
+// 	const [cart, setCart] = useState([]);
+// 	const [productDisplay, setProductDisplay] = useState([]);
 
-`
+// 	useEffect(() => {
+// 		fetchProducts();
+// 	}, []);
+
+// 	useEffect(() => {
+// 		setProductDisplay(products);
+// 	}, [products]);
+
+// 	const fetchProducts = async () => {
+// 		const response = await getProducts();
+// 		const productData = response.products || [];
+// 		setProducts(productData);
+// 	};
+
+// 	const handleSearch = (e) => {
+// 		const query = e.target.value;
+// 		setSearchQuery(query);
+
+// 		const filteredProducts = query ? products.filter((product) => product.product_name.toLowerCase().includes(query.toLowerCase())) : products;
+
+// 		setProductDisplay(filteredProducts);
+// 	};
+
+// 	const updateCart = (product, operation) => {
+// 		const existingProduct = cart.find((item) => item.product_id === product.product_id);
+
+// 		if (operation === "add") {
+// 			if (existingProduct) {
+// 				setCart(cart.map((item) => (item.product_id === product.product_id ? { ...item, quantity: item.quantity + 1 } : item)));
+// 			} else {
+// 				setCart([...cart, { ...product, quantity: 1 }]);
+// 			}
+// 		} else if (operation === "subtract") {
+// 			if (existingProduct?.quantity === 1) {
+// 				setCart(cart.filter((item) => item.product_id !== product.product_id));
+// 			} else {
+// 				setCart(cart.map((item) => (item.product_id === product.product_id ? { ...item, quantity: item.quantity - 1 } : item)));
+// 			}
+// 		}
+// 	};
+
+// 	return (
+// 		<DashboardLayout>
+// 			<PageTitle title="POS" />
+
+// 			<POSWrapper>
+// 				<StyledPanel pos>
+// 					<SearchBarContainer>
+// 						<div className="searchBar" style={{ display: "flex", alignItems: "center" }}>
+// 							<div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", marginRight: "16px" }} className="searchBarInput">
+// 								<p style={{ marginBottom: "8px", color: "black" }}>Search for Product</p>
+// 								<input
+// 									style={{
+// 										width: "592.5px",
+// 										padding: "8px 8px 8px 36px", // Add padding on the left for the icon
+// 										border: "1px solid #ddd",
+// 										borderRadius: "12px",
+// 										fontSize: "14px",
+// 										backgroundImage: `url("/Search.png")`,
+// 										backgroundPosition: "10px center", // Adjust position as needed
+// 										backgroundRepeat: "no-repeat",
+// 										backgroundSize: "20px auto", // Adjust size as needed
+// 									}}
+// 									type="text"
+// 									placeholder="Search"
+// 									value={searchQuery}
+// 									onChange={handleSearch}
+// 								/>
+// 							</div>
+
+// 							<div style={{ display: "flex", marginLeft: "16px" }}>
+// 								<div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginRight: "36px" }}>
+// 									<p style={{ marginBottom: "0", textAlign: "center" }}>Categories</p>
+// 									<ButtonAll>
+// 										<FontAwesomeIcon icon={faFilter} />
+// 										All
+// 									</ButtonAll>
+// 								</div>
+// 							</div>
+// 						</div>
+// 					</SearchBarContainer>
+// 					<ProductsList>
+// 						{productDisplay.map((product) => (
+// 							<Product key={product.product_id} onClick={() => updateCart(product, "add")}>
+// 								<Image src="/sabon.png" width={200} height={200} alt="Product image" />
+// 								<ProductTitle>{product.product_name}</ProductTitle>
+// 								<PriceTitle>P{product.product_price / 100}</PriceTitle>
+// 								<StockTitleContainer>
+// 									<StockTitle>Stock: {product.quantity_in_stock}</StockTitle>
+// 								</StockTitleContainer>
+// 								{/* <Button onClick={() => updateCart(product, "add")} width={"100%"}>
+// 									Add
+// 								</Button> */}
+// 							</Product>
+// 						))}
+// 					</ProductsList>
+// 				</StyledPanel>
+
+// 				<StickyContainer>
+// 					<Sticky enabled={true} top={20}>
+// 						<POSactions cart={cart} minusToCart={(product) => updateCart(product, "subtract")} addToCart={(product) => updateCart(product, "add")} />
+// 					</Sticky>
+// 				</StickyContainer>
+// 			</POSWrapper>
+// 		</DashboardLayout>
+// 	);
+// };
+
+// export default Pos;
+
+const SearchBarComponent = ({ searchQuery, handleSearch }) => (
+	<SearchBarContainer>
+		<div className="searchBar" style={{ display: "flex", alignItems: "center" }}>
+			<div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", marginRight: "16px" }} className="searchBarInput">
+				<p style={{ marginBottom: "8px", color: "black" }}>Search for Product</p>
+				<input
+					style={{
+						width: "592.5px",
+						padding: "8px 8px 8px 36px", // Add padding on the left for the icon
+						border: "1px solid #ddd",
+						borderRadius: "12px",
+						fontSize: "14px",
+						backgroundImage: `url("/Search.png")`,
+						backgroundPosition: "10px center", // Adjust position as needed
+						backgroundRepeat: "no-repeat",
+						backgroundSize: "20px auto", // Adjust size as needed
+					}}
+					type="text"
+					placeholder="Search"
+					value={searchQuery}
+					onChange={handleSearch}
+				/>
+			</div>
+			<div style={{ display: "flex", marginLeft: "16px" }}>
+				<div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginRight: "36px" }}>
+					<p style={{ marginBottom: "0", textAlign: "center" }}>Categories</p>
+					<ButtonAll>
+						<FontAwesomeIcon icon={faFilter} />
+						All
+					</ButtonAll>
+				</div>
+			</div>
+		</div>
+	</SearchBarContainer>
+);
+
+const ProductComponent = ({ product, onClick }) => (
+	<Product key={product.product_id} onClick={onClick} unclickable={product.quantity_in_stock <= 0}>
+		<Image src="/sabon.png" width={200} height={200} alt="Product image" />
+		<ProductTitle>{product.product_name}</ProductTitle>
+		<PriceTitle>P{product.product_price / 100}</PriceTitle>
+		<StockTitleContainer>
+			<StockTitle>Stock: {product.quantity_in_stock}</StockTitle>
+		</StockTitleContainer>
+	</Product>
+);
+
 const Pos = () => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [products, setProducts] = useState([]);
@@ -242,35 +411,31 @@ const Pos = () => {
 
 	const fetchProducts = async () => {
 		const response = await getProducts();
-		const productData = response.products || [];
-		setProducts(productData);
+		setProducts(response.products || []);
 	};
 
 	const handleSearch = (e) => {
 		const query = e.target.value;
 		setSearchQuery(query);
-
 		const filteredProducts = query ? products.filter((product) => product.product_name.toLowerCase().includes(query.toLowerCase())) : products;
-
 		setProductDisplay(filteredProducts);
 	};
 
 	const updateCart = (product, operation) => {
 		const existingProduct = cart.find((item) => item.product_id === product.product_id);
 
+		let updatedCart;
 		if (operation === "add") {
-			if (existingProduct) {
-				setCart(cart.map((item) => (item.product_id === product.product_id ? { ...item, quantity: item.quantity + 1 } : item)));
-			} else {
-				setCart([...cart, { ...product, quantity: 1 }]);
-			}
-		} else if (operation === "subtract") {
-			if (existingProduct?.quantity === 1) {
-				setCart(cart.filter((item) => item.product_id !== product.product_id));
-			} else {
-				setCart(cart.map((item) => (item.product_id === product.product_id ? { ...item, quantity: item.quantity - 1 } : item)));
-			}
+			updatedCart = existingProduct
+				? cart.map((item) => (item.product_id === product.product_id ? { ...item, quantity: item.quantity + 1 } : item))
+				: [...cart, { ...product, quantity: 1 }];
+		} else if (operation === "subtract" && existingProduct) {
+			updatedCart =
+				existingProduct.quantity === 1
+					? cart.filter((item) => item.product_id !== product.product_id)
+					: cart.map((item) => (item.product_id === product.product_id ? { ...item, quantity: item.quantity - 1 } : item));
 		}
+		setCart(updatedCart);
 	};
 
 	return (
@@ -278,55 +443,12 @@ const Pos = () => {
 			<PageTitle title="POS" />
 
 			<POSWrapper>
-				<StyledPanel pos> 
-				<SearchBarContainer>
+				<StyledPanel pos>
+					<SearchBarComponent searchQuery={searchQuery} handleSearch={handleSearch} />
 
-       <div className="searchBar" style={{ display: "flex", alignItems: "center" }}>
-             <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", marginRight: "16px" }} className="searchBarInput">
-                <p style={{ marginBottom: "8px", color: "black" }}>Search for Product</p>
-        <input
-          style={{
-          width: "592.5px",
-          padding: "8px 8px 8px 36px", // Add padding on the left for the icon
-          border: "1px solid #ddd",
-          borderRadius: "12px",
-          fontSize: "14px",
-          backgroundImage: `url("/Search.png")`,
-          backgroundPosition: "10px center", // Adjust position as needed
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "20px auto", // Adjust size as needed
-           }}
-          type="text"
-          placeholder="Search"
-          value={searchQuery} 
-          onChange={handleSearch} 
-          />
-	</div>
-
-    <div style={{ display: "flex", marginLeft: "16px" }}>
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginRight: "36px" }}>
-        <p style={{ marginBottom: "0", textAlign: "center" }}>Categories</p>
-        <ButtonAll>
-          <FontAwesomeIcon icon={faFilter} />
-          All
-        </ButtonAll>
-      </div>
-    </div>
-  </div>
-</SearchBarContainer>
 					<ProductsList>
 						{productDisplay.map((product) => (
-							<Product key={product.product_id}>
-								<Image src="/sabon.png" width={200} height={200} alt="Product image" />
-								<ProductTitle>{product.product_name}</ProductTitle>
-								<PriceTitle>P{product.product_price / 100}</PriceTitle>
-								<StockTitleContainer>
-									<StockTitle>Stock: {product.quantity_in_stock}</StockTitle>
-								</StockTitleContainer>
-								<Button onClick={() => updateCart(product, "add")} width={"100%"}>
-									Add
-								</Button>
-							</Product>
+							<ProductComponent product={product} onClick={() => updateCart(product, "add")} key={product.product_id} />
 						))}
 					</ProductsList>
 				</StyledPanel>

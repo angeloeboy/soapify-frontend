@@ -9,38 +9,39 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TableControlPanel from "@/styled-components/TableControlPanel";
 import { Button, ButtonAddInventory, ButtonAddAccountType, ButtonAddStatus } from "@/styled-components/ItemActionModal";
 import AddInventoryComponent from "@/components/inventory/addInventory"; // Import your popup content component
- 
+import { getInventory } from "@/api/inventory";
+
 const InventoryPage = () => {
-	const [products, setProducts] = useState([
-		{
-			name: "Yellow Soap Ind..",
-			sku: " RC1D2D3",
-			quantity: "23",
-			quantityRemaining: "3",
-			dateReceived: "8/8/2023",
-		},
-		{
-			name: "Yellow Soap Ind..",
-			sku: " RC1D2D3",
-			quantity: "344",
-			quantityRemaining: "230",
-			dateReceived: "8/8/2023",
-		},
-		{
-			name: "Yellow Soap Ind..",
-			sku: "RC1D2D3",
-			quantity: "23",
-			quantityRemaining: "3",
-			dateReceived: "8/8/2023",
-		},
-		{
-			name: "Yellow Soap Ind..",
-			sku: "RC1D2D3",
-			quantity: "23",
-			quantityRemaining: "3",
-			dateReceived: "8/8/2023",
-		},
-	]);
+	// const [products, setProducts] = useState([
+	// 	{
+	// 		name: "Yellow Soap Ind..",
+	// 		sku: " RC1D2D3",
+	// 		quantity: "23",
+	// 		quantityRemaining: "3",
+	// 		dateReceived: "8/8/2023",
+	// 	},
+	// 	{
+	// 		name: "Yellow Soap Ind..",
+	// 		sku: " RC1D2D3",
+	// 		quantity: "344",
+	// 		quantityRemaining: "230",
+	// 		dateReceived: "8/8/2023",
+	// 	},
+	// 	{
+	// 		name: "Yellow Soap Ind..",
+	// 		sku: "RC1D2D3",
+	// 		quantity: "23",
+	// 		quantityRemaining: "3",
+	// 		dateReceived: "8/8/2023",
+	// 	},
+	// 	{
+	// 		name: "Yellow Soap Ind..",
+	// 		sku: "RC1D2D3",
+	// 		quantity: "23",
+	// 		quantityRemaining: "3",
+	// 		dateReceived: "8/8/2023",
+	// 	},
+	// ]);
 
 	const [inventory, setInventory] = useState([]);
 
@@ -61,14 +62,14 @@ const InventoryPage = () => {
 		setPopupOpen(false);
 	};
 
-	// useEffect(() => {
-	// 	getInventoryFunc();
+	useEffect(() => {
+		getInventoryFunc();
 
-	// 	document.addEventListener("click", handleClickOutside);
-	// 	return () => {
-	// 		document.removeEventListener("click", handleClickOutside);
-	// 	};
-	// }, []);
+		document.addEventListener("click", handleClickOutside);
+		return () => {
+			document.removeEventListener("click", handleClickOutside);
+		};
+	}, []);
 
 	const [currentPage, setCurrentPage] = useState(1);
 	// const itemsPerPage = 10; // Adjust the number of items per page
@@ -83,12 +84,12 @@ const InventoryPage = () => {
 	// 	setCurrentPage(pageNumber);
 	// };
 
-	// const getInventoryFunc = () => {
-	// 	getInventory().then((res) => {
-	// 		console.log(res);
-	// 		res.inventory ? setInventory(res.inventory) : setInventory([]);
-	// 	});
-	// };
+	const getInventoryFunc = () => {
+		getInventory().then((res) => {
+			console.log(res);
+			res.inventory ? setInventory(res.inventory) : setInventory([]);
+		});
+	};
 
 	const convertToDateFormat = (date) => {
 		let newDate = new Date(date);

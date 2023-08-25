@@ -33,7 +33,6 @@ const StickyContainer = styled.div`
 `;
 
 const Pos = () => {
-	const [searchQuery, setSearchQuery] = useState("");
 	const [products, setProducts] = useState([]);
 	const [cart, setCart] = useState([]);
 	const [productDisplay, setProductDisplay] = useState([]);
@@ -41,7 +40,6 @@ const Pos = () => {
 
 	useEffect(() => {
 		fetchProducts();
-		fetchProductCategories();
 	}, []);
 
 	useEffect(() => {
@@ -51,19 +49,7 @@ const Pos = () => {
 	const fetchProducts = async () => {
 		const response = await getProducts();
 		setProducts(response.products || []);
-	};
-
-	const fetchProductCategories = async () => {
-		const response = await getProductCategories();
-		setProductCategories(response.categories || []);
-		console.log(response.categories);
-	};
-
-	const handleSearch = (e) => {
-		const query = e.target.value;
-		setSearchQuery(query);
-		const filteredProducts = query ? products.filter((product) => product.product_name.toLowerCase().includes(query.toLowerCase())) : products;
-		setProductDisplay(filteredProducts);
+		console.log(response.products);
 	};
 
 	const updateCart = (product, operation) => {
@@ -89,7 +75,7 @@ const Pos = () => {
 
 			<POSWrapper>
 				<StyledPanel pos>
-					<SearchBarComponent searchQuery={searchQuery} handleSearch={handleSearch} productCategories={productCategories} />
+					<SearchBarComponent products={products} setProductDisplay={setProductDisplay} />
 
 					<ProductsList>
 						{productDisplay.map((product) => (

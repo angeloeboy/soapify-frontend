@@ -163,7 +163,7 @@ export const ButtonAddAccountType = styled.button`
 	font-size: 16px;
 	cursor: pointer;
 	width: 130.027px;
-    height: 45.2px;
+    height: auto;
     flex-shrink: 0;
 	font-family: Arial;
 	background-color: #F8F8F8;
@@ -180,7 +180,7 @@ export const ButtonAddStatus = styled.button`
 	font-size: 16px;
 	cursor: pointer;
 	width: 115px;
-    height: 45.2px;
+    height: auto;
     flex-shrink: 0;
 	font-family: Arial;
 	background-color: #F8F8F8;
@@ -188,6 +188,32 @@ export const ButtonAddStatus = styled.button`
 	font-weight: 700;
 	line-height: normal;
 `;
+
+export const ButtonAddProduct = styled.button`
+color: rgba(255, 255, 255, 1);
+border-radius: 12px;
+padding: 10px 20px;
+border: none;
+margin: 5px;
+font-size: 14px; /* Decrease the font size */
+cursor: pointer;
+max-width: 140px;
+height: auto;
+white-space: nowrap;
+flex-shrink: 0;
+font-family: Arial;
+background-color: rgba(26, 105, 240, 1);
+font-style: normal;
+font-weight: 700;
+line-height: normal;
+
+svg {
+    background-color: white  ;
+    margin-right: 6px; /* Add margin to create space between icon and text */
+    width: 16px; /* Set the width of the SVG icon */
+    height: 16px; /* Set the height of the SVG icon */
+  }
+`
 
 
 export const Centered = styled.div`

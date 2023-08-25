@@ -226,6 +226,7 @@ const ButtonAll = styled.button`
    
 
 `
+
 const Pos = () => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [products, setProducts] = useState([]);

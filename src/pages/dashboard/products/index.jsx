@@ -3,7 +3,7 @@ import DashboardLayout from "@/components/misc/dashboardLayout";
 
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPen, faTrash, faEllipsis } from "@fortawesome/free-solid-svg-icons";
+import { faPen, faTrash, faEllipsis, faFilter, faPlus } from "@fortawesome/free-solid-svg-icons";
 import PageTitle from "@/components/misc/pageTitle";
 import TableControlPanel from "@/styled-components/TableControlPanel";
 import StyledPanel from "@/styled-components/StyledPanel";
@@ -14,7 +14,7 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 // import Button from "@/components/misc/button";
 import Table, { ActionContainer, TableData, TableHeadings, TableRows, Status } from "@/styled-components/TableComponent";
-
+import { ButtonAddAccountType, ButtonAddStatus, ButtonAddProduct } from "@/styled-components/ItemActionModal";
 import { Button } from "@/styled-components/ItemActionModal";
 
 import AddProductComponent from "@/components/product/addProduct";
@@ -70,16 +70,39 @@ const Products = () => {
 				<button type="submit">Upload</button>
 			</form>
 
-			<PageTitle title="Products" />
+			<PageTitle title="Products List" />
 
 			<StyledPanel>
 				<TableControlPanel>
-					<div className="searchBar">
-						<p>Search for Product</p>
-						<input type="text" placeholder="Search" />
+				<div className="searchBar" style={{ display: "flex", alignItems: "center" }}>
+  <div>
+    <p style={{ marginBottom: "0", alignSelf: "flex-start" }}>Search for Product</p>
+    <input type="text" placeholder="Search" />
+  </div>
+  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginLeft: "16px" }}>
+    <p style={{ marginBottom: "0", textAlign: "center", alignSelf: "center" }}>Account Type</p>
+    <ButtonAddAccountType>
+      <FontAwesomeIcon icon={faFilter} />
+      All
+    </ButtonAddAccountType>
+  </div>
+  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginLeft: "11px" }}>
+    <p style={{ marginBottom: "0", textAlign: "center", alignSelf: "center" }}>Status</p>
+    <ButtonAddStatus>
+      <FontAwesomeIcon icon={faFilter} />
+      All
+    </ButtonAddStatus>
+  </div>
+  <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+    <p style={{ marginBottom: "0", textAlign: "center" }}>Add Product</p>
+    <ButtonAddProduct onClick={handleOpenPopup}>
+      <FontAwesomeIcon icon={faPlus} /> Add Product
+    </ButtonAddProduct>
+  </div>
+</div>
 
-						<Button onClick={handleOpenPopup}>Add Products</Button>
-					</div>
+
+
 				</TableControlPanel>
 				<Table>
 					<tbody>
@@ -124,7 +147,7 @@ const Products = () => {
 							products.map((product, index) => (
 								<TableRows key={product.product_id}>
 									<TableData bold withImage>
-										<Image src="/product_img.png" alt="My Image" width="40" height="40" /> {product.product_name}
+										<Image src="/sabon.png" alt="My Image" width="40" height="40" /> {product.product_name}
 									</TableData>
 									<TableData>{product.product_id}</TableData>
 									<TableData>{product.quantity_in_stock}</TableData>

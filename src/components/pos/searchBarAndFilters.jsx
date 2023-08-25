@@ -24,19 +24,10 @@ const SearchBarComponent = ({ products, setProductDisplay }) => {
 		console.log(response.categories);
 	};
 	const handleSearchChange = (e) => {
-		// const query = e.target.value;
-		// setSearchQuery(query);
-		// if (query == "") return setProductDisplay(products);
-		// const filteredProducts = query ? products.filter((product) => product.product_name.toLowerCase().includes(query.toLowerCase())) : productDisplay;
-		// setProductDisplay(filteredProducts);
 		setSearchQuery(e.target.value);
 	};
 
 	const handleCategoryChange = (category) => {
-		// const query = category;
-		// if (query == "All") return setProductDisplay(products);
-		// const filteredProducts = query ? products.filter((product) => product.category.name.toLowerCase().includes(query.toLowerCase())) : products;
-		// setProductDisplay(filteredProducts);
 		setSelectedCategory(category);
 	};
 
@@ -46,7 +37,6 @@ const SearchBarComponent = ({ products, setProductDisplay }) => {
 		console.log(query, category);
 		if (query == "" && category == "All") return setProductDisplay(products);
 
-		//get products with same name and category
 		let filteredProducts;
 
 		if (category == "All") {
@@ -59,10 +49,6 @@ const SearchBarComponent = ({ products, setProductDisplay }) => {
 				  )
 				: products;
 		}
-
-		// setSearchQuery(query);
-		// if (query == "") return setProductDisplay(products);
-		// const filteredProducts = query ? products.filter((product) => product.product_name.toLowerCase().includes(query.toLowerCase())) : productDisplay;
 		setProductDisplay(filteredProducts);
 	};
 
@@ -85,8 +71,8 @@ const Dropdown = ({ productCategories, handleCategoryChange }) => {
 	const [selectedItem, setSelectedItem] = useState("All");
 
 	return (
-		<DropdownWrapper>
-			<DropdownHeader onClick={() => setIsOpen(!isOpen)}>
+		<DropdownWrapper onClick={() => setIsOpen(!isOpen)}>
+			<DropdownHeader>
 				<FontAwesomeIcon icon={faFilter} />
 				{selectedItem}
 			</DropdownHeader>

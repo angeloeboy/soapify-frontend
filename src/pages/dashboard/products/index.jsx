@@ -96,7 +96,7 @@ const Products = () => {
   <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
     <p style={{ marginBottom: "0", textAlign: "center" }}>Add Product</p>
     <ButtonAddProduct onClick={handleOpenPopup}>
-      <FontAwesomeIcon icon={faPlus} /> Add Product
+      + Add Product
     </ButtonAddProduct>
   </div>
 </div>

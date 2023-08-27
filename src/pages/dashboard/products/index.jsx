@@ -167,7 +167,6 @@ const Products = () => {
 										{activeActionContainer === index && (
 											<ActionContainer onClick={() => setActiveActionContainer(-1)}>
 												<p>
-													{" "}
 													<FontAwesomeIcon icon={faPen} />
 													Edit
 												</p>

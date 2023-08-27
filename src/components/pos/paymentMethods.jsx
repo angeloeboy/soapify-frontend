@@ -1,8 +1,9 @@
 import { getPaymentMethods } from "@/api/pos";
 import { ComponentTitle } from "@/styled-components/pos";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import Button from "../misc/button";
+import { TransactionContext } from "@/context/pos.context";
 
 const PaymentMethod = styled.div`
 	margin-bottom: 16px;
@@ -54,6 +55,8 @@ const PaymentMethods = (props) => {
 	const [paymentMethods, setPaymentMethods] = useState([]);
 	const [paymentMethod, setPaymentMethod] = useState(1);
 	const [transactionNo, setTransactionNo] = useState("");
+	// const { paymentMethod, setPaymentMethod } = useContext(TransactionContext);
+
 	useEffect(() => {
 		getPaymentMethodsFunc();
 	}, []);
@@ -68,11 +71,17 @@ const PaymentMethods = (props) => {
 
 	return (
 		<>
-			<ComponentTitle>Payment Methods</ComponentTitle>
+			<ComponentTitle>
+				<span onClick={() => props.setActiveAction("cart")}>{"<"}</span> Payment Methods
+			</ComponentTitle>
 			<PaymentMethodsContainer>
 				{paymentMethods.map((payment) => {
 					return (
-						<PaymentMethod key={payment.id} selected={paymentMethod == payment.id} onClick={() => setPaymentMethod(payment.id)}>
+						<PaymentMethod
+							key={payment.payment_method_id}
+							selected={paymentMethod == payment.payment_method_id}
+							onClick={() => setPaymentMethod(payment.payment_method_id)}
+						>
 							<p className="paymentName">{payment.name}</p>
 							<p className="paymentNo">{payment.account_no}</p>
 						</PaymentMethod>

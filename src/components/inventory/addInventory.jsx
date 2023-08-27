@@ -24,7 +24,7 @@ import { addInventory } from "@/api/inventory";
 
 const AddInventoryComponent = ({ onClose, onButtonClick, getInventoryFunc }) => {
 	const [inventory, setInventory] = useState({
-		product_id: 1,
+		product_id: 16,
 		quantity: 1,
 		date_added: "2023-08-12T08:00:00Z",
 		date_updated: "2023-08-12T08:00:00Z",
@@ -32,24 +32,27 @@ const AddInventoryComponent = ({ onClose, onButtonClick, getInventoryFunc }) => 
 
 	const [products, setProducts] = useState([]);
 
-	const getProductsFunc = () => {
+	const fetchProducts = () => {
 		getProducts().then((res) => {
 			console.log(res);
 			res ? setProducts(res.products) : setProducts([]);
+			setInventory({ ...inventory, product_id: res.products[0].product_id });
 		});
 	};
 
-	const addInventoryFunc = (e) => {
+	const addInventoryFunc = async (e) => {
 		e.preventDefault();
-		addInventory(inventory).then((res) => {
+		await addInventory(inventory).then((res) => {
 			console.log(res);
-			res ? setInventory(res.inventory) : setInventory([]);
 		});
+
+		await getInventoryFunc();
 	};
 
 	useEffect(() => {
-		getProductsFunc();
+		fetchProducts();
 	}, []);
+
 	return (
 		<PopupOverlay>
 			<PopupContent>
@@ -61,11 +64,11 @@ const AddInventoryComponent = ({ onClose, onButtonClick, getInventoryFunc }) => 
 						</LabelContainer>
 						<div>
 							<FieldTitleLabel notFirst>Product</FieldTitleLabel>
-							<Select onChange={(e) => setInventory({ ...inventory, product_id: e.target.value })} value={inventory.product_id}>
+							<Select value={inventory.product_id} onChange={(e) => setInventory({ ...inventory, product_id: e.target.value })}>
 								{products.map((product) => {
 									return (
 										<Option value={product.product_id} key={product.product_id}>
-											{product.product_name}
+											{product.product_name} {product.product_id}
 										</Option>
 									);
 								})}
@@ -78,7 +81,7 @@ const AddInventoryComponent = ({ onClose, onButtonClick, getInventoryFunc }) => 
 						<div>
 							<FieldTitleLabel notFirst>Quantity</FieldTitleLabel>
 							<InputHolder
-								type="text"
+								type="number"
 								placeholder="Enter your minimum stock"
 								onChange={(e) => setInventory({ ...inventory, quantity: e.target.value })}
 								value={inventory.quantity}

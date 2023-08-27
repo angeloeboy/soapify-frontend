@@ -134,6 +134,7 @@ const Product = styled.div`
 
 const ItemsContainer = styled.div`
 	margin-top: 48px;
+	min-height: 200px;
 `;
 
 const Total = styled.div`
@@ -157,6 +158,7 @@ const Cart = ({ cart, minusToCart, addToCart, setActiveAction }) => {
 		<>
 			<ComponentTitle>Order Details</ComponentTitle>
 			<ItemsContainer>
+				{cart.length === 0 && <p>No items in cart</p>}
 				{cart.map((item) => (
 					<Product key={item.product_id} active={item.quantity > 1}>
 						<Image src="/sabon.png" width={60} height={60} alt="Product image" />

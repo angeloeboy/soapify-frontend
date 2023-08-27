@@ -83,6 +83,7 @@ const ProductComponent = ({ product, onClick }) => (
 		<Image src="/sabon.png" width={200} height={200} alt="Product image" />
 		<ProductTitle>{product.product_name}</ProductTitle>
 		<PriceTitle>P{product.product_price / 100}</PriceTitle>
+		<p>{product.category.name}</p>
 		<StockTitleContainer>
 			<StockTitle>Stock: {product.quantity_in_stock}</StockTitle>
 		</StockTitleContainer>

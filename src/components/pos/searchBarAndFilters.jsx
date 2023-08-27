@@ -21,7 +21,6 @@ const SearchBarComponent = ({ products, setProductDisplay }) => {
 	const fetchProductCategories = async () => {
 		const response = await getProductCategories();
 		setProductCategories(response.categories || []);
-		console.log(response.categories);
 	};
 	const handleSearchChange = (e) => {
 		setSearchQuery(e.target.value);
@@ -34,21 +33,18 @@ const SearchBarComponent = ({ products, setProductDisplay }) => {
 	const handleSearch = () => {
 		const query = searchQuery;
 		const category = selectedCategory;
-		console.log(query, category);
-		if (query == "" && category == "All") return setProductDisplay(products);
+		console.log(category);
 
 		let filteredProducts;
 
 		if (category == "All") {
 			filteredProducts = query ? products.filter((product) => product.product_name.toLowerCase().includes(query.toLowerCase())) : products;
 		} else {
-			filteredProducts = query
-				? products.filter(
-						(product) =>
-							product.product_name.toLowerCase().includes(query.toLowerCase()) && product.category.name.toLowerCase().includes(category.toLowerCase())
-				  )
-				: products;
+			filteredProducts = products.filter(
+				(product) => product.product_name.toLowerCase().includes(query.toLowerCase()) && product.category.name.toLowerCase().includes(category.toLowerCase())
+			);
 		}
+
 		setProductDisplay(filteredProducts);
 	};
 

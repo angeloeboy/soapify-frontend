@@ -1,17 +1,16 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import StyledPanel from "@/styled-components/StyledPanel";
 import { styled } from "styled-components";
 import DashboardLayout from "@/components/misc/dashboardLayout";
-import Image from "next/image";
 import POSactions from "@/components/pos/posActions";
-import { getProductCategories, getProducts } from "@/api/products";
+import { getProducts } from "@/api/products";
 import PageTitle from "@/components/misc/pageTitle";
 import Sticky from "react-stickynode";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFilter, faMagnifyingGlass, faSearch } from "@fortawesome/free-solid-svg-icons";
-import { ButtonAddAccountType } from "@/styled-components/ItemActionModal";
-import SearchBarComponent from "./../../../components/pos/searchBarAndFilters";
-import ProductComponent from "./../../../components/pos/product";
+
+import SearchBarComponent from "@/components/pos/searchBarAndFilters";
+import ProductComponent from "@/components/pos/product";
+import { TransactionProvider } from "@/context/pos.contextProvider";
+import { TransactionContext } from "@/context/pos.context";
 
 const ProductsList = styled.div`
 	display: flex;
@@ -37,6 +36,9 @@ const Pos = () => {
 	const [cart, setCart] = useState([]);
 	const [productDisplay, setProductDisplay] = useState([]);
 	const [productCategories, setProductCategories] = useState([]);
+
+	// const { cart, setCart } = useContext(TransactionContext);
+	// const { paymentMethod, setPaymentMethod } = useContext(TransactionContext);
 
 	useEffect(() => {
 		fetchProducts();
@@ -70,27 +72,29 @@ const Pos = () => {
 	};
 
 	return (
-		<DashboardLayout>
-			<PageTitle title="POS" />
+		<TransactionProvider>
+			<DashboardLayout>
+				<PageTitle title="POS" />
 
-			<POSWrapper>
-				<StyledPanel pos>
-					<SearchBarComponent products={products} setProductDisplay={setProductDisplay} />
+				<POSWrapper>
+					<StyledPanel pos>
+						<SearchBarComponent products={products} setProductDisplay={setProductDisplay} />
 
-					<ProductsList>
-						{productDisplay.map((product) => (
-							<ProductComponent product={product} onClick={() => updateCart(product, "add")} key={product.product_id} />
-						))}
-					</ProductsList>
-				</StyledPanel>
+						<ProductsList>
+							{productDisplay.map((product) => (
+								<ProductComponent product={product} onClick={() => updateCart(product, "add")} key={product.product_id} />
+							))}
+						</ProductsList>
+					</StyledPanel>
 
-				<StickyContainer>
-					<Sticky enabled={true} top={20}>
-						<POSactions cart={cart} minusToCart={(product) => updateCart(product, "subtract")} addToCart={(product) => updateCart(product, "add")} />
-					</Sticky>
-				</StickyContainer>
-			</POSWrapper>
-		</DashboardLayout>
+					<StickyContainer>
+						<Sticky enabled={true} top={20}>
+							<POSactions cart={cart} minusToCart={(product) => updateCart(product, "subtract")} addToCart={(product) => updateCart(product, "add")} />
+						</Sticky>
+					</StickyContainer>
+				</POSWrapper>
+			</DashboardLayout>
+		</TransactionProvider>
 	);
 };
 

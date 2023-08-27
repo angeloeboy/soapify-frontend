@@ -12,36 +12,7 @@ import AddInventoryComponent from "@/components/inventory/addInventory"; // Impo
 import { getInventory } from "@/api/inventory";
 
 const InventoryPage = () => {
-	// const [products, setProducts] = useState([
-	// 	{
-	// 		name: "Yellow Soap Ind..",
-	// 		sku: " RC1D2D3",
-	// 		quantity: "23",
-	// 		quantityRemaining: "3",
-	// 		dateReceived: "8/8/2023",
-	// 	},
-	// 	{
-	// 		name: "Yellow Soap Ind..",
-	// 		sku: " RC1D2D3",
-	// 		quantity: "344",
-	// 		quantityRemaining: "230",
-	// 		dateReceived: "8/8/2023",
-	// 	},
-	// 	{
-	// 		name: "Yellow Soap Ind..",
-	// 		sku: "RC1D2D3",
-	// 		quantity: "23",
-	// 		quantityRemaining: "3",
-	// 		dateReceived: "8/8/2023",
-	// 	},
-	// 	{
-	// 		name: "Yellow Soap Ind..",
-	// 		sku: "RC1D2D3",
-	// 		quantity: "23",
-	// 		quantityRemaining: "3",
-	// 		dateReceived: "8/8/2023",
-	// 	},
-	// ]);
+
 
 	const [inventory, setInventory] = useState([]);
 
@@ -71,18 +42,7 @@ const InventoryPage = () => {
 		};
 	}, []);
 
-	const [currentPage, setCurrentPage] = useState(1);
-	// const itemsPerPage = 10; // Adjust the number of items per page
 
-	// // Calculate the index range for the current page
-	// const indexOfLastItem = currentPage * itemsPerPage;
-	// const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-	// const currentItems = products.slice(indexOfFirstItem, indexOfLastItem);
-
-	// // Handle page change
-	// const handlePageChange = (pageNumber) => {
-	// 	setCurrentPage(pageNumber);
-	// };
 
 	const getInventoryFunc = () => {
 		getInventory().then((res) => {
@@ -181,79 +141,6 @@ const InventoryPage = () => {
 						))}
 					</tbody>
 				</Table>
-
-				{/* <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", marginTop: "1rem" }}>
-					<Button
-						style={{
-							width: "80px",
-							height: "18px",
-							display: "flex",
-							justifyContent: "center",
-							alignItems: "center",
-							color: "black",
-							backgroundColor: "white", // Default background color
-							marginRight: "10px",
-							cursor: "pointer",
-						}}
-						onMouseEnter={(e) => (e.target.style.backgroundColor = "rgba(26, 105, 240, 1)")}
-						onMouseLeave={(e) => (e.target.style.backgroundColor = "white")}
-					>
-						Previous
-					</Button>
-
-					<Button
-						style={{
-							width: "30px",
-							height: "30px",
-							display: "flex",
-							justifyContent: "center",
-							alignItems: "center",
-							color: "black",
-							backgroundColor: "white", // Default background color
-							marginRight: "5px",
-							cursor: "pointer",
-						}}
-						onMouseEnter={(e) => (e.target.style.backgroundColor = "rgba(26, 105, 240, 1)")}
-						onMouseLeave={(e) => (e.target.style.backgroundColor = "white")}
-					>
-						1
-					</Button>
-					<Button
-						style={{
-							width: "30px",
-							height: "30px",
-							display: "flex",
-							justifyContent: "center",
-							alignItems: "center",
-							color: "black",
-							backgroundColor: "white", // Default background color
-							marginRight: "5px",
-							cursor: "pointer",
-						}}
-						onMouseEnter={(e) => (e.target.style.backgroundColor = "rgba(26, 105, 240, 1)")}
-						onMouseLeave={(e) => (e.target.style.backgroundColor = "white")}
-					>
-						2
-					</Button>
-			
-					<Button
-						style={{
-							width: "50px",
-							height: "30px",
-							display: "flex",
-							justifyContent: "center",
-							alignItems: "center",
-							color: "black",
-							backgroundColor: "white", // Default background color
-							marginRight: "5px",
-							cursor: "pointer",
-						}}
-						onMouseEnter={(e) => (e.target.style.backgroundColor = "rgba(26, 105, 240, 1)")}
-						onMouseLeave={(e) => (e.target.style.backgroundColor = "white")}
-					>
-						Next
-					</Button>
-				</div> */}
 			</StyledPanel>
 			{isPopupOpen && <AddInventoryComponent onClose={handleClosePopup} getInventoryFunc={getInventoryFunc} />}
 		</DashboardLayout>

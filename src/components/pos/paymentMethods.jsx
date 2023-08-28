@@ -65,6 +65,7 @@ const PaymentMethods = (props) => {
 		getPaymentMethods().then((res) => {
 			console.log(res.paymentMethods);
 			res ? setPaymentMethods(res.paymentMethods) : setPaymentMethods([]);
+			setTransaction((prev) => ({ ...prev, payment_method_id: res.paymentMethods[0].payment_method_id }));
 		});
 	};
 

@@ -3,7 +3,7 @@ import { ComponentTitle } from "@/styled-components/pos";
 import { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import Button from "../misc/button";
-import { TransactionContext } from "@/context/pos.context";
+import { TransactionContext } from "@/pages/dashboard/pos";
 
 const PaymentMethod = styled.div`
 	margin-bottom: 16px;
@@ -55,7 +55,7 @@ const PaymentMethods = (props) => {
 	const [paymentMethods, setPaymentMethods] = useState([]);
 	const [paymentMethod, setPaymentMethod] = useState(1);
 	const [transactionNo, setTransactionNo] = useState("");
-	// const { paymentMethod, setPaymentMethod } = useContext(TransactionContext);
+	const { setTransaction, transaction } = useContext(TransactionContext);
 
 	useEffect(() => {
 		getPaymentMethodsFunc();
@@ -65,9 +65,12 @@ const PaymentMethods = (props) => {
 		getPaymentMethods().then((res) => {
 			console.log(res.paymentMethods);
 			res ? setPaymentMethods(res.paymentMethods) : setPaymentMethods([]);
-			// setPaymentMethodsLoading(false);
 		});
 	};
+
+	useEffect(() => {
+		setTransaction((prev) => ({ ...prev, transaction_number: transactionNo }));
+	}, [transactionNo]);
 
 	return (
 		<>
@@ -80,7 +83,10 @@ const PaymentMethods = (props) => {
 						<PaymentMethod
 							key={payment.payment_method_id}
 							selected={paymentMethod == payment.payment_method_id}
-							onClick={() => setPaymentMethod(payment.payment_method_id)}
+							onClick={() => {
+								setPaymentMethod(payment.payment_method_id);
+								setTransaction((prev) => ({ ...prev, payment_method_id: payment.payment_method_id }));
+							}}
 						>
 							<p className="paymentName">{payment.name}</p>
 							<p className="paymentNo">{payment.account_no}</p>
@@ -92,7 +98,13 @@ const PaymentMethods = (props) => {
 				<ComponentTitle>Transaction Number</ComponentTitle>
 				<input type="text" value={transactionNo} onChange={(e) => setTransactionNo(e.target.value)} />
 			</TransactionNo>
-			<Button width={"100%"} onClick={() => props.setActiveAction("receipt")}>
+			<Button
+				width={"100%"}
+				onClick={() => {
+					console.log(transaction);
+					// props.setActiveAction("receipt");
+				}}
+			>
 				Finish
 			</Button>
 		</>

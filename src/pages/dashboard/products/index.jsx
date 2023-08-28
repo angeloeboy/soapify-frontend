@@ -65,7 +65,7 @@ const Products = () => {
 			<PageTitle title="Products List" />
 
 			<StyledPanel>
-				<SearchBarComponentProduct />
+				<SearchBarComponentProduct setPopupOpen={setPopupOpen} />
 				<Table>
 					<tbody>
 						<TableRows heading>
@@ -144,7 +144,7 @@ const Products = () => {
 					</tbody>
 				</Table>
 			</StyledPanel>
-			{isPopupOpen && <AddProductComponent onClose={handleClosePopup} onButtonClick={onButtonClick} GetProducts={GetProducts} />}
+			{isPopupOpen && <AddProductComponent onClose={handleClosePopup} onButtonClick={onButtonClick} GetProducts={fetchProducts} />}
 		</DashboardLayout>
 	);
 };

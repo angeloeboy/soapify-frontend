@@ -4,7 +4,8 @@ import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "../misc/button";
 import Image from "next/image";
-import { useMemo } from "react";
+import { useContext, useMemo } from "react";
+import { TransactionContext } from "@/pages/dashboard/pos";
 
 const CartTable = styled.table`
 	width: 100%;
@@ -149,7 +150,9 @@ const Total = styled.div`
 	}
 `;
 
-const Cart = ({ cart, minusToCart, addToCart, setActiveAction }) => {
+const Cart = ({ minusToCart, addToCart, setActiveAction }) => {
+	const { cart } = useContext(TransactionContext);
+
 	const total = useMemo(() => {
 		return cart.reduce((acc, item) => acc + item.quantity * (item.product_price / 100), 0).toFixed(2);
 	}, [cart]);

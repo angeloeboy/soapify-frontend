@@ -18,6 +18,7 @@ import { ButtonAddAccountType, ButtonAddStatus, ButtonAddProduct } from "@/style
 import { Button } from "@/styled-components/ItemActionModal";
 
 import AddProductComponent from "@/components/product/addProduct";
+import SearchBarComponentProduct from "@/components/product/searchBarAndFilters";
 
 const Products = () => {
 	const [products, setProducts] = useState([]);
@@ -28,10 +29,10 @@ const Products = () => {
 	const router = useRouter();
 
 	useEffect(() => {
-		GetProducts();
+		fetchProducts();
 	}, []);
 
-	const GetProducts = () => {
+	const fetchProducts = () => {
 		getProducts().then((res) => {
 			console.log(res);
 			res.products ? setProducts(res.products) : setProducts([]);
@@ -51,10 +52,6 @@ const Products = () => {
 		};
 	}, []);
 
-	const handleOpenPopup = () => {
-		setPopupOpen(true);
-	};
-
 	const handleClosePopup = () => {
 		setPopupOpen(false);
 	};
@@ -65,45 +62,10 @@ const Products = () => {
 
 	return (
 		<DashboardLayout>
-			<form onSubmit={(e) => AddProduct(e)} enctype="multipart/form-data">
-				<input type="file" name="product_image" required />
-				<button type="submit">Upload</button>
-			</form>
-
 			<PageTitle title="Products List" />
 
 			<StyledPanel>
-				<TableControlPanel>
-				<div className="searchBar" style={{ display: "flex", alignItems: "center" }}>
-  <div>
-    <p style={{ marginBottom: "0", alignSelf: "flex-start" }}>Search for Product</p>
-    <input type="text" placeholder="Search" />
-  </div>
-  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginLeft: "16px" }}>
-    <p style={{ marginBottom: "0", textAlign: "center", alignSelf: "center" }}>Account Type</p>
-    <ButtonAddAccountType>
-      <FontAwesomeIcon icon={faFilter} />
-      All
-    </ButtonAddAccountType>
-  </div>
-  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginLeft: "11px" }}>
-    <p style={{ marginBottom: "0", textAlign: "center", alignSelf: "center" }}>Status</p>
-    <ButtonAddStatus>
-      <FontAwesomeIcon icon={faFilter} />
-      All
-    </ButtonAddStatus>
-  </div>
-  <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-    <p style={{ marginBottom: "0", textAlign: "center" }}>Add Product</p>
-    <ButtonAddProduct onClick={handleOpenPopup}>
-      + Add Product
-    </ButtonAddProduct>
-  </div>
-</div>
-
-
-
-				</TableControlPanel>
+				<SearchBarComponentProduct />
 				<Table>
 					<tbody>
 						<TableRows heading>

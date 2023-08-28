@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import StyledPanel from "@/styled-components/StyledPanel";
 import { styled } from "styled-components";
 import DashboardLayout from "@/components/misc/dashboardLayout";
@@ -9,8 +9,7 @@ import Sticky from "react-stickynode";
 
 import SearchBarComponent from "@/components/pos/searchBarAndFilters";
 import ProductComponent from "@/components/pos/product";
-import { TransactionProvider } from "@/context/pos.contextProvider";
-import { TransactionContext } from "@/context/pos.context";
+import { addTransaction, getTransactions } from "@/api/transaction";
 
 const ProductsList = styled.div`
 	display: flex;
@@ -30,39 +29,38 @@ const StickyContainer = styled.div`
 	max-width: 500px;
 	margin-top: 48px;
 `;
-const ButtonAll = styled.button`
-    color: black;
-	border-radius: 12px;
-	padding: 10px 20px;
-	border: none;
-	margin: 5px;
-	font-size: 16px;
-	cursor: pointer;
-     height:  40.2px;
-    flex-shrink: 0;
-	font-family: Arial;
-	background-color: #F8F8F8;
-	font-style: normal;
-	font-weight: 700;
-	line-height: normal;
-	width: 108.85px;
-   
 
-`
-
+export const TransactionContext = createContext(null);
 
 const Pos = () => {
 	const [products, setProducts] = useState([]);
 	const [cart, setCart] = useState([]);
 	const [productDisplay, setProductDisplay] = useState([]);
-	const [productCategories, setProductCategories] = useState([]);
 
-	// const { cart, setCart } = useContext(TransactionContext);
-	// const { paymentMethod, setPaymentMethod } = useContext(TransactionContext);
+	const [transaction, setTransaction] = useState({
+		payment_method_id: undefined,
+		transaction_number: "",
+		total_amount: 0,
+		items: [],
+	});
 
 	useEffect(() => {
 		fetchProducts();
 	}, []);
+
+	useEffect(() => {
+		console.log(transaction);
+		// setTransaction((prev) => ({ ...prev, total_amount: cart.reduce((acc, item) => acc + item.price * item.quantity, 0) }));
+	}, [transaction]);
+
+	useEffect(() => {
+		setTransaction((prev) => ({ ...prev, total_amount: cart.reduce((acc, item) => acc + item.product_price * item.quantity, 0), items: cart }));
+	}, [cart]);
+
+	const initiateTransaction = async () => {
+		const response = await addTransaction(transaction);
+		console.log(response);
+	};
 
 	useEffect(() => {
 		setProductDisplay(products);
@@ -92,10 +90,10 @@ const Pos = () => {
 	};
 
 	return (
-		<TransactionProvider>
+		<TransactionContext.Provider value={{ setTransaction, transaction, cart }}>
 			<DashboardLayout>
 				<PageTitle title="POS" />
-
+				<button onClick={() => initiateTransaction()}>Add transaction</button>
 				<POSWrapper>
 					<StyledPanel pos>
 						<SearchBarComponent products={products} setProductDisplay={setProductDisplay} />
@@ -109,12 +107,12 @@ const Pos = () => {
 
 					<StickyContainer>
 						<Sticky enabled={true} top={20}>
-							<POSactions cart={cart} minusToCart={(product) => updateCart(product, "subtract")} addToCart={(product) => updateCart(product, "add")} />
+							<POSactions minusToCart={(product) => updateCart(product, "subtract")} addToCart={(product) => updateCart(product, "add")} />
 						</Sticky>
 					</StickyContainer>
 				</POSWrapper>
 			</DashboardLayout>
-		</TransactionProvider>
+		</TransactionContext.Provider>
 	);
 };
 

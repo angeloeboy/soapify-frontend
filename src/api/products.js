@@ -51,7 +51,7 @@ export const addProduct = async (product) => {
 
 //product categories
 
-export const getCategories = async () => {
+export const getProductCategories = async () => {
 	try {
 		const response = await fetch("/api/product/category", {
 			method: "GET",

@@ -19,10 +19,11 @@ import {
 } from "@/styled-components/ItemActionModal";
 
 import { useEffect, useState } from "react";
-import { addProduct, getProducts } from "@/api/products";
+import { addProduct, getProductCategories, getProducts } from "@/api/products";
 
 const AddProductComponent = ({ onClose, onButtonClick, GetProducts }) => {
 	const [fileUploaded, setFileUploaded] = useState(false);
+	const [categories, setCategories] = useState([]);
 	const [product, setProduct] = useState({
 		product_name: "",
 		product_desc: "",
@@ -32,6 +33,10 @@ const AddProductComponent = ({ onClose, onButtonClick, GetProducts }) => {
 		quantity_in_stock: 0,
 		minimum_reorder_level: 1,
 	});
+
+	useEffect(() => {
+		fetchProductCategories();
+	}, []);
 
 	let AddProduct = (e) => {
 		e.preventDefault();
@@ -44,6 +49,8 @@ const AddProductComponent = ({ onClose, onButtonClick, GetProducts }) => {
 			formData.append(key, product[key]);
 		}
 
+		console.log(product);
+
 		addProduct(formData)
 			.then((res) => {
 				console.log(res);
@@ -51,6 +58,12 @@ const AddProductComponent = ({ onClose, onButtonClick, GetProducts }) => {
 			.then(() => {
 				GetProducts();
 			});
+	};
+
+	let fetchProductCategories = async () => {
+		const res = await getProductCategories();
+		console.log(res);
+		setCategories(res.categories);
 	};
 
 	return (
@@ -116,10 +129,17 @@ const AddProductComponent = ({ onClose, onButtonClick, GetProducts }) => {
 						</LabelContainer>
 						<div>
 							<FieldTitleLabel notFirst>Category</FieldTitleLabel>
-							<Select>
-								<Option value="Store Clerk">Store Clerk</Option>
-								<Option value="Store Owner">Store Owner</Option>
-								<Option value="Cashier">Cashier</Option>
+							<Select
+								value={product.category_id}
+								onChange={(e) => {
+									setProduct({ ...product, category_id: e.target.value });
+								}}
+							>
+								{categories.map((category) => (
+									<Option value={category.id} key={category.id}>
+										{category.name}
+									</Option>
+								))}
 							</Select>
 						</div>
 					</FieldContainer>

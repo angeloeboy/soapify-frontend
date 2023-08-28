@@ -3,7 +3,7 @@ import DashboardLayout from "@/components/misc/dashboardLayout";
 
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPen, faTrash, faEllipsis } from "@fortawesome/free-solid-svg-icons";
+import { faPen, faTrash, faEllipsis, faFilter, faPlus } from "@fortawesome/free-solid-svg-icons";
 import PageTitle from "@/components/misc/pageTitle";
 import TableControlPanel from "@/styled-components/TableControlPanel";
 import StyledPanel from "@/styled-components/StyledPanel";
@@ -14,10 +14,11 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 // import Button from "@/components/misc/button";
 import Table, { ActionContainer, TableData, TableHeadings, TableRows, Status } from "@/styled-components/TableComponent";
-
+import { ButtonAddAccountType, ButtonAddStatus, ButtonAddProduct } from "@/styled-components/ItemActionModal";
 import { Button } from "@/styled-components/ItemActionModal";
 
 import AddProductComponent from "@/components/product/addProduct";
+import SearchBarComponentProduct from "@/components/product/searchBarAndFilters";
 
 const Products = () => {
 	const [products, setProducts] = useState([]);
@@ -28,10 +29,10 @@ const Products = () => {
 	const router = useRouter();
 
 	useEffect(() => {
-		GetProducts();
+		fetchProducts();
 	}, []);
 
-	const GetProducts = () => {
+	const fetchProducts = () => {
 		getProducts().then((res) => {
 			console.log(res);
 			res.products ? setProducts(res.products) : setProducts([]);
@@ -51,10 +52,6 @@ const Products = () => {
 		};
 	}, []);
 
-	const handleOpenPopup = () => {
-		setPopupOpen(true);
-	};
-
 	const handleClosePopup = () => {
 		setPopupOpen(false);
 	};
@@ -65,22 +62,10 @@ const Products = () => {
 
 	return (
 		<DashboardLayout>
-			<form onSubmit={(e) => AddProduct(e)} enctype="multipart/form-data">
-				<input type="file" name="product_image" required />
-				<button type="submit">Upload</button>
-			</form>
-
-			<PageTitle title="Products" />
+			<PageTitle title="Products List" />
 
 			<StyledPanel>
-				<TableControlPanel>
-					<div className="searchBar">
-						<p>Search for Product</p>
-						<input type="text" placeholder="Search" />
-
-						<Button onClick={handleOpenPopup}>Add Products</Button>
-					</div>
-				</TableControlPanel>
+				<SearchBarComponentProduct />
 				<Table>
 					<tbody>
 						<TableRows heading>
@@ -124,7 +109,7 @@ const Products = () => {
 							products.map((product, index) => (
 								<TableRows key={product.product_id}>
 									<TableData bold withImage>
-										<Image src="/product_img.png" alt="My Image" width="40" height="40" /> {product.product_name}
+										<Image src="/sabon.png" alt="My Image" width="40" height="40" /> {product.product_name}
 									</TableData>
 									<TableData>{product.product_id}</TableData>
 									<TableData>{product.quantity_in_stock}</TableData>

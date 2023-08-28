@@ -30,6 +30,26 @@ const StickyContainer = styled.div`
 	max-width: 500px;
 	margin-top: 48px;
 `;
+const ButtonAll = styled.button`
+    color: black;
+	border-radius: 12px;
+	padding: 10px 20px;
+	border: none;
+	margin: 5px;
+	font-size: 16px;
+	cursor: pointer;
+     height:  40.2px;
+    flex-shrink: 0;
+	font-family: Arial;
+	background-color: #F8F8F8;
+	font-style: normal;
+	font-weight: 700;
+	line-height: normal;
+	width: 108.85px;
+   
+
+`
+
 
 const Pos = () => {
 	const [products, setProducts] = useState([]);

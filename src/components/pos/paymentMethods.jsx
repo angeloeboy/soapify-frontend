@@ -111,6 +111,7 @@ const PaymentMethods = (props) => {
 				<ComponentTitle>Transaction Number</ComponentTitle>
 				<input type="text" value={transactionNo} onChange={(e) => setTransactionNo(e.target.value)} />
 			</TransactionNo>
+
 			<Button
 				width={"100%"}
 				onClick={() => {
@@ -119,7 +120,7 @@ const PaymentMethods = (props) => {
 					initiateTransaction();
 				}}
 			>
-				{loading ? <Image src="/loading.svg" alt="loading" width="40" height="40" /> : "Finish"}
+				{loading ? <Image src="/loading.svg" alt="loading" width="20" height="20" /> : "Finish"}
 			</Button>
 		</>
 	);

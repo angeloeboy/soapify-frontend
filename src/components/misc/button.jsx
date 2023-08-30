@@ -11,6 +11,11 @@ const Button = styled.button`
 
 	/* you can use props to customize the button */
 	width: ${(props) => props.width || "initial"};
+
+	img {
+		display: block;
+		margin: 0 auto;
+	}
 `;
 
 export default Button;

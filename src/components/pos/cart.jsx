@@ -1,11 +1,12 @@
 import styled from "styled-components";
 import { ComponentTitle } from "./../../styled-components/pos";
-import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faMinus, faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "../misc/button";
 import Image from "next/image";
 import { useContext, useMemo } from "react";
 import { TransactionContext } from "@/pages/dashboard/pos";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 
 const CartTable = styled.table`
 	width: 100%;
@@ -131,11 +132,44 @@ const Product = styled.div`
 	.minus {
 		opacity: ${(props) => (props.active ? "1" : "0.5")};
 	}
+
+	.delete {
+		align-self: center;
+		cursor: pointer;
+		margin-right: 16px;
+		path {
+			color: #bebebe !important;
+		}
+
+		&:hover {
+			path {
+				color: #f88181 !important;
+			}
+		}
+	}
 `;
 
 const ItemsContainer = styled.div`
 	margin-top: 48px;
 	min-height: 200px;
+
+	.item-enter {
+		opacity: 0;
+	}
+
+	.item-enter-active {
+		opacity: 1;
+		transition: opacity 0.4s ease-in-out;
+	}
+
+	.item-exit {
+		opacity: 1;
+	}
+
+	.item-exit-active {
+		opacity: 0;
+		transition: opacity 0.4s ease-in-out;
+	}
 `;
 
 const Total = styled.div`
@@ -150,8 +184,8 @@ const Total = styled.div`
 	}
 `;
 
-const Cart = ({ minusToCart, addToCart, setActiveAction }) => {
-	const { cart } = useContext(TransactionContext);
+const Cart = ({ setActiveAction }) => {
+	const { cart, updateCart } = useContext(TransactionContext);
 
 	const total = useMemo(() => {
 		return cart.reduce((acc, item) => acc + item.quantity * (item.product_price / 100), 0).toFixed(2);
@@ -160,27 +194,33 @@ const Cart = ({ minusToCart, addToCart, setActiveAction }) => {
 	return (
 		<>
 			<ComponentTitle>Order Details</ComponentTitle>
-			<ItemsContainer>
-				{cart.length === 0 && <p>No items in cart</p>}
+			{cart.length === 0 && <p>No items in cart</p>}
+
+			<TransitionGroup component={ItemsContainer}>
 				{cart.map((item) => (
-					<Product key={item.product_id} active={item.quantity > 1}>
-						<Image src="/sabon.png" width={60} height={60} alt="Product image" />
-						<div className="productInformation">
-							<p className="productName">{item.product_name}</p>
-							<p className="productPrice">P{item.product_price / 100}</p>
-						</div>
-						<div className="quantity">
-							<span onClick={() => minusToCart(item)} className="minus">
-								<FontAwesomeIcon icon={faMinus} />
-							</span>
-							<p>{item.quantity}</p>
-							<span onClick={() => addToCart(item)}>
-								<FontAwesomeIcon icon={faPlus} />
-							</span>
-						</div>
-					</Product>
+					<CSSTransition key={item.product_id} timeout={500} classNames="item">
+						<Product key={item.product_id} active={item.quantity > 1}>
+							<FontAwesomeIcon icon={faTrash} onClick={() => updateCart(item, "delete")} className="delete" />
+							<Image src="/sabon.png" width={60} height={60} alt="Product image" />
+							<div className="productInformation">
+								<p className="productName">{item.product_name}</p>
+								<p className="productPrice">P{item.product_price / 100}</p>
+							</div>
+							<div className="quantity">
+								<span onClick={() => updateCart(item, "subtract")} className="minus">
+									<FontAwesomeIcon icon={faMinus} />
+								</span>
+								<p>{item.quantity}</p>
+
+								<span onClick={() => updateCart(item, "add")}>
+									<FontAwesomeIcon icon={faPlus} />
+								</span>
+							</div>
+						</Product>
+					</CSSTransition>
 				))}
-			</ItemsContainer>
+			</TransitionGroup>
+
 			<Total>
 				<p>Total</p>
 				<p>{total}</p>

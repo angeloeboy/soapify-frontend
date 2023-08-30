@@ -108,6 +108,13 @@ const Product = styled.div`
 		p {
 			padding: 0px 16px;
 		}
+
+		input {
+			border: none;
+			background-color: transparent;
+			width: 70px;
+			text-align: center;
+		}
 		span {
 			border-radius: 4px;
 			background: #1a69f0;
@@ -155,11 +162,13 @@ const ItemsContainer = styled.div`
 
 	.item-enter {
 		opacity: 0;
+		transform: translateX(-20px);
 	}
 
 	.item-enter-active {
 		opacity: 1;
-		transition: opacity 0.4s ease-in-out;
+		transition: all 0.4s ease-in-out;
+		transform: translateX(0px);
 	}
 
 	.item-exit {
@@ -168,7 +177,8 @@ const ItemsContainer = styled.div`
 
 	.item-exit-active {
 		opacity: 0;
-		transition: opacity 0.4s ease-in-out;
+		transition: all 0.4s ease-in-out;
+		transform: translateX(-50px);
 	}
 `;
 
@@ -185,7 +195,7 @@ const Total = styled.div`
 `;
 
 const Cart = ({ setActiveAction }) => {
-	const { cart, updateCart } = useContext(TransactionContext);
+	const { cart, setCart, updateCart } = useContext(TransactionContext);
 
 	const total = useMemo(() => {
 		return cart.reduce((acc, item) => acc + item.quantity * (item.product_price / 100), 0).toFixed(2);
@@ -210,8 +220,22 @@ const Cart = ({ setActiveAction }) => {
 								<span onClick={() => updateCart(item, "subtract")} className="minus">
 									<FontAwesomeIcon icon={faMinus} />
 								</span>
-								<p>{item.quantity}</p>
+								{/* <p>{item.quantity}</p> */}
+								<input
+									type="number"
+									value={item.quantity}
+									onChange={(e) => {
+										if (e.target.valueAsNumber >= 0) {
+											updateCart(item, "delete");
+											return;
+										}
 
+										let updatedCart = cart.map((product) =>
+											product.product_id === item.product_id ? { ...product, quantity: e ? e.target.valueAsNumber : 0 } : product
+										);
+										setCart(updatedCart);
+									}}
+								/>
 								<span onClick={() => updateCart(item, "add")}>
 									<FontAwesomeIcon icon={faPlus} />
 								</span>

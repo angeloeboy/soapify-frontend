@@ -43,7 +43,7 @@ const ProductTitle = styled.p`
 	letter-spacing: 0em;
 	text-align: left;
 	width: 180px;
-	height: 23px;
+	/* height: 23px; */
 	top: 943px;
 	left: 127px;
 	color: rgba(0, 0, 0, 1);
@@ -83,7 +83,6 @@ const ProductComponent = ({ product, onClick }) => (
 		<Image src="/sabon.png" width={200} height={200} alt="Product image" />
 		<ProductTitle>{product.product_name}</ProductTitle>
 		<PriceTitle>P{product.product_price / 100}</PriceTitle>
-		<p>{product.category.name}</p>
 		<StockTitleContainer>
 			<StockTitle>Stock: {product.quantity_in_stock}</StockTitle>
 		</StockTitleContainer>

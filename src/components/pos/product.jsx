@@ -11,6 +11,7 @@ const Product = styled.div`
 	margin: 8px;
 	/* width: 31%; */
 	width: 100%;
+	z-index: 1;
 	max-width: 269.31px;
 	cursor: ${({ unclickable }) => (unclickable ? "no-drop" : "pointer")};
 	transition: all 0.3s ease;

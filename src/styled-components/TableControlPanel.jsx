@@ -4,7 +4,8 @@ export const TableControlPanel = styled.div`
 	display: flex;
 	align-items: center;
 	margin-bottom: 44px;
-
+	z-index: 99;
+	position: relative;
 	p {
 		color: #000;
 		font-size: 14.22px;

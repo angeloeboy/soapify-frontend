@@ -4,6 +4,10 @@ import { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import Button from "../misc/button";
 import { TransactionContext } from "@/pages/dashboard/pos";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import Image from "next/image";
+import { addTransaction } from "@/api/transaction";
 
 const PaymentMethod = styled.div`
 	margin-bottom: 16px;
@@ -55,16 +59,25 @@ const PaymentMethods = (props) => {
 	const [paymentMethods, setPaymentMethods] = useState([]);
 	const [paymentMethod, setPaymentMethod] = useState(1);
 	const [transactionNo, setTransactionNo] = useState("");
+	const [loading, setLoading] = useState(false);
 	const { setTransaction, transaction } = useContext(TransactionContext);
 
 	useEffect(() => {
-		getPaymentMethodsFunc();
+		fetchPaymentMethods();
 	}, []);
 
-	const getPaymentMethodsFunc = () => {
+	const initiateTransaction = async () => {
+		setLoading(true);
+		const response = await addTransaction(transaction);
+		console.log(response);
+		setLoading(false);
+	};
+
+	const fetchPaymentMethods = () => {
 		getPaymentMethods().then((res) => {
 			console.log(res.paymentMethods);
 			res ? setPaymentMethods(res.paymentMethods) : setPaymentMethods([]);
+			setTransaction((prev) => ({ ...prev, payment_method_id: res.paymentMethods[0].payment_method_id }));
 		});
 	};
 
@@ -98,14 +111,16 @@ const PaymentMethods = (props) => {
 				<ComponentTitle>Transaction Number</ComponentTitle>
 				<input type="text" value={transactionNo} onChange={(e) => setTransactionNo(e.target.value)} />
 			</TransactionNo>
+
 			<Button
 				width={"100%"}
 				onClick={() => {
 					console.log(transaction);
 					// props.setActiveAction("receipt");
+					initiateTransaction();
 				}}
 			>
-				Finish
+				{loading ? <Image src="/loading.svg" alt="loading" width="20" height="20" /> : "Finish"}
 			</Button>
 		</>
 	);

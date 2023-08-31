@@ -114,6 +114,7 @@ const Product = styled.div`
 			background-color: transparent;
 			width: 70px;
 			text-align: center;
+			outline: none;
 		}
 		span {
 			border-radius: 4px;
@@ -222,20 +223,41 @@ const Cart = ({ setActiveAction }) => {
 								</span>
 								{/* <p>{item.quantity}</p> */}
 								<input
-									type="number"
+									type="text"
 									value={item.quantity}
 									onChange={(e) => {
-										if (e.target.valueAsNumber >= 0) {
-											updateCart(item, "delete");
+										const valueAsString = e.target.value;
+										const valueAsNumber = Number(valueAsString); // convert to number
+
+										if (valueAsString === "") {
+											let updatedCart = cart.map((product) => (product.product_id === item.product_id ? { ...product, quantity: 0 } : product));
+											setCart(updatedCart);
 											return;
 										}
 
-										let updatedCart = cart.map((product) =>
-											product.product_id === item.product_id ? { ...product, quantity: e ? e.target.valueAsNumber : 0 } : product
-										);
-										setCart(updatedCart);
+										if (!isNaN(valueAsNumber) && valueAsNumber >= 0) {
+											let updatedCart = cart.map((product) => (product.product_id === item.product_id ? { ...product, quantity: valueAsNumber } : product));
+											setCart(updatedCart);
+										}
+									}}
+									onKeyDown={(e) => {
+										const valueAsString = e.target.value;
+										const valueAsNumber = Number(valueAsString);
+
+										if (e.key === "ArrowUp") {
+											let updatedCart = cart.map((product) => (product.product_id === item.product_id ? { ...product, quantity: valueAsNumber + 1 } : product));
+											setCart(updatedCart);
+										} else if (e.key === "ArrowDown") {
+											if (valueAsNumber > 0) {
+												let updatedCart = cart.map((product) =>
+													product.product_id === item.product_id ? { ...product, quantity: valueAsNumber - 1 } : product
+												);
+												setCart(updatedCart);
+											}
+										}
 									}}
 								/>
+
 								<span onClick={() => updateCart(item, "add")}>
 									<FontAwesomeIcon icon={faPlus} />
 								</span>

@@ -19,9 +19,11 @@ import { Button } from "@/styled-components/ItemActionModal";
 
 import AddProductComponent from "@/components/product/addProduct";
 import SearchBarComponentProduct from "@/components/product/searchBarAndFilters";
+import SearchBarComponent from "@/components/product/searchBarAndFilters";
 
 const Products = () => {
 	const [products, setProducts] = useState([]);
+	const [productDisplay, setProductDisplay] = useState([]);
 	const [productsLoading, setProductsLoading] = useState(true);
 	const [isPopupOpen, setPopupOpen] = useState(false);
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
@@ -35,6 +37,7 @@ const Products = () => {
 	const fetchProducts = () => {
 		getProducts().then((res) => {
 			console.log(res);
+			res.products ? setProductDisplay(res.products) : setProductDisplay([]);
 			res.products ? setProducts(res.products) : setProducts([]);
 			setProductsLoading(false);
 		});
@@ -65,7 +68,7 @@ const Products = () => {
 			<PageTitle title="Products List" />
 
 			<StyledPanel>
-				<SearchBarComponentProduct setPopupOpen={setPopupOpen} />
+				<SearchBarComponent setPopupOpen={setPopupOpen} setProductDisplay={setProductDisplay} products={products} />
 				<Table>
 					<tbody>
 						<TableRows heading>
@@ -106,7 +109,7 @@ const Products = () => {
 								<Button onClick={() => router.push("/dashboard/products/add")}>Add Product</Button>
 							)
 						) : (
-							products.map((product, index) => (
+							productDisplay.map((product, index) => (
 								<TableRows key={product.product_id}>
 									<TableData bold withImage>
 										<Image src="/sabon.png" alt="My Image" width="40" height="40" /> {product.product_name}

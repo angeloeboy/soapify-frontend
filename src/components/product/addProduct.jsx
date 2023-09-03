@@ -136,7 +136,7 @@ const AddProductComponent = ({ onClose, onButtonClick, GetProducts }) => {
 								}}
 							>
 								{categories.map((category) => (
-									<Option value={category.id} key={category.id}>
+									<Option value={category.category_id} key={category.category_id}>
 										{category.name}
 									</Option>
 								))}

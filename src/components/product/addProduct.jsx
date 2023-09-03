@@ -28,7 +28,7 @@ const AddProductComponent = ({ onClose, onButtonClick, GetProducts }) => {
 		product_name: "",
 		product_desc: "",
 		product_price: 0,
-		category_id: 0,
+		category_id: 1,
 		supplier_id: 0,
 		quantity_in_stock: 0,
 		minimum_reorder_level: 1,

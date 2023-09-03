@@ -112,7 +112,13 @@ const Products = () => {
 							productDisplay.map((product, index) => (
 								<TableRows key={product.product_id}>
 									<TableData bold withImage>
-										<Image src="/sabon.png" alt="My Image" width="40" height="40" /> {product.product_name}
+										<Image
+											src={product.image_link == "testimage" ? "/sabon.png" : "/api/" + product.image_link.replace(/\\/g, "/")}
+											alt="My Image"
+											width="40"
+											height="40"
+										/>
+										{product.product_name}
 									</TableData>
 									<TableData>{product.product_id}</TableData>
 									<TableData>{product.quantity_in_stock}</TableData>

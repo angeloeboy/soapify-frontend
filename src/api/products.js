@@ -48,6 +48,20 @@ export const addProduct = async (product) => {
 		console.log(error);
 	}
 };
+export const editProduct = async (product) => {
+  try {
+    const response = await fetch("/api/product/create", {
+      method: "POST",
+      body: product,
+      credentials: "include",
+    });
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 //product categories
 

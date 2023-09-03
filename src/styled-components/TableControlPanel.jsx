@@ -42,6 +42,7 @@ export const DropdownWrapper = styled.div`
 	margin-top: 8px;
 	border: 1px solid #dddddd;
 	margin-left: 8px;
+	z-index: 77;
 	svg {
 		margin-right: 8px;
 	}
@@ -74,6 +75,23 @@ export const DropdownItem = styled.div`
 	&:hover {
 		background-color: #e0e0e0;
 	}
+`;
+
+export const Button = styled.button`
+	color: white;
+	background-color: #002056;
+	border-radius: 12px;
+	/* padding: 10px 20px; */
+	border: none;
+	font-size: 16px;
+	cursor: pointer;
+	/* you can use props to customize the button */
+	width: ${(props) => props.width || "initial"};
+	margin-top: 8px;
+	margin-left: 8px;
+	padding: 16px;
+	min-width: 200px;
+	max-height: 100px;
 `;
 
 export default TableControlPanel;

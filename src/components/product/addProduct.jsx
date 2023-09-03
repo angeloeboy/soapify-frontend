@@ -28,7 +28,7 @@ const AddProductComponent = ({ onClose, onButtonClick, GetProducts }) => {
 		product_name: "",
 		product_desc: "",
 		product_price: 0,
-		category_id: 0,
+		category_id: 1,
 		supplier_id: 0,
 		quantity_in_stock: 0,
 		minimum_reorder_level: 1,
@@ -136,7 +136,7 @@ const AddProductComponent = ({ onClose, onButtonClick, GetProducts }) => {
 								}}
 							>
 								{categories.map((category) => (
-									<Option value={category.id} key={category.id}>
+									<Option value={category.category_id} key={category.category_id}>
 										{category.name}
 									</Option>
 								))}

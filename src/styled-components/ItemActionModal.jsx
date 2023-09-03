@@ -1,5 +1,36 @@
 import styled from "styled-components";
 
+export const PopupOverlay = styled.div`
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100vh;
+	background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
+	display: flex;
+	align-items: center;
+	z-index: 99;
+`;
+
+export const PopupContent = styled.div`
+	background-color: #fff;
+	border-radius: 8px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	overflow-y: auto;
+	overflow-x: hidden; /* Hide horizontal overflow */
+	max-width: 828.924px;
+	max-height: 90vh; /* Set the maximum height to 90% of the viewport height */
+	display: block;
+	flex-shrink: 0;
+	margin: 0 auto;
+	padding: 0 auto;
+	position: fixed;
+	right: 20px;
+	flex-direction: column;
+	/* position: relative; */
+	width: calc(100% - 40px);
+`;
+
 export const HeaderTitle = styled.h2`
 	padding: 15px;
 	color: #002056;
@@ -131,31 +162,24 @@ export const FileInput = styled.input.attrs({ type: "file" })`
 	width: 100%;
 `;
 export const ButtonAddInventory = styled.button`
-    color: white;
+	color: white;
 	border-radius: 12px;
 	padding: 10px 20px;
 	border: none;
 	margin: 5px;
 	font-size: 16px;
 	cursor: pointer;
-     height: 45.2px;
-    flex-shrink: 0;
+	height: 45.2px;
+	flex-shrink: 0;
 	font-family: Arial;
 	background-color: #1a69f0;
 	font-style: normal;
 	font-weight: 700;
 	line-height: normal;
-   
-	
-	 
 `;
 
-
- 
- 
-
 export const ButtonAddAccountType = styled.button`
-    color: black;
+	color: black;
 	border-radius: 12px;
 	padding: 10px 20px;
 	border: none;
@@ -163,16 +187,16 @@ export const ButtonAddAccountType = styled.button`
 	font-size: 16px;
 	cursor: pointer;
 	width: 130.027px;
-    height: auto;
-    flex-shrink: 0;
+	height: auto;
+	flex-shrink: 0;
 	font-family: Arial;
-	background-color: #F8F8F8;
+	background-color: #f8f8f8;
 	font-style: normal;
 	font-weight: 700;
 	line-height: normal;
 `;
 export const ButtonAddStatus = styled.button`
-    color: black;
+	color: black;
 	border-radius: 12px;
 	padding: 10px 20px;
 	border: none;
@@ -180,41 +204,40 @@ export const ButtonAddStatus = styled.button`
 	font-size: 16px;
 	cursor: pointer;
 	width: 115px;
-    height: auto;
-    flex-shrink: 0;
+	height: auto;
+	flex-shrink: 0;
 	font-family: Arial;
-	background-color: #F8F8F8;
+	background-color: #f8f8f8;
 	font-style: normal;
 	font-weight: 700;
 	line-height: normal;
 `;
 
 export const ButtonAddProduct = styled.button`
-color: rgba(255, 255, 255, 1);
-border-radius: 12px;
-padding: 10px 20px;
-border: none;
-margin: 5px;
-font-size: 14px; /* Decrease the font size */
-cursor: pointer;
-max-width: 140px;
-height: auto;
-white-space: nowrap;
-flex-shrink: 0;
-font-family: Arial;
-background-color: rgba(26, 105, 240, 1);
-font-style: normal;
-font-weight: 700;
-line-height: normal;
+	color: rgba(255, 255, 255, 1);
+	border-radius: 12px;
+	padding: 10px 20px;
+	border: none;
+	margin: 5px;
+	font-size: 14px; /* Decrease the font size */
+	cursor: pointer;
+	max-width: 140px;
+	height: auto;
+	white-space: nowrap;
+	flex-shrink: 0;
+	font-family: Arial;
+	background-color: rgba(26, 105, 240, 1);
+	font-style: normal;
+	font-weight: 700;
+	line-height: normal;
 
-svg {
-    background-color: white  ;
-    margin-right: 6px; /* Add margin to create space between icon and text */
-    width: 16px; /* Set the width of the SVG icon */
-    height: 16px; /* Set the height of the SVG icon */
-  }
-`
-
+	svg {
+		background-color: white;
+		margin-right: 6px; /* Add margin to create space between icon and text */
+		width: 16px; /* Set the width of the SVG icon */
+		height: 16px; /* Set the height of the SVG icon */
+	}
+`;
 
 export const Centered = styled.div`
 	margin-top: 10px;
@@ -271,35 +294,4 @@ export const ButtonsContainer = styled.div`
 	z-index: 9;
 	background-color: white;
 	padding: 24px 24px 24px 0px;
-`;
-
-export const PopupOverlay = styled.div`
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100vh;
-	background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
-	display: flex;
-	align-items: center;
-`;
-
-export const PopupContent = styled.div`
-	background-color: #fff;
-	border-radius: 8px;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-	overflow-y: auto;
-	overflow-x: hidden; /* Hide horizontal overflow */
-	width: 828.924px;
-	max-height: 90vh; /* Set the maximum height to 90% of the viewport height */
-	display: block;
-	flex-shrink: 0;
-	margin: 0 auto;
-	padding: 0 auto;
-	right: 0;
-	/* transform: translateX(40%); */
-	position: fixed;
-	right: 20px;
-	flex-direction: column;
-	/* position: relative; */
 `;

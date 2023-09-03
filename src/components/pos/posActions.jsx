@@ -22,7 +22,7 @@ const POSactions = (props) => {
 
 	return (
 		<POSactionsWrapper>
-			{activeAction == "cart" && <Cart minusToCart={props.minusToCart} addToCart={props.addToCart} setActiveAction={setActiveAction} />}
+			{activeAction == "cart" && <Cart setActiveAction={setActiveAction} />}
 			{activeAction == "payment" && <PaymentMethods setActiveAction={setActiveAction} />}
 			{activeAction == "receipt" && <Receipt />}
 		</POSactionsWrapper>

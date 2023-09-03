@@ -9,7 +9,9 @@ const Product = styled.div`
 	border-radius: 18px;
 	padding: 25px;
 	margin: 8px;
-	width: 31%;
+	/* width: 31%; */
+	width: 100%;
+	z-index: 1;
 	max-width: 269.31px;
 	cursor: ${({ unclickable }) => (unclickable ? "no-drop" : "pointer")};
 	transition: all 0.3s ease;
@@ -20,13 +22,10 @@ const Product = styled.div`
 	}
 	img {
 		margin: 0 auto;
-		/* width: 100%; */
 		background-color: rgba(248, 248, 248, 1);
-		width: 247.36px;
-		height: 180.34px;
-		top: 347px;
-		left: 692.53px;
+		max-height: 200px;
 		border-radius: 8px;
+		width: auto;
 	}
 
 	button {
@@ -43,7 +42,7 @@ const ProductTitle = styled.p`
 	letter-spacing: 0em;
 	text-align: left;
 	width: 180px;
-	height: 23px;
+	/* height: 23px; */
 	top: 943px;
 	left: 127px;
 	color: rgba(0, 0, 0, 1);
@@ -80,10 +79,9 @@ const PriceTitle = styled.p`
 
 const ProductComponent = ({ product, onClick }) => (
 	<Product key={product.product_id} onClick={() => (product.quantity_in_stock <= 0 ? null : onClick())} unclickable={product.quantity_in_stock <= 0}>
-		<Image src="/sabon.png" width={200} height={200} alt="Product image" />
+		<Image src="/sabon.png" width={200} height={400} alt="Product image" />
 		<ProductTitle>{product.product_name}</ProductTitle>
 		<PriceTitle>P{product.product_price / 100}</PriceTitle>
-		<p>{product.category.name}</p>
 		<StockTitleContainer>
 			<StockTitle>Stock: {product.quantity_in_stock}</StockTitle>
 		</StockTitleContainer>

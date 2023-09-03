@@ -82,15 +82,17 @@ const Pos = () => {
 				: [...cart, { ...product, quantity: 1 }];
 		} else if (operation === "subtract" && existingProduct) {
 			updatedCart =
-				existingProduct.quantity === 1
+				existingProduct.quantity === 1 || existingProduct.quantity < 0
 					? cart.filter((item) => item.product_id !== product.product_id)
 					: cart.map((item) => (item.product_id === product.product_id ? { ...item, quantity: item.quantity - 1 } : item));
+		} else if (operation === "delete" && existingProduct) {
+			updatedCart = cart.filter((item) => item.product_id !== product.product_id);
 		}
 		setCart(updatedCart);
 	};
 
 	return (
-		<TransactionContext.Provider value={{ setTransaction, transaction, cart }}>
+		<TransactionContext.Provider value={{ setTransaction, transaction, cart, updateCart, setCart }}>
 			<DashboardLayout>
 				<PageTitle title="POS" />
 				<button onClick={() => initiateTransaction()}>Add transaction</button>
@@ -107,7 +109,7 @@ const Pos = () => {
 
 					<StickyContainer>
 						<Sticky enabled={true} top={20}>
-							<POSactions minusToCart={(product) => updateCart(product, "subtract")} addToCart={(product) => updateCart(product, "add")} />
+							<POSactions />
 						</Sticky>
 					</StickyContainer>
 				</POSWrapper>

@@ -195,7 +195,7 @@ const sidebarData = [
 		link: "/dashboard/pos",
 		hasSubmenu: true,
 		submenus: [
-			{ title: "POS System", link: "/dashboard/pos" },
+			{ title: "POS", link: "/dashboard/pos" },
 			{ title: "Sales", link: "/" },
 		],
 	},

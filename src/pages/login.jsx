@@ -169,14 +169,6 @@ let Login = () => {
 						</Button>
 					</div>
 				</Form>
-
-				<Button
-					onClick={() => {
-						test().then((res) => console.log(res));
-					}}
-				>
-					Click
-				</Button>
 			</LoginContainer>
 		</>
 	);

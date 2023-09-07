@@ -14,7 +14,23 @@ const SidebarContainer = styled.div`
 	transition: all 0.3s ease;
 	transform: ${({ visible }) => (visible ? "translateX(0px)" : "translateX(-100%)")};
 	flex-direction: column;
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 100vh;
+	width: 256px;
+	background-color: rgba(0, 32, 86, 1);
+	padding: 20px; /* Add some padding to give space for the button */
+	transition: all 0.3s ease;
+	transform: ${({ visible }) => (visible ? "translateX(0px)" : "translateX(-100%)")};
+	flex-direction: column;
 
+	h1 {
+		color: white;
+		text-align: center;
+		margin-bottom: 20px;
+		border-bottom: 1px solid #ffffff27;
+	}
 	h1 {
 		color: white;
 		text-align: center;
@@ -32,6 +48,14 @@ const ToggleButton = styled.button`
 	background-color: white;
 	cursor: pointer;
 	transition: left 0.3s ease;
+	position: absolute;
+	transform: translate(100%);
+	top: 0px;
+	right: 0px;
+	border: none;
+	background-color: white;
+	cursor: pointer;
+	transition: left 0.3s ease;
 `;
 
 const MenuContainer = styled.div`
@@ -39,7 +63,13 @@ const MenuContainer = styled.div`
 	justify-content: flex-start;
 	align-items: center;
 	flex-grow: 1;
+	color: white;
+	justify-content: flex-start;
+	align-items: center;
+	flex-grow: 1;
 
+	width: 100%;
+	/* padding-left: 5px; */
 	width: 100%;
 	/* padding-left: 5px; */
 `;
@@ -52,7 +82,20 @@ const Menu = styled.div`
 	padding: 10px 0;
 	cursor: pointer;
 	position: relative;
+	font-weight: 400;
+	color: white !important;
+	align-items: center;
+	margin: 10px;
+	padding: 10px 0;
+	cursor: pointer;
+	position: relative;
 
+	img {
+		margin-right: 13px;
+		padding: 0px;
+		vertical-align: middle;
+		display: inline-block;
+	}
 	img {
 		margin-right: 13px;
 		padding: 0px;
@@ -75,9 +118,26 @@ const Menu = styled.div`
 			background-color: #1a69f0;
 		}
 	}
+	.menuTextContainer {
+		color: white;
+		background-color: #1a68f08c;
+		padding: 8px 5px 8px 5px;
+		border-radius: 10px;
+		transition: all 0.3s ease;
+		background-color: ${({ isOpen }) => (isOpen ? "" : "transparent")};
+		&:hover {
+			background-color: #1a69f0;
+		}
+		&.active {
+			border: 1px solid black;
+			background-color: #1a69f0;
+		}
+	}
 `;
 
 const SubMenu = styled.div`
+	display: block;
+	margin-top: 5px;
 	display: block;
 	margin-top: 5px;
 
@@ -159,56 +219,55 @@ const sidebarData = [
 ];
 
 const Sidebar = (props) => {
-	const [submenuOpen, setSubmenuOpen] = useState(Array(sidebarData.length).fill(false));
+	// Initialize sidebar state
+	const [sidebarState, setSidebarState] = useState({
+		submenuOpen: Array(sidebarData.length).fill(false),
+		sidebarVisible: true,
+		activeMenuIndex: -1,
+		activeSubmenuItemIndex: -1,
+	});
 
-	const [sidebarVisible, setSidebarVisible] = useState(true);
-	const [activeMenuIndex, setActiveMenuIndex] = useState(-1);
-	const [activeSubmenuItemIndex, setActiveSubmenuItemIndex] = useState(-1);
+	const { submenuOpen, sidebarVisible, activeMenuIndex, activeSubmenuItemIndex } = sidebarState;
 
-	//basically you just didnt saved and fetched the activeSubmenuItemIndex
-	//for styling look for line 97
-  
+	// Load previous state from localStorage on component mount
 	useEffect(() => {
-		const storedActiveMenuIndex = localStorage.getItem("activeMenuIndex");
-		if (storedActiveMenuIndex !== null) {
-			setActiveMenuIndex(parseInt(storedActiveMenuIndex));
-		}
+		const storedSidebarState = JSON.parse(localStorage.getItem("sidebarState"));
 
-		const storedSubmenuState = localStorage.getItem("submenuOpen");
-		if (storedSubmenuState !== null) {
-			setSubmenuOpen(JSON.parse(storedSubmenuState));
-		}
-
-		//this code gets which index is active in the submenu
-		const storedactiveSubmenuItemIndex = localStorage.getItem("activeSubmenuItemIndex");
-		console.log(storedactiveSubmenuItemIndex);
-		if (storedactiveSubmenuItemIndex !== null) {
-			setActiveSubmenuItemIndex(parseInt(storedactiveSubmenuItemIndex));
+		if (storedSidebarState) {
+			setSidebarState((prevState) => ({
+				...prevState,
+				...storedSidebarState,
+			}));
 		}
 	}, []);
 
+	// Toggle the sidebar's visibility
 	const handleToggleSidebar = () => {
-		setSidebarVisible((prevVisible) => !prevVisible);
+		setSidebarState((prevState) => ({
+			...prevState,
+			sidebarVisible: !prevState.sidebarVisible,
+		}));
 		props.setIsSidebarOpen(!sidebarVisible);
 	};
 
+	// Toggle submenu open/close and manage active indices
 	const handleSubMenuToggle = (index) => {
-		if (index === activeMenuIndex) {
-			setSubmenuOpen((prevState) => prevState.map((isOpen, i) => (i === index ? !isOpen : false)));
-		} else {
-			setActiveMenuIndex(index);
-			setSubmenuOpen((prevState) => prevState.map((_, i) => i === index));
-			setActiveSubmenuItemIndex(-1); // Reset the active submenu index
-		}
+		setSidebarState((prevState) => {
+			const newSubmenuOpen = prevState.submenuOpen.map((isOpen, i) => (i === index ? !isOpen : false));
+
+			return {
+				...prevState,
+				activeMenuIndex: index,
+				submenuOpen: newSubmenuOpen,
+				activeSubmenuItemIndex: -1, // Reset the active submenu index
+			};
+		});
 	};
 
+	// Update localStorage when state changes
 	useEffect(() => {
-		localStorage.setItem("activeMenuIndex", activeMenuIndex.toString());
-		localStorage.setItem("submenuOpen", JSON.stringify(submenuOpen));
-
-		//this code saves which index is active in the submenu
-		localStorage.setItem("activeSubmenuItemIndex", JSON.stringify(activeSubmenuItemIndex));
-	}, [activeMenuIndex, submenuOpen, activeSubmenuItemIndex]);
+		localStorage.setItem("sidebarState", JSON.stringify(sidebarState));
+	}, [sidebarState]);
 
 	return (
 		<div>
@@ -223,7 +282,7 @@ const Sidebar = (props) => {
 				<h1>SOAPIFY</h1>
 				<MenuContainer>
 					{sidebarData.map((menuItem, index) => (
-						<Menu key={index} active>
+						<Menu key={index}>
 							<div className={`menuTextContainer ${activeMenuIndex === index ? "active" : ""}`} onClick={() => handleSubMenuToggle(index)}>
 								<Image src={menuItem.icon} alt={menuItem.title} width="24" height="24" />
 								{menuItem.title}
@@ -235,7 +294,12 @@ const Sidebar = (props) => {
 											key={subIndex}
 											href={submenuItem.link}
 											className={activeSubmenuItemIndex === subIndex ? "active" : ""}
-											onClick={() => setActiveSubmenuItemIndex(subIndex)}
+											onClick={() =>
+												setSidebarState((prevState) => ({
+													...prevState,
+													activeSubmenuItemIndex: subIndex,
+												}))
+											}
 										>
 											{submenuItem.title}
 										</Link>

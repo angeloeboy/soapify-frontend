@@ -1,8 +1,13 @@
 import { getPaymentMethods } from "@/api/pos";
 import { ComponentTitle } from "@/styled-components/pos";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import Button from "../misc/button";
+import { TransactionContext } from "@/pages/dashboard/pos";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import Image from "next/image";
+import { addTransaction } from "@/api/transaction";
 
 const PaymentMethod = styled.div`
 	margin-bottom: 16px;
@@ -54,25 +59,48 @@ const PaymentMethods = (props) => {
 	const [paymentMethods, setPaymentMethods] = useState([]);
 	const [paymentMethod, setPaymentMethod] = useState(1);
 	const [transactionNo, setTransactionNo] = useState("");
+	const [loading, setLoading] = useState(false);
+	const { setTransaction, transaction } = useContext(TransactionContext);
+
 	useEffect(() => {
-		getPaymentMethodsFunc();
+		fetchPaymentMethods();
 	}, []);
 
-	const getPaymentMethodsFunc = () => {
+	const initiateTransaction = async () => {
+		setLoading(true);
+		const response = await addTransaction(transaction);
+		console.log(response);
+		setLoading(false);
+	};
+
+	const fetchPaymentMethods = () => {
 		getPaymentMethods().then((res) => {
 			console.log(res.paymentMethods);
 			res ? setPaymentMethods(res.paymentMethods) : setPaymentMethods([]);
-			// setPaymentMethodsLoading(false);
+			setTransaction((prev) => ({ ...prev, payment_method_id: res.paymentMethods[0].payment_method_id }));
 		});
 	};
 
+	useEffect(() => {
+		setTransaction((prev) => ({ ...prev, transaction_number: transactionNo }));
+	}, [transactionNo]);
+
 	return (
 		<>
-			<ComponentTitle>Payment Methods</ComponentTitle>
+			<ComponentTitle>
+				<span onClick={() => props.setActiveAction("cart")}>{"<"}</span> Payment Methods
+			</ComponentTitle>
 			<PaymentMethodsContainer>
 				{paymentMethods.map((payment) => {
 					return (
-						<PaymentMethod key={payment.id} selected={paymentMethod == payment.id} onClick={() => setPaymentMethod(payment.id)}>
+						<PaymentMethod
+							key={payment.payment_method_id}
+							selected={paymentMethod == payment.payment_method_id}
+							onClick={() => {
+								setPaymentMethod(payment.payment_method_id);
+								setTransaction((prev) => ({ ...prev, payment_method_id: payment.payment_method_id }));
+							}}
+						>
 							<p className="paymentName">{payment.name}</p>
 							<p className="paymentNo">{payment.account_no}</p>
 						</PaymentMethod>
@@ -83,8 +111,16 @@ const PaymentMethods = (props) => {
 				<ComponentTitle>Transaction Number</ComponentTitle>
 				<input type="text" value={transactionNo} onChange={(e) => setTransactionNo(e.target.value)} />
 			</TransactionNo>
-			<Button width={"100%"} onClick={() => props.setActiveAction("receipt")}>
-				Finish
+
+			<Button
+				width={"100%"}
+				onClick={() => {
+					console.log(transaction);
+					// props.setActiveAction("receipt");
+					initiateTransaction();
+				}}
+			>
+				{loading ? <Image src="/loading.svg" alt="loading" width="20" height="20" /> : "Finish"}
 			</Button>
 		</>
 	);

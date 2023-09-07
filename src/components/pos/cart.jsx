@@ -1,10 +1,12 @@
 import styled from "styled-components";
 import { ComponentTitle } from "./../../styled-components/pos";
-import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faMinus, faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "../misc/button";
 import Image from "next/image";
-import { useMemo } from "react";
+import { useContext, useMemo } from "react";
+import { TransactionContext } from "@/pages/dashboard/pos";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 
 const CartTable = styled.table`
 	width: 100%;
@@ -106,6 +108,14 @@ const Product = styled.div`
 		p {
 			padding: 0px 16px;
 		}
+
+		input {
+			border: none;
+			background-color: transparent;
+			width: 70px;
+			text-align: center;
+			outline: none;
+		}
 		span {
 			border-radius: 4px;
 			background: #1a69f0;
@@ -130,10 +140,47 @@ const Product = styled.div`
 	.minus {
 		opacity: ${(props) => (props.active ? "1" : "0.5")};
 	}
+
+	.delete {
+		align-self: center;
+		cursor: pointer;
+		margin-right: 16px;
+		path {
+			color: #bebebe !important;
+		}
+
+		&:hover {
+			path {
+				color: #f88181 !important;
+			}
+		}
+	}
 `;
 
 const ItemsContainer = styled.div`
 	margin-top: 48px;
+	min-height: 200px;
+
+	.item-enter {
+		opacity: 0;
+		transform: translateX(-20px);
+	}
+
+	.item-enter-active {
+		opacity: 1;
+		transition: all 0.4s ease-in-out;
+		transform: translateX(0px);
+	}
+
+	.item-exit {
+		opacity: 1;
+	}
+
+	.item-exit-active {
+		opacity: 0;
+		transition: all 0.4s ease-in-out;
+		transform: translateX(-50px);
+	}
 `;
 
 const Total = styled.div`
@@ -148,7 +195,9 @@ const Total = styled.div`
 	}
 `;
 
-const Cart = ({ cart, minusToCart, addToCart, setActiveAction }) => {
+const Cart = ({ setActiveAction }) => {
+	const { cart, setCart, updateCart } = useContext(TransactionContext);
+
 	const total = useMemo(() => {
 		return cart.reduce((acc, item) => acc + item.quantity * (item.product_price / 100), 0).toFixed(2);
 	}, [cart]);
@@ -156,26 +205,68 @@ const Cart = ({ cart, minusToCart, addToCart, setActiveAction }) => {
 	return (
 		<>
 			<ComponentTitle>Order Details</ComponentTitle>
-			<ItemsContainer>
+			{cart.length === 0 && <p>No items in cart</p>}
+
+			<TransitionGroup component={ItemsContainer}>
 				{cart.map((item) => (
-					<Product key={item.product_id} active={item.quantity > 1}>
-						<Image src="/sabon.png" width={60} height={60} alt="Product image" />
-						<div className="productInformation">
-							<p className="productName">{item.product_name}</p>
-							<p className="productPrice">P{item.product_price / 100}</p>
-						</div>
-						<div className="quantity">
-							<span onClick={() => minusToCart(item)} className="minus">
-								<FontAwesomeIcon icon={faMinus} />
-							</span>
-							<p>{item.quantity}</p>
-							<span onClick={() => addToCart(item)}>
-								<FontAwesomeIcon icon={faPlus} />
-							</span>
-						</div>
-					</Product>
+					<CSSTransition key={item.product_id} timeout={500} classNames="item">
+						<Product key={item.product_id} active={item.quantity > 1}>
+							<FontAwesomeIcon icon={faTrash} onClick={() => updateCart(item, "delete")} className="delete" />
+							<Image src="/sabon.png" width={60} height={60} alt="Product image" />
+							<div className="productInformation">
+								<p className="productName">{item.product_name}</p>
+								<p className="productPrice">P{item.product_price / 100}</p>
+							</div>
+							<div className="quantity">
+								<span onClick={() => updateCart(item, "subtract")} className="minus">
+									<FontAwesomeIcon icon={faMinus} />
+								</span>
+								{/* <p>{item.quantity}</p> */}
+								<input
+									type="text"
+									value={item.quantity}
+									onChange={(e) => {
+										const valueAsString = e.target.value;
+										const valueAsNumber = Number(valueAsString); // convert to number
+
+										if (valueAsString === "") {
+											let updatedCart = cart.map((product) => (product.product_id === item.product_id ? { ...product, quantity: 0 } : product));
+											setCart(updatedCart);
+											return;
+										}
+
+										if (!isNaN(valueAsNumber) && valueAsNumber >= 0) {
+											let updatedCart = cart.map((product) => (product.product_id === item.product_id ? { ...product, quantity: valueAsNumber } : product));
+											setCart(updatedCart);
+										}
+									}}
+									onKeyDown={(e) => {
+										const valueAsString = e.target.value;
+										const valueAsNumber = Number(valueAsString);
+
+										if (e.key === "ArrowUp") {
+											let updatedCart = cart.map((product) => (product.product_id === item.product_id ? { ...product, quantity: valueAsNumber + 1 } : product));
+											setCart(updatedCart);
+										} else if (e.key === "ArrowDown") {
+											if (valueAsNumber > 0) {
+												let updatedCart = cart.map((product) =>
+													product.product_id === item.product_id ? { ...product, quantity: valueAsNumber - 1 } : product
+												);
+												setCart(updatedCart);
+											}
+										}
+									}}
+								/>
+
+								<span onClick={() => updateCart(item, "add")}>
+									<FontAwesomeIcon icon={faPlus} />
+								</span>
+							</div>
+						</Product>
+					</CSSTransition>
 				))}
-			</ItemsContainer>
+			</TransitionGroup>
+
 			<Total>
 				<p>Total</p>
 				<p>{total}</p>

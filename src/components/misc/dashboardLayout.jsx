@@ -18,7 +18,7 @@ let DashboardLayout = ({ children }) => {
 
 	return (
 		<>
-			<Sidebar setIsSidebarOpen={setIsSidebarOpen} />
+			<Sidebar setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} />
 
 			<DashboardRight isSidebarOpen={isSidebarOpen}>
 				<TopBar pageName="Products" />

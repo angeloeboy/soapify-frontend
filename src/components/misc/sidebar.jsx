@@ -12,7 +12,7 @@ const SidebarContainer = styled.div`
 	background-color: rgba(0, 32, 86, 1);
 	padding: 20px; /* Add some padding to give space for the button */
 	transition: all 0.3s ease;
-	transform: ${({ visible }) => (visible ? "translateX(0px)" : "translateX(-100%)")};
+	transform: ${({ visible }) => (!visible ? "translateX(-100%)" : "translateX(0)")};
 	flex-direction: column;
 
 	h1 {
@@ -32,6 +32,14 @@ const ToggleButton = styled.button`
 	background-color: white;
 	cursor: pointer;
 	transition: left 0.3s ease;
+	position: absolute;
+	transform: translate(100%);
+	top: 0px;
+	right: 0px;
+	border: none;
+	background-color: white;
+	cursor: pointer;
+	transition: left 0.3s ease;
 `;
 
 const MenuContainer = styled.div`
@@ -39,12 +47,25 @@ const MenuContainer = styled.div`
 	justify-content: flex-start;
 	align-items: center;
 	flex-grow: 1;
+	color: white;
+	justify-content: flex-start;
+	align-items: center;
+	flex-grow: 1;
 
+	width: 100%;
+	/* padding-left: 5px; */
 	width: 100%;
 	/* padding-left: 5px; */
 `;
 
 const Menu = styled.div`
+	font-weight: 400;
+	color: white !important;
+	align-items: center;
+	margin: 10px;
+	padding: 10px 0;
+	cursor: pointer;
+	position: relative;
 	font-weight: 400;
 	color: white !important;
 	align-items: center;
@@ -67,6 +88,8 @@ const Menu = styled.div`
 		border-radius: 10px;
 		transition: all 0.3s ease;
 		background-color: ${({ isOpen }) => (isOpen ? "" : "transparent")};
+		display: block;
+		text-decoration: none;
 		&:hover {
 			background-color: #1a69f0;
 		}
@@ -78,6 +101,8 @@ const Menu = styled.div`
 `;
 
 const SubMenu = styled.div`
+	display: block;
+	margin-top: 5px;
 	display: block;
 	margin-top: 5px;
 
@@ -135,7 +160,7 @@ const sidebarData = [
 		link: "/dashboard/pos",
 		hasSubmenu: true,
 		submenus: [
-			{ title: "POS System", link: "/dashboard/pos" },
+			{ title: "POS", link: "/dashboard/pos" },
 			{ title: "Sales", link: "/" },
 		],
 	},
@@ -145,8 +170,9 @@ const sidebarData = [
 		link: "/dashboard/products",
 		hasSubmenu: true,
 		submenus: [
-			{ title: "Products List", link: "/dashboard/products" },
-			{ title: "Categories", link: "/dashboard/products/categories" },
+			{ title: "Products", link: "/dashboard/products" },
+			{ title: "Inventory List", link: "/dashboard/inventory" },
+			{ title: "Categories", link: "/dashboard/products/category" },
 			{ title: "Statistics", link: "/" },
 		],
 	},
@@ -183,18 +209,14 @@ const Sidebar = (props) => {
 
 	// Toggle the sidebar's visibility
 	const handleToggleSidebar = () => {
-		setSidebarState((prevState) => ({
-			...prevState,
-			sidebarVisible: !prevState.sidebarVisible,
-		}));
-		props.setIsSidebarOpen(!sidebarVisible);
+		props.setIsSidebarOpen(!props.isSidebarOpen);
+		console.log("test");
 	};
 
 	// Toggle submenu open/close and manage active indices
 	const handleSubMenuToggle = (index) => {
 		setSidebarState((prevState) => {
 			const newSubmenuOpen = prevState.submenuOpen.map((isOpen, i) => (i === index ? !isOpen : false));
-
 			return {
 				...prevState,
 				activeMenuIndex: index,
@@ -211,7 +233,7 @@ const Sidebar = (props) => {
 
 	return (
 		<div>
-			<SidebarContainer visible={sidebarVisible}>
+			<SidebarContainer visible={props.isSidebarOpen}>
 				<ToggleButton visible={sidebarVisible} onClick={handleToggleSidebar}>
 					{sidebarVisible ? (
 						<Image src="/toggle-sidebar-icon.png" alt="Close Sidebar" width="50" height="50" />
@@ -221,33 +243,46 @@ const Sidebar = (props) => {
 				</ToggleButton>
 				<h1>SOAPIFY</h1>
 				<MenuContainer>
-					{sidebarData.map((menuItem, index) => (
-						<Menu key={index}>
-							<div className={`menuTextContainer ${activeMenuIndex === index ? "active" : ""}`} onClick={() => handleSubMenuToggle(index)}>
-								<Image src={menuItem.icon} alt={menuItem.title} width="24" height="24" />
-								{menuItem.title}
-							</div>
-							{menuItem.hasSubmenu && submenuOpen[index] && (
-								<SubMenu>
-									{menuItem.submenus.map((submenuItem, subIndex) => (
-										<Link
-											key={subIndex}
-											href={submenuItem.link}
-											className={activeSubmenuItemIndex === subIndex ? "active" : ""}
-											onClick={() =>
-												setSidebarState((prevState) => ({
-													...prevState,
-													activeSubmenuItemIndex: subIndex,
-												}))
-											}
-										>
-											{submenuItem.title}
-										</Link>
-									))}
-								</SubMenu>
-							)}
-						</Menu>
-					))}
+					{sidebarData.map((menuItem, index) =>
+						menuItem.hasSubmenu ? (
+							<Menu key={index}>
+								<div className={`menuTextContainer ${activeMenuIndex === index ? "active" : ""}`} onClick={() => handleSubMenuToggle(index)}>
+									<Image src={menuItem.icon} alt={menuItem.title} width="24" height="24" />
+									{menuItem.title}
+								</div>
+								{menuItem.hasSubmenu && submenuOpen[index] && (
+									<SubMenu>
+										{menuItem.submenus.map((submenuItem, subIndex) => (
+											<Link
+												key={subIndex}
+												href={submenuItem.link}
+												className={activeSubmenuItemIndex === subIndex ? "active" : ""}
+												onClick={() =>
+													setSidebarState((prevState) => ({
+														...prevState,
+														activeSubmenuItemIndex: subIndex,
+													}))
+												}
+											>
+												{submenuItem.title}
+											</Link>
+										))}
+									</SubMenu>
+								)}
+							</Menu>
+						) : (
+							<Menu key={index}>
+								<Link
+									href={menuItem.link}
+									className={`menuTextContainer ${activeMenuIndex === index ? "active" : ""}`}
+									onClick={() => handleSubMenuToggle(index)}
+								>
+									<Image src={menuItem.icon} alt={menuItem.title} width="24" height="24" />
+									{menuItem.title}
+								</Link>
+							</Menu>
+						)
+					)}
 				</MenuContainer>
 			</SidebarContainer>
 		</div>

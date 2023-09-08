@@ -11,7 +11,7 @@ import Table, {
 } from "@/styled-components/TableComponent";
 import { Button } from "@/styled-components/ItemActionModal";
 import TopBar from "@/components/misc/topbar";
-import SearchBarUserComponent from "@/components/user/SearchBar";
+import UserSearchBarComponent from "@/components/misc/userSearchBarAndFilters";
 import PopupContentUser from "@/components/user/addUser";
 
 const User = () => {
@@ -43,7 +43,7 @@ const User = () => {
     <DashboardLayout>
       <PageTitle title="Accounts Lists" />
       <StyledPanel>
-        <SearchBarUserComponent
+        <UserSearchBarComponent
           searchQuery={searchQuery}
           handleSearchChange={handleSearchChange}
           handleOpenPopup={handleOpenPopup} // Pass handleOpenPopup function

@@ -10,6 +10,7 @@ export const TableControlPanel = styled.div`
 		color: #000;
 		font-size: 14.22px;
 		font-weight: 400;
+		padding-left: 8px;
 	}
 `;
 
@@ -64,6 +65,8 @@ export const DropdownMenu = styled.div`
 	width: 100%;
 	border: 1px solid #e0e0e0;
 	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	max-height: 150px;
+	overflow-y: auto;
 `;
 
 export const DropdownItem = styled.div`

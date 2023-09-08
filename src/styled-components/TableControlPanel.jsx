@@ -10,6 +10,7 @@ export const TableControlPanel = styled.div`
 		color: #000;
 		font-size: 14.22px;
 		font-weight: 400;
+		padding-left: 8px;
 	}
 `;
 

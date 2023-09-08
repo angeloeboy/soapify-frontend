@@ -126,7 +126,7 @@ const sidebarData = [
 	{
 		title: "Home",
 		icon: "/home-icon.png",
-		link: "/",
+		link: "/dashboard",
 		hasSubmenu: false,
 	},
 	{
@@ -146,7 +146,7 @@ const sidebarData = [
 		hasSubmenu: true,
 		submenus: [
 			{ title: "Products List", link: "/dashboard/products" },
-			{ title: "Categories", link: "/dashboard" },
+			{ title: "Categories", link: "/dashboard/products/categories" },
 			{ title: "Statistics", link: "/" },
 		],
 	},

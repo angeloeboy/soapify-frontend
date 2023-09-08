@@ -95,7 +95,6 @@ const Pos = () => {
 		<TransactionContext.Provider value={{ setTransaction, transaction, cart, updateCart, setCart }}>
 			<DashboardLayout>
 				<PageTitle title="POS" />
-				<button onClick={() => initiateTransaction()}>Add transaction</button>
 				<POSWrapper>
 					<StyledPanel pos>
 						<SearchBarComponent products={products} setProductDisplay={setProductDisplay} />

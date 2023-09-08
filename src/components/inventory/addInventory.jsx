@@ -23,14 +23,20 @@ import { addProduct, getProducts } from "@/api/products";
 import { addInventory } from "@/api/inventory";
 
 const AddInventoryComponent = ({ onClose, onButtonClick, getInventoryFunc }) => {
+	const currentDate = new Date().toISOString();
+
 	const [inventory, setInventory] = useState({
-		product_id: 16,
+		product_id: 0,
 		quantity: 1,
-		date_added: "2023-08-12T08:00:00Z",
-		date_updated: "2023-08-12T08:00:00Z",
+		date_added: currentDate,
+		date_updated: currentDate,
 	});
 
 	const [products, setProducts] = useState([]);
+
+	useEffect(() => {
+		console.log(inventory);
+	}, [inventory]);
 
 	const fetchProducts = () => {
 		getProducts().then((res) => {
@@ -89,7 +95,11 @@ const AddInventoryComponent = ({ onClose, onButtonClick, getInventoryFunc }) => 
 						</div>
 						<div>
 							<FieldTitleLabel notFirst>Date Received</FieldTitleLabel>
-							<InputHolder type="date" placeholder="Enter your Quantity Remaining" />
+							<InputHolder
+								type="date"
+								placeholder="Enter your Quantity Remaining"
+								onChange={(e) => setInventory({ ...inventory, date_added: e.target.value })}
+							/>
 						</div>
 					</FieldContainer>
 

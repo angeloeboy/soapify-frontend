@@ -64,6 +64,7 @@ const EditProductComponent = ({ productId, onClose, GetProducts }) => {
 		// console.log(product);
 		// const formData = new FormData();
 		// Append fields to formData for editing
+		console.log(product);
 		editProduct(product, productId)
 			.then((res) => {
 				console.log(res);

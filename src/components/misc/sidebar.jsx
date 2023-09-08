@@ -12,25 +12,9 @@ const SidebarContainer = styled.div`
 	background-color: rgba(0, 32, 86, 1);
 	padding: 20px; /* Add some padding to give space for the button */
 	transition: all 0.3s ease;
-	transform: ${({ visible }) => (visible ? "translateX(0px)" : "translateX(-100%)")};
-	flex-direction: column;
-	position: fixed;
-	top: 0;
-	left: 0;
-	height: 100vh;
-	width: 256px;
-	background-color: rgba(0, 32, 86, 1);
-	padding: 20px; /* Add some padding to give space for the button */
-	transition: all 0.3s ease;
-	transform: ${({ visible }) => (visible ? "translateX(0px)" : "translateX(-100%)")};
+	transform: ${({ visible }) => (!visible ? "translateX(-100%)" : "translateX(0)")};
 	flex-direction: column;
 
-	h1 {
-		color: white;
-		text-align: center;
-		margin-bottom: 20px;
-		border-bottom: 1px solid #ffffff27;
-	}
 	h1 {
 		color: white;
 		text-align: center;
@@ -96,12 +80,6 @@ const Menu = styled.div`
 		vertical-align: middle;
 		display: inline-block;
 	}
-	img {
-		margin-right: 13px;
-		padding: 0px;
-		vertical-align: middle;
-		display: inline-block;
-	}
 
 	.menuTextContainer {
 		color: white;
@@ -110,21 +88,8 @@ const Menu = styled.div`
 		border-radius: 10px;
 		transition: all 0.3s ease;
 		background-color: ${({ isOpen }) => (isOpen ? "" : "transparent")};
-		&:hover {
-			background-color: #1a69f0;
-		}
-		&.active {
-			border: 1px solid black;
-			background-color: #1a69f0;
-		}
-	}
-	.menuTextContainer {
-		color: white;
-		background-color: #1a68f08c;
-		padding: 8px 5px 8px 5px;
-		border-radius: 10px;
-		transition: all 0.3s ease;
-		background-color: ${({ isOpen }) => (isOpen ? "" : "transparent")};
+		display: block;
+		text-decoration: none;
 		&:hover {
 			background-color: #1a69f0;
 		}
@@ -205,8 +170,9 @@ const sidebarData = [
 		link: "/dashboard/products",
 		hasSubmenu: true,
 		submenus: [
-			{ title: "Products List", link: "/dashboard/products" },
-			{ title: "Categories", link: "/dashboard" },
+			{ title: "Products", link: "/dashboard/products" },
+			{ title: "Inventory List", link: "/dashboard/inventory" },
+			{ title: "Categories", link: "/dashboard/products/category" },
 			{ title: "Statistics", link: "/" },
 		],
 	},
@@ -243,18 +209,14 @@ const Sidebar = (props) => {
 
 	// Toggle the sidebar's visibility
 	const handleToggleSidebar = () => {
-		setSidebarState((prevState) => ({
-			...prevState,
-			sidebarVisible: !prevState.sidebarVisible,
-		}));
-		props.setIsSidebarOpen(!sidebarVisible);
+		props.setIsSidebarOpen(!props.isSidebarOpen);
+		console.log("test");
 	};
 
 	// Toggle submenu open/close and manage active indices
 	const handleSubMenuToggle = (index) => {
 		setSidebarState((prevState) => {
 			const newSubmenuOpen = prevState.submenuOpen.map((isOpen, i) => (i === index ? !isOpen : false));
-
 			return {
 				...prevState,
 				activeMenuIndex: index,
@@ -271,7 +233,7 @@ const Sidebar = (props) => {
 
 	return (
 		<div>
-			<SidebarContainer visible={sidebarVisible}>
+			<SidebarContainer visible={props.isSidebarOpen}>
 				<ToggleButton visible={sidebarVisible} onClick={handleToggleSidebar}>
 					{sidebarVisible ? (
 						<Image src="/toggle-sidebar-icon.png" alt="Close Sidebar" width="50" height="50" />
@@ -281,33 +243,46 @@ const Sidebar = (props) => {
 				</ToggleButton>
 				<h1>SOAPIFY</h1>
 				<MenuContainer>
-					{sidebarData.map((menuItem, index) => (
-						<Menu key={index}>
-							<div className={`menuTextContainer ${activeMenuIndex === index ? "active" : ""}`} onClick={() => handleSubMenuToggle(index)}>
-								<Image src={menuItem.icon} alt={menuItem.title} width="24" height="24" />
-								{menuItem.title}
-							</div>
-							{menuItem.hasSubmenu && submenuOpen[index] && (
-								<SubMenu>
-									{menuItem.submenus.map((submenuItem, subIndex) => (
-										<Link
-											key={subIndex}
-											href={submenuItem.link}
-											className={activeSubmenuItemIndex === subIndex ? "active" : ""}
-											onClick={() =>
-												setSidebarState((prevState) => ({
-													...prevState,
-													activeSubmenuItemIndex: subIndex,
-												}))
-											}
-										>
-											{submenuItem.title}
-										</Link>
-									))}
-								</SubMenu>
-							)}
-						</Menu>
-					))}
+					{sidebarData.map((menuItem, index) =>
+						menuItem.hasSubmenu ? (
+							<Menu key={index}>
+								<div className={`menuTextContainer ${activeMenuIndex === index ? "active" : ""}`} onClick={() => handleSubMenuToggle(index)}>
+									<Image src={menuItem.icon} alt={menuItem.title} width="24" height="24" />
+									{menuItem.title}
+								</div>
+								{menuItem.hasSubmenu && submenuOpen[index] && (
+									<SubMenu>
+										{menuItem.submenus.map((submenuItem, subIndex) => (
+											<Link
+												key={subIndex}
+												href={submenuItem.link}
+												className={activeSubmenuItemIndex === subIndex ? "active" : ""}
+												onClick={() =>
+													setSidebarState((prevState) => ({
+														...prevState,
+														activeSubmenuItemIndex: subIndex,
+													}))
+												}
+											>
+												{submenuItem.title}
+											</Link>
+										))}
+									</SubMenu>
+								)}
+							</Menu>
+						) : (
+							<Menu key={index}>
+								<Link
+									href={menuItem.link}
+									className={`menuTextContainer ${activeMenuIndex === index ? "active" : ""}`}
+									onClick={() => handleSubMenuToggle(index)}
+								>
+									<Image src={menuItem.icon} alt={menuItem.title} width="24" height="24" />
+									{menuItem.title}
+								</Link>
+							</Menu>
+						)
+					)}
 				</MenuContainer>
 			</SidebarContainer>
 		</div>

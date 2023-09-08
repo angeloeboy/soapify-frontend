@@ -151,7 +151,7 @@ const sidebarData = [
 	{
 		title: "Home",
 		icon: "/home-icon.png",
-		link: "/",
+		link: "/dashboard",
 		hasSubmenu: false,
 	},
 	{

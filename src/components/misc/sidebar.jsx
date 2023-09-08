@@ -14,7 +14,7 @@ const SidebarContainer = styled.div`
 	transition: all 0.3s ease;
 	transform: ${({ visible }) => (!visible ? "translateX(-100%)" : "translateX(0)")};
 	flex-direction: column;
-
+	z-index: 101;
 	h1 {
 		color: white;
 		text-align: center;

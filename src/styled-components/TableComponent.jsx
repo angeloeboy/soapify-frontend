@@ -26,7 +26,7 @@ export const TableData = styled.td`
 	font-style: normal;
 	font-weight: ${(props) => (props.bold ? "bold" : "400")};
 	line-height: normal;
-	padding: 32px 0px;
+	padding: 20px 0px;
 	border-bottom: 1px solid #dfdfdf;
 	position: relative;
 

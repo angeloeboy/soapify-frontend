@@ -9,7 +9,7 @@ export const PopupOverlay = styled.div`
 	background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
 	display: flex;
 	align-items: center;
-	z-index: 99;
+	z-index: 102;
 `;
 
 export const PopupContent = styled.div`

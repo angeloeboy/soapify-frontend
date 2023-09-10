@@ -20,6 +20,13 @@ const LoginContainer = styled.div`
 		border-bottom: 1px solid rgba(0, 32, 86, 0.12);
 		width: 217px;
 	}
+
+	.too_many_logins {
+		color: red;
+		text-align: center;
+		font-size: 14px;
+		margin-top: 16px;
+	}
 `;
 
 const Form = styled.form`
@@ -90,6 +97,7 @@ const Error = styled.p`
 let Login = () => {
 	const [credentials, setCredentials] = useState({ username: "", password: "" });
 	const [loggingIn, setIsLoggingIn] = useState(false);
+	const [rateLimited, setRateLimited] = useState(false);
 	const [errorMessages, setErrorMessages] = useState({
 		username: "",
 		password: "",
@@ -100,28 +108,40 @@ let Login = () => {
 	const handleLogin = (e) => {
 		e.preventDefault();
 		setIsLoggingIn(true);
-		login(credentials).then((res) => {
-			setIsLoggingIn(false);
+		login(credentials)
+			.then((res) => {
+				setIsLoggingIn(false);
 
-			if (res.status == "Success") {
-				//do actions here
-				console.log("success");
-				router.push("/dashboard");
-				return;
-			}
+				if (res.status == "Success") {
+					//do actions here
+					console.log("success");
+					router.push("/dashboard");
+					return;
+				}
 
-			if (!res.errors) return;
-			console.log(res.errors);
-			const errors = res.errors;
+				if (!res.errors) return;
 
-			const usernameErrorMessage = errors.find((error) => error.path === "username")?.msg;
-			const passwordErrorMessage = errors.find((error) => error.path === "password")?.msg;
+				console.log(res.errors);
+				const errors = res.errors;
 
-			setErrorMessages({
-				username: usernameErrorMessage || "",
-				password: passwordErrorMessage || "",
+				const usernameErrorMessage = errors.find((error) => error.path === "username")?.msg;
+				const passwordErrorMessage = errors.find((error) => error.path === "password")?.msg;
+
+				setErrorMessages({
+					username: usernameErrorMessage || "",
+					password: passwordErrorMessage || "",
+				});
+			})
+			.catch((err) => {
+				console.log(err);
+
+				setErrorMessages({
+					username: "",
+					password: "",
+				});
+
+				setRateLimited(true);
 			});
-		});
 	};
 
 	return (
@@ -169,6 +189,8 @@ let Login = () => {
 						</Button>
 					</div>
 				</Form>
+
+				{rateLimited && <p className="too_many_logins">Too many login attempts from this IP, please try again later.</p>}
 			</LoginContainer>
 		</>
 	);

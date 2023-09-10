@@ -1,126 +1,181 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
+import Image from "next/image";
 import DashboardLayout from "@/components/misc/dashboardLayout";
-import ItemActionModal, {
-	Button,
-	Select,
-	LabelContainer,
-	Label,
-	Option,
-	FieldContainer,
-	ProfilePictureContainer,
-	FileInput,
-	Centered,
-	SecondaryButton,
-	CloseButton,
-	ButtonsContainer,
-	PopupOverlay,
-	PopupContent,
-	HeaderTitle,
-	FieldTitleLabel,
-	InputHolder,
-} from "@/styled-components/ItemActionModal";
 import StyledPanel from "@/styled-components/StyledPanel";
+import PageTitle from "@/components/misc/pageTitle";
+import Table, {
+  ActionContainer,
+  TableData,
+  TableHeadings,
+  TableRows,
+} from "@/styled-components/TableComponent";
+import { Button } from "@/styled-components/ItemActionModal";
+import TopBar from "@/components/misc/topbar";
+import { useRouter } from "next/router";
+import UserSearchBarComponent from "@/components/misc/userSearchBarAndFilters";
+import EditUserComponent from "@/components/user/editUser";
+import PopupContentUser from "@/components/user/addUser";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
 
-const Popup = ({ onClose, onButtonClick, fileInput }) => {
-	const [fileUploaded, setFileUploaded] = useState(false);
+const User = () => {
+  const [searchQuery, setSearchQuery] = useState(""); // Initialize searchQuery
+  const [isPopupOpen, setPopupOpen] = useState(false);
+  const [activeActionContainer, setActiveActionContainer] = useState(-1);
+  const [isEditUserPopup, setEditUserPopup] = useState(false);
 
-	const handleFileUpload = () => {
-		setFileUploaded(true);
-	};
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+    // You can perform any other actions related to search here
+  };
+  const router = useRouter();
 
-	const resetFileUpload = () => {
-		setFileUploaded(false);
-	};
+  const handleClickOutside = (event) => {
+    if (
+      !event.target.closest(".action-container") &&
+      !event.target.closest(".ellipsis")
+    ) {
+      setActiveActionContainer(null);
+    }
+  };
+  useEffect(() => {
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
 
-	return (
-		<PopupOverlay>
-			<PopupContent>
-				<HeaderTitle>Add User</HeaderTitle>
-				<FieldContainer>
-					<LabelContainer first>
-						<Label>General Information</Label>{" "}
-					</LabelContainer>
-					<div>
-						<FieldTitleLabel> First Name </FieldTitleLabel>
-						<InputHolder type="text" placeholder="Enter your First Name" />
-					</div>
-					<div>
-						<FieldTitleLabel notFirst>Last Name</FieldTitleLabel>
-						<InputHolder type="text" placeholder="Enter your Last Name" />
-					</div>
-					<div>
-						<FieldTitleLabel notFirst>Username</FieldTitleLabel>
-						<InputHolder type="text" placeholder="Enter your Username" />
-					</div>
-					<div>
-						<FieldTitleLabel notFirst>Image (optional)</FieldTitleLabel>
-						<ProfilePictureContainer>
-							<Centered>
-								<SecondaryButton onClick={onButtonClick}>
-									{fileUploaded ? "You've uploaded a file" : "Click to Upload or Drag and drop an Image"}
-								</SecondaryButton>
-								<FileInput ref={fileInput} onChange={handleFileUpload} />
-							</Centered>
-						</ProfilePictureContainer>
-					</div>
-					<LabelContainer>
-						<Label>Password</Label>
-					</LabelContainer>
-					<div>
-						<FieldTitleLabel notFirst>Password</FieldTitleLabel>
-						<InputHolder type="password" placeholder="Enter your Password" />
-					</div>
-					<div>
-						<FieldTitleLabel notFirst>Confirm Password</FieldTitleLabel>
-						<InputHolder type="password" placeholder="" />
-					</div>
-					<LabelContainer>
-						<Label>Account Type</Label>
-					</LabelContainer>
-					<div>
-						<FieldTitleLabel notFirst>Account Type</FieldTitleLabel>
-						<Select>
-							<Option value="Store Clerk">Store Clerk</Option>
-							<Option value="Store Owner">Store Owner</Option>
-							<Option value="Cashier">Cashier</Option>
-						</Select>
-					</div>
-				</FieldContainer>
+  const handleCloseEditUserPopUp = () => {
+    setEditUserPopup(false);
+  };
+  const openEditUserPopUp = () => {
+    setEditUserPopup(true);
+  };
 
-				<ButtonsContainer>
-					<CloseButton onClick={onClose}>Close</CloseButton>
-					<Button onClick={() => router.push("/dashboard")}>Save</Button>
-				</ButtonsContainer>
-			</PopupContent>
-		</PopupOverlay>
-	);
+  const handleClosePopup = () => {
+    setEditUserPopup(false);
+  };
+  const onButtonClick = () => {
+    fileInput.current.click();
+  };
+
+  // useEffect(() => {
+  //   // Fetch your users or any other data here using a similar pattern as in the Products component.
+  //   // For example:
+  //   // fetchUsers().then((res) => {
+  //   //   setUsers(res.users || []);
+  //   // });
+  // }, []);
+  const userData = [
+    {
+      name: "User 1",
+      username: "user1",
+      status: "Active",
+      type: "Admin",
+    },
+    {
+      name: "User 2",
+      username: "user2",
+      status: "Inactive",
+      type: "User",
+    },
+    {
+      name: "User 3",
+      username: "user3",
+      status: "Active",
+      type: "User",
+    },
+  ];
+
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  return (
+    <DashboardLayout>
+      <PageTitle title="Accounts Lists" />
+      <StyledPanel>
+        <UserSearchBarComponent
+          searchQuery={searchQuery}
+          handleSearchChange={handleSearchChange}
+          // handleOpenPopup={handleOpenPopup} // Pass handleOpenPopup function
+        />
+
+        <Table>
+          <tbody>
+            <TableRows heading>
+              <TableHeadings>Name</TableHeadings>
+              <TableHeadings>Username</TableHeadings>
+              <TableHeadings>Status</TableHeadings>
+              <TableHeadings>Type</TableHeadings>
+              <TableHeadings>Actions</TableHeadings>
+            </TableRows>
+
+            {userData.map((user, index) => (
+              <TableRows key={index}>
+                <TableData bold withImage>
+                  <Image
+                    src="/product_img2.png"
+                    width={40}
+                    height={40}
+                    alt={"Product image"}
+                  />
+                  {user.name}
+                </TableData>
+                <TableData>{user.username}</TableData>
+                <TableData>{user.status}</TableData>
+                <TableData>{user.type}</TableData>
+                <TableData>
+                  <FontAwesomeIcon
+                    className="ellipsis"
+                    icon={faEllipsis}
+                    onClick={() =>
+                      activeActionContainer === index
+                        ? setActiveActionContainer(-1)
+                        : setActiveActionContainer(index)
+                    }
+                  />
+
+                  {activeActionContainer === index && (
+                    <ActionContainer
+                      onClick={() => setActiveActionContainer(-1)}
+                    >
+                      <p
+                        onClick={() => {
+                          setSelectedUserId();
+                          // (user.user_id);
+                          openEditUserPopUp();
+                          // (selectedProductId);
+                        }}
+                      >
+                        <FontAwesomeIcon icon={faPen} />
+                        Edit
+                      </p>
+                      <p>
+                        <FontAwesomeIcon icon={faTrash} /> Delete
+                      </p>
+                    </ActionContainer>
+                  )}
+                </TableData>
+              </TableRows>
+            ))}
+          </tbody>
+        </Table>
+      </StyledPanel>
+      {isPopupOpen && (
+        <PopupContentUser
+          onClose={handleClosePopup}
+          onButtonClick={onButtonClick}
+        />
+      )}
+      {isEditUserPopup && (
+        <EditUserComponent
+          onClose={handleCloseEditUserPopUp}
+          // productId={selectedProductId}
+          //   onButtonClick={onButtonClick}
+          //   GetProducts={fetchProducts}
+        />
+      )}
+    </DashboardLayout>
+  );
 };
 
-const Test = () => {
-	const [isPopupOpen, setPopupOpen] = useState(false);
-	const fileInput = useRef(null);
-
-	const handleOpenPopup = () => {
-		setPopupOpen(true);
-	};
-
-	const handleClosePopup = () => {
-		setPopupOpen(false);
-	};
-
-	const onButtonClick = () => {
-		fileInput.current.click();
-	};
-
-	return (
-		<DashboardLayout>
-			<StyledPanel>
-				<Button onClick={handleOpenPopup}>Create User</Button>
-				{isPopupOpen && <Popup onClose={handleClosePopup} onButtonClick={onButtonClick} fileInput={fileInput} />}
-			</StyledPanel>
-		</DashboardLayout>
-	);
-};
-
-export default Test;
+export default User;

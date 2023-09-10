@@ -20,7 +20,7 @@ import PopupContentWarehouse from "@/components/warehouse/addWarehouse";
 import WarehouseSearchBarComponent from "@/components/warehouse/SearchBarAndFilter";
 
 
-const User = () => {
+const warehouse = () => {
   const [searchQuery, setSearchQuery] = useState(""); // Initialize searchQuery
   const [isPopupOpen, setPopupOpen] = useState(false);
   const [activeActionContainer, setActiveActionContainer] = useState(-1);
@@ -129,4 +129,4 @@ const User = () => {
   );
 };
 
-export default User;
+export default warehouse;

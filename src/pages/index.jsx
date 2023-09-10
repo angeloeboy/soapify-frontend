@@ -1,156 +1,199 @@
+import Button from "@/components/misc/button";
+import React from "react";
+import styled from "styled-components";
 import { useState } from "react";
+import { login, logout, test } from "@/api/auth";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import Link from "next/link";
 import { useRouter } from "next/router";
-import StyledPanel, { BigTitle, FieldTitle } from "@/styled-components/StyledPanel";
-import { styled } from "styled-components";
-import Sidebar from "@/components/misc/sidebar";
-import DashboardLayout from "@/components/misc/dashboardLayout";
 
-const SearchBarContainer = styled.div`
-	display: flex;
-	align-items: center;
-	position: relative;
-	background-color: transparent; /* Make the background transparent */
-	margin-bottom: 20px; /* Add margin-bottom to create a gap between SearchBar and CategoriesButton */
-`;
-
-const SearchIcon = styled.img`
-	position: absolute;
-	top: 50%;
-	left: 20px; /* Adjust the left position as needed */
-	transform: translateY(-50%);
-	width: 20px;
-	height: 20px;
-	cursor: pointer;
-`;
-
-const SearchBar = styled.input`
-	width: 592px;
-	padding: 10px 30px 10px 50px; /* Add padding on both sides for the icon */
-	border: 1px solid #dddd;
-	border-radius: 4px;
-	font-size: 14px;
-	border-radius: 12px;
-`;
-
-const CategoriesButton = styled.button`
-	color: black;
-	background-color: transparent; /* Make the background transparent */
-	border: 1px solid #dddd; /* Add a border around the button */
-	font-size: 6px;
-	cursor: pointer;
-	padding: 8px 15px;
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	border-radius: 12px;
-	margin-left: 16px;
-	min-width: 108px;
-`;
-
-const FilterIcon = styled.img`
-	width: 20px;
-	height: 20px;
-`;
-
-const AllText = styled.span`
-	font-size: 16px;
-	font-weight: bold;
-`;
-
-const HomeContainer = styled.div``;
-
-const ImageLabelContainer = styled.div`
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	border: 1px solid #dddd;
-	flex-direction: column;
-	border-radius: 18px;
-	padding: 25px;
-	@media (max-width: 768px) {
-	}
-`;
-
-const Image = styled.img`
-	width: 100px;
-	height: 171px;
-	margin-right: 16px;
-	object-fit: cover;
-	@media (max-width: 768px) {
-		width: 70px;
-		height: 70px;
-		margin-right: 8px;
-	}
-`;
-
-const InfoContainer = styled.div`
-	display: flex;
-	align-items: center;
-	justify-content: space-between; /* Add this property to create space between the two elements */
+const LoginContainer = styled.div`
+	height: 100vh;
 	width: 100%;
-	padding: 0 16px;
-	flex: 1;
+	max-width: 770px;
+	padding: 53px 10vw;
+	padding-top: 100px;
+	.appTitle {
+		text-transform: uppercase;
+		padding-bottom: 19px;
+		border-bottom: 1px solid rgba(0, 32, 86, 0.12);
+		width: 217px;
+	}
 
-	@media (max-width: 768px) {
-		flex-direction: column;
-		align-items: center; /* Adjust as per your design needs */
-		padding: 10px 16px;
+	.too_many_logins {
+		color: red;
+		text-align: center;
+		font-size: 14px;
+		margin-top: 16px;
 	}
 `;
 
-const Label = styled.label`
-	font-size: 14px;
-	font-weight: bold;
-	color: #005eff;
+const Form = styled.form`
+	margin-top: 74px;
 
-	@media (max-width: 768px) {
-		margin-top: 10px;
+	h3 {
+		font-size: 24px;
+		font-weight: 700;
+	}
+
+	p {
+		color: #b1b1b1;
+		font-size: 16px;
+		font-weight: 400;
+	}
+
+	.formsContainer {
+		margin-top: calc(72px - 29px);
+		label {
+			font-size: 14px;
+			font-weight: 500;
+			display: block;
+			margin-top: 29px;
+			background-color: transparent;
+		}
+
+		.loginBtn {
+			/* max-width: 443px; */
+			padding: 14px !important;
+			font-size: 16px;
+			margin-top: 75px;
+		}
+
+		a {
+			text-decoration: none;
+			color: #005eff;
+			text-align: right;
+			margin-top: 25px;
+			font-size: 14px;
+			display: block;
+		}
+
+		svg path {
+			color: white !important;
+		}
 	}
 `;
 
-const GridContainer = styled.div`
-	display: grid;
-	grid-template-columns: repeat(3, 250px); /* Adjust the width as per your requirement */
-	gap: 15px;
-
-	@media (max-width: 768px) {
-		grid-template-columns: repeat(2, 150px); /* Adjust the width as per your requirement */
-		gap: 10px;
-	}
+const FormField = styled.input`
+	display: block;
+	width: 100%;
+	/* width: 443px; */
+	height: 41px;
+	border-radius: 11px;
+	border: 1px solid ${(props) => (props.error ? "red" : " #eee")};
+	margin-top: 9px;
+	padding: 10px 21px;
+	transition: border 0.2s ease-in-out;
+	outline: none;
 `;
 
-const Button = styled.button`
-	/* Button styles here */
-	color: white;
-	background-color: #002056;
-	border-radius: 4px;
-	padding: 10px 20px;
-	border: none;
-	margin: 5px;
-	font-size: 16px;
-	cursor: pointer;
-	width: 221px;
-	height: 50px;
-	margin-top: 25px; /* Add margin-top to create spacing between Button and other elements */
-
-	@media (max-width: 768px) {
-		width: 100%;
-	}
+const Error = styled.p`
+	color: red !important;
+	font-size: 14px !important;
+	margin-top: 10px;
 `;
 
-const Home = () => {
-	const [searchQuery, setSearchQuery] = useState("");
-	const handleSearchChange = (event) => {
-		setSearchQuery(event.target.value);
+let Login = () => {
+	const [credentials, setCredentials] = useState({ username: "", password: "" });
+	const [loggingIn, setIsLoggingIn] = useState(false);
+	const [rateLimited, setRateLimited] = useState(false);
+	const [errorMessages, setErrorMessages] = useState({
+		username: "",
+		password: "",
+	});
+
+	let router = useRouter();
+
+	const handleLogin = (e) => {
+		e.preventDefault();
+		setIsLoggingIn(true);
+		login(credentials)
+			.then((res) => {
+				setIsLoggingIn(false);
+
+				if (res.status == "Success") {
+					//do actions here
+					console.log("success");
+					router.push("/dashboard");
+					return;
+				}
+
+				if (!res.errors) return;
+
+				console.log(res.errors);
+				const errors = res.errors;
+
+				const usernameErrorMessage = errors.find((error) => error.path === "username")?.msg;
+				const passwordErrorMessage = errors.find((error) => error.path === "password")?.msg;
+
+				setErrorMessages({
+					username: usernameErrorMessage || "",
+					password: passwordErrorMessage || "",
+				});
+			})
+			.catch((err) => {
+				console.log(err);
+
+				setErrorMessages({
+					username: "",
+					password: "",
+				});
+
+				setRateLimited(true);
+			});
 	};
 
-	const router = useRouter();
-
 	return (
-		<DashboardLayout>
-			
-		</DashboardLayout>
+		<>
+			<LoginContainer>
+				<h2 className="appTitle">Soapify</h2>
+
+				<Form onSubmit={(e) => handleLogin(e)}>
+					<h3>Log In</h3>
+					<p>Enter your username and password to sign in!</p>
+
+					<div className="formsContainer">
+						<label htmlFor="username">Username</label>
+						<FormField
+							type="text"
+							onChange={(e) => {
+								setCredentials({ ...credentials, username: e.target.value });
+								setErrorMessages({ ...errorMessages, username: "" });
+							}}
+							value={credentials.username}
+							id="username"
+							name="username"
+							error={errorMessages.username ? true : false}
+						/>
+						{errorMessages.username && <Error>{errorMessages.username}</Error>}
+
+						<label htmlFor="password">Password</label>
+						<FormField
+							type="password"
+							onChange={(e) => {
+								setCredentials({ ...credentials, password: e.target.value });
+								setErrorMessages({ ...errorMessages, password: "" });
+							}}
+							value={credentials.password}
+							id="password"
+							name="password"
+							error={errorMessages.password ? true : false}
+						/>
+						{errorMessages.password && <Error>{errorMessages.password}</Error>}
+
+						<Link href="/">Forgot Password</Link>
+
+						<Button className="loginBtn" width="100%" onClick={(e) => handleLogin(e)}>
+							{loggingIn ? <FontAwesomeIcon icon={faSpinner} spin /> : "Log In"}
+						</Button>
+					</div>
+				</Form>
+
+				{rateLimited && <p className="too_many_logins">Too many login attempts from this IP, please try again later.</p>}
+			</LoginContainer>
+		</>
 	);
 };
 
-export default Home;
+export default Login;

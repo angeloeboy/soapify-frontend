@@ -8,7 +8,8 @@ export async function middleware(req) {
 	if (req.nextUrl.pathname.startsWith("/dashboard") && !token) {
 		const url = req.nextUrl.clone();
 		url.pathname = "/";
-		return NextResponse.rewrite(url);
+		// return NextResponse.rewrite(url);
+		return NextResponse.redirect(url);
 	}
 
 	// If accessing root or login with a token, verify and redirect to dashboard if valid
@@ -22,7 +23,8 @@ export async function middleware(req) {
 		if (response.ok) {
 			const url = req.nextUrl.clone();
 			url.pathname = "/dashboard";
-			return NextResponse.rewrite(url);
+			// return NextResponse.rewrite(url);
+			return NextResponse.redirect(url);
 		}
 	}
 
@@ -35,8 +37,9 @@ export async function middleware(req) {
 		});
 
 		const url = req.nextUrl.clone();
-		url.pathname = "/login";
-		return response.ok ? NextResponse.next() : NextResponse.rewrite(url);
+		url.pathname = "/";
+		// return response.ok ? NextResponse.next() : NextResponse.rewrite(url);
+		return response.ok ? NextResponse.next() : NextResponse.redirect(url);
 	}
 
 	return NextResponse.next();

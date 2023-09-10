@@ -107,4 +107,4 @@ const Warehouse = () => {
 	);
 };
 
-export default warehouse;
+export default Warehouse;

@@ -73,6 +73,20 @@ const Products = () => {
 		fileInput.current.click();
 	};
 
+	const checkStockStatus = (product) => {
+		let status = "";
+
+		if (product.quantity_in_stock <= product.minimum_reorder_level) {
+			status = "Low";
+		} else if (product.quantity_in_stock < 2 * product.minimum_reorder_level) {
+			status = "Moderate";
+		} else {
+			status = "High";
+		}
+
+		return status;
+	};
+
 	const [selectedProductId, setSelectedProductId] = useState(null);
 
 	return (
@@ -88,7 +102,7 @@ const Products = () => {
 							<TableHeadings>ID</TableHeadings>
 							<TableHeadings>Stock</TableHeadings>
 							<TableHeadings>Price</TableHeadings>
-							<TableHeadings>Status</TableHeadings>
+							<TableHeadings>Stock Status</TableHeadings>
 							<TableHeadings>Actions</TableHeadings>
 						</TableRows>
 
@@ -136,9 +150,27 @@ const Products = () => {
 									<TableData>{product.quantity_in_stock}</TableData>
 									<TableData>{product.product_price / 100}</TableData>
 									<TableData>
-										<Status bgColor={"rgba(255, 116, 116, 0.49)"} color={"#EA0000"}>
-											LOW
-										</Status>
+										{/* <Status bgColor={"rgba(255, 116, 116, 0.49)"} color={"#EA0000"}>
+											{checkStockStatus(product)}
+										</Status> */}
+
+										{checkStockStatus(product) === "Low" && (
+											<Status bgColor={"rgba(255, 116, 116, 0.49)"} color={"#EA0000"}>
+												{checkStockStatus(product)}
+											</Status>
+										)}
+
+										{checkStockStatus(product) === "Moderate" && (
+											<Status bgColor={"rgba(255, 246, 116, 0.49)"} color={"#312600"}>
+												{checkStockStatus(product)}
+											</Status>
+										)}
+
+										{checkStockStatus(product) === "High" && (
+											<Status bgColor={"rgba(179, 255, 116, 0.49)"} color={"#56ea00"}>
+												{checkStockStatus(product)}
+											</Status>
+										)}
 									</TableData>
 									<TableData>
 										<FontAwesomeIcon
@@ -175,6 +207,7 @@ const Products = () => {
 				<EditProductComponent
 					onClose={handleCloseEditPopUp}
 					productId={selectedProductId}
+					fetchProducts={fetchProducts}
 					//   onButtonClick={onButtonClick}
 					//   GetProducts={fetchProducts}
 				/>

@@ -97,8 +97,7 @@ const WarehouseDropDown = ({ warehouseTypeChange }) => {
           All
         </DropdownItem>
 
-        {/* Add other warehouse types as DropdownItems */}
-      </DropdownMenu>
+       </DropdownMenu>
     </DropdownWrapper>
   );
 };

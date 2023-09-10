@@ -16,6 +16,8 @@ import UserSearchBarComponent from "@/components/misc/userSearchBarAndFilters";
 import PopupContentUser from "@/components/user/addUser";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
+import PopupContentWarehouse from "@/components/warehouse/addWarehouse";
+import WarehouseSearchBarComponent from "@/components/warehouse/SearchBarAndFilter";
 
 
 const User = () => {
@@ -66,19 +68,25 @@ const User = () => {
 
   return (
     <DashboardLayout>
-      <PageTitle title="Accounts Lists" />
+      <PageTitle title="Warehouse" />
       <StyledPanel>
-        {/* <UserSearchBarComponent
-          searchQuery={searchQuery}
-          handleSearchChange={handleSearchChange}
-          handleOpenPopup={handleOpenPopup} // Pass handleOpenPopup function
-        /> */}
+
+      <WarehouseSearchBarComponent
+        searchQuery={searchQuery}
+        handleSearchChange={handleSearchChange}
+        handleOpenPopup={handleOpenPopup}
+      />
+
+  
+     
       <Table>
           <tbody>
             <TableRows heading>
               <TableHeadings>Warehouse ID</TableHeadings>
               <TableHeadings>Warehouse Name</TableHeadings>
               <TableHeadings>Location</TableHeadings> 
+              <TableHeadings>Actions</TableHeadings> 
+
             </TableRows>
 
             {warehouseData.map((warehouse, index) => (
@@ -86,11 +94,10 @@ const User = () => {
                 <TableData>
                   {warehouse.warehouse_id}
                 </TableData>
-                  <TableData bold withImage>
- 									<Image src="/product_img2.png" width={40} height={40} alt={"Product image"} />
-
-									{warehouse.name}
-								</TableData>
+                  <TableData >
+ 
+					{warehouse.warehouse_name}
+                 </TableData>
                  <TableData>{warehouse.location}</TableData>
                 <TableData>
                 <FontAwesomeIcon
@@ -117,7 +124,7 @@ const User = () => {
         </Table>
 
       </StyledPanel>
-      {isPopupOpen && <PopupContentUser onClose={handleClosePopup} />}
+      {isPopupOpen && <PopupContentWarehouse onClose={handleClosePopup} />}
     </DashboardLayout>
   );
 };

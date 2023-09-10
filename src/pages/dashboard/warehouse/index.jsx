@@ -16,6 +16,8 @@ import UserSearchBarComponent from "@/components/misc/userSearchBarAndFilters";
 import PopupContentUser from "@/components/user/addUser";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
+import PopupContentWarehouse from "@/components/warehouse/addWarehouse";
+import WarehouseSearchBarComponent from "@/components/warehouse/SearchBarAndFilter";
 
 
 const User = () => {
@@ -44,57 +46,59 @@ const User = () => {
   //   //   setUsers(res.users || []);
   //   // });
   // }, []);
-  const userData = [
+  const warehouseData = [
     {
-      name: "User 1",
-      username: "user1",
-      status: "Active",
-      type: "Admin",
+      warehouse_id: "1",
+      warehouse_name:"warehouseName1",
+      location:"Address123"
     },
     {
-      name: "User 2",
-      username: "user2",
-      status: "Inactive",
-      type: "User",
+      warehouse_id: "2",
+      warehouse_name:"warehouseName2",
+      location:"Address1234"
+     
     },
     {
-      name: "User 3",
-      username: "user3",
-      status: "Active",
-      type: "User",
+      warehouse_id: "3",
+      warehouse_name:"warehouseName3",
+      location:"Address12345"
     },
 
   ];
 
   return (
     <DashboardLayout>
-      <PageTitle title="Accounts Lists" />
+      <PageTitle title="Warehouse" />
       <StyledPanel>
-        {/* <UserSearchBarComponent
-          searchQuery={searchQuery}
-          handleSearchChange={handleSearchChange}
-          handleOpenPopup={handleOpenPopup} // Pass handleOpenPopup function
-        /> */}
+
+      <WarehouseSearchBarComponent
+        searchQuery={searchQuery}
+        handleSearchChange={handleSearchChange}
+        handleOpenPopup={handleOpenPopup}
+      />
+
+  
+     
       <Table>
           <tbody>
             <TableRows heading>
-              <TableHeadings>Name</TableHeadings>
-              <TableHeadings>Username</TableHeadings>
-              <TableHeadings>Status</TableHeadings>
-              <TableHeadings>Type</TableHeadings>
-              <TableHeadings>Actions</TableHeadings>
+              <TableHeadings>Warehouse ID</TableHeadings>
+              <TableHeadings>Warehouse Name</TableHeadings>
+              <TableHeadings>Location</TableHeadings> 
+              <TableHeadings>Actions</TableHeadings> 
+
             </TableRows>
 
-            {userData.map((user, index) => (
+            {warehouseData.map((warehouse, index) => (
               <TableRows key={index}>
-                  <TableData bold withImage>
- 									<Image src="/product_img2.png" width={40} height={40} alt={"Product image"} />
-
-									{user.name}
-								</TableData>
-                 <TableData>{user.username}</TableData>
-                <TableData>{user.status}</TableData>
-                <TableData>{user.type}</TableData>
+                <TableData>
+                  {warehouse.warehouse_id}
+                </TableData>
+                  <TableData >
+ 
+					{warehouse.warehouse_name}
+                 </TableData>
+                 <TableData>{warehouse.location}</TableData>
                 <TableData>
                 <FontAwesomeIcon
 										className="ellipsis"
@@ -120,7 +124,7 @@ const User = () => {
         </Table>
 
       </StyledPanel>
-      {isPopupOpen && <PopupContentUser onClose={handleClosePopup} />}
+      {isPopupOpen && <PopupContentWarehouse onClose={handleClosePopup} />}
     </DashboardLayout>
   );
 };

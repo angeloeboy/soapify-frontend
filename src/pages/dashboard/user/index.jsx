@@ -44,22 +44,24 @@ const User = () => {
   //   //   setUsers(res.users || []);
   //   // });
   // }, []);
-  const warehouseData = [
+  const userData = [
     {
-      warehouse_id: "1",
-      warehouse_name:"warehouseName1",
-      location:"Address123"
+      name: "User 1",
+      username: "user1",
+      status: "Active",
+      type: "Admin",
     },
     {
-      warehouse_id: "2",
-      warehouse_name:"warehouseName2",
-      location:"Address1234"
-     
+      name: "User 2",
+      username: "user2",
+      status: "Inactive",
+      type: "User",
     },
     {
-      warehouse_id: "3",
-      warehouse_name:"warehouseName3",
-      location:"Address12345"
+      name: "User 3",
+      username: "user3",
+      status: "Active",
+      type: "User",
     },
 
   ];
@@ -76,22 +78,23 @@ const User = () => {
       <Table>
           <tbody>
             <TableRows heading>
-              <TableHeadings>Warehouse ID</TableHeadings>
-              <TableHeadings>Warehouse Name</TableHeadings>
-              <TableHeadings>Location</TableHeadings> 
+              <TableHeadings>Name</TableHeadings>
+              <TableHeadings>Username</TableHeadings>
+              <TableHeadings>Status</TableHeadings>
+              <TableHeadings>Type</TableHeadings>
+              <TableHeadings>Actions</TableHeadings>
             </TableRows>
 
-            {warehouseData.map((warehouse, index) => (
+            {userData.map((user, index) => (
               <TableRows key={index}>
-                <TableData>
-                  {warehouse.warehouse_id}
-                </TableData>
                   <TableData bold withImage>
  									<Image src="/product_img2.png" width={40} height={40} alt={"Product image"} />
 
-									{warehouse.name}
+									{user.name}
 								</TableData>
-                 <TableData>{warehouse.location}</TableData>
+                 <TableData>{user.username}</TableData>
+                <TableData>{user.status}</TableData>
+                <TableData>{user.type}</TableData>
                 <TableData>
                 <FontAwesomeIcon
 										className="ellipsis"

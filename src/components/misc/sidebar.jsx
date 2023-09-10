@@ -185,7 +185,12 @@ const sidebarData = [
 		title: "Settings",
 		icon: "/settings-icon.png",
 		link: "/settings",
-		hasSubmenu: false,
+		hasSubmenu: true,
+		submenus: [
+			{ title: "Users", link: "/dashboard/user" },
+			{ title: "Warehouse", link: "/dashboard/warehouse" },
+			{ title: "Payment Methods", link: "/dashboard/payment" },
+		],
 	},
 ];
 

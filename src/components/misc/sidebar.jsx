@@ -177,7 +177,7 @@ const sidebarData = [
 		submenus: [
 			{ title: "Products", link: "/dashboard/products" },
 			{ title: "Inventory List", link: "/dashboard/inventory" },
-			{ title: "Categories", link: "/dashboard/products/category" },
+			{ title: "Categories", link: "/dashboard/products/categories" },
 			{ title: "Statistics", link: "/" },
 		],
 	},

@@ -9,7 +9,7 @@ export async function middleware(req) {
 
 		if (!token) {
 			const url = req.nextUrl.clone();
-			url.pathname = "/login";
+			url.pathname = "/";
 			return NextResponse.rewrite(url);
 		}
 
@@ -24,5 +24,5 @@ export async function middleware(req) {
 		return response.ok ? NextResponse.next() : NextResponse.rewrite(url);
 	}
 
-	// return NextResponse.next();
+	return NextResponse.next();
 }

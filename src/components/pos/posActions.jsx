@@ -15,6 +15,20 @@ const POSactionsWrapper = styled.div`
 	padding: 48px 5%;
 	height: calc(100vh - 68px);
 	overflow-y: auto;
+
+	@media (max-width: 1500px) {
+		/* transform: translateX(120%); */
+		/* width: 0px; */
+		/* margin-left: 130%; */
+	}
+
+	@media (max-width: 1000px) {
+		/* margin-left: 0px;
+		position: absolute;
+		right: 0px;
+		width: 500px;
+		z-index: 104; */
+	}
 `;
 
 const POSactions = (props) => {

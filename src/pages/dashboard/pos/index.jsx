@@ -28,6 +28,12 @@ const StickyContainer = styled.div`
 	width: 100%;
 	max-width: 500px;
 	margin-top: 48px;
+
+	/* @media (max-width: 1200px) {
+		position: fixed;
+		right: 5%;
+		top: 17%;
+	} */
 `;
 
 export const TransactionContext = createContext(null);
@@ -43,6 +49,21 @@ const Pos = () => {
 		total_amount: 0,
 		items: [],
 	});
+
+	const [windowWidth, setWindowWidth] = useState(1200);
+
+	useEffect(() => {
+		// Update width to the actual window width when the component mounts on the client side
+		setWindowWidth(window.innerWidth);
+
+		const handleResize = () => setWindowWidth(window.innerWidth);
+
+		// Attach the event listener
+		window.addEventListener("resize", handleResize);
+
+		// Cleanup the event listener on component unmount
+		return () => window.removeEventListener("resize", handleResize);
+	}, []);
 
 	useEffect(() => {
 		fetchProducts();
@@ -107,7 +128,7 @@ const Pos = () => {
 					</StyledPanel>
 
 					<StickyContainer>
-						<Sticky enabled={true} top={20}>
+						<Sticky enabled={windowWidth > 1200 ? true : false} top={20}>
 							<POSactions />
 						</Sticky>
 					</StickyContainer>

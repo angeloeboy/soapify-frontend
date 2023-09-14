@@ -120,9 +120,7 @@ const Categories = () => {
 						) : (
 							categoriesDisplay.map((category, index) => (
 								<TableRows key={category.category_id}>
-									<TableData bold withImage>
-										{category.name}
-									</TableData>
+									<TableData bold>{category.name}</TableData>
 									<TableData>{category.category_id}</TableData>
 									<TableData>{category.number_of_products}</TableData>
 									<TableData>{category.isActive ? "Active" : "Not active"}</TableData>

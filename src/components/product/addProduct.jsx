@@ -70,8 +70,9 @@ const AddProductComponent = ({ onClose, onButtonClick, GetProducts }) => {
 		<PopupOverlay>
 			<PopupContent>
 				<form onSubmit={(e) => AddProduct(e)} enctype="multipart/form-data">
-					<HeaderTitle>Add Products</HeaderTitle>
 					<FieldContainer>
+						<HeaderTitle>Add Products</HeaderTitle>
+
 						<LabelContainer first>
 							<Label>General Information</Label>{" "}
 						</LabelContainer>

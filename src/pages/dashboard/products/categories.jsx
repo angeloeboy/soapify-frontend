@@ -21,8 +21,8 @@ import { Button } from "@/styled-components/ItemActionModal";
 import AddProductComponent from "@/components/product/addProduct";
 import EditProductComponent from "@/components/product/editProduct";
 
-import SearchBarComponentProduct from "@/components/product/searchBarAndFilters";
-import SearchBarComponent from "@/components/product/searchBarAndFilters";
+import SearchBarComponent from "@/components/product/categories/searchBarAndFilters";
+import AddCategoriesComponent from "./../../../components/product/categories/addCategories";
 
 const Categories = () => {
 	const [categories, setCategories] = useState([]);
@@ -81,7 +81,8 @@ const Categories = () => {
 			<PageTitle title="Category List" />
 
 			<StyledPanel>
-				{/* <SearchBarComponent setPopupOpen={setPopupOpen} setProductDisplay={setProductDisplay} products={products} /> */}
+				<SearchBarComponent setPopupOpen={setPopupOpen} setCategoriesDisplay={setCategoriesDisplay} categories={categories} />
+
 				<Table>
 					<tbody>
 						<TableRows heading>
@@ -156,8 +157,9 @@ const Categories = () => {
 					</tbody>
 				</Table>
 			</StyledPanel>
-			{/* {isPopupOpen && <AddProductComponent onClose={handleClosePopup} onButtonClick={onButtonClick} GetProducts={fetchProducts} />}
-			{isEditPopupOpen && (
+			{isPopupOpen && <AddCategoriesComponent onClose={handleClosePopup} onButtonClick={onButtonClick} setPopupOpen={setPopupOpen} />}
+
+			{/* {isEditPopupOpen && (
 				<EditProductComponent
 					onClose={handleCloseEditPopUp}
 					productId={selectedProductId}

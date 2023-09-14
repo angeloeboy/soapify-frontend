@@ -13,13 +13,8 @@ import { addProduct, getProductCategories, getProducts } from "@/api/products";
 import { useRouter } from "next/router";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-// import Button from "@/components/misc/button";
 import Table, { ActionContainer, TableData, TableHeadings, TableRows, Status } from "@/styled-components/TableComponent";
-import { ButtonAddAccountType, ButtonAddStatus, ButtonAddProduct } from "@/styled-components/ItemActionModal";
 import { Button } from "@/styled-components/ItemActionModal";
-
-import AddProductComponent from "@/components/product/addProduct";
-import EditProductComponent from "@/components/product/editProduct";
 
 import SearchBarComponent from "@/components/product/categories/searchBarAndFilters";
 import AddCategoriesComponent from "./../../../components/product/categories/addCategories";

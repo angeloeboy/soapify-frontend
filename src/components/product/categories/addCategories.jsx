@@ -19,57 +19,44 @@ import {
 } from "@/styled-components/ItemActionModal";
 
 import { useEffect, useState } from "react";
-import { addProduct, getProductCategories, getProducts } from "@/api/products";
+import { addCategory, addProduct, getProductCategories, getProducts } from "@/api/products";
 
-const AddCategoriesComponent = ({ onClose, onButtonClick, GetProducts }) => {
-	const [fileUploaded, setFileUploaded] = useState(false);
-	const [categories, setCategories] = useState([]);
-	const [product, setProduct] = useState({
-		product_name: "",
-		product_desc: "",
-		product_price: 0,
-		category_id: 1,
-		supplier_id: 0,
-		quantity_in_stock: 0,
-		minimum_reorder_level: 1,
+const AddCategoriesComponent = ({ onClose, onButtonClick, fetchCategories }) => {
+	const [category, setCategory] = useState({
+		name: "",
 	});
 
-	useEffect(() => {
-		fetchProductCategories();
-	}, []);
+	// useEffect(() => {
+	// 	fetchProductCategories();
+	// }, []);
 
-	let AddProduct = (e) => {
+	let AddCategory = (e) => {
 		e.preventDefault();
 
-		const formData = new FormData();
-		formData.append("product_image", e.target.elements.product_image.files[0]);
+		// const formData = new FormData();
+		// formData.append("product_image", e.target.elements.product_image.files[0]);
 
-		// Append each property in the product object to formData
-		for (let key in product) {
-			formData.append(key, product[key]);
-		}
+		// // Append each property in the product object to formData
+		// for (let key in product) {
+		// 	formData.append(key, product[key]);
+		// }
 
-		console.log(product);
-
-		addProduct(formData)
-			.then((res) => {
-				console.log(res);
-			})
-			.then(() => {
-				GetProducts();
-			});
+		addCategory(category).then((res) => {
+			console.log(res);
+			fetchCategories();
+		});
 	};
 
-	let fetchProductCategories = async () => {
-		const res = await getProductCategories();
-		console.log(res);
-		setCategories(res.categories);
-	};
+	// let fetchProductCategories = async () => {
+	// 	const res = await getProductCategories();
+	// 	console.log(res);
+	// 	setCategories(res.categories);
+	// };
 
 	return (
 		<PopupOverlay>
 			<PopupContent>
-				<form onSubmit={(e) => AddProduct(e)} enctype="multipart/form-data">
+				<form onSubmit={(e) => AddCategory(e)} enctype="multipart/form-data">
 					<FieldContainer>
 						<HeaderTitle>Add Category</HeaderTitle>
 
@@ -82,10 +69,10 @@ const AddCategoriesComponent = ({ onClose, onButtonClick, GetProducts }) => {
 								type="text"
 								placeholder="Enter your Category Name"
 								onChange={(e) => {
-									setProduct({ ...product, product_name: e.target.value });
+									setCategory({ ...category, name: e.target.value });
 								}}
 								required
-								value={product.product_name}
+								value={category.name}
 							/>
 						</div>
 					</FieldContainer>

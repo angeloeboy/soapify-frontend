@@ -157,7 +157,9 @@ const Categories = () => {
 					</tbody>
 				</Table>
 			</StyledPanel>
-			{isPopupOpen && <AddCategoriesComponent onClose={handleClosePopup} onButtonClick={onButtonClick} setPopupOpen={setPopupOpen} />}
+			{isPopupOpen && (
+				<AddCategoriesComponent onClose={handleClosePopup} onButtonClick={onButtonClick} fetchCategories={fetchCategories} setPopupOpen={setPopupOpen} />
+			)}
 
 			{/* {isEditPopupOpen && (
 				<EditProductComponent

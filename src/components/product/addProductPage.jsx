@@ -131,3 +131,4 @@ const AddProductComponent = ({ onClose, onButtonClick, GetProducts }) => {
 };
 
 export default AddProductComponent;
+ 

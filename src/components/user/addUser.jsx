@@ -1,7 +1,6 @@
 import React, { useState, useRef } from "react";
-import styled from "styled-components";
-import DashboardLayout from "@/components/misc/dashboardLayout";
-import ItemActionModal, {
+
+import {
   Button,
   Select,
   LabelContainer,
@@ -20,7 +19,6 @@ import ItemActionModal, {
   FieldTitleLabel,
   InputHolder,
 } from "@/styled-components/ItemActionModal";
-import StyledPanel from "@/styled-components/StyledPanel";
 
 const PopupContentUser = ({ onClose, onButtonClick, fileInput }) => {
   const [fileUploaded, setFileUploaded] = useState(false);
@@ -31,6 +29,10 @@ const PopupContentUser = ({ onClose, onButtonClick, fileInput }) => {
 
   const resetFileUpload = () => {
     setFileUploaded(false);
+  };
+
+  const handleClosePopup = () => {
+    setPopupOpen(false);
   };
 
   return (
@@ -57,11 +59,11 @@ const PopupContentUser = ({ onClose, onButtonClick, fileInput }) => {
             <FieldTitleLabel notFirst>Image (optional)</FieldTitleLabel>
             <ProfilePictureContainer>
               <Centered>
-                <SecondaryButton onClick={onButtonClick}>
+                {/* <SecondaryButton onClick={onButtonClick}>
                   {fileUploaded
                     ? "You've uploaded a file"
                     : "Click to Upload or Drag and drop an Image"}
-                </SecondaryButton>
+                </SecondaryButton> */}
                 <FileInput ref={fileInput} onChange={handleFileUpload} />
               </Centered>
             </ProfilePictureContainer>
@@ -92,7 +94,7 @@ const PopupContentUser = ({ onClose, onButtonClick, fileInput }) => {
 
         <ButtonsContainer>
           <CloseButton onClick={onClose}>Close</CloseButton>
-          <Button onClick={() => router.push("/dashboard/")}>Save</Button>
+          <Button type="submit">Save</Button>
         </ButtonsContainer>
       </PopupContent>
     </PopupOverlay>

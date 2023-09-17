@@ -12,6 +12,7 @@ import {
 } from "@/styled-components/TableControlPanel";
 
 import PopupContentUser from "../user/addUser";
+import { Status } from "@/styled-components/TableComponent";
 
 const UserSearchBarComponent = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -56,13 +57,20 @@ const UserSearchBarComponent = () => {
         <AccountDropDown accountTypeChange={accountTypeChange} />
       </div>
       <div>
+        <p> Status</p>
+        <StatusDropDown
+        // productCategories={productCategories}
+        // handleCategoryChange={handleCategoryChange}
+        />
+      </div>
+      <div>
         <Button
           style={{ marginTop: "28px", padding: "16px 24px" }}
           onClick={handleOpenPopupContenUser}
         >
           + Add User
         </Button>
-        {setIsPopupContentUserOpen && (
+        {isPopupContenUserOpen && (
           <PopupContentUser onClose={handleOpenPopupContenUser} />
         )}
       </div>
@@ -103,6 +111,34 @@ const AccountDropDown = ({ handleCategoryChange }) => {
             handleCategoryChange(option.name);
           }}
         ></DropdownItem>
+      </DropdownMenu>
+    </DropdownWrapper>
+  );
+};
+
+const StatusDropDown = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState("All");
+
+  return (
+    <DropdownWrapper onClick={() => setIsOpen(!isOpen)}>
+      <DropdownHeader>
+        <FontAwesomeIcon icon={faFilter} />
+        {selectedStatus}
+      </DropdownHeader>
+      <DropdownMenu isOpen={isOpen}>
+        <DropdownItem
+          key={0}
+          onClick={() => {
+            setSelectedStatus("All");
+            setIsOpen(false);
+            handleCategoryChange("All");
+          }}
+        >
+          All
+        </DropdownItem>
+
+        <DropdownItem></DropdownItem>
       </DropdownMenu>
     </DropdownWrapper>
   );

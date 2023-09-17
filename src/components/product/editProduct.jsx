@@ -22,7 +22,7 @@ import { useEffect, useState } from "react";
 
 import { getProduct, editProduct, getProductCategories } from "@/api/products";
 
-const EditProductComponent = ({ productId, onClose, GetProducts }) => {
+const EditProductComponent = ({ productId, onClose, fetchProducts }) => {
 	const [product, setProduct] = useState({
 		product_name: "",
 		product_desc: "dfasdfasdfd",
@@ -39,6 +39,10 @@ const EditProductComponent = ({ productId, onClose, GetProducts }) => {
 		fetchProductData();
 		fetchProductCategories();
 	}, []);
+
+	useEffect(() => {
+		console.log(product);
+	}, [product]);
 
 	const fetchProductData = async () => {
 		try {
@@ -61,13 +65,12 @@ const EditProductComponent = ({ productId, onClose, GetProducts }) => {
 
 	const handleFormSubmit = (e) => {
 		e.preventDefault();
-		// console.log(product);
-		// const formData = new FormData();
 		// Append fields to formData for editing
 		console.log(product);
 		editProduct(product, productId)
 			.then((res) => {
 				console.log(res);
+				fetchProducts();
 			})
 			.then(() => {});
 	};
@@ -76,10 +79,7 @@ const EditProductComponent = ({ productId, onClose, GetProducts }) => {
 		<PopupOverlay>
 			<PopupContent>
 				<form onSubmit={(e) => handleFormSubmit(e)} enctype="multipart/form-data">
-					<HeaderTitle>
-						Edit Product {product.product_name} stock:
-						{product.quantity_in_stock}
-					</HeaderTitle>
+					<HeaderTitle>Edit Product {product.product_name}</HeaderTitle>
 					<FieldContainer>
 						<LabelContainer first>
 							<Label>General Information</Label>{" "}
@@ -147,7 +147,7 @@ const EditProductComponent = ({ productId, onClose, GetProducts }) => {
 								}}
 							>
 								{categories.map((category) => (
-									<Option value={category.id} key={category.id}>
+									<Option value={category.category_id} key={category.category_id}>
 										{category.name}
 									</Option>
 								))}

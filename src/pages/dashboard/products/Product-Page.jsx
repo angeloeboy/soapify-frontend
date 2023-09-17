@@ -12,6 +12,7 @@ import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
 import PageTitle from "@/components/misc/pageTitle";
 import StyledPanel from "@/styled-components/StyledPanel";
 import ProductPageSearchBar from "@/components/product/searchBarAndFiltersProductPages";
+import AddProductComponent from "@/components/product/addProduct";
 const ProductsPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isPopupOpen, setPopupOpen] = useState(false);
@@ -95,7 +96,7 @@ const ProductsPage = () => {
         </Table>
 
       </StyledPanel>
-      {isPopupOpen && <YourPopupComponent onClose={handleClosePopup} />}
+      {isPopupOpen && <AddProductComponent onClose={handleClosePopup} />}
     </DashboardLayout>
   );
 };

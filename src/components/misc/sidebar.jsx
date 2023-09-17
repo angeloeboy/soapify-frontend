@@ -177,15 +177,21 @@ const sidebarData = [
 		submenus: [
 			{ title: "Products", link: "/dashboard/products" },
 			{ title: "Inventory List", link: "/dashboard/inventory" },
-			{ title: "Categories", link: "/dashboard/products/category" },
-			{ title: "Statistics", link: "/" },
+			{ title: "Categories", link: "/dashboard/products/categories" },
+			{ title: "Statistics", link: "/dashboard" },
+			{ title: "Suppliers", link: "/dashboard/suppliers" },
 		],
 	},
 	{
 		title: "Settings",
 		icon: "/settings-icon.png",
 		link: "/settings",
-		hasSubmenu: false,
+		hasSubmenu: true,
+		submenus: [
+			{ title: "Users", link: "/dashboard/user" },
+			{ title: "Warehouse", link: "/dashboard/warehouse" },
+			{ title: "Payment Methods", link: "/dashboard/payment" },
+		],
 	},
 ];
 

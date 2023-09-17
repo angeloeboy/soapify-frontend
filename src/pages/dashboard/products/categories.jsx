@@ -13,16 +13,11 @@ import { addProduct, getProductCategories, getProducts } from "@/api/products";
 import { useRouter } from "next/router";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-// import Button from "@/components/misc/button";
 import Table, { ActionContainer, TableData, TableHeadings, TableRows, Status } from "@/styled-components/TableComponent";
-import { ButtonAddAccountType, ButtonAddStatus, ButtonAddProduct } from "@/styled-components/ItemActionModal";
 import { Button } from "@/styled-components/ItemActionModal";
 
-import AddProductComponent from "@/components/product/addProduct";
-import EditProductComponent from "@/components/product/editProduct";
-
-import SearchBarComponentProduct from "@/components/product/searchBarAndFilters";
-import SearchBarComponent from "@/components/product/searchBarAndFilters";
+import SearchBarComponent from "@/components/product/categories/searchBarAndFilters";
+import AddCategoriesComponent from "./../../../components/product/categories/addCategories";
 
 const Categories = () => {
 	const [categories, setCategories] = useState([]);
@@ -81,7 +76,8 @@ const Categories = () => {
 			<PageTitle title="Category List" />
 
 			<StyledPanel>
-				{/* <SearchBarComponent setPopupOpen={setPopupOpen} setProductDisplay={setProductDisplay} products={products} /> */}
+				<SearchBarComponent setPopupOpen={setPopupOpen} setCategoriesDisplay={setCategoriesDisplay} categories={categories} />
+
 				<Table>
 					<tbody>
 						<TableRows heading>
@@ -119,9 +115,7 @@ const Categories = () => {
 						) : (
 							categoriesDisplay.map((category, index) => (
 								<TableRows key={category.category_id}>
-									<TableData bold withImage>
-										{category.name}
-									</TableData>
+									<TableData bold>{category.name}</TableData>
 									<TableData>{category.category_id}</TableData>
 									<TableData>{category.number_of_products}</TableData>
 									<TableData>{category.isActive ? "Active" : "Not active"}</TableData>
@@ -156,8 +150,11 @@ const Categories = () => {
 					</tbody>
 				</Table>
 			</StyledPanel>
-			{/* {isPopupOpen && <AddProductComponent onClose={handleClosePopup} onButtonClick={onButtonClick} GetProducts={fetchProducts} />}
-			{isEditPopupOpen && (
+			{isPopupOpen && (
+				<AddCategoriesComponent onClose={handleClosePopup} onButtonClick={onButtonClick} fetchCategories={fetchCategories} setPopupOpen={setPopupOpen} />
+			)}
+
+			{/* {isEditPopupOpen && (
 				<EditProductComponent
 					onClose={handleCloseEditPopUp}
 					productId={selectedProductId}

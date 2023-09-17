@@ -20,7 +20,7 @@ import PopupContentWarehouse from "@/components/warehouse/addWarehouse";
 import EditWarehouseComponent from "@/components/warehouse/editWarehouse";
 import WarehouseSearchBarComponent from "@/components/warehouse/SearchBarAndFilter";
 
-const User = () => {
+const Warehouse = () => {
   const [searchQuery, setSearchQuery] = useState(""); // Initialize searchQuery
   const [isPopupOpen, setPopupOpen] = useState(false);
   const [isEditWarehouseOpen, setEditWarehouseOpen] = useState(false);
@@ -115,6 +115,7 @@ const User = () => {
                           openEditWarehouse();
                         }}
                       >
+                        {" "}
                         <FontAwesomeIcon icon={faPen} />
                         Edit
                       </p>
@@ -137,4 +138,4 @@ const User = () => {
   );
 };
 
-export default User;
+export default Warehouse;

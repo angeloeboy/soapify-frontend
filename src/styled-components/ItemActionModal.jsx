@@ -29,6 +29,14 @@ export const PopupContent = styled.div`
 	flex-direction: column;
 	/* position: relative; */
 	width: calc(100% - 40px);
+	height: 90vh;
+	form {
+		height: 100%;
+	}
+
+	.form_fields {
+		height: 100%;
+	}
 `;
 
 export const HeaderTitle = styled.h2`
@@ -136,6 +144,7 @@ export const FieldContainer = styled.div`
 	display: flex;
 	width: 100%;
 	flex-direction: column;
+	min-height: calc(100% - 200px);
 	${InputHolder}:not(:first-child) {
 		margin-top: 2px;
 	}
@@ -285,9 +294,9 @@ export const CloseButton = styled.button`
 export const ButtonsContainer = styled.div`
 	display: flex;
 	justify-content: flex-end;
-	margin-top: 222px;
 	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 	/* position: fixed; */
+	margin-top: 130px;
 	position: sticky;
 	bottom: 0px;
 	width: 100%;

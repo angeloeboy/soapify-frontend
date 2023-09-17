@@ -8,7 +8,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
 import PaymentSearchBarComponent from "@/components/PaymentMethod/SearchBarPaymentMethod";
 import { getPaymentMethods } from "@/api/pos";
-import { Skeleton } from "react-loading-skeleton";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 const PaymentTable = () => {
 	const paymentData = [
@@ -54,7 +55,6 @@ const PaymentTable = () => {
 			console.log(res);
 			setPaymentMethods(res.paymentMethods);
 			setPaymentMethodsLoading(false);
-      
 		});
 	};
 

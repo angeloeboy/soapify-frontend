@@ -12,6 +12,7 @@ import Table, {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
 import PaymentSearchBarComponent from "@/components/PaymentMethod/SearchBarPaymentMethod";
+import EditPaymentMethodComponent from "@/components/PaymentMethod/editPaymentMethod";
 
 const PaymentTable = () => {
   const paymentData = [
@@ -37,13 +38,20 @@ const PaymentTable = () => {
 
   const [activeActionContainer, setActiveActionContainer] = useState(-1);
   const [searchQuery, setSearchQuery] = useState(""); // Define searchQuery state variable
-
+  const [isEditPaymentOpen, setEditPaymentOpen] = useState(false);
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
   };
 
   const handleOpenPopup = () => {
     // Handle opening the payment method popup here
+  };
+
+  const openEditPayment = () => {
+    setEditPaymentOpen(true);
+  };
+  const closeEditPayment = () => {
+    setEditPaymentOpen(false);
   };
 
   return (
@@ -83,8 +91,14 @@ const PaymentTable = () => {
                   />
 
                   {activeActionContainer === index && (
-                    <ActionContainer onClick={() => setActiveActionContainer(-1)}>
-                      <p>
+                    <ActionContainer
+                      onClick={() => setActiveActionContainer(-1)}
+                    >
+                      <p
+                        onClick={() => {
+                          openEditPayment();
+                        }}
+                      >
                         <FontAwesomeIcon icon={faPen} /> Edit
                       </p>
                       <p>
@@ -98,6 +112,9 @@ const PaymentTable = () => {
           </tbody>
         </Table>
       </StyledPanel>
+      {isEditPaymentOpen && (
+        <EditPaymentMethodComponent onClose={closeEditPayment} />
+      )}
     </DashboardLayout>
   );
 };

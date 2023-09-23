@@ -119,3 +119,38 @@ export const getProductTemplates = async () => {
 		console.log(error);
 	}
 };
+
+export const addTemplate = async (template) => {
+	try {
+		const response = await fetch("/api/product/template/add", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(template),
+			credentials: "include",
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const getSubCategories = async () => {
+	try {
+		const response = await fetch("/api/subcategory", {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			credentials: "include",
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};

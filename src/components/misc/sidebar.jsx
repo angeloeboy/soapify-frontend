@@ -180,6 +180,7 @@ const sidebarData = [
 			{ title: "Categories", link: "/dashboard/products/categories" },
 			{ title: "Statistics", link: "/dashboard" },
 			{ title: "Suppliers", link: "/dashboard/suppliers" },
+			{ title: "Subcategories", link: "/dashboard/products/subcategories" },
 		],
 	},
 	{

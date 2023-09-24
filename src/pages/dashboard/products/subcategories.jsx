@@ -5,22 +5,19 @@ import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faTrash, faEllipsis, faFilter, faPlus } from "@fortawesome/free-solid-svg-icons";
 import PageTitle from "@/components/misc/pageTitle";
-import TableControlPanel from "@/styled-components/TableControlPanel";
 import StyledPanel from "@/styled-components/StyledPanel";
 import { useEffect, useState } from "react";
 import { addProduct, getProductTemplates, getProducts, getSubCategories } from "@/api/products";
 import { useRouter } from "next/router";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+
 // import Button from "@/components/misc/button";
 import Table, { ActionContainer, TableData, TableHeadings, TableRows, Status } from "@/styled-components/TableComponent";
-import { ButtonAddAccountType, ButtonAddStatus, ButtonAddProduct } from "@/styled-components/ItemActionModal";
 import { Button } from "@/styled-components/ItemActionModal";
 
-import AddProductComponent from "@/components/product/addProduct";
-import EditProductComponent from "@/components/product/editProduct";
 import SearchBarComponent from "@/components/product/subcategory/searchBarAndFilter";
-import AddTemplateComponent from "@/components/product/subcategory/addTemplate";
+import AddSubCategory from "@/components/product/subcategory/addSubcategory";
 
 // import SearchBarComponent from "@/components/product/product-template/searchBarAndFilters";
 
@@ -29,10 +26,6 @@ const ProductTemplates = () => {
 	const [isEditPopupOpen, setEditPopUpOpen] = useState(false);
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
 
-	const [templates, setTemplates] = useState([]);
-	const [templatesDisplay, setTemplatesDisplay] = useState([]);
-	const [templatesLoading, setTemplatesLoading] = useState(true);
-
 	const [subCategories, setSubCategories] = useState([]);
 	const [subCategoriesLoading, setSubCategoriesLoading] = useState(true);
 	const [subcategoryDisplay, setSubcategoryDisplay] = useState([]);
@@ -40,17 +33,8 @@ const ProductTemplates = () => {
 	const router = useRouter();
 
 	useEffect(() => {
-		fetchProductTemplates();
 		fetchProductSubcategories();
 	}, []);
-
-	const fetchProductTemplates = async () => {
-		const res = await getProductTemplates();
-		res.templates ? setTemplatesDisplay(res.templates) : setTemplatesDisplay([]);
-		res.templates ? setTemplates(res.templates) : setTemplates([]);
-		console.log(res.templates);
-		setTemplatesLoading(false);
-	};
 
 	const fetchProductSubcategories = async () => {
 		const res = await getSubCategories();
@@ -93,7 +77,7 @@ const ProductTemplates = () => {
 
 	return (
 		<DashboardLayout>
-			<PageTitle title="Product Templates" />
+			<PageTitle title="Subcategories" />
 
 			<StyledPanel>
 				<SearchBarComponent setPopupOpen={setPopupOpen} subCategories={subCategories} setSubcategoryDisplay={setSubcategoryDisplay} />
@@ -164,8 +148,8 @@ const ProductTemplates = () => {
 					</tbody>
 				</Table>
 			</StyledPanel>
-			{isPopupOpen && <AddTemplateComponent onClose={handleClosePopup} onButtonClick={onButtonClick} fetchProductTemplates={fetchProductTemplates} />}
-			{isEditPopupOpen && <EditProductComponent onClose={handleCloseEditPopUp} productId={selectedProductId} fetchProducts={fetchProducts} />}
+			{isPopupOpen && <AddSubCategory onClose={handleClosePopup} onButtonClick={onButtonClick} fetchProductSubcategories={fetchProductSubcategories} />}
+			{/* {isEditPopupOpen && <EditProductComponent onClose={handleCloseEditPopUp} productId={selectedProductId} fetchProducts={fetchProducts} />} */}
 		</DashboardLayout>
 	);
 };

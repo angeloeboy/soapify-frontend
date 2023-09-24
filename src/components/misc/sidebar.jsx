@@ -181,6 +181,7 @@ const sidebarData = [
 			{ title: "Statistics", link: "/dashboard" },
 			{ title: "Suppliers", link: "/dashboard/suppliers" },
 			{ title: "Subcategories", link: "/dashboard/products/subcategories" },
+			{ title: "Attributes", link: "/dashboard/attributes" },
 		],
 	},
 	{

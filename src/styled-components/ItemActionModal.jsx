@@ -68,7 +68,10 @@ export const InputHolder = styled.input`
 	border: 1px solid #eee;
 	padding: 8px 16px;
 	margin-left: 23.92px;
-	width: 780.824px;
+	margin-right: 23.92px;
+
+	max-width: 780.824px;
+	width: calc(100% - (23.92px * 2));
 	height: 41px;
 	flex-shrink: 0;
 	&:focus {
@@ -95,11 +98,12 @@ export const Button = styled.button`
 
 export const Select = styled.select`
 	color: #1a69f0;
-	width: 700.824px;
+	/* width: 700.824px; */
 	height: 41px;
 	padding: 10px;
 	margin-bottom: 10px;
 	margin-left: 23.92px;
+	display: block;
 	border: 1px solid #ccc;
 	border-radius: 11px;
 	font-size: 16px;
@@ -108,6 +112,8 @@ export const Select = styled.select`
 	font-style: normal;
 	font-weight: 700;
 	line-height: normal;
+	margin-right: 23.92px;
+	width: calc(100% - (23.92px * 2));
 `;
 export const LabelContainer = styled.div`
 	background-color: #f3f3f3;

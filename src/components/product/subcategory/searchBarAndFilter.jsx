@@ -46,7 +46,7 @@ const SearchBarComponent = ({ setPopupOpen, subCategories, setSubcategoryDisplay
 
 			<div>
 				<p> Add </p>
-				<Button onClick={() => setPopupOpen(true)}>+ Add Template</Button>
+				<Button onClick={() => setPopupOpen(true)}>+ Add Subcategory</Button>
 			</div>
 		</TableControlPanel>
 	);

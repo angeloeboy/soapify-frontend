@@ -36,7 +36,7 @@ export const getProduct = async (id) => {
 
 export const addProduct = async (product) => {
 	try {
-		const response = await fetch("/api/product/create", {
+		const response = await fetch("/api/product/", {
 			method: "POST",
 			body: product,
 			credentials: "include",
@@ -120,24 +120,6 @@ export const getProductTemplates = async () => {
 	}
 };
 
-export const addTemplate = async (template) => {
-	try {
-		const response = await fetch("/api/product/template/add", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(template),
-			credentials: "include",
-		});
-
-		const data = await response.json();
-		return data;
-	} catch (error) {
-		console.log(error);
-	}
-};
-
 export const getSubCategories = async () => {
 	try {
 		const response = await fetch("/api/subcategory", {
@@ -149,6 +131,7 @@ export const getSubCategories = async () => {
 		});
 
 		const data = await response.json();
+		console.log(data);
 		return data;
 	} catch (error) {
 		console.log(error);

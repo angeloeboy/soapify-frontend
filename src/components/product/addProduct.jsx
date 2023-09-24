@@ -105,6 +105,7 @@ const AddProductComponent = ({ onClose, onButtonClick, GetProducts }) => {
 				console.error("Error adding product:", error);
 			});
 	};
+
 	let fetchProductCategories = async () => {
 		const res = await getProductCategories();
 		setCategories(res.categories);
@@ -207,7 +208,6 @@ const AddProductComponent = ({ onClose, onButtonClick, GetProducts }) => {
 							<FieldTitleLabel> Product Name </FieldTitleLabel>
 							<InputHolder
 								type="text"
-								placeholder="Enter your Product Name"
 								onChange={(e) => {
 									setProduct({ ...product, product_name: e.target.value });
 								}}

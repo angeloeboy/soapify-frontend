@@ -15,16 +15,11 @@ import {
 } from "@/styled-components/ItemActionModal";
 
 import { useEffect, useState } from "react";
-import { addTemplate, getProductCategories } from "@/api/products";
+import { getProductCategories } from "@/api/products";
 import { getAttributes } from "@/api/attributes";
 import { addSubCategory } from "@/api/subcategories";
 
 const AddSubCategory = ({ onClose, onButtonClick, fetchProductSubcategories }) => {
-	const [template, setTemplate] = useState({
-		template_name: "",
-		attributes: [],
-	});
-
 	const [subCategory, setSubCategory] = useState({
 		name: "",
 		category_id: undefined,

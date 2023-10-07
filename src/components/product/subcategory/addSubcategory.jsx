@@ -54,7 +54,10 @@ const AddSubCategory = ({ onClose, onButtonClick, fetchProductSubcategories }) =
 		const res = await getProductCategories();
 		res.categories ? setCategories(res.categories) : setCategories([]);
 		console.log(res.categories);
-		setSubCategory({ ...subCategory, category_id: res.categories[0].category_id });
+
+		if (res.categories.length > 0) {
+			setSubCategory({ ...subCategory, category_id: res.categories[0].category_id });
+		}
 	};
 
 	let addSubcategory = async (e) => {

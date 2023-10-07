@@ -47,35 +47,40 @@ const AddProductComponent = ({ onClose, onButtonClick, GetProducts }) => {
 		fetchSuppliers();
 	}, []);
 
+	// useEffect(() => {
+	// 	console.log(attributes);
+	// }, [attributes]);
+
 	useEffect(() => {
 		console.log(product);
 	}, [product]);
 
 	useEffect(() => {
-		if (subCategories.length == 0) return;
 		if (categories.length == 0) return;
 		if (suppliers.length == 0) return;
+		if (subCategories.length == 0) return;
 
 		setSubCategories(categories[0]?.subcategories);
 		setAttributes(categories[0]?.subcategories[0]?.attributes);
-
 		//set initial attributes
-		let initialAttributes = categories[0]?.subcategories[0]?.attributes;
 
+		let initialAttributes = categories[0]?.subcategories[0]?.attributes;
+		// console.log(categories[0].subcategories[0].subcategory_id);
 		let attributeArray = [];
 
 		initialAttributes.forEach((attribute) => {
 			attributeArray.push({ attribute_id: attribute.attribute_id, attribute_value_id: attribute.values[0].attribute_value_id });
 		});
 
+
 		setProduct({
 			...product,
-			supplier_id: suppliers[0]?.supplier_id,
+			supplier_id: suppliers[0]?.supplier_id ?? 0,
 			category_id: categories[0]?.category_id,
-			subcategory_id: categories[0]?.subcategories.subcategory_id,
+			subcategory_id: categories[0]?.subcategories[0].subcategory_id,
 			attributes: attributeArray,
 		});
-	}, [categories, suppliers]);
+	}, [categories, suppliers, subCategories]);
 
 	let AddProduct = (e) => {
 		e.preventDefault();
@@ -118,7 +123,6 @@ const AddProductComponent = ({ onClose, onButtonClick, GetProducts }) => {
 
 	let fetchSubCategories = async () => {
 		const res = await getSubCategories();
-		console.log(res);
 		setSubCategories(res.subcategories);
 	};
 
@@ -187,8 +191,6 @@ const AddProductComponent = ({ onClose, onButtonClick, GetProducts }) => {
 							<Select
 								value={product.template_id}
 								onChange={(e) => {
-									// setProduct({ ...product, subcategory_id: Number(e.target.value) });
-									// setAttributes(subCategories.find((subcategory) => subcategory.subcategory_id == e.target.value).attributes);
 									handleSubCategoryChange(e);
 								}}
 							>
@@ -266,11 +268,6 @@ const AddProductComponent = ({ onClose, onButtonClick, GetProducts }) => {
 
 									<Select
 										value={product.attributes[index]?.attribute_value_id}
-										// onChange={(e) => {
-										// 	setProduct({ ...product, subcategory_id: Number(e.target.value) });
-										// 	setAttributes(subCategories.find((subcategory) => subcategory.subcategory_id == e.target.value).attributes);
-										// }}
-
 										onChange={(e) => {
 											let newAttributes = [...product.attributes];
 											console.log(newAttributes);

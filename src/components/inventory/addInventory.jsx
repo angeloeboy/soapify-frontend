@@ -42,7 +42,9 @@ const AddInventoryComponent = ({ onClose, onButtonClick, getInventoryFunc }) => 
 		getProducts().then((res) => {
 			console.log(res);
 			res ? setProducts(res.products) : setProducts([]);
-			setInventory({ ...inventory, product_id: res.products[0].product_id });
+			if (res.products.length > 0) {
+				setInventory({ ...inventory, product_id: res.products[0].product_id });
+			}
 		});
 	};
 

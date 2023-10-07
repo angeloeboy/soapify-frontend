@@ -47,10 +47,6 @@ const AddProductComponent = ({ onClose, onButtonClick, GetProducts }) => {
 		fetchSuppliers();
 	}, []);
 
-	// useEffect(() => {
-	// 	console.log(attributes);
-	// }, [attributes]);
-
 	useEffect(() => {
 		console.log(product);
 	}, [product]);
@@ -71,7 +67,6 @@ const AddProductComponent = ({ onClose, onButtonClick, GetProducts }) => {
 		initialAttributes.forEach((attribute) => {
 			attributeArray.push({ attribute_id: attribute.attribute_id, attribute_value_id: attribute.values[0].attribute_value_id });
 		});
-
 
 		setProduct({
 			...product,
@@ -113,16 +108,24 @@ const AddProductComponent = ({ onClose, onButtonClick, GetProducts }) => {
 
 	let fetchProductCategories = async () => {
 		const res = await getProductCategories();
-		setCategories(res.categories);
+		console.log(res.categories);
+		res ? setCategories(res.categories) : setCategories([]);
 	};
 
 	let fetchSuppliers = async () => {
 		const res = await getSuppliers();
-		setSuppliers(res.suppliers);
+		res ? setSuppliers(res.suppliers) : setSuppliers([]);
 	};
 
 	let fetchSubCategories = async () => {
 		const res = await getSubCategories();
+
+		if (!res) {
+			setSubCategories([]);
+			setAttributes([]);
+			return;
+		}
+
 		setSubCategories(res.subcategories);
 	};
 
@@ -178,11 +181,12 @@ const AddProductComponent = ({ onClose, onButtonClick, GetProducts }) => {
 									handleCategoryChange(e);
 								}}
 							>
-								{categories.map((category) => (
-									<Option value={category.category_id} key={category.category_id}>
-										{category.name}
-									</Option>
-								))}
+								{categories !== undefined &&
+									categories.map((category) => (
+										<Option value={category.category_id} key={category.category_id}>
+											{category.name}
+										</Option>
+									))}
 							</Select>
 						</div>
 

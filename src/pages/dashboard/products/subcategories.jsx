@@ -38,9 +38,15 @@ const ProductTemplates = () => {
 
 	const fetchProductSubcategories = async () => {
 		const res = await getSubCategories();
+
+		if (!res) {
+			setSubcategoryDisplay([]);
+			setSubCategoriesLoading(false);
+			return;
+		}
+
 		res.subcategories ? setSubcategoryDisplay(res.subcategories) : setSubcategoryDisplay([]);
 		res.subcategories ? setSubCategories(res.subcategories) : setSubCategories([]);
-		console.log(res.subcategories);
 		setSubCategoriesLoading(false);
 	};
 
@@ -110,7 +116,7 @@ const ProductTemplates = () => {
 									</TableRows>
 								))
 							) : (
-								<Button onClick={() => router.push("/dashboard/products/add")}>No Templates</Button>
+								<p>No Subcategories found</p>
 							)
 						) : (
 							subcategoryDisplay.map((subcategory, index) => (

@@ -110,7 +110,7 @@ const Categories = () => {
 									</TableRows>
 								))
 							) : (
-								<Button onClick={() => router.push("/dashboard/products/add")}>Add Product</Button>
+								<p>No Categories found</p>
 							)
 						) : (
 							categoriesDisplay.map((category, index) => (

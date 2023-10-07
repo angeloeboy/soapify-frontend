@@ -40,6 +40,9 @@ const AddAttributeComponent = ({ setPopUpOpen, fetchAttributes }) => {
 
 	const addAttributeFunc = async (e) => {
 		e.preventDefault();
+
+		if (attribute.attribute_name == "") return;
+
 		await addAttribute(attribute).then((res) => {
 			console.log(res);
 			fetchAttributes();
@@ -48,6 +51,11 @@ const AddAttributeComponent = ({ setPopUpOpen, fetchAttributes }) => {
 
 	const addValue = (value) => {
 		let values = attribute.values;
+
+		if (value == "") return;
+
+		if (values.includes(value)) return;
+
 		values.push(value);
 		setAttribute({ ...attribute, values: values });
 		setAttributeValue("");
@@ -112,7 +120,7 @@ const AddAttributeComponent = ({ setPopUpOpen, fetchAttributes }) => {
 						</LabelContainer>
 						<div>
 							<FieldTitleLabel notFirst> Name</FieldTitleLabel>
-							<InputHolder type="text" placeholder="Enter attribute name" onChange={(e) => setAttributeValue(e.target.value)} value={attributeValue} />
+							<InputHolder type="text" onChange={(e) => setAttributeValue(e.target.value)} value={attributeValue} />
 
 							<Button type="button" onClick={() => addValue(attributeValue)}>
 								Add

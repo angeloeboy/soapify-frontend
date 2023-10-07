@@ -39,6 +39,14 @@ const PaymentTable = () => {
 
 	const fetchAttributes = async () => {
 		const res = await getAttributes();
+
+		if (!res) {
+			setAttributes([]);
+			setAttributesDisplay([]);
+			setAttributesLoading(false);
+			return;
+		}
+
 		res.attributes ? setAttributes(res.attributes) : setAttributes([]);
 		res.attributes ? setAttributesDisplay(res.attributes) : setAttributesDisplay([]);
 		setAttributesLoading(false);

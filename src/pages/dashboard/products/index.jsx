@@ -132,7 +132,7 @@ const Products = () => {
 									</TableRows>
 								))
 							) : (
-								<Button onClick={() => router.push("/dashboard/products/add")}>Add Product</Button>
+								<p>No Products found</p>
 							)
 						) : (
 							productDisplay.map((product, index) => (

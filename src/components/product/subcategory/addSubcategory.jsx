@@ -90,21 +90,20 @@ const AddSubCategory = ({ onClose, onButtonClick, fetchProductSubcategories }) =
 
 						<div>
 							<FieldTitleLabel> Category </FieldTitleLabel>
-							{categories.length > 0 && (
-								<Select
-									value={subCategory.category_id}
-									onChange={(e) => {
-										console.log(e.target.value);
-										setSubCategory({ ...subCategory, category_id: e.target.value });
-									}}
-								>
-									{categories.map((category) => (
-										<Option value={category.category_id} key={category.category_id}>
-											{category.name}
-										</Option>
-									))}
-								</Select>
-							)}
+
+							<Select
+								value={subCategory.category_id}
+								onChange={(e) => {
+									console.log(e.target.value);
+									setSubCategory({ ...subCategory, category_id: e.target.value });
+								}}
+							>
+								{categories.map((category) => (
+									<Option value={category.category_id} key={category.category_id}>
+										{category.name}
+									</Option>
+								))}
+							</Select>
 						</div>
 
 						<LabelContainer>
@@ -117,16 +116,16 @@ const AddSubCategory = ({ onClose, onButtonClick, fetchProductSubcategories }) =
 							{attributes.length > 0 && (
 								<Select
 									value={chosenAttribute.attribute_id}
+									placeholder="Select an option"
 									onChange={(e) => {
+										if (e.target.value == "none") return;
+
 										let attr = attributes.find((value) => value.attribute_id == Number(e.target.value));
 										setChosenAttribute(attr);
-
 										let attrArr = subCategory.attributes;
-
 										if (attrArr.find((value) => value.attribute_id == attr.attribute_id)) {
 											return;
 										}
-
 										let attrObj = {
 											attribute_id: attr.attribute_id,
 											attribute_name: attr.attribute_name,
@@ -136,6 +135,7 @@ const AddSubCategory = ({ onClose, onButtonClick, fetchProductSubcategories }) =
 										setSubCategory({ ...subCategory, attributes: attrArr });
 									}}
 								>
+									<Option value="none">Select an option</Option>
 									{attributes.map((value) => (
 										<Option value={value.attribute_id} key={value.attribute_id}>
 											{value.attribute_name}

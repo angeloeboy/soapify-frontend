@@ -5,7 +5,7 @@ import { styled } from "styled-components";
 import { DropdownHeader, DropdownItem, DropdownMenu, DropdownWrapper, SearchBar, TableControlPanel, Button } from "@/styled-components/TableControlPanel";
 import { getProductCategories } from "@/api/products";
 
-const SearchBarComponent = ({ setPopupOpen, products, setProductDisplay }) => {
+const SearchBarComponent = ({ setIsAddPopUpOpen, products, setProductDisplay }) => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [selectedCategory, setSelectedCategory] = useState("All");
 	const [productCategories, setProductCategories] = useState([]);
@@ -61,7 +61,7 @@ const SearchBarComponent = ({ setPopupOpen, products, setProductDisplay }) => {
 
 			<div>
 				<p> Add </p>
-				<Button onClick={() => setPopupOpen(true)}>+ Add Product</Button>
+				<Button onClick={() => setIsAddPopUpOpen(true)}>+ Add Product</Button>
 			</div>
 		</TableControlPanel>
 	);

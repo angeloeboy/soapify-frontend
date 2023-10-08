@@ -79,12 +79,7 @@ const AddAttributeComponent = ({ setPopUpOpen, fetchAttributes }) => {
 						</LabelContainer>
 						<div>
 							<FieldTitleLabel notFirst>Attribute Name</FieldTitleLabel>
-							<InputHolder
-								type="text"
-								placeholder="Enter attribute name"
-								onChange={(e) => setAttribute({ ...attribute, attribute_name: e.target.value })}
-								value={attribute.attribute_name}
-							/>
+							<InputHolder type="text" onChange={(e) => setAttribute({ ...attribute, attribute_name: e.target.value })} value={attribute.attribute_name} />
 						</div>
 						<div>
 							<FieldTitleLabel notFirst>Requires Additional Value</FieldTitleLabel>

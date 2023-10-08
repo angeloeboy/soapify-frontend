@@ -21,7 +21,7 @@ import {
 import { useEffect, useState } from "react";
 import { addCategory, addProduct, getProductCategories, getProducts } from "@/api/products";
 
-const AddCategoriesComponent = ({ onClose, onButtonClick, fetchCategories }) => {
+const AddCategoriesComponent = ({ setIsAddPopUpOpen, fetchCategories }) => {
 	const [category, setCategory] = useState({
 		name: "",
 	});
@@ -33,25 +33,12 @@ const AddCategoriesComponent = ({ onClose, onButtonClick, fetchCategories }) => 
 	let AddCategory = (e) => {
 		e.preventDefault();
 
-		// const formData = new FormData();
-		// formData.append("product_image", e.target.elements.product_image.files[0]);
-
-		// // Append each property in the product object to formData
-		// for (let key in product) {
-		// 	formData.append(key, product[key]);
-		// }
 
 		addCategory(category).then((res) => {
 			console.log(res);
 			fetchCategories();
 		});
 	};
-
-	// let fetchProductCategories = async () => {
-	// 	const res = await getProductCategories();
-	// 	console.log(res);
-	// 	setCategories(res.categories);
-	// };
 
 	return (
 		<PopupOverlay>
@@ -67,7 +54,6 @@ const AddCategoriesComponent = ({ onClose, onButtonClick, fetchCategories }) => 
 							<FieldTitleLabel> Category Name </FieldTitleLabel>
 							<InputHolder
 								type="text"
-								placeholder="Enter your Category Name"
 								onChange={(e) => {
 									setCategory({ ...category, name: e.target.value });
 								}}
@@ -78,7 +64,7 @@ const AddCategoriesComponent = ({ onClose, onButtonClick, fetchCategories }) => 
 					</FieldContainer>
 
 					<ButtonsContainer>
-						<CloseButton onClick={onClose}>Close</CloseButton>
+						<CloseButton onClick={() => setIsAddPopUpOpen(false)}>Close</CloseButton>
 						<Button type="submit">Save</Button>
 					</ButtonsContainer>
 				</form>

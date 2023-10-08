@@ -22,7 +22,7 @@ import { useEffect, useState } from "react";
 import { addProduct, getProductCategories, getProducts, getSubCategories } from "@/api/products";
 import { getSuppliers } from "@/api/supplier";
 
-const AddProductComponent = ({ onClose, onButtonClick, GetProducts }) => {
+const AddProductComponent = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 	const [categories, setCategories] = useState([]);
 	const [suppliers, setSuppliers] = useState([]);
 	const [attributes, setAttributes] = useState([]);
@@ -310,7 +310,7 @@ const AddProductComponent = ({ onClose, onButtonClick, GetProducts }) => {
 					</FieldContainer>
 
 					<ButtonsContainer>
-						<CloseButton onClick={onClose}>Close</CloseButton>
+						<CloseButton onClick={() => setIsAddPopUpOpen(false)}>Close</CloseButton>
 						<Button type="submit">Save</Button>
 					</ButtonsContainer>
 				</form>

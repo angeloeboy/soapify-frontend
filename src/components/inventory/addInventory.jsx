@@ -22,7 +22,7 @@ import { useEffect, useState } from "react";
 import { addProduct, getProducts } from "@/api/products";
 import { addInventory } from "@/api/inventory";
 
-const AddInventoryComponent = ({ onClose, onButtonClick, getInventoryFunc }) => {
+const AddInventoryComponent = ({ setIsAddPopUpOpen, getInventoryFunc }) => {
 	const currentDate = new Date().toISOString();
 
 	const [inventory, setInventory] = useState({
@@ -76,7 +76,7 @@ const AddInventoryComponent = ({ onClose, onButtonClick, getInventoryFunc }) => 
 								{products.map((product) => {
 									return (
 										<Option value={product.product_id} key={product.product_id}>
-											{product.product_name} {product.product_id}
+											{product.product_name}
 										</Option>
 									);
 								})}
@@ -106,7 +106,7 @@ const AddInventoryComponent = ({ onClose, onButtonClick, getInventoryFunc }) => 
 					</FieldContainer>
 
 					<ButtonsContainer>
-						<CloseButton onClick={onClose}>Close</CloseButton>
+						<CloseButton onClick={() => setIsAddPopUpOpen(false)}>Close</CloseButton>
 						<Button type="submit">Save</Button>
 					</ButtonsContainer>
 				</form>

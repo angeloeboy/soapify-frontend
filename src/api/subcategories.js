@@ -1,6 +1,6 @@
-export const getAttributes = async () => {
+export const getSubCategories = async () => {
 	try {
-		const response = await fetch("/api/attributes", {
+		const response = await fetch("/api/subcategory", {
 			method: "GET",
 			headers: {
 				"Content-Type": "application/json",
@@ -15,14 +15,14 @@ export const getAttributes = async () => {
 	}
 };
 
-export const addAttribute = async (attribute) => {
+export const addSubCategory = async (subCategory) => {
 	try {
-		const response = await fetch("/api/attributes", {
+		const response = await fetch("/api/subcategory", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify(attribute),
+			body: JSON.stringify(subCategory),
 			credentials: "include",
 		});
 

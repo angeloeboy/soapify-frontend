@@ -23,11 +23,8 @@ const Categories = () => {
 	const [categories, setCategories] = useState([]);
 	const [categoriesDisplay, setCategoriesDisplay] = useState([]);
 	const [categoriesLoading, setCategoriesLoading] = useState(true);
-	const [isPopupOpen, setPopupOpen] = useState(false);
-	const [isEditPopupOpen, setEditPopUpOpen] = useState(false);
+	const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false);
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
-
-	const router = useRouter();
 
 	useEffect(() => {
 		fetchCategories();
@@ -41,33 +38,15 @@ const Categories = () => {
 			setCategoriesLoading(false);
 		});
 	};
-	const handleClickOutside = (event) => {
-		if (!event.target.closest(".action-container") && !event.target.closest(".ellipsis")) {
-			setActiveActionContainer(null);
-		}
-	};
 
-	useEffect(() => {
-		document.addEventListener("click", handleClickOutside);
-		return () => {
-			document.removeEventListener("click", handleClickOutside);
-		};
-	}, []);
 
-	const handleClosePopup = () => {
-		setPopupOpen(false);
-	};
 
-	const handleCloseEditPopUp = () => {
-		setEditPopUpOpen(false);
-	};
+
 	const openEditPopUp = (product_id) => {
 		setEditPopUpOpen(true);
 	};
 
-	const onButtonClick = () => {
-		fileInput.current.click();
-	};
+
 
 	const [selectedProductId, setSelectedProductId] = useState(null);
 
@@ -76,14 +55,12 @@ const Categories = () => {
 			<PageTitle title="Category List" />
 
 			<StyledPanel>
-				<SearchBarComponent setPopupOpen={setPopupOpen} setCategoriesDisplay={setCategoriesDisplay} categories={categories} />
+				<SearchBarComponent setIsAddPopUpOpen={setIsAddPopUpOpen} setCategoriesDisplay={setCategoriesDisplay} categories={categories} />
 
 				<Table>
 					<tbody>
 						<TableRows heading>
 							<TableHeadings>Name</TableHeadings>
-							<TableHeadings>ID</TableHeadings>
-							<TableHeadings>Products</TableHeadings>
 							<TableHeadings>Status</TableHeadings>
 							<TableHeadings>Actions</TableHeadings>
 						</TableRows>
@@ -95,12 +72,7 @@ const Categories = () => {
 										<TableData className="imgContainer">
 											<Skeleton circle={true} height={40} width={40} />
 										</TableData>
-										<TableData>
-											<Skeleton width={50} height={20} />
-										</TableData>
-										<TableData>
-											<Skeleton width={50} height={20} />
-										</TableData>
+
 										<TableData>
 											<Skeleton width={50} height={20} />
 										</TableData>
@@ -110,14 +82,13 @@ const Categories = () => {
 									</TableRows>
 								))
 							) : (
-								<Button onClick={() => router.push("/dashboard/products/add")}>Add Product</Button>
+								<p>No Categories found</p>
 							)
 						) : (
 							categoriesDisplay.map((category, index) => (
 								<TableRows key={category.category_id}>
-									<TableData bold>{category.name}</TableData>
-									<TableData>{category.category_id}</TableData>
-									<TableData>{category.number_of_products}</TableData>
+									<TableData>{category.name}</TableData>
+
 									<TableData>{category.isActive ? "Active" : "Not active"}</TableData>
 
 									<TableData>
@@ -150,18 +121,11 @@ const Categories = () => {
 					</tbody>
 				</Table>
 			</StyledPanel>
-			{isPopupOpen && (
-				<AddCategoriesComponent onClose={handleClosePopup} onButtonClick={onButtonClick} fetchCategories={fetchCategories} setPopupOpen={setPopupOpen} />
+			{isAddPopUpOpen && (
+				<AddCategoriesComponent setIsAddPopUpOpen={setIsAddPopUpOpen} fetchCategories={fetchCategories}  />
 			)}
 
-			{/* {isEditPopupOpen && (
-				<EditProductComponent
-					onClose={handleCloseEditPopUp}
-					productId={selectedProductId}
-					//   onButtonClick={onButtonClick}
-					//   GetProducts={fetchProducts}
-				/>
-			)} */}
+
 		</DashboardLayout>
 	);
 };

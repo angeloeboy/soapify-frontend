@@ -1,10 +1,7 @@
-export const getAttributes = async () => {
+export const getAllWarehouse = async () => {
 	try {
-		const response = await fetch("/api/attributes", {
+		const response = await fetch("/api/warehouse", {
 			method: "GET",
-			headers: {
-				"Content-Type": "application/json",
-			},
 			credentials: "include",
 		});
 
@@ -15,15 +12,15 @@ export const getAttributes = async () => {
 	}
 };
 
-export const addAttribute = async (attribute) => {
+export const addWarehouse = async (warehouse) => {
 	try {
-		const response = await fetch("/api/attributes", {
+		const response = await fetch("/api/warehouse", {
 			method: "POST",
+			credentials: "include",
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify(attribute),
-			credentials: "include",
+			body: JSON.stringify(warehouse),
 		});
 
 		const data = await response.json();

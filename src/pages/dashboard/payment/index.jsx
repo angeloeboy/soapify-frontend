@@ -81,43 +81,20 @@ const PaymentTable = () => {
 		<DashboardLayout>
 			<PageTitle title="Payment" />
 			<StyledPanel>
-				<PaymentSearchBarComponent searchQuery={searchQuery} handleSearchChange={handleSearchChange} handleOpenPopup={handleOpenPopup} />
+				<PaymentSearchBarComponent
+					searchQuery={searchQuery}
+					handleSearchChange={handleSearchChange}
+					handleOpenPopup={handleOpenPopup}
+					fetchPaymentMethods={fetchPaymentMethods}
+				/>
 				<Table>
 					<tbody>
 						<TableRows heading>
 							<TableHeadings>Payment Name</TableHeadings>
 							<TableHeadings>Number/Account Number</TableHeadings>
-							<TableHeadings>Type</TableHeadings>
 							<TableHeadings>Created</TableHeadings>
 							<TableHeadings>Actions</TableHeadings>
 						</TableRows>
-
-						{/* {paymentData.map((payment, index) => (
-							<TableRows key={index}>
-								<TableData>{payment.paymentName}</TableData>
-								<TableData>{payment.accountNumber}</TableData>
-								<TableData>{payment.type}</TableData>
-								<TableData>{payment.createdDate}</TableData>
-								<TableData>
-									<FontAwesomeIcon
-										className="ellipsis"
-										icon={faEllipsis}
-										onClick={() => (activeActionContainer === index ? setActiveActionContainer(-1) : setActiveActionContainer(index))}
-									/>
-
-									{activeActionContainer === index && (
-										<ActionContainer onClick={() => setActiveActionContainer(-1)}>
-											<p>
-												<FontAwesomeIcon icon={faPen} /> Edit
-											</p>
-											<p>
-												<FontAwesomeIcon icon={faTrash} /> Delete
-											</p>
-										</ActionContainer>
-									)}
-								</TableData>
-							</TableRows>
-						))} */}
 
 						{paymentMethods.length === 0
 							? paymentMethodsLoading &&
@@ -141,7 +118,6 @@ const PaymentTable = () => {
 									<TableRows key={index}>
 										<TableData>{method.name}</TableData>
 										<TableData>{method.account_no}</TableData>
-										<TableData>Test Type</TableData>
 										<TableData>{formatDateToMonthDayYear(method.createdAt)}</TableData>
 										<TableData>
 											<FontAwesomeIcon

@@ -27,11 +27,9 @@ const Products = () => {
 	const [products, setProducts] = useState([]);
 	const [productDisplay, setProductDisplay] = useState([]);
 	const [productsLoading, setProductsLoading] = useState(true);
-	const [isPopupOpen, setPopupOpen] = useState(false);
+	const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false);
 	const [isEditPopupOpen, setEditPopUpOpen] = useState(false);
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
-
-	const router = useRouter();
 
 	useEffect(() => {
 		fetchProducts();
@@ -58,9 +56,6 @@ const Products = () => {
 		};
 	}, []);
 
-	const handleClosePopup = () => {
-		setPopupOpen(false);
-	};
 
 	const handleCloseEditPopUp = () => {
 		setEditPopUpOpen(false);
@@ -94,7 +89,7 @@ const Products = () => {
 			<PageTitle title="Products List" />
 
 			<StyledPanel>
-				<SearchBarComponent setPopupOpen={setPopupOpen} setProductDisplay={setProductDisplay} products={products} />
+				<SearchBarComponent setIsAddPopUpOpen={setIsAddPopUpOpen} setProductDisplay={setProductDisplay} products={products} />
 				<Table>
 					<tbody>
 						<TableRows heading>
@@ -132,7 +127,7 @@ const Products = () => {
 									</TableRows>
 								))
 							) : (
-								<Button onClick={() => router.push("/dashboard/products/add")}>Add Product</Button>
+								<p>No Products found</p>
 							)
 						) : (
 							productDisplay.map((product, index) => (
@@ -202,16 +197,8 @@ const Products = () => {
 					</tbody>
 				</Table>
 			</StyledPanel>
-			{isPopupOpen && <AddProductComponent onClose={handleClosePopup} onButtonClick={onButtonClick} GetProducts={fetchProducts} />}
-			{isEditPopupOpen && (
-				<EditProductComponent
-					onClose={handleCloseEditPopUp}
-					productId={selectedProductId}
-					fetchProducts={fetchProducts}
-					//   onButtonClick={onButtonClick}
-					//   GetProducts={fetchProducts}
-				/>
-			)}
+			{isAddPopUpOpen && <AddProductComponent setIsAddPopUpOpen={setIsAddPopUpOpen} onButtonClick={onButtonClick} GetProducts={fetchProducts} />}
+			{isEditPopupOpen && <EditProductComponent onClose={handleCloseEditPopUp} productId={selectedProductId} fetchProducts={fetchProducts} />}
 		</DashboardLayout>
 	);
 };

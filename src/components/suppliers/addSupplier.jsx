@@ -55,7 +55,6 @@ const AddSupplierComponent = ({ onClose, onButtonClick, fetchSuppliers }) => {
 							<FieldTitleLabel> Supplier Name </FieldTitleLabel>
 							<InputHolder
 								type="text"
-								placeholder="Enter your Category Name"
 								onChange={(e) => {
 									setSupplier({ ...supplier, supplier_name: e.target.value });
 								}}
@@ -66,7 +65,7 @@ const AddSupplierComponent = ({ onClose, onButtonClick, fetchSuppliers }) => {
 							<FieldTitleLabel> Supplier Address </FieldTitleLabel>
 							<InputHolder
 								type="text"
-								placeholder="Enter supplier address "
+								
 								onChange={(e) => {
 									setSupplier({ ...supplier, supplier_address: e.target.value });
 								}}
@@ -76,7 +75,7 @@ const AddSupplierComponent = ({ onClose, onButtonClick, fetchSuppliers }) => {
 							<FieldTitleLabel> Supplier Phone No.</FieldTitleLabel>
 							<InputHolder
 								type="text"
-								placeholder="Enter Supplier Phone no. "
+								
 								onChange={(e) => {
 									setSupplier({ ...supplier, supplier_phone: e.target.value });
 								}}

@@ -12,54 +12,45 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import EditPaymentMethodComponent from "./../../../components/PaymentMethod/editPaymentMethod";
 import { getAttributes } from "@/api/attributes";
+import AttributesSearchBarComponent from "@/components/attributes/searchBarAndFilters";
+import AddAttributeComponent from "@/components/attributes/addAttributes";
 
 const PaymentTable = () => {
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
-	const [searchQuery, setSearchQuery] = useState(""); // Define searchQuery state variable
-	const [isEditPaymentOpen, setEditPaymentOpen] = useState(false);
-	const [paymentMethods, setPaymentMethods] = useState([]); // Define paymentMethods state variable
 	const [paymentMethodsLoading, setPaymentMethodsLoading] = useState(false); // Define paymentMethodsLoading state variable
 
 	const [attributes, setAttributes] = useState([]);
 	const [attributesLoading, setAttributesLoading] = useState(false);
 	const [attributesDisplay, setAttributesDisplay] = useState([]); // Define attributesDisplay state variable
 
+	const [isPopUpOpen, setPopUpOpen] = useState(false);
+
 	useEffect(() => {
-		fetchPaymentMethods();
 		fetchAttributes();
 	}, []);
 
-	const fetchPaymentMethods = () => {
-		getPaymentMethods().then((res) => {
-			setPaymentMethodsLoading(true);
-			setPaymentMethods(res.paymentMethods);
-			setPaymentMethodsLoading(false);
-		});
+	useEffect(() => {
+		console.log(isPopUpOpen);
+	}, [isPopUpOpen]);
+
+	const handleClosePopup = () => {
+		setPopupOpen(false);
 	};
 
 	const fetchAttributes = async () => {
 		const res = await getAttributes();
+
+		if (!res) {
+			setAttributes([]);
+			setAttributesDisplay([]);
+			setAttributesLoading(false);
+			return;
+		}
+
 		res.attributes ? setAttributes(res.attributes) : setAttributes([]);
 		res.attributes ? setAttributesDisplay(res.attributes) : setAttributesDisplay([]);
 		setAttributesLoading(false);
 		console.log(res.attributes);
-	};
-
-	const formatDateToMonthDayYear = (isoDate) => {
-		const date = new Date(isoDate);
-		const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-		const month = monthNames[date.getUTCMonth()];
-		const day = date.getUTCDate();
-		const year = date.getUTCFullYear();
-
-		return `${month} ${day}, ${year}`;
-	};
-
-	const openEditPayment = () => {
-		setEditPaymentOpen(true);
-	};
-	const closeEditPayment = () => {
-		setEditPaymentOpen(false);
 	};
 
 	return (
@@ -67,6 +58,8 @@ const PaymentTable = () => {
 			<PageTitle title="Attributes" />
 			<StyledPanel>
 				{/* <PaymentSearchBarComponent searchQuery={searchQuery} handleSearchChange={handleSearchChange} handleOpenPopup={handleOpenPopup} /> */}
+				<AttributesSearchBarComponent setPopUpOpen={setPopUpOpen} />
+
 				<Table>
 					<tbody>
 						<TableRows heading>
@@ -130,6 +123,7 @@ const PaymentTable = () => {
 					</tbody>
 				</Table>
 			</StyledPanel>
+			{isPopUpOpen && <AddAttributeComponent setPopUpOpen={setPopUpOpen} fetchAttributes={fetchAttributes} />}
 		</DashboardLayout>
 	);
 };

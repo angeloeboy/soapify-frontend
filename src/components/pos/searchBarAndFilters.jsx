@@ -37,11 +37,28 @@ const SearchBarComponent = ({ products, setProductDisplay }) => {
 
 		let filteredProducts;
 
+		// if (category == "All") {
+		// 	filteredProducts = query ? products.filter((product) => product.product_name.toLowerCase().includes(query.toLowerCase())) : products;
+		// } else {
+		// 	filteredProducts = products.filter(
+		// 		(product) => product.product_name.toLowerCase().includes(query.toLowerCase()) && product.category.name.toLowerCase().includes(category.toLowerCase())
+		// 	);
+		// }
+
 		if (category == "All") {
-			filteredProducts = query ? products.filter((product) => product.product_name.toLowerCase().includes(query.toLowerCase())) : products;
+			filteredProducts = query
+				? products.filter(
+						(product) =>
+							product.product_name.toLowerCase().includes(query.toLowerCase()) ||
+							product.attribute.some((attr) => attr.value.toLowerCase().includes(query.toLowerCase()))
+				  )
+				: products;
 		} else {
 			filteredProducts = products.filter(
-				(product) => product.product_name.toLowerCase().includes(query.toLowerCase()) && product.category.name.toLowerCase().includes(category.toLowerCase())
+				(product) =>
+					(product.product_name.toLowerCase().includes(query.toLowerCase()) ||
+						product.attribute.some((attr) => attr.value.toLowerCase().includes(query.toLowerCase()))) &&
+					product.category.name.toLowerCase().includes(category.toLowerCase())
 			);
 		}
 

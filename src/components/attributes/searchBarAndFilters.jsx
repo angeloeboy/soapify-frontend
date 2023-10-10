@@ -5,7 +5,7 @@ import { styled } from "styled-components";
 import { DropdownHeader, DropdownItem, DropdownMenu, DropdownWrapper, SearchBar, TableControlPanel, Button } from "@/styled-components/TableControlPanel";
 import { getProductCategories } from "@/api/products";
 
-const SearchBarComponent = ({ setIsAddPopUpOpen, products, setCategoriesDisplay }) => {
+const AttributesSearchBarComponent = ({ setPopUpOpen }) => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [selectedCategory, setSelectedCategory] = useState("All");
 	const [productCategories, setProductCategories] = useState([]);
@@ -26,35 +26,41 @@ const SearchBarComponent = ({ setIsAddPopUpOpen, products, setCategoriesDisplay 
 		setSearchQuery(e.target.value);
 	};
 
-	const handleCategoryChange = (category) => {
-		setSelectedCategory(category);
-	};
-
 	const handleSearch = () => {
 		const query = searchQuery;
+		const category = selectedCategory;
+		console.log(category);
 
-		let filteredCategories;
-		filteredCategories = query ? productCategories.filter((category) => category.name.toLowerCase().includes(query.toLowerCase())) : productCategories;
-		setCategoriesDisplay(filteredCategories);
+		// let filteredProducts;
+
+		// if (category == "All") {
+		// 	filteredProducts = query ? products.filter((product) => product.product_name.toLowerCase().includes(query.toLowerCase())) : products;
+		// } else {
+		// 	filteredProducts = products.filter(
+		// 		(product) => product.product_name.toLowerCase().includes(query.toLowerCase()) && product.category.name.toLowerCase().includes(category.toLowerCase())
+		// 	);
+		// }
+
+		// setProductDisplay(filteredProducts);
 	};
 
 	return (
 		<TableControlPanel>
 			<SearchBar>
-				<p>Search for Product</p>
+				<p>Search for attributes</p>
 				<input type="text" placeholder="Search" value={searchQuery} onChange={handleSearchChange} />
 			</SearchBar>
-			{/* <div>
-				<p> Category</p>
-				<Dropdown productCategories={productCategories} handleCategoryChange={handleCategoryChange} />
-			</div> */}
+			<div>
+				{/* <p> Category</p>
+				<Dropdown productCategories={productCategories} handleCategoryChange={handleCategoryChange} /> */}
+			</div>
 
 			<div>
 				<p> Add </p>
-				<Button onClick={() => setIsAddPopUpOpen(true)}>+ Add Category</Button>
+				<Button onClick={() => setPopUpOpen(true)}>+ Add Attribute</Button>
 			</div>
 		</TableControlPanel>
 	);
 };
 
-export default SearchBarComponent;
+export default AttributesSearchBarComponent;

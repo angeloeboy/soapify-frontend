@@ -1,8 +1,9 @@
 import Cart from "@/components/pos/cart";
 import styled from "styled-components";
 import PaymentMethods from "./paymentMethods";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Receipt from "./receipt";
+import { TransactionContext } from "@/pages/dashboard/pos";
 
 const POSactionsWrapper = styled.div`
 	/* width: 100%; */
@@ -32,7 +33,8 @@ const POSactionsWrapper = styled.div`
 `;
 
 const POSactions = (props) => {
-	const [activeAction, setActiveAction] = useState("cart");
+	// const [activeAction, setActiveAction] = useState("cart");
+	const { activeAction, setActiveAction } = useContext(TransactionContext);
 
 	return (
 		<POSactionsWrapper>

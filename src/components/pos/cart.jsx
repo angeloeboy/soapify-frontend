@@ -379,12 +379,15 @@ const Cart = ({ setActiveAction }) => {
 				<p>Total</p>
 				<p>{total}</p>
 			</Total>
-			<Button width={"100%"} onClick={() => setActiveAction("payment")}>
+			<Button
+				width={"100%"}
+				onClick={() => {
+					if (cart.length <= 0) return;
+					setActiveAction("payment");
+				}}
+			>
 				Confirm
 			</Button>
-			{/* <Button width={"100%"} onClick={() => createReceipt()}>
-				Test
-			</Button> */}
 		</>
 	);
 };

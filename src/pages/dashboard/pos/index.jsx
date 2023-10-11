@@ -42,6 +42,7 @@ const Pos = () => {
 	const [products, setProducts] = useState([]);
 	const [cart, setCart] = useState([]);
 	const [productDisplay, setProductDisplay] = useState([]);
+	const [activeAction, setActiveAction] = useState("cart");
 
 	const [transaction, setTransaction] = useState({
 		payment_method_id: undefined,
@@ -108,7 +109,7 @@ const Pos = () => {
 	};
 
 	return (
-		<TransactionContext.Provider value={{ setTransaction, transaction, cart, updateCart, setCart }}>
+		<TransactionContext.Provider value={{ setTransaction, transaction, cart, updateCart, setCart, activeAction, setActiveAction }}>
 			<DashboardLayout>
 				<PageTitle title="POS" />
 				<POSWrapper>
@@ -117,7 +118,15 @@ const Pos = () => {
 
 						<ProductsList>
 							{productDisplay.map((product, productIndex) => (
-								<ProductComponent product={product} index={productIndex} onClick={() => updateCart(product, "add")} key={product.product_id} />
+								<ProductComponent
+									product={product}
+									index={productIndex}
+									onClick={() => {
+										updateCart(product, "add");
+										if (activeAction != "cart") setActiveAction("cart");
+									}}
+									key={product.product_id}
+								/>
 							))}
 						</ProductsList>
 					</StyledPanel>

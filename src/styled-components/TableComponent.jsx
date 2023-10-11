@@ -25,10 +25,13 @@ export const TableData = styled.td`
 	font-size: 14px;
 	font-style: normal;
 	font-weight: ${(props) => (props.bold ? "bold" : "400")};
+	text-align: ${(props) => (props.bold ? "left" : "center")};
+
 	line-height: normal;
 	padding: 20px 0px;
 	border-bottom: 1px solid #dfdfdf;
 	position: relative;
+	padding-left: ${(props) => (props.bold ? "24px" : "0px")};
 
 	${(props) =>
 		props.withImage &&

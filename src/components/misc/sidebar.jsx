@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import styled from "styled-components";
 import Link from "next/link";
 import Image from "next/image";
+import { logout } from "@/api/auth";
 
 const SidebarContainer = styled.div`
 	position: fixed;
@@ -20,6 +21,10 @@ const SidebarContainer = styled.div`
 		text-align: center;
 		margin-bottom: 20px;
 		border-bottom: 1px solid #ffffff27;
+	}
+
+	.loading {
+		margin-left: 16px;
 	}
 `;
 
@@ -172,15 +177,23 @@ const sidebarData = [
 		submenus: [
 			{ title: "Products", link: "/dashboard/products" },
 			{ title: "Inventory List", link: "/dashboard/inventory" },
-			{ title: "Categories", link: "/dashboard/products/category" },
-			{ title: "Statistics", link: "/" },
+			{ title: "Categories", link: "/dashboard/products/categories" },
+			{ title: "Statistics", link: "/dashboard" },
+			{ title: "Suppliers", link: "/dashboard/suppliers" },
+			{ title: "Subcategories", link: "/dashboard/products/subcategories" },
+			{ title: "Attributes", link: "/dashboard/attributes" },
 		],
 	},
 	{
 		title: "Settings",
 		icon: "/settings-icon.png",
 		link: "/settings",
-		hasSubmenu: false,
+		hasSubmenu: true,
+		submenus: [
+			{ title: "Users", link: "/dashboard/user" },
+			{ title: "Warehouse", link: "/dashboard/warehouse" },
+			{ title: "Payment Methods", link: "/dashboard/payment" },
+		],
 	},
 ];
 
@@ -194,7 +207,7 @@ const Sidebar = (props) => {
 	});
 
 	const { submenuOpen, sidebarVisible, activeMenuIndex, activeSubmenuItemIndex } = sidebarState;
-
+	const [isLoggingOut, setIsLoggingOut] = useState(false);
 	// Load previous state from localStorage on component mount
 	useEffect(() => {
 		const storedSidebarState = JSON.parse(localStorage.getItem("sidebarState"));
@@ -230,6 +243,15 @@ const Sidebar = (props) => {
 	useEffect(() => {
 		localStorage.setItem("sidebarState", JSON.stringify(sidebarState));
 	}, [sidebarState]);
+
+	const handleLogout = async () => {
+		setIsLoggingOut(true);
+		await logout();
+
+		setTimeout(() => {
+			window.location.href = "/login";
+		}, 1000);
+	};
 
 	return (
 		<div>
@@ -283,6 +305,19 @@ const Sidebar = (props) => {
 							</Menu>
 						)
 					)}
+
+					<Menu>
+						<p
+							className={`menuTextContainer `}
+							onClick={() => {
+								handleLogout();
+							}}
+						>
+							<Image src="/inventory-icon.png" alt="/inventory-icon.png" width="24" height="24" />
+							Log out
+							{isLoggingOut && <Image src="/loading.svg" alt="loading" width="24" height="24" className="loading" />}
+						</p>
+					</Menu>
 				</MenuContainer>
 			</SidebarContainer>
 		</div>

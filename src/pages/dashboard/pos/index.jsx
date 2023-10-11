@@ -78,11 +78,6 @@ const Pos = () => {
 		setTransaction((prev) => ({ ...prev, total_amount: cart.reduce((acc, item) => acc + item.product_price * item.quantity, 0), items: cart }));
 	}, [cart]);
 
-	const initiateTransaction = async () => {
-		const response = await addTransaction(transaction);
-		console.log(response);
-	};
-
 	useEffect(() => {
 		setProductDisplay(products);
 	}, [products]);
@@ -121,8 +116,8 @@ const Pos = () => {
 						<SearchBarComponent products={products} setProductDisplay={setProductDisplay} />
 
 						<ProductsList>
-							{productDisplay.map((product) => (
-								<ProductComponent product={product} onClick={() => updateCart(product, "add")} key={product.product_id} />
+							{productDisplay.map((product, productIndex) => (
+								<ProductComponent product={product} index={productIndex} onClick={() => updateCart(product, "add")} key={product.product_id} />
 							))}
 						</ProductsList>
 					</StyledPanel>

@@ -317,7 +317,12 @@ const Cart = ({ setActiveAction }) => {
 							<FontAwesomeIcon icon={faTrash} onClick={() => updateCart(item, "delete")} className="delete" />
 							<Image src="/sabon.png" width={60} height={60} alt="Product image" />
 							<div className="productInformation">
-								<p className="productName">{item.product_name}</p>
+								<p className="productName">
+									{item.product_name} |
+									{item.attribute.map((attribute) => {
+										return <> {attribute.value} | </>;
+									})}
+								</p>
 								<p className="productPrice">P{item.product_price / 100}</p>
 							</div>
 							<div className="quantity">

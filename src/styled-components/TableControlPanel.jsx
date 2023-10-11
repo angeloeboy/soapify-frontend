@@ -6,6 +6,8 @@ export const TableControlPanel = styled.div`
 	margin-bottom: 44px;
 	z-index: 99;
 	position: relative;
+	width: 100%;
+	flex-wrap: wrap;
 	p {
 		color: #000;
 		font-size: 14.22px;
@@ -22,6 +24,22 @@ export const SearchBar = styled.div`
 		background: #f8f8f8;
 		padding: 16px;
 		margin-top: 8px;
+
+		@media (max-width: 1200px) {
+			width: 400px;
+		}
+
+		@media (max-width: 800px) {
+			width: 100%;
+		}
+	}
+
+	
+	@media (max-width: 800px) {
+		width: 100%;
+		input{
+			width: 100%;
+		}
 	}
 `;
 

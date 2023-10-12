@@ -29,7 +29,17 @@ const StyledPanel = styled.div`
 		width: calc(100% - 520px);
 		display: inline-block;
 
+		// @media (max-width: 1500px) {
+		// 	flex: 1 0 100%; 
+		// }
+
+	
 	`}
+
+
+	@media(max-width: 768px) {
+		padding: 48px 24px;
+	}
 `;
 
 export const BigTitle = styled.h2`

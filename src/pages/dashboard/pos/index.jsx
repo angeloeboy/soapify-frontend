@@ -28,6 +28,12 @@ const StickyContainer = styled.div`
 	width: 100%;
 	max-width: 500px;
 	margin-top: 48px;
+
+	/* @media (max-width: 1200px) {
+		position: fixed;
+		right: 5%;
+		top: 17%;
+	} */
 `;
 
 export const TransactionContext = createContext(null);
@@ -36,6 +42,7 @@ const Pos = () => {
 	const [products, setProducts] = useState([]);
 	const [cart, setCart] = useState([]);
 	const [productDisplay, setProductDisplay] = useState([]);
+	const [activeAction, setActiveAction] = useState("cart");
 
 	const [transaction, setTransaction] = useState({
 		payment_method_id: undefined,
@@ -43,6 +50,21 @@ const Pos = () => {
 		total_amount: 0,
 		items: [],
 	});
+
+	const [windowWidth, setWindowWidth] = useState(1200);
+
+	useEffect(() => {
+		// Update width to the actual window width when the component mounts on the client side
+		setWindowWidth(window.innerWidth);
+
+		const handleResize = () => setWindowWidth(window.innerWidth);
+
+		// Attach the event listener
+		window.addEventListener("resize", handleResize);
+
+		// Cleanup the event listener on component unmount
+		return () => window.removeEventListener("resize", handleResize);
+	}, []);
 
 	useEffect(() => {
 		fetchProducts();
@@ -87,7 +109,7 @@ const Pos = () => {
 	};
 
 	return (
-		<TransactionContext.Provider value={{ setTransaction, transaction, cart, updateCart, setCart }}>
+		<TransactionContext.Provider value={{ setTransaction, transaction, cart, updateCart, setCart, activeAction, setActiveAction }}>
 			<DashboardLayout>
 				<PageTitle title="POS" />
 				<POSWrapper>
@@ -96,13 +118,21 @@ const Pos = () => {
 
 						<ProductsList>
 							{productDisplay.map((product, productIndex) => (
-								<ProductComponent product={product} index={productIndex} onClick={() => updateCart(product, "add")} key={product.product_id} />
+								<ProductComponent
+									product={product}
+									index={productIndex}
+									onClick={() => {
+										updateCart(product, "add");
+										if (activeAction != "cart") setActiveAction("cart");
+									}}
+									key={product.product_id}
+								/>
 							))}
 						</ProductsList>
 					</StyledPanel>
 
 					<StickyContainer>
-						<Sticky enabled={true} top={20}>
+						<Sticky enabled={windowWidth > 1200 ? true : false} top={20}>
 							<POSactions />
 						</Sticky>
 					</StickyContainer>

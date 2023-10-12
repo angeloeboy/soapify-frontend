@@ -31,6 +31,17 @@ const Product = styled.div`
 	button {
 		margin-top: 27px;
 	}
+
+	@media (max-width: 1100px) {
+		/* width: 100%; */
+		margin: 8px 0px;
+
+		max-width: 200px;
+
+		img {
+			max-height: 100px;
+		}
+	}
 `;
 
 const ProductTitle = styled.p`

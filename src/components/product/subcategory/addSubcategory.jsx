@@ -14,14 +14,21 @@ import {
   Option,
 } from "@/styled-components/ItemActionModal";
 
-import { addSubcategory } from "@/api/subcategories"; // Import your API function for adding subcategories
+import { useEffect, useState } from "react";
+import { getProductCategories } from "@/api/products";
+import { getAttributes } from "@/api/attributes";
+import { addSubCategory } from "@/api/subcategories";
 
-const AddSubcategoryComponent = ({
+const AddSubCategory = ({
   onClose,
   onButtonClick,
-  getSubcategoriesFunc,
+  fetchProductSubcategories,
 }) => {
-  const currentDate = new Date().toISOString();
+  const [subCategory, setSubCategory] = useState({
+    name: "",
+    category_id: undefined,
+    attributes: [],
+  });
 
   const [categories, setCategories] = useState([]);
 

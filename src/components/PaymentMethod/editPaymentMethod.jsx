@@ -14,7 +14,7 @@ import {
 } from "@/styled-components/ItemActionModal";
 import { useEffect, useState } from "react";
 
-const EditPaymentMethodComponent = ({ onClose, paymentId }) => {
+const EditPaymentMethodComponent = ({ onClose, paymentId, fetchPaymentMethods }) => {
 	const [paymentMethod, setPaymentMethod] = useState({
 		name: "",
 		account_no: "",
@@ -34,6 +34,7 @@ const EditPaymentMethodComponent = ({ onClose, paymentId }) => {
 		const res = await editPayment(paymentId, paymentMethod);
 		console.log(res);
 		loadPaymentMethod();
+		fetchPaymentMethods();
 	};
 
 	useEffect(() => {

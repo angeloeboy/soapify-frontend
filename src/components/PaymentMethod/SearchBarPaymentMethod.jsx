@@ -6,10 +6,9 @@ import { DropdownHeader, DropdownItem, DropdownMenu, DropdownWrapper, SearchBar,
 
 import AddPaymentMethod from "./addPaymentMethod"; // Import the payment popup component
 
-const PaymentSearchBarComponent = ({ fetchPaymentMethods }) => {
+const PaymentSearchBarComponent = ({ fetchPaymentMethods, setAddPaymentOpen }) => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [selectedPaymentType, setSelectedPaymentType] = useState("All");
-	const [isPopupContentPaymentOpen, setIsPopupContentPaymentOpen] = useState(false);
 
 	useEffect(() => {
 		handleSearch();
@@ -44,10 +43,9 @@ const PaymentSearchBarComponent = ({ fetchPaymentMethods }) => {
 			</SearchBar>
 
 			<div>
-				<Button style={{ marginTop: "28px", padding: "16px 24px" }} onClick={handleOpenPopupContentPayment}>
+				<Button style={{ marginTop: "28px", padding: "16px 24px" }} onClick={() => setAddPaymentOpen(true)}>
 					+ Add Payment Method
 				</Button>
-				{isPopupContentPaymentOpen && <AddPaymentMethod onClose={handleClosePopupContentPayment} fetchPaymentMethods={fetchPaymentMethods} />}
 			</div>
 		</TableControlPanel>
 	);

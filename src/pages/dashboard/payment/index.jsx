@@ -11,41 +11,16 @@ import { getPaymentMethods } from "@/api/pos";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import EditPaymentMethodComponent from "./../../../components/PaymentMethod/editPaymentMethod";
+import AddPaymentMethod from "@/components/PaymentMethod/addPaymentMethod";
 
 const PaymentTable = () => {
-	const paymentData = [
-		{
-			paymentName: "Payment 1",
-			accountNumber: "1234567890",
-			type: "Credit Card",
-			createdDate: "2023-09-10",
-		},
-		{
-			paymentName: "Payment 2",
-			accountNumber: "9876543210",
-			type: "Bank Transfer",
-			createdDate: "2023-09-11",
-		},
-		{
-			paymentName: "Payment 3",
-			accountNumber: "5678901234",
-			type: "PayPal",
-			createdDate: "2023-09-12",
-		},
-	];
-
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
-	const [searchQuery, setSearchQuery] = useState(""); // Define searchQuery state variable
 	const [isEditPaymentOpen, setEditPaymentOpen] = useState(false);
-	const [paymentMethods, setPaymentMethods] = useState([]); // Define paymentMethods state variable
-	const [paymentMethodsLoading, setPaymentMethodsLoading] = useState(false); // Define paymentMethodsLoading state variable
-	const handleSearchChange = (event) => {
-		setSearchQuery(event.target.value);
-	};
+	const [isAddPaymentOpen, setAddPaymentOpen] = useState(false);
+	const [paymentMethods, setPaymentMethods] = useState([]);
+	const [paymentMethodsLoading, setPaymentMethodsLoading] = useState(false);
 
-	const handleOpenPopup = () => {
-		// Handle opening the payment method popup here
-	};
+	const [clickedId, setClickedId] = useState(null);
 
 	useEffect(() => {
 		fetchPaymentMethods();
@@ -73,6 +48,7 @@ const PaymentTable = () => {
 	const openEditPayment = () => {
 		setEditPaymentOpen(true);
 	};
+
 	const closeEditPayment = () => {
 		setEditPaymentOpen(false);
 	};
@@ -81,12 +57,7 @@ const PaymentTable = () => {
 		<DashboardLayout>
 			<PageTitle title="Payment" />
 			<StyledPanel>
-				<PaymentSearchBarComponent
-					searchQuery={searchQuery}
-					handleSearchChange={handleSearchChange}
-					handleOpenPopup={handleOpenPopup}
-					fetchPaymentMethods={fetchPaymentMethods}
-				/>
+				<PaymentSearchBarComponent fetchPaymentMethods={fetchPaymentMethods} setAddPaymentOpen={setAddPaymentOpen} />
 				<Table>
 					<tbody>
 						<TableRows heading>
@@ -130,6 +101,7 @@ const PaymentTable = () => {
 												<ActionContainer onClick={() => setActiveActionContainer(-1)}>
 													<p
 														onClick={() => {
+															setClickedId(method.payment_method_id);
 															openEditPayment();
 														}}
 													>
@@ -146,7 +118,8 @@ const PaymentTable = () => {
 					</tbody>
 				</Table>
 			</StyledPanel>
-			{isEditPaymentOpen && <EditPaymentMethodComponent onClose={closeEditPayment} />}
+			{isEditPaymentOpen && <EditPaymentMethodComponent onClose={closeEditPayment} paymentId={clickedId} fetchPaymentMethods={fetchPaymentMethods} />}
+			{isAddPaymentOpen && <AddPaymentMethod setAddPaymentOpen={setAddPaymentOpen} />}
 		</DashboardLayout>
 	);
 };

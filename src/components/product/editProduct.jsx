@@ -18,7 +18,12 @@ import {
   InputHolder,
 } from "@/styled-components/ItemActionModal";
 import { useEffect, useState } from "react";
-import { getProduct, editProduct, getProductCategories } from "@/api/products";
+import {
+  getProduct,
+  editProduct,
+  getProductCategories,
+  getSubCategories,
+} from "@/api/products";
 import { getSuppliers } from "@/api/supplier";
 
 const EditProductComponent = ({ productId, onClose, fetchProducts }) => {
@@ -39,6 +44,8 @@ const EditProductComponent = ({ productId, onClose, fetchProducts }) => {
   });
 
   useEffect(() => {
+    fetchSuppliers();
+    fetchSubCategories();
     fetchProductData();
     fetchProductCategories();
     fetchProductAttributes(); // Fetch attributes when the component mounts
@@ -76,6 +83,108 @@ const EditProductComponent = ({ productId, onClose, fetchProducts }) => {
     }
   };
 
+  let fetchSubCategories = async () => {
+    const res = await getSubCategories();
+
+    if (!res) {
+      setSubCategories([]);
+      setAttributes([]);
+      return;
+    }
+
+    setSubCategories(res.subcategories);
+  };
+  const fetchSuppliers = async () => {
+    const res = await getSuppliers();
+    res ? setSuppliers(res.suppliers) : setSuppliers([]);
+  };
+  useEffect(() => {
+    if (categories.length == 0) return;
+    if (suppliers.length == 0) return;
+    if (subCategories.length == 0) return;
+
+    setSubCategories(categories[0]?.subcategories);
+    setAttributes(categories[0]?.subcategories[0]?.attributes);
+    //set initial attributes
+
+    let initialAttributes = categories[0]?.subcategories[0]?.attributes;
+    // console.log(categories[0].subcategories[0].subcategory_id);
+    let attributeArray = [];
+
+    initialAttributes.forEach((attribute) => {
+      attributeArray.push({
+        attribute_id: attribute.attribute_id,
+        attribute_value_id: attribute.values[0].attribute_value_id,
+      });
+    });
+
+    setProduct({
+      ...product,
+      supplier_id: suppliers[0]?.supplier_id ?? 0,
+      category_id: categories[0]?.category_id,
+      subcategory_id: categories[0]?.subcategories[0].subcategory_id,
+      attributes: attributeArray,
+    });
+  }, [categories, suppliers, subCategories]);
+  let handleCategoryChange = (e) => {
+    let subcategory_id = categories.find(
+      (category) => category.category_id == e.target.value
+    ).subcategories[0].subcategory_id;
+    let initialAttributes = categories.find(
+      (category) => category.category_id == e.target.value
+    ).subcategories[0].attributes;
+
+    let attributeArray = [];
+
+    initialAttributes.forEach((attribute) => {
+      attributeArray.push({
+        attribute_id: attribute.attribute_id,
+        attribute_value_id: attribute.values[0].attribute_value_id,
+      });
+    });
+
+    setProduct({
+      ...product,
+      category_id: Number(e.target.value),
+      subcategory_id: subcategory_id,
+      attributes: attributeArray,
+    });
+    setSubCategories(
+      categories.find((category) => category.category_id == e.target.value)
+        .subcategories
+    );
+    setAttributes(
+      categories.find((category) => category.category_id == e.target.value)
+        .subcategories[0].attributes
+    );
+  };
+
+  let handleSubCategoryChange = (e) => {
+    let initialAttributes = subCategories.find(
+      (subcategory) => subcategory.subcategory_id == e.target.value
+    ).attributes;
+
+    let attributeArray = [];
+
+    initialAttributes.forEach((attribute) => {
+      attributeArray.push({
+        attribute_id: attribute.attribute_id,
+        attribute_value_id: attribute.values[0].attribute_value_id,
+      });
+    });
+
+    setProduct({
+      ...product,
+      subcategory_id: Number(e.target.value),
+      attributes: attributeArray,
+    });
+    setAttributes(
+      subCategories.find(
+        (subcategory) => subcategory.subcategory_id == e.target.value
+      ).attributes
+    );
+  };
+
   const handleFormSubmit = (e) => {
     e.preventDefault();
     // Append fields to formData for editing
@@ -97,6 +206,62 @@ const EditProductComponent = ({ productId, onClose, fetchProducts }) => {
         >
           <HeaderTitle>Edit Product {product.product_name}</HeaderTitle>
           <FieldContainer>
+            <LabelContainer first>
+              <Label>Category</Label>
+            </LabelContainer>
+            <div>
+              <FieldTitleLabel notFirst>Category</FieldTitleLabel>
+              <Select
+                value={product.category_id}
+                onChange={(e) => {
+                  if (
+                    categories.find(
+                      (category) => category.category_id == e.target.value
+                    ).subcategories.length == 0
+                  ) {
+                    setSubCategories([]);
+                    setAttributes([]);
+                    setProduct({
+                      ...product,
+                      category_id: Number(e.target.value),
+                      subcategory_id: 0,
+                    });
+                    return;
+                  }
+
+                  handleCategoryChange(e);
+                }}
+              >
+                {categories !== undefined &&
+                  categories.map((category) => (
+                    <Option
+                      value={category.category_id}
+                      key={category.category_id}
+                    >
+                      {category.name}
+                    </Option>
+                  ))}
+              </Select>
+            </div>
+
+            <div>
+              <FieldTitleLabel>Sub category</FieldTitleLabel>
+              <Select
+                value={product.template_id}
+                onChange={(e) => {
+                  handleSubCategoryChange(e);
+                }}
+              >
+                {subCategories.map((subcategory) => (
+                  <Option
+                    value={subcategory.subcategory_id}
+                    key={subcategory.subcategory_id}
+                  >
+                    {subcategory.subcategory_name}
+                  </Option>
+                ))}
+              </Select>
+            </div>
             <LabelContainer first>
               <Label>General Information</Label>{" "}
             </LabelContainer>

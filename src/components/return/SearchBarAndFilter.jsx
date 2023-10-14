@@ -13,7 +13,8 @@ const ReturnSearchBar = ({ setIsAddPopUpOpen, setReturnsDisplay }) => {
       <div>
         <p> Add Return </p>
         <Button onClick={() => setIsAddPopUpOpen(true)}>+ Add Return</Button>
-      </div>
+
+       </div>
 
       <Dropdown />
     </TableControlPanel>

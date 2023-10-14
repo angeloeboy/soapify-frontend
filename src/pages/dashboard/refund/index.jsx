@@ -5,7 +5,7 @@ import Table, { ActionContainer, TableData, TableHeadings, TableRows } from "@/s
 import StyledPanel from "@/styled-components/StyledPanel"; 
 import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import AddRefundComponent from "@/components/refund/addRefund";
+import AddRefundComponent from "@/components/refund/addRefund"; 
 import RefundSearchBar from "@/components/refund/SearchBarAndFilter";
 const RefundPage = () => {
   const [refunds, setRefunds] = useState([]);

@@ -1,14 +1,9 @@
 import {
-    Button,
-    Select,
-    LabelContainer,
     Label,
-    Option,
+    Button,
+    LabelContainer,
     FieldContainer,
-    ProfilePictureContainer,
-    FileInput,
     Centered,
-    SecondaryButton,
     CloseButton,
     ButtonsContainer,
     PopupOverlay,
@@ -19,13 +14,12 @@ import {
   } from "@/styled-components/ItemActionModal";
   
   import { useEffect, useState } from "react";
-  import { addRefund, getProducts } from "@/api/products"; // Replace "addProduct" and "addInventory" with appropriate refund-related API functions
+  import { addRefund } from "@/api/products"; // Adjust the API import based on your requirements
   
   const AddRefundComponent = ({ setIsAddPopUpOpen, getRefundsFunc }) => {
     const currentDate = new Date().toISOString();
   
     const [refund, setRefund] = useState({
-      product_id: 0, // Update to reflect the structure of refund data
       quantity: 1,
       date_added: currentDate,
       date_updated: currentDate,
@@ -34,22 +28,6 @@ import {
       reasonForRefund: "", // Add reason for refund field
       // Add any other refund-related fields you need
     });
-  
-    const [products, setProducts] = useState([]);
-  
-    useEffect(() => {
-      console.log(refund);
-    }, [refund]);
-  
-    const fetchProducts = () => {
-      getProducts().then((res) => {
-        console.log(res);
-        res ? setProducts(res.products) : setProducts([]);
-        if (res.products.length > 0) {
-          setRefund({ ...refund, product_id: res.products[0].product_id });
-        }
-      });
-    };
   
     const addRefundFunc = async (e) => {
       e.preventDefault();
@@ -60,10 +38,6 @@ import {
       await getRefundsFunc();
     };
   
-    useEffect(() => {
-      fetchProducts();
-    }, []);
-  
     return (
       <PopupOverlay>
         <PopupContent>
@@ -71,37 +45,21 @@ import {
             <HeaderTitle>Add Refund</HeaderTitle>
             <FieldContainer>
               <LabelContainer first>
-                <Label>Customer Information</Label>
+              <Label>Customer Information</Label>{" "}
               </LabelContainer>
               <div>
                 <FieldTitleLabel>Customer Information</FieldTitleLabel>
-                <Select
-                  value={refund.product_id}
-                  onChange={(e) => setRefund({ ...refund, product_id: e.target.value })}
-                >
-                  {products.map((product) => {
-                    return (
-                      <Option value={product.product_id} key={product.product_id}>
-                        {product.product_name}
-                      </Option>
-                    );
-                  })}
-                </Select>
-              </div>
-              <div>
-                <FieldTitleLabel>Product Name</FieldTitleLabel>
                 <InputHolder
-                  type="number"
-                  placeholder="Enter the quantity"
-                  onChange={(e) => setRefund({ ...refund, quantity: e.target.value })}
-                  value={refund.quantity}
+                  type="text"
+                  placeholder="Enter customer information"
+                  onChange={(e) => setRefund({ ...refund, customerInfo: e.target.value })}
                 />
               </div>
               <div>
-                <FieldTitleLabel>Date of Purchased</FieldTitleLabel>
+                <FieldTitleLabel>Date of Purchase</FieldTitleLabel>
                 <InputHolder
                   type="date"
-                  placeholder="Enter the date received"
+                  placeholder="Enter the date of purchase"
                   onChange={(e) => setRefund({ ...refund, date_added: e.target.value })}
                 />
               </div>
@@ -118,7 +76,8 @@ import {
                 <InputHolder
                   type="text"
                   placeholder="Enter the reason for refund"
-                 />
+                  onChange={(e) => setRefund({ ...refund, reasonForRefund: e.target.value })}
+                />
               </div>
               {/* Add fields for any other refund-related information */}
             </FieldContainer>

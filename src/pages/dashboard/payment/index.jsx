@@ -119,7 +119,7 @@ const PaymentTable = () => {
 				</Table>
 			</StyledPanel>
 			{isEditPaymentOpen && <EditPaymentMethodComponent onClose={closeEditPayment} paymentId={clickedId} fetchPaymentMethods={fetchPaymentMethods} />}
-			{isAddPaymentOpen && <AddPaymentMethod setAddPaymentOpen={setAddPaymentOpen} />}
+			{isAddPaymentOpen && <AddPaymentMethod setAddPaymentOpen={setAddPaymentOpen} fetchPaymentMethods={fetchPaymentMethods} />}
 		</DashboardLayout>
 	);
 };

@@ -10,6 +10,14 @@ export const PopupOverlay = styled.div`
 	display: flex;
 	align-items: center;
 	z-index: 102;
+	backdrop-filter: blur(2px);
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 999999999;
+	background-color: rgba(3, 10, 22, 0.768627451) !important;
 `;
 
 export const PopupContent = styled.div`

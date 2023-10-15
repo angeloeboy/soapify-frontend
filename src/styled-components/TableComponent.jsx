@@ -44,6 +44,22 @@ export const TableData = styled.td`
         }
         
     `}
+
+	.attr_container {
+		margin-top: 10px;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		span {
+			font-size: 12px;
+			padding: 4px;
+			background-color: #3ea2e44e;
+			color: #1b1b1b;
+			margin-right: 5px;
+			margin-bottom: 5px;
+			border-radius: 4px;
+		}
+	}
 `;
 
 export const TableRows = styled.tr`

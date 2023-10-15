@@ -17,7 +17,7 @@ import {
 	FieldTitleLabel,
 	InputHolder,
 } from "@/styled-components/ItemActionModal";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getProduct, editProduct, getProductCategories, getSubCategories } from "@/api/products";
 import { getSuppliers } from "@/api/supplier";
 
@@ -61,73 +61,6 @@ const EditProductComponent = ({ productId, onClose, fetchProducts }) => {
 		}
 	};
 
-	// const fetchProductCategories = async () => {
-	// 	try {
-	// 		const categoryData = await getProductCategories();
-	// 		setCategories(categoryData.categories);
-	// 	} catch (error) {
-	// 		console.log(error);
-	// 	}
-	// };
-
-	// const fetchProductAttributes = async () => {
-	// 	try {
-	// 		// const attributesData = await getProductAttributes(productId);
-	// 		setAttributes(product.attributes);
-	// 		console.log(product.attributes);
-	// 	} catch (error) {
-	// 		console.log(error);
-	// 	}
-	// };
-
-	// let fetchSubCategories = async () => {
-	// 	const res = await getSubCategories();
-
-	// 	if (!res) {
-	// 		setSubCategories([]);
-	// 		setAttributes([]);
-	// 		return;
-	// 	}
-
-	// 	setSubCategories(res.subcategories);
-	// };
-
-	// const fetchSuppliers = async () => {
-	// 	const res = await getSuppliers();
-	// 	res ? setSuppliers(res.suppliers) : setSuppliers([]);
-	// };
-
-	// useEffect(() => {
-	// 	if (categories.length == 0) return;
-	// 	if (suppliers.length == 0) return;
-	// 	if (subCategories.length == 0) return;
-	// 	if (product.product_name == null) return;
-	// 	console.log("testing");
-	// 	setSubCategories(categories[product.category_id]?.subcategories);
-	// 	setAttributes(categories[product.category_id]?.subcategories[0]?.attributes);
-
-	// 	// set initial att  ributes
-
-	// 	let initialAttributes = categories[product.category_id]?.subcategories[product.subcategory_id]?.attributes;
-	// 	// console.log(categories[0].subcategories[0].subcategory_id);
-	// 	// let attributeArray = [];
-
-	// 	// initialAttributes.forEach((attribute) => {
-	// 	// 	attributeArray.push({
-	// 	// 		attribute_id: attribute.attribute_id,
-	// 	// 		attribute_value_id: attribute.values[0].attribute_value_id,
-	// 	// 	});
-	// 	// });
-
-	// 	setProduct({
-	// 		...product,
-	// 		supplier_id: suppliers[product.supplier_id]?.supplier_id ?? 0,
-	// 		category_id: categories[product.category_id]?.category_id,
-	// 		subcategory_id: categories[product.category_id]?.subcategories[0].subcategory_id,
-	// 		// attributes: attributeArray,
-	// 	});
-	// }, [categories, suppliers, subCategories]);
-
 	let fetchProductCategories = async () => {
 		const res = await getProductCategories();
 		res ? setCategories(res.categories) : setCategories([]);
@@ -139,30 +72,75 @@ const EditProductComponent = ({ productId, onClose, fetchProducts }) => {
 		res ? setSuppliers(res.suppliers) : setSuppliers([]);
 	};
 
-	useEffect(() => {
-		if (categories.length == 0) return;
+	// useEffect(() => {
+	// 	if (!product.product_name || categories.length === 0) return;
 
-		let initialAttributes = categories[0]?.subcategories[0]?.attributes;
+	// 	// let initialAttributes = categories[product.category_id]?.subcategories[product.subcategory_id]?.attributes;
+	// 	let category = categories.find((category) => category.category_id == product.category_id);
+	// 	let subcategory = category.subcategories.find((subcategory) => subcategory.subcategory_id == product.subcategory_id);
 
+	// 	let initialAttributes = subcategory.attributes;
+
+	// 	console.log(initialAttributes);
+	// 	let attributeArray = [];
+
+	// 	initialAttributes.forEach((attribute) => {
+	// 		attributeArray.push({
+	// 			attribute_id: attribute.attribute_id,
+	// 			attribute_value_id: attribute.values[0].attribute_value_id,
+	// 		});
+	// 	});
+
+	// 	setSubCategories(category.subcategories);
+
+	// 	setProduct((prevProduct) => ({
+	// 		...prevProduct,
+	// 		supplier_id: prevProduct.supplier_id ?? 0,
+	// 		category_id: prevProduct.category_id,
+	// 		subcategory_id: prevProduct.subcategory_id,
+	// 		attributes: attributeArray,
+	// 	}));
+
+	// 	setAttributes(initialAttributes);
+	// 	// console.log("testset");
+	// }, [product, categories]);
+
+	// Destructure the needed properties from the product state
+	const { category_id, subcategory_id, supplier_id } = product;
+
+	// Refactor the product update into its own function outside of your effects
+	const updateProductAttributes = useCallback((attributes) => {
 		let attributeArray = [];
 
-		initialAttributes.forEach((attribute) => {
+		attributes.forEach((attribute) => {
 			attributeArray.push({
 				attribute_id: attribute.attribute_id,
 				attribute_value_id: attribute.values[0].attribute_value_id,
 			});
 		});
 
-		setProduct({
-			...product,
-			supplier_id: suppliers[0]?.supplier_id ?? 0,
-			category_id: categories[0]?.category_id,
-			subcategory_id: categories[0]?.subcategories[0].subcategory_id,
+		setProduct((prevProduct) => ({
+			...prevProduct,
 			attributes: attributeArray,
-		});
+		}));
+	}, []);
 
-		setAttributes(categories[0]?.subcategories[0]?.attributes);
-	}, [categories]);
+	// Now, your useEffect only runs when the specific properties change, not the entire product object
+	useEffect(() => {
+		if (!product.product_name || categories.length === 0) return;
+
+		let category = categories.find((category) => category.category_id === category_id);
+		if (!category) return;
+
+		let subcategory = category.subcategories.find((subcategory) => subcategory.subcategory_id === subcategory_id);
+		if (!subcategory) return;
+
+		let initialAttributes = subcategory.attributes;
+
+		updateProductAttributes(initialAttributes); // Call the update function
+		setSubCategories(category.subcategories);
+		setAttributes(initialAttributes);
+	}, [category_id, subcategory_id, categories, updateProductAttributes]); // Dependencies are now specific properties
 
 	let handleCategoryChange = (e) => {
 		let subcategory_id = categories.find((category) => category.category_id == e.target.value).subcategories[0].subcategory_id;
@@ -177,12 +155,12 @@ const EditProductComponent = ({ productId, onClose, fetchProducts }) => {
 			});
 		});
 
-		setProduct({
-			...product,
-			category_id: Number(e.target.value),
+		setProduct((prevProduct) => ({
+			...prevProduct,
+			category_id: newCategoryId,
 			subcategory_id: subcategory_id,
 			attributes: attributeArray,
-		});
+		}));
 
 		setSubCategories(categories.find((category) => category.category_id == e.target.value).subcategories);
 		setAttributes(categories.find((category) => category.category_id == e.target.value).subcategories[0].attributes);
@@ -209,61 +187,6 @@ const EditProductComponent = ({ productId, onClose, fetchProducts }) => {
 
 		setAttributes(subCategories.find((subcategory) => subcategory.subcategory_id == e.target.value).attributes);
 	};
-
-	// let handleCategoryChange = (e) => {
-	// 	let subcategory_id = categories.find((category) => category.category_id == e.target.value).subcategories[0].subcategory_id;
-	// 	let initialAttributes = categories.find((category) => category.category_id == e.target.value).subcategories[0].attributes;
-
-	// 	let attributeArray = [];
-
-	// 	initialAttributes.forEach((attribute) => {
-	// 		attributeArray.push({
-	// 			attribute_id: attribute.attribute_id,
-	// 			attribute_value_id: attribute.values[0].attribute_value_id,
-	// 		});
-	// 	});
-
-	// 	setProduct({
-	// 		...product,
-	// 		category_id: Number(e.target.value),
-	// 		subcategory_id: subcategory_id,
-	// 		attributes: attributeArray,
-	// 	});
-	// 	setSubCategories(categories.find((category) => category.category_id == e.target.value).subcategories);
-	// 	setAttributes(categories.find((category) => category.category_id == e.target.value).subcategories[0].attributes);
-	// };
-
-	// let handleSubCategoryChange = (e) => {
-	// 	let initialAttributes = subCategories.find((subcategory) => subcategory.subcategory_id == e.target.value).attributes;
-
-	// 	let attributeArray = [];
-
-	// 	initialAttributes.forEach((attribute) => {
-	// 		attributeArray.push({
-	// 			attribute_id: attribute.attribute_id,
-	// 			attribute_value_id: attribute.values[0].attribute_value_id,
-	// 		});
-	// 	});
-
-	// 	setProduct({
-	// 		...product,
-	// 		subcategory_id: Number(e.target.value),
-	// 		attributes: attributeArray,
-	// 	});
-	// 	setAttributes(subCategories.find((subcategory) => subcategory.subcategory_id == e.target.value).attributes);
-	// };
-
-	// const handleFormSubmit = (e) => {
-	// 	e.preventDefault();
-	// 	// Append fields to formData for editing
-	// 	console.log(product);
-	// 	editProduct(product, productId)
-	// 		.then((res) => {
-	// 			console.log(res);
-	// 			fetchProducts();
-	// 		})
-	// 		.then(() => {});
-	// };
 
 	return (
 		<PopupOverlay>

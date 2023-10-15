@@ -1,40 +1,23 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFilter } from "@fortawesome/free-solid-svg-icons";
-import { DropdownHeader, DropdownItem, DropdownMenu, DropdownWrapper, SearchBar, TableControlPanel, Button } from "@/styled-components/TableControlPanel";
+import React from "react";
+import { TableControlPanel, SearchBar, Button } from "@/styled-components/TableControlPanel";
 
-const ReturnSearchBar = ({ setIsAddPopUpOpen, setReturnsDisplay }) => {
+const ReturnSearchBar = ({ setIsAddPopUpOpen, setReturnsDisplay, onSearch }) => {
   return (
     <TableControlPanel>
       <SearchBar>
         <p>Search for Returns</p>
-        <input type="text" placeholder="Search" />
+        <input
+          type="text"
+          placeholder="Search"
+          onChange={(e) => onSearch(e.target.value)}
+        />
       </SearchBar>
 
       <div>
         <p> Add Return </p>
         <Button onClick={() => setIsAddPopUpOpen(true)}>+ Add Return</Button>
-
-       </div>
-
-      <Dropdown />
+      </div>
     </TableControlPanel>
-  );
-};
-
-const Dropdown = () => {
-  const isOpen = false;
-
-  return (
-    <DropdownWrapper>
-      <DropdownHeader>
-        <FontAwesomeIcon icon={faFilter} />
-        All
-      </DropdownHeader>
-      <DropdownMenu isOpen={isOpen}>
-        <DropdownItem key={"All"}>All</DropdownItem>
-        {/* Add more filtering options here */}
-      </DropdownMenu>
-    </DropdownWrapper>
   );
 };
 

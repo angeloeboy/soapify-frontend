@@ -17,7 +17,7 @@ import {
 	FieldTitleLabel,
 	InputHolder,
 } from "@/styled-components/ItemActionModal";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getProduct, editProduct, getProductCategories, getSubCategories } from "@/api/products";
 import { getSuppliers } from "@/api/supplier";
 
@@ -73,10 +73,15 @@ const EditProductComponent = ({ productId, onClose, fetchProducts }) => {
 	};
 
 	// useEffect(() => {
-	// 	if (categories.length == 0) return;
+	// 	if (!product.product_name || categories.length === 0) return;
 
-	// 	let initialAttributes = categories[0]?.subcategories[0]?.attributes;
+	// 	// let initialAttributes = categories[product.category_id]?.subcategories[product.subcategory_id]?.attributes;
+	// 	let category = categories.find((category) => category.category_id == product.category_id);
+	// 	let subcategory = category.subcategories.find((subcategory) => subcategory.subcategory_id == product.subcategory_id);
 
+	// 	let initialAttributes = subcategory.attributes;
+
+	// 	console.log(initialAttributes);
 	// 	let attributeArray = [];
 
 	// 	initialAttributes.forEach((attribute) => {
@@ -86,49 +91,56 @@ const EditProductComponent = ({ productId, onClose, fetchProducts }) => {
 	// 		});
 	// 	});
 
-	// 	setProduct({
-	// 		...product,
-	// 		supplier_id: suppliers[0]?.supplier_id ?? 0,
-	// 		category_id: categories[0]?.category_id,
-	// 		subcategory_id: categories[0]?.subcategories[0].subcategory_id,
+	// 	setSubCategories(category.subcategories);
+
+	// 	setProduct((prevProduct) => ({
+	// 		...prevProduct,
+	// 		supplier_id: prevProduct.supplier_id ?? 0,
+	// 		category_id: prevProduct.category_id,
+	// 		subcategory_id: prevProduct.subcategory_id,
 	// 		attributes: attributeArray,
-	// 	});
+	// 	}));
 
-	// 	setAttributes(categories[0]?.subcategories[0]?.attributes);
-	// }, [categories]);
+	// 	setAttributes(initialAttributes);
+	// 	// console.log("testset");
+	// }, [product, categories]);
 
-	useEffect(() => {
-		if (product.product_name == null) return;
-		if (categories.length == 0) return;
+	// Destructure the needed properties from the product state
+	const { category_id, subcategory_id, supplier_id } = product;
 
-		// let initialAttributes = categories[product.category_id]?.subcategories[product.subcategory_id]?.attributes;
-		let category = categories.find((category) => category.category_id == product.category_id);
-		let subcategory = category.subcategories.find((subcategory) => subcategory.subcategory_id == product.subcategory_id);
-
-		let initialAttributes = subcategory.attributes;
-
-		console.log(initialAttributes);
+	// Refactor the product update into its own function outside of your effects
+	const updateProductAttributes = useCallback((attributes) => {
 		let attributeArray = [];
 
-		initialAttributes.forEach((attribute) => {
+		attributes.forEach((attribute) => {
 			attributeArray.push({
 				attribute_id: attribute.attribute_id,
 				attribute_value_id: attribute.values[0].attribute_value_id,
 			});
 		});
 
-		setSubCategories(category.subcategories);
-
-		setProduct({
-			...product,
-			supplier_id: product.supplier_id ?? 0,
-			category_id: product?.category_id,
-			subcategory_id: product.subcategory_id,
+		setProduct((prevProduct) => ({
+			...prevProduct,
 			attributes: attributeArray,
-		});
+		}));
+	}, []);
 
+	// Now, your useEffect only runs when the specific properties change, not the entire product object
+	useEffect(() => {
+		if (!product.product_name || categories.length === 0) return;
+
+		let category = categories.find((category) => category.category_id === category_id);
+		if (!category) return;
+
+		let subcategory = category.subcategories.find((subcategory) => subcategory.subcategory_id === subcategory_id);
+		if (!subcategory) return;
+
+		let initialAttributes = subcategory.attributes;
+
+		updateProductAttributes(initialAttributes); // Call the update function
+		setSubCategories(category.subcategories);
 		setAttributes(initialAttributes);
-	}, [product, categories]);
+	}, [category_id, subcategory_id, categories, updateProductAttributes]); // Dependencies are now specific properties
 
 	let handleCategoryChange = (e) => {
 		let subcategory_id = categories.find((category) => category.category_id == e.target.value).subcategories[0].subcategory_id;
@@ -143,12 +155,12 @@ const EditProductComponent = ({ productId, onClose, fetchProducts }) => {
 			});
 		});
 
-		setProduct({
-			...product,
-			category_id: Number(e.target.value),
+		setProduct((prevProduct) => ({
+			...prevProduct,
+			category_id: newCategoryId,
 			subcategory_id: subcategory_id,
 			attributes: attributeArray,
-		});
+		}));
 
 		setSubCategories(categories.find((category) => category.category_id == e.target.value).subcategories);
 		setAttributes(categories.find((category) => category.category_id == e.target.value).subcategories[0].attributes);

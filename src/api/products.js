@@ -36,7 +36,7 @@ export const getProduct = async (id) => {
 
 export const addProduct = async (product) => {
 	try {
-		const response = await fetch("/api/product/create", {
+		const response = await fetch("/api/product/", {
 			method: "POST",
 			body: product,
 			credentials: "include",
@@ -48,19 +48,22 @@ export const addProduct = async (product) => {
 		console.log(error);
 	}
 };
-export const editProduct = async (product) => {
-  try {
-    const response = await fetch("/api/product/create", {
-      method: "POST",
-      body: product,
-      credentials: "include",
-    });
+export const editProduct = async (product, product_id) => {
+	try {
+		const response = await fetch(`/api/product/edit/${product_id}`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(product),
+			credentials: "include",
+		});
 
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.log(error);
-  }
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
 };
 
 //product categories
@@ -90,6 +93,40 @@ export const addCategory = async (category) => {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify(category),
+			credentials: "include",
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const getProductTemplates = async () => {
+	try {
+		const response = await fetch("/api/product/template", {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			credentials: "include",
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const getSubCategories = async () => {
+	try {
+		const response = await fetch("/api/subcategory", {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+			},
 			credentials: "include",
 		});
 

@@ -16,7 +16,7 @@ const InventoryPage = () => {
 	const [inventory, setInventory] = useState([]);
 	const [inventoryDisplay, setinventoryDisplay] = useState([]);
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
-	const [isPopupOpen, setPopupOpen] = useState(false);
+	const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false);
 
 	useEffect(() => {
 		fetchInventory();
@@ -31,14 +31,6 @@ const InventoryPage = () => {
 		if (!event.target.closest(".action-container") && !event.target.closest(".ellipsis")) {
 			setActiveActionContainer(null);
 		}
-	};
-
-	const handleOpenPopup = () => {
-		setPopupOpen(true);
-	};
-
-	const handleClosePopup = () => {
-		setPopupOpen(false);
 	};
 
 	const fetchInventory = () => {
@@ -64,7 +56,7 @@ const InventoryPage = () => {
 			<PageTitle title="Inventory" />
 
 			<StyledPanel>
-				<SearchBarComponent setPopupOpen={setPopupOpen} setinventoryDisplay={setinventoryDisplay} inventory={inventory} />
+				<SearchBarComponent setIsAddPopUpOpen={setIsAddPopUpOpen} setinventoryDisplay={setinventoryDisplay} inventory={inventory} />
 				<Table>
 					<tbody>
 						<TableRows heading>
@@ -78,9 +70,8 @@ const InventoryPage = () => {
 
 						{inventoryDisplay.map((inventory, index) => (
 							<TableRows key={index}>
-								<TableData bold withImage>
+								<TableData bold>
 									{/* <Image src="/product_img2.png" width={40} height={40} alt={"Product image"} /> */}
-									<Image src="/product_img2.png" width={40} height={40} alt={"Product image"} />
 
 									{inventory.Product.product_name}
 								</TableData>
@@ -113,7 +104,7 @@ const InventoryPage = () => {
 					</tbody>
 				</Table>
 			</StyledPanel>
-			{isPopupOpen && <AddInventoryComponent onClose={handleClosePopup} getInventoryFunc={fetchInventory} />}
+			{isAddPopUpOpen && <AddInventoryComponent setIsAddPopUpOpen={setIsAddPopUpOpen} getInventoryFunc={fetchInventory} />}
 		</DashboardLayout>
 	);
 };

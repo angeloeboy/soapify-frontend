@@ -32,3 +32,17 @@ export const addTransaction = async (transaction) => {
 		console.log(error);
 	}
 };
+
+export const getTransaction = async (id) => {
+	try {
+		const response = await fetch("/api/transactions/" + id, {
+			method: "GET",
+			credentials: "include",
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};

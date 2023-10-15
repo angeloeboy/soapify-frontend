@@ -9,7 +9,15 @@ export const PopupOverlay = styled.div`
 	background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
 	display: flex;
 	align-items: center;
-	z-index: 99;
+	z-index: 102;
+	backdrop-filter: blur(2px);
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 999999999;
+	background-color: rgba(3, 10, 22, 0.768627451) !important;
 `;
 
 export const PopupContent = styled.div`
@@ -29,6 +37,14 @@ export const PopupContent = styled.div`
 	flex-direction: column;
 	/* position: relative; */
 	width: calc(100% - 40px);
+	height: 90vh;
+	form {
+		height: 100%;
+	}
+
+	.form_fields {
+		height: 100%;
+	}
 `;
 
 export const HeaderTitle = styled.h2`
@@ -60,7 +76,10 @@ export const InputHolder = styled.input`
 	border: 1px solid #eee;
 	padding: 8px 16px;
 	margin-left: 23.92px;
-	width: 780.824px;
+	margin-right: 23.92px;
+
+	max-width: 780.824px;
+	width: calc(100% - (23.92px * 2));
 	height: 41px;
 	flex-shrink: 0;
 	&:focus {
@@ -87,11 +106,12 @@ export const Button = styled.button`
 
 export const Select = styled.select`
 	color: #1a69f0;
-	width: 700.824px;
+	/* width: 700.824px; */
 	height: 41px;
 	padding: 10px;
 	margin-bottom: 10px;
 	margin-left: 23.92px;
+	display: block;
 	border: 1px solid #ccc;
 	border-radius: 11px;
 	font-size: 16px;
@@ -100,6 +120,8 @@ export const Select = styled.select`
 	font-style: normal;
 	font-weight: 700;
 	line-height: normal;
+	margin-right: 23.92px;
+	width: calc(100% - (23.92px * 2));
 `;
 export const LabelContainer = styled.div`
 	background-color: #f3f3f3;
@@ -136,6 +158,7 @@ export const FieldContainer = styled.div`
 	display: flex;
 	width: 100%;
 	flex-direction: column;
+	min-height: calc(100% - 200px);
 	${InputHolder}:not(:first-child) {
 		margin-top: 2px;
 	}
@@ -285,9 +308,9 @@ export const CloseButton = styled.button`
 export const ButtonsContainer = styled.div`
 	display: flex;
 	justify-content: flex-end;
-	margin-top: 222px;
 	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 	/* position: fixed; */
+	margin-top: 130px;
 	position: sticky;
 	bottom: 0px;
 	width: 100%;

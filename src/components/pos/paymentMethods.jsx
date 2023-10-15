@@ -76,7 +76,11 @@ const PaymentMethods = (props) => {
 	const fetchPaymentMethods = () => {
 		getPaymentMethods().then((res) => {
 			console.log(res.paymentMethods);
+
+			if (res.paymentMethods.length <= 0 || !res) return;
+
 			res ? setPaymentMethods(res.paymentMethods) : setPaymentMethods([]);
+
 			setTransaction((prev) => ({ ...prev, payment_method_id: res.paymentMethods[0].payment_method_id }));
 		});
 	};
@@ -91,6 +95,7 @@ const PaymentMethods = (props) => {
 				<span onClick={() => props.setActiveAction("cart")}>{"<"}</span> Payment Methods
 			</ComponentTitle>
 			<PaymentMethodsContainer>
+				{paymentMethods.length <= 0 && <p>No payment Methods </p>}
 				{paymentMethods.map((payment) => {
 					return (
 						<PaymentMethod
@@ -116,7 +121,6 @@ const PaymentMethods = (props) => {
 				width={"100%"}
 				onClick={() => {
 					console.log(transaction);
-					// props.setActiveAction("receipt");
 					initiateTransaction();
 				}}
 			>

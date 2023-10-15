@@ -16,7 +16,7 @@ import { ButtonsContainer } from "@/styled-components/ItemActionModal";
 import { CloseButton } from "../styled-components/PopUp";
 import { addPaymentMethod } from "@/api/payment_method";
 
-const AddPaymentMethod = ({ onClose, fetchPaymentMethods }) => {
+const AddPaymentMethod = ({ setAddPaymentOpen, fetchPaymentMethods }) => {
 	const [paymentMethod, setPaymentMethod] = useState({
 		name: "",
 		account_no: "",
@@ -25,7 +25,7 @@ const AddPaymentMethod = ({ onClose, fetchPaymentMethods }) => {
 	const addPaymentMethodFunc = async () => {
 		const response = await addPaymentMethod(paymentMethod);
 		console.log(response);
-    fetchPaymentMethods()
+		fetchPaymentMethods();
 	};
 
 	return (
@@ -46,7 +46,7 @@ const AddPaymentMethod = ({ onClose, fetchPaymentMethods }) => {
 					</div>
 				</FieldContainer>
 				<ButtonsContainer>
-					<CloseButton onClick={onClose}>Close</CloseButton>
+					<CloseButton onClick={() => setAddPaymentOpen(false)}>Close</CloseButton>
 					<Button onClick={() => addPaymentMethodFunc(paymentMethod)}>Save</Button>
 				</ButtonsContainer>
 			</PopupContent>

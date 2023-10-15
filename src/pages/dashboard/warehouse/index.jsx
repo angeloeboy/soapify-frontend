@@ -9,12 +9,17 @@ import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
 import AddWarehouse from "@/components/warehouse/addWarehouse";
 import WarehouseSearchBarComponent from "@/components/warehouse/SearchBarAndFilter";
 import { getAllWarehouse } from "@/api/warehouse";
+import EditWarehouse from "@/components/warehouse/editWarehouse";
+import DeactivateModal from "@/components/misc/deactivate";
 
 const Warehouse = () => {
 	const [isAddPopUpOpen, setAddPopUpOpen] = useState(false);
+	const [isEditPopUpOpen, setEditPopUpOpen] = useState(false);
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
 	const [warehouses, setWarehouses] = useState([]);
-
+	const [clickedId, setClickedId] = useState(null);
+	const [clickedName, setClickedName] = useState(null);
+	const [showDeactivate, setShowDeactivate] = useState(false);
 	useEffect(() => {
 		fetchWarehouses();
 	}, []);
@@ -24,11 +29,13 @@ const Warehouse = () => {
 		res ? setWarehouses(res.warehouses) : setWarehouses([]);
 	};
 
+	const deactivateWarehouse = async () => {};
+
 	return (
 		<DashboardLayout>
 			<PageTitle title="Warehouse" />
 			<StyledPanel>
-				<WarehouseSearchBarComponent  setAddPopUpOpen={setAddPopUpOpen} />
+				<WarehouseSearchBarComponent setAddPopUpOpen={setAddPopUpOpen} />
 
 				<Table>
 					<tbody>
@@ -52,11 +59,21 @@ const Warehouse = () => {
 									/>
 									{activeActionContainer === index && (
 										<ActionContainer onClick={() => setActiveActionContainer(-1)}>
-											<p>
+											<p
+												onClick={() => {
+													setClickedId(warehouse.warehouse_id);
+													setEditPopUpOpen(true);
+												}}
+											>
 												<FontAwesomeIcon icon={faPen} />
 												Edit
 											</p>
-											<p>
+											<p
+												onClick={() => {
+													setShowDeactivate(true);
+													setClickedName(warehouse.warehouse_name);
+												}}
+											>
 												<FontAwesomeIcon icon={faTrash} /> Delete
 											</p>
 										</ActionContainer>
@@ -68,6 +85,8 @@ const Warehouse = () => {
 				</Table>
 			</StyledPanel>
 			{isAddPopUpOpen && <AddWarehouse setAddPopUpOpen={setAddPopUpOpen} fetchWarehouses={fetchWarehouses} />}
+			{isEditPopUpOpen && <EditWarehouse setEditPopUpOpen={setEditPopUpOpen} fetchWarehouses={fetchWarehouses} clickedId={clickedId} />}
+			{showDeactivate && <DeactivateModal type="warehouse" text={clickedName} close={setShowDeactivate} />}
 		</DashboardLayout>
 	);
 };

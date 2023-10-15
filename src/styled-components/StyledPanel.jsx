@@ -10,6 +10,8 @@ const StyledPanel = styled.div`
 	background: #fff;
 	min-height: 500px;
 	overflow: auto;
+	border-radius: 0.5rem;
+	box-shadow: 0 1px 3px rgba(7, 14, 35, 0.06), 0 2px 8px -1px rgba(7, 14, 35, 0.05);
 	.addProductBtn {
 		margin-top: 78px;
 		font-weight: bold;
@@ -29,7 +31,17 @@ const StyledPanel = styled.div`
 		width: calc(100% - 520px);
 		display: inline-block;
 
+		// @media (max-width: 1500px) {
+		// 	flex: 1 0 100%; 
+		// }
+
+	
 	`}
+
+
+	@media(max-width: 768px) {
+		padding: 48px 24px;
+	}
 `;
 
 export const BigTitle = styled.h2`

@@ -1,7 +1,6 @@
+import React, { useEffect, useState } from "react";
 import {
 	Button,
-	LabelContainer,
-	Label,
 	FieldContainer,
 	CloseButton,
 	ButtonsContainer,
@@ -10,153 +9,62 @@ import {
 	HeaderTitle,
 	FieldTitleLabel,
 	InputHolder,
-	Select,
-	Option,
 } from "@/styled-components/ItemActionModal";
 
-import { useEffect, useState } from "react";
-import { getProductCategories } from "@/api/products";
-import { getAttributes } from "@/api/attributes";
-import { addSubCategory } from "@/api/subcategories";
+import { addSubcategory } from "@/api/subcategories"; // Import your API function for adding subcategories
 
-const AddSubCategory = ({ onClose, onButtonClick, fetchProductSubcategories }) => {
-	const [subCategory, setSubCategory] = useState({
-		name: "",
-		category_id: undefined,
-		attributes: [],
+const AddSubcategoryComponent = ({ onClose, onButtonClick, getSubcategoriesFunc }) => {
+	const currentDate = new Date().toISOString();
+
+	const [subcategory, setSubcategory] = useState({
+		subcategory_name: "",
+		date_created: currentDate,
+		subcategory_id: 0, // Replace with appropriate logic to set subcategory ID
+		// Add more fields related to subcategories here
 	});
 
-	const [categories, setCategories] = useState([]);
-
-	const [attributes, setAttributes] = useState([]);
-	const [chosenAttribute, setChosenAttribute] = useState([]);
-
 	useEffect(() => {
-		fetchAttributes();
-		fetchProductCategories();
-	}, []);
+		console.log(subcategory);
+	}, [subcategory]);
 
-	useEffect(() => {
-		console.log(subCategory);
-	}, [subCategory]);
-
-	useEffect(() => {
-		console.log(chosenAttribute.attribute_name);
-	}, [chosenAttribute]);
-
-	let fetchAttributes = async () => {
-		const res = await getAttributes();
-		res.attributes ? setAttributes(res.attributes) : setAttributes([]);
-		console.log(res.attributes);
-	};
-
-	let fetchProductCategories = async () => {
-		const res = await getProductCategories();
-		res.categories ? setCategories(res.categories) : setCategories([]);
-		console.log(res.categories);
-
-		if (res.categories.length > 0) {
-			setSubCategory({ ...subCategory, category_id: res.categories[0].category_id });
-		}
-	};
-
-	let addSubcategory = async (e) => {
+	const addSubcategoryFunc = async (e) => {
 		e.preventDefault();
-		const res = await addSubCategory(subCategory);
-		console.log(res);
+		await addSubcategory(subcategory).then((res) => {
+			console.log(res);
+		});
 
-		fetchProductSubcategories();
+		await getSubcategoriesFunc(); // Fetch subcategories after adding a new one
 	};
 
 	return (
 		<PopupOverlay>
 			<PopupContent>
-				<form onSubmit={(e) => addSubcategory(e)} enctype="multipart/form-data">
+				<form onSubmit={(e) => addSubcategoryFunc(e)}>
+					<HeaderTitle>Add Subcategory</HeaderTitle>
 					<FieldContainer>
-						<HeaderTitle>Add Subcategory</HeaderTitle>
-
-						<LabelContainer first>
-							<Label>General Information</Label>
-						</LabelContainer>
 						<div>
-							<FieldTitleLabel> Subcategory Name </FieldTitleLabel>
+							<FieldTitleLabel>Subcategory Name</FieldTitleLabel>
 							<InputHolder
 								type="text"
-								onChange={(e) => {
-									setSubCategory({ ...subCategory, name: e.target.value });
-								}}
-								required
-								value={subCategory.name}
+								placeholder="Enter subcategory name"
+								onChange={(e) => setSubcategory({ ...subcategory, subcategory_name: e.target.value })}
+								value={subcategory.subcategory_name}
 							/>
 						</div>
-
 						<div>
-							<FieldTitleLabel> Category </FieldTitleLabel>
-
-							<Select
-								value={subCategory.category_id}
-								onChange={(e) => {
-									console.log(e.target.value);
-									setSubCategory({ ...subCategory, category_id: e.target.value });
-								}}
-							>
-								{categories.map((category) => (
-									<Option value={category.category_id} key={category.category_id}>
-										{category.name}
-									</Option>
-								))}
-							</Select>
+							<FieldTitleLabel>Date Created</FieldTitleLabel>
+							<InputHolder type="date" placeholder="Enter date created" onChange={(e) => setSubcategory({ ...subcategory, date_created: e.target.value })} />
 						</div>
-
-						<LabelContainer>
-							<Label>Attributes</Label>
-						</LabelContainer>
-
 						<div>
-							<FieldTitleLabel> Attribute Name </FieldTitleLabel>
-
-							{attributes.length > 0 && (
-								<Select
-									value={chosenAttribute.attribute_id}
-									placeholder="Select an option"
-									onChange={(e) => {
-										if (e.target.value == "none") return;
-
-										let attr = attributes.find((value) => value.attribute_id == Number(e.target.value));
-										setChosenAttribute(attr);
-										let attrArr = subCategory.attributes;
-										if (attrArr.find((value) => value.attribute_id == attr.attribute_id)) {
-											return;
-										}
-										let attrObj = {
-											attribute_id: attr.attribute_id,
-											attribute_name: attr.attribute_name,
-										};
-
-										attrArr.push(attrObj);
-										setSubCategory({ ...subCategory, attributes: attrArr });
-									}}
-								>
-									<Option value="none">Select an option</Option>
-									{attributes.map((value) => (
-										<Option value={value.attribute_id} key={value.attribute_id}>
-											{value.attribute_name}
-										</Option>
-									))}
-								</Select>
-							)}
+							<FieldTitleLabel>Subcategory ID</FieldTitleLabel>
+							<InputHolder
+								type="text"
+								placeholder="Enter subcategory ID"
+								onChange={(e) => setSubcategory({ ...subcategory, subcategory_id: e.target.value })}
+								value={subcategory.subcategory_id}
+							/>
 						</div>
-
-						<div>
-							<FieldTitleLabel> Attribute List </FieldTitleLabel>
-
-							{subCategory.attributes.map((attribute, index) => (
-								<>
-									<InputHolder type="text" key={index} readOnly value={attribute.attribute_name} />
-									<p> Delete </p>
-								</>
-							))}
-						</div>
+						{/* Add more fields related to subcategories here */}
 					</FieldContainer>
 
 					<ButtonsContainer>
@@ -169,4 +77,4 @@ const AddSubCategory = ({ onClose, onButtonClick, fetchProductSubcategories }) =
 	);
 };
 
-export default AddSubCategory;
+export default AddSubcategoryComponent;

@@ -16,7 +16,7 @@ import {
 import { useEffect, useState } from "react";
 // import { addRefund } from "@/api/products"; // Adjust the API import based on your requirements
 
-const AddRefundComponent = ({ setIsAddPopUpOpen, getRefundsFunc }) => {
+const EditRefundComponent = ({ setIsEditPopUpOpen, getRefundsFunc }) => {
   const currentDate = new Date().toISOString();
 
   const [refund, setRefund] = useState({
@@ -29,9 +29,9 @@ const AddRefundComponent = ({ setIsAddPopUpOpen, getRefundsFunc }) => {
     // Add any other refund-related fields you need
   });
 
-  const addRefundFunc = async (e) => {
+  const editRefundFunc = async (e) => {
     e.preventDefault();
-    await addRefund(refund).then((res) => {
+    await editRefund(refund).then((res) => {
       console.log(res);
     });
 
@@ -41,8 +41,8 @@ const AddRefundComponent = ({ setIsAddPopUpOpen, getRefundsFunc }) => {
   return (
     <PopupOverlay>
       <PopupContent>
-        <form onSubmit={(e) => addRefundFunc(e)}>
-          <HeaderTitle>Add Refund</HeaderTitle>
+        <form onSubmit={(e) => editRefundFunc(e)}>
+          <HeaderTitle>Edit Refund</HeaderTitle>
           <FieldContainer>
             <LabelContainer first>
               <Label>Customer Information</Label>{" "}
@@ -91,7 +91,7 @@ const AddRefundComponent = ({ setIsAddPopUpOpen, getRefundsFunc }) => {
           </FieldContainer>
 
           <ButtonsContainer>
-            <CloseButton onClick={() => setIsAddPopUpOpen(false)}>
+            <CloseButton onClick={() => setIsEditPopUpOpen(false)}>
               Close
             </CloseButton>
             <Button type="submit">Save</Button>
@@ -102,4 +102,4 @@ const AddRefundComponent = ({ setIsAddPopUpOpen, getRefundsFunc }) => {
   );
 };
 
-export default AddRefundComponent;
+export default EditRefundComponent;

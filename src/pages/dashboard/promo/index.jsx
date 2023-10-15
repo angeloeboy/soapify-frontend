@@ -7,7 +7,7 @@ import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // import AddPromoComponent from "@/components/promo/addOP";
 
-import PromoSearchBar from "@/components/promo/SearchBarAndFilter";
+import PromoSearchBar from "@/components/promo/searchBarAndFilter";
 import AddPromoComponent from "@/components/promo/addPromo";
 
 const PromoPage = () => {

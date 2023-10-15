@@ -1,20 +1,6 @@
 import React, { useState, useEffect } from "react";
-import {
-  Label,
-  Button,
-  LabelContainer,
-  FieldContainer,
-  Centered,
-  CloseButton,
-  ButtonsContainer,
-  PopupOverlay,
-  PopupContent,
-  HeaderTitle,
-  FieldTitleLabel,
-  InputHolder,
-} from "@/styled-components/ItemActionModal";
+import { Label, Button, LabelContainer, FieldContainer, Centered, CloseButton, ButtonsContainer, PopupOverlay, PopupContent, HeaderTitle, FieldTitleLabel, InputHolder } from "@/styled-components/ItemActionModal";
 
- 
 const AddReturnComponent = ({ setIsAddPopUpOpen, getReturnsFunc }) => {
   const currentDate = new Date().toISOString();
 

@@ -6,7 +6,7 @@ import StyledPanel from "@/styled-components/StyledPanel";
 import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AddReturnComponent from "@/components/return/addReturn";
-import ReturnSearchBar from "@/components/return/SearchBarAndFilter";
+import ReturnSearchBar from "@/components/return/searchBar";
 
 const ReturnPage = () => {
   const [returns, setReturns] = useState([]);

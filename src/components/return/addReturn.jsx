@@ -15,7 +15,7 @@ import {
 } from "@/styled-components/ItemActionModal";
 
  
-const AddReturnComponent = ({ setIsAddPopUpOpen, getReturnsFunc }) => {
+const ReturnComponent = ({ setIsAddPopUpOpen, getReturnsFunc }) => {
   const currentDate = new Date().toISOString();
 
   const [returnData, setReturnData] = useState({
@@ -124,4 +124,4 @@ const AddReturnComponent = ({ setIsAddPopUpOpen, getReturnsFunc }) => {
   );
 };
 
-export default AddReturnComponent;
+export default ReturnComponent;

@@ -1,18 +1,24 @@
 import React, { useState, useEffect } from "react";
 import DashboardLayout from "@/components/misc/dashboardLayout";
 import PageTitle from "@/components/misc/pageTitle";
-import Table, { ActionContainer, TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
+import Table, {
+  ActionContainer,
+  TableData,
+  TableHeadings,
+  TableRows,
+} from "@/styled-components/TableComponent";
 import StyledPanel from "@/styled-components/StyledPanel";
 import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AddReturnComponent from "@/components/return/addReturn";
+import EditReturnComponent from "@/components/return/editReturn";
 import ReturnSearchBar from "@/components/return/searchBar";
 
 const ReturnPage = () => {
   const [returns, setReturns] = useState([]);
   const [activeActionContainer, setActiveActionContainer] = useState(-1);
   const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false); // State to control the popup
-
+  const [isEditPopUpOpen, setIsEditPopUpOpen] = useState(false); // State to control the popup
   useEffect(() => {
     // Fetch return data when the component mounts (can be replaced with API calls)
     const staticReturnData = [
@@ -21,7 +27,7 @@ const ReturnPage = () => {
         customerInfo: "John Doe",
         productName: "Product A",
         dateOfPurchase: "2023-01-15",
-        returnAmount: 50.00,
+        returnAmount: 50.0,
         returnReason: "Defective",
         returnStatus: "Processing",
       },
@@ -30,7 +36,7 @@ const ReturnPage = () => {
         customerInfo: "Alice Smith",
         productName: "Product B",
         dateOfPurchase: "2023-02-20",
-        returnAmount: 30.00,
+        returnAmount: 30.0,
         returnReason: "Changed Mind",
         returnStatus: "not completed",
       },
@@ -44,14 +50,17 @@ const ReturnPage = () => {
     // Implement this function to fetch the latest return data (e.g., from an API)
     // Update the 'returns' state with the fetched data
   };
-
+  const [selectedReturn, setSelectedReturn] = useState({}); // State to store the selected return data
   return (
     <DashboardLayout>
       <PageTitle title="Returns" />
 
       <StyledPanel>
         {/* Button to open the Add Return popup */}
-        <ReturnSearchBar setIsAddPopUpOpen={setIsAddPopUpOpen} setReturnsDisplay={setReturns} />
+        <ReturnSearchBar
+          setIsAddPopUpOpen={setIsAddPopUpOpen}
+          setReturnsDisplay={setReturns}
+        />
 
         <Table>
           <tbody>
@@ -87,8 +96,15 @@ const ReturnPage = () => {
                   />
 
                   {activeActionContainer === index && (
-                    <ActionContainer onClick={() => setActiveActionContainer(-1)}>
-                      <p>
+                    <ActionContainer
+                      onClick={() => setActiveActionContainer(-1)}
+                    >
+                      <p
+                        onClick={() => {
+                          setSelectedReturn(returns);
+                          setIsEditPopUpOpen(selectedReturn);
+                        }}
+                      >
                         <FontAwesomeIcon icon={faPen} />
                         Edit
                       </p>
@@ -104,7 +120,15 @@ const ReturnPage = () => {
         </Table>
       </StyledPanel>
 
-      {isAddPopUpOpen && <AddReturnComponent setIsAddPopUpOpen={setIsAddPopUpOpen} getReturnsFunc={getReturnsFunc} />}
+      {isAddPopUpOpen && (
+        <AddReturnComponent
+          setIsAddPopUpOpen={setIsAddPopUpOpen}
+          getReturnsFunc={getReturnsFunc}
+        />
+      )}
+      {isEditPopUpOpen && (
+        <EditReturnComponent setIsEditPopUpOpen={setIsEditPopUpOpen} />
+      )}
     </DashboardLayout>
   );
 };

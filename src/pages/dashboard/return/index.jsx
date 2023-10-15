@@ -5,8 +5,8 @@ import Table, { ActionContainer, TableData, TableHeadings, TableRows } from "@/s
 import StyledPanel from "@/styled-components/StyledPanel";
 import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import ReturnComponent from "@/components/return/addReturn";
-import ReturnSearchBar from "@/components/return/searchBarAndFilter";
+import AddReturnComponent from "@/components/return/AddReturn";
+import ReturnSearchBar from "@/components/return/SearchBarAndFilter";
 
 const ReturnPage = () => {
   const [returns, setReturns] = useState([]);
@@ -104,7 +104,7 @@ const ReturnPage = () => {
         </Table>
       </StyledPanel>
 
-      {isAddPopUpOpen && <ReturnComponent setIsAddPopUpOpen={setIsAddPopUpOpen} getReturnsFunc={getReturnsFunc} />}
+      {isAddPopUpOpen && <AddReturnComponent setIsAddPopUpOpen={setIsAddPopUpOpen} getReturnsFunc={getReturnsFunc} />}
     </DashboardLayout>
   );
 };

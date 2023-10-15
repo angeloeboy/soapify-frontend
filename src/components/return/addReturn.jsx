@@ -1,21 +1,7 @@
 import React, { useState, useEffect } from "react";
-import {
-  Label,
-  Button,
-  LabelContainer,
-  FieldContainer,
-  Centered,
-  CloseButton,
-  ButtonsContainer,
-  PopupOverlay,
-  PopupContent,
-  HeaderTitle,
-  FieldTitleLabel,
-  InputHolder,
-} from "@/styled-components/ItemActionModal";
+import { Label, Button, LabelContainer, FieldContainer, Centered, CloseButton, ButtonsContainer, PopupOverlay, PopupContent, HeaderTitle, FieldTitleLabel, InputHolder } from "@/styled-components/ItemActionModal";
 
- 
-const ReturnComponent = ({ setIsAddPopUpOpen, getReturnsFunc }) => {
+const AddReturnComponent = ({ setIsAddPopUpOpen, getReturnsFunc }) => {
   const currentDate = new Date().toISOString();
 
   const [returnData, setReturnData] = useState({
@@ -124,4 +110,4 @@ const ReturnComponent = ({ setIsAddPopUpOpen, getReturnsFunc }) => {
   );
 };
 
-export default ReturnComponent;
+export default AddReturnComponent;

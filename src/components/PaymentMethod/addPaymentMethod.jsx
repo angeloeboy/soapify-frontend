@@ -16,7 +16,7 @@ import { ButtonsContainer } from "@/styled-components/ItemActionModal";
 import { CloseButton } from "../styled-components/PopUp";
 import { addPaymentMethod } from "@/api/payment_method";
 
-const AddPaymentMethod = ({ setAddPaymentOpen }) => {
+const AddPaymentMethod = ({ setAddPaymentOpen, fetchPaymentMethods }) => {
 	const [paymentMethod, setPaymentMethod] = useState({
 		name: "",
 		account_no: "",

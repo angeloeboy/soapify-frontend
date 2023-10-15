@@ -19,7 +19,7 @@ import { getProductCategories } from "@/api/products";
 import { getAttributes } from "@/api/attributes";
 import { addSubCategory } from "@/api/subcategories";
 
-const AddSubCategory = ({ onClose, onButtonClick, fetchProductSubcategories }) => {
+const AddSubCategoryModal = ({ onClose, onButtonClick, fetchProductSubcategories }) => {
 	const [subCategory, setSubCategory] = useState({
 		name: "",
 		category_id: undefined,
@@ -173,4 +173,4 @@ const AddSubCategory = ({ onClose, onButtonClick, fetchProductSubcategories }) =
 	);
 };
 
-export default AddSubCategory;
+export default AddSubCategoryModal;

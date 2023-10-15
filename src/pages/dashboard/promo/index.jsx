@@ -2,16 +2,28 @@ import React, { useState, useEffect } from "react";
 import DashboardLayout from "@/components/misc/dashboardLayout";
 import PageTitle from "@/components/misc/pageTitle";
 import Table, { ActionContainer, TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
-import StyledPanel from "@/styled-components/StyledPanel"; 
+import StyledPanel from "@/styled-components/StyledPanel";
 import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import AddPromoComponent from "@/components/promo/AddPromo"; 
-import PromoSearchBar from "@/components/promo/SearchBarAndFilter";
+import PromoSearchBar from "@/components/promo/searchBarAndFilter";
+import AddPromoComponent from "@/components/promo/AddPromo";
 
 const PromoPage = () => {
   const [promotions, setPromotions] = useState([]);
+  const [filteredPromotions, setFilteredPromotions] = useState([]); // Initialize with an empty array
   const [activeActionContainer, setActiveActionContainer] = useState(-1);
-  const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false); // State to control the popup
+  const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false);
+
+  const handleSearch = (searchTerm) => {
+    const filteredPromos = promotions.filter((promo) => {
+      return (
+        promo.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        promo.promotionName.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    });
+
+    setFilteredPromotions(filteredPromos);
+  };
 
   useEffect(() => {
     // Fetch promo data when the component mounts (can be replaced with API calls)
@@ -25,8 +37,8 @@ const PromoPage = () => {
         endDate: "2023-01-30",
         discountPercentage: 50,
         discountAmount: null,
-        originalPrice: 100.00,
-        promoPrice: 50.00,
+        originalPrice: 100.0,
+        promoPrice: 50.0,
         status: "Active",
         description: "Limited-time discount promotion.",
       },
@@ -39,8 +51,8 @@ const PromoPage = () => {
         endDate: "2023-02-28",
         discountPercentage: null,
         discountAmount: null,
-        originalPrice: 20.00,
-        promoPrice: 20.00,
+        originalPrice: 20.0,
+        promoPrice: 20.0,
         status: "Active",
         description: "Special offer: Buy one, get one free!",
       },
@@ -48,21 +60,17 @@ const PromoPage = () => {
     ];
 
     setPromotions(staticPromoData);
+    setFilteredPromotions(staticPromoData); // Initialize filteredPromotions with all promotions
   }, []);
-
-  const getPromotionsFunc = () => {
-    // Implement this function to fetch the latest promo data (e.g., from an API)
-    // Update the 'promotions' state with the fetched data
-  };
 
   return (
     <DashboardLayout>
       <PageTitle title="Promotions" />
 
       <StyledPanel>
-        {/* Button to open the Add Promo popup */}
-        <PromoSearchBar setIsAddPopUpOpen={setIsAddPopUpOpen} setPromotionsDisplay={setPromotions} />
+        <PromoSearchBar onSearch={handleSearch}  setIsAddPopUpOpen={setIsAddPopUpOpen} setPromosDisplay={setPromotions}  />    
 
+             
         <Table>
           <tbody>
             <TableRows heading>
@@ -81,7 +89,7 @@ const PromoPage = () => {
               <TableHeadings>Actions</TableHeadings>
             </TableRows>
 
-            {promotions.map((promo, index) => (
+            {filteredPromotions.map((promo, index) => (
               <TableRows key={promo.promotionID}>
                 <TableData>{promo.promotionID}</TableData>
                 <TableData>{promo.productName}</TableData>
@@ -118,9 +126,9 @@ const PromoPage = () => {
             ))}
           </tbody>
         </Table>
-      </StyledPanel>
+       </StyledPanel>
 
-      {isAddPopUpOpen && <AddPromoComponent setIsAddPopUpOpen={setIsAddPopUpOpen} getPromotionsFunc={getPromotionsFunc} />}
+      {isAddPopUpOpen && <AddPromoComponent setIsAddPopUpOpen={setIsAddPopUpOpen} />}
     </DashboardLayout>
   );
 };

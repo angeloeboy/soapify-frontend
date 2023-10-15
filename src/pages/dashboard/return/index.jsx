@@ -8,14 +8,14 @@ import Table, {
   TableRows,
 } from "@/styled-components/TableComponent";
 import StyledPanel from "@/styled-components/StyledPanel";
-import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsis, faTrash, faPen } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AddReturnComponent from "@/components/return/addReturn";
 import EditReturnComponent from "@/components/return/editReturn";
 import ReturnSearchBar from "@/components/return/searchBar";
-
 const ReturnPage = () => {
   const [returns, setReturns] = useState([]);
+  const [filteredReturns, setFilteredReturns] = useState([]); // Initialize with an empty array
   const [activeActionContainer, setActiveActionContainer] = useState(-1);
   const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false); // State to control the popup
   const [isEditPopUpOpen, setIsEditPopUpOpen] = useState(false); // State to control the popup
@@ -38,12 +38,13 @@ const ReturnPage = () => {
         dateOfPurchase: "2023-02-20",
         returnAmount: 30.0,
         returnReason: "Changed Mind",
-        returnStatus: "not completed",
+        returnStatus: "Not Completed",
       },
       // Add more return objects here as needed
     ];
 
     setReturns(staticReturnData);
+    setFilteredReturns(staticReturnData); // Initialize filteredReturns with all returns
   }, []);
 
   const getReturnsFunc = () => {
@@ -75,7 +76,7 @@ const ReturnPage = () => {
               <TableHeadings>Actions</TableHeadings>
             </TableRows>
 
-            {returns.map((returnItem, index) => (
+            {filteredReturns.map((returnItem, index) => (
               <TableRows key={returnItem.returnID}>
                 <TableData>{returnItem.returnID}</TableData>
                 <TableData>{returnItem.customerInfo}</TableData>

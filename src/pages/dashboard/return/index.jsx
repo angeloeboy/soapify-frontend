@@ -3,15 +3,26 @@ import DashboardLayout from "@/components/misc/dashboardLayout";
 import PageTitle from "@/components/misc/pageTitle";
 import Table, { ActionContainer, TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
 import StyledPanel from "@/styled-components/StyledPanel";
-import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsis,faTrash,faPen } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AddReturnComponent from "@/components/return/addReturn";
 import ReturnSearchBar from "@/components/return/searchBar";
-
 const ReturnPage = () => {
   const [returns, setReturns] = useState([]);
+  const [filteredReturns, setFilteredReturns] = useState([]); // Initialize with an empty array
   const [activeActionContainer, setActiveActionContainer] = useState(-1);
-  const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false); // State to control the popup
+  const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false);
+
+  const handleSearch = (searchTerm) => {
+    const filtered = returns.filter((returnItem) => {
+      return (
+        returnItem.customerInfo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        returnItem.productName.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    });
+
+    setFilteredReturns(filtered);
+  };
 
   useEffect(() => {
     // Fetch return data when the component mounts (can be replaced with API calls)
@@ -32,26 +43,21 @@ const ReturnPage = () => {
         dateOfPurchase: "2023-02-20",
         returnAmount: 30.00,
         returnReason: "Changed Mind",
-        returnStatus: "not completed",
+        returnStatus: "Not Completed",
       },
       // Add more return objects here as needed
     ];
 
     setReturns(staticReturnData);
+    setFilteredReturns(staticReturnData); // Initialize filteredReturns with all returns
   }, []);
-
-  const getReturnsFunc = () => {
-    // Implement this function to fetch the latest return data (e.g., from an API)
-    // Update the 'returns' state with the fetched data
-  };
 
   return (
     <DashboardLayout>
       <PageTitle title="Returns" />
 
       <StyledPanel>
-        {/* Button to open the Add Return popup */}
-        <ReturnSearchBar setIsAddPopUpOpen={setIsAddPopUpOpen} setReturnsDisplay={setReturns} />
+        <ReturnSearchBar onSearch={handleSearch} setIsAddPopUpOpen={setIsAddPopUpOpen} setReturnsDisplay={setReturns} />
 
         <Table>
           <tbody>
@@ -66,7 +72,7 @@ const ReturnPage = () => {
               <TableHeadings>Actions</TableHeadings>
             </TableRows>
 
-            {returns.map((returnItem, index) => (
+            {filteredReturns.map((returnItem, index) => (
               <TableRows key={returnItem.returnID}>
                 <TableData>{returnItem.returnID}</TableData>
                 <TableData>{returnItem.customerInfo}</TableData>
@@ -104,7 +110,7 @@ const ReturnPage = () => {
         </Table>
       </StyledPanel>
 
-      {isAddPopUpOpen && <AddReturnComponent setIsAddPopUpOpen={setIsAddPopUpOpen} getReturnsFunc={getReturnsFunc} />}
+      {isAddPopUpOpen && <AddReturnComponent setIsAddPopUpOpen={setIsAddPopUpOpen} />}
     </DashboardLayout>
   );
 };

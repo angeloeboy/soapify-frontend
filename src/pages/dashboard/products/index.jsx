@@ -56,7 +56,6 @@ const Products = () => {
 		};
 	}, []);
 
-
 	const handleCloseEditPopUp = () => {
 		setEditPopUpOpen(false);
 	};
@@ -94,7 +93,7 @@ const Products = () => {
 					<tbody>
 						<TableRows heading>
 							<TableHeadings>Name</TableHeadings>
-							<TableHeadings>ID</TableHeadings>
+							<TableHeadings>Attributes</TableHeadings>
 							<TableHeadings>Stock</TableHeadings>
 							<TableHeadings>Price</TableHeadings>
 							<TableHeadings>Stock Status</TableHeadings>
@@ -141,7 +140,13 @@ const Products = () => {
 										/>
 										{product.product_name}
 									</TableData>
-									<TableData>{product.product_id}</TableData>
+									<TableData>
+										<div className="attr_container">
+											{product.attribute.map((attr, index) => {
+												return <span key={index}> {attr.value}</span>;
+											})}
+										</div>
+									</TableData>
 									<TableData>{product.quantity_in_stock}</TableData>
 									<TableData>{product.product_price / 100}</TableData>
 									<TableData>

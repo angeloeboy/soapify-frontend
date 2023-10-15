@@ -54,7 +54,7 @@ const Categories = () => {
     });
   };
 
-  const openEditPopUp = () => {
+  const openEditPopUp = (category_id) => {
     setEditCategoryOpen(true);
   };
   const closeEditPopUp = () => {
@@ -153,7 +153,10 @@ const Categories = () => {
         />
       )}
       {isEditCategoryOpen && (
-        <EditCategoryComponent setEditCategoryOpen={setEditCategoryOpen} />
+        <EditCategoryComponent
+          onClose={closeEditPopUp}
+          setEditCategoryOpen={setEditCategoryOpen}
+        />
       )}
     </DashboardLayout>
   );

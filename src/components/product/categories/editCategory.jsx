@@ -18,30 +18,31 @@ import {
   InputHolder,
 } from "@/styled-components/ItemActionModal";
 import { useEffect, useState } from "react";
+import { editProduct, getProductCategories } from "@/api/products";
 
 const EditCategoryComponent = ({ category_id, onClose, fetchCategories }) => {
   const [category, setCategory] = useState({
     name: "",
   });
 
-  // const handleFormSubmit = (e) => {
-  // 	e.preventDefault();
-  // 	// Append fields to formData for editing
-  // 	console.log(product);
-  // 	editProduct(product, productId)
-  // 		.then((res) => {
-  // 			console.log(res);
-  // 			fetchProducts();
-  // 		})
-  // 		.then(() => {});
-  // };
-
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    // Append fields to formData for editing
+    console.log(category);
+    getProductCategories(category, category_id)
+      .then((res) => {
+        console.log(res);
+        fetchCategories();
+      })
+      .then(() => {});
+  };
   return (
     <PopupOverlay>
       <PopupContent>
-        <form>
-          {" "}
-          {/* onSubmit={(e) => handleFormSubmit(e)} enctype="multipart/form-data" */}
+        <form
+          onSubmit={(e) => handleFormSubmit(e)}
+          enctype="multipart/form-data"
+        >
           <FieldContainer>
             <HeaderTitle>Edit Category</HeaderTitle>
 

@@ -10,6 +10,8 @@ const StyledPanel = styled.div`
 	background: #fff;
 	min-height: 500px;
 	overflow: auto;
+	border-radius: 0.5rem;
+	box-shadow: 0 1px 3px rgba(7, 14, 35, 0.06), 0 2px 8px -1px rgba(7, 14, 35, 0.05);
 	.addProductBtn {
 		margin-top: 78px;
 		font-weight: bold;

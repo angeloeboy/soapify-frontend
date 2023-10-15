@@ -18,7 +18,7 @@ const Warehouse = () => {
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
 	const [warehouses, setWarehouses] = useState([]);
 	const [clickedId, setClickedId] = useState(null);
-
+	const [clickedName, setClickedName] = useState(null);
 	const [showDeactivate, setShowDeactivate] = useState(false);
 	useEffect(() => {
 		fetchWarehouses();
@@ -28,6 +28,8 @@ const Warehouse = () => {
 		const res = await getAllWarehouse();
 		res ? setWarehouses(res.warehouses) : setWarehouses([]);
 	};
+
+	const deactivateWarehouse = async () => {};
 
 	return (
 		<DashboardLayout>
@@ -69,6 +71,7 @@ const Warehouse = () => {
 											<p
 												onClick={() => {
 													setShowDeactivate(true);
+													setClickedName(warehouse.warehouse_name);
 												}}
 											>
 												<FontAwesomeIcon icon={faTrash} /> Delete
@@ -83,7 +86,7 @@ const Warehouse = () => {
 			</StyledPanel>
 			{isAddPopUpOpen && <AddWarehouse setAddPopUpOpen={setAddPopUpOpen} fetchWarehouses={fetchWarehouses} />}
 			{isEditPopUpOpen && <EditWarehouse setEditPopUpOpen={setEditPopUpOpen} fetchWarehouses={fetchWarehouses} clickedId={clickedId} />}
-			{showDeactivate && <DeactivateModal text="Are you sure you want to deactivate this warehouse?" />}
+			{showDeactivate && <DeactivateModal type="warehouse" text={clickedName} close={setShowDeactivate} />}
 		</DashboardLayout>
 	);
 };

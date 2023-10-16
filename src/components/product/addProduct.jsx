@@ -256,6 +256,34 @@ const AddProductComponent = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) 
 							</Select>
 						</div>
 
+						<LabelContainer>
+							<Label>Attributes</Label>
+						</LabelContainer>
+
+						{attributes.map((attribute, index) => {
+							return (
+								<div key={attribute.attribute_id}>
+									<FieldTitleLabel notFirst>{attribute.attribute_name}</FieldTitleLabel>
+
+									<Select
+										value={product.attributes[index]?.attribute_value_id}
+										onChange={(e) => {
+											let newAttributes = [...product.attributes];
+											console.log(newAttributes);
+											newAttributes[index].attribute_value_id = Number(e.target.value);
+											setProduct({ ...product, attributes: newAttributes });
+										}}
+									>
+										{attribute.values.map((attribute) => (
+											<Option value={attribute.attribute_value_id} key={attribute.attribute_value_id}>
+												{attribute.attribute_value}
+											</Option>
+										))}
+									</Select>
+								</div>
+							);
+						})}
+
 						<LabelContainer first>
 							<Label>General Information</Label>
 						</LabelContainer>
@@ -314,33 +342,6 @@ const AddProductComponent = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) 
 								</Centered>
 							</ProfilePictureContainer>
 						</div>
-						<LabelContainer>
-							<Label>Attributes</Label>
-						</LabelContainer>
-
-						{attributes.map((attribute, index) => {
-							return (
-								<div key={attribute.attribute_id}>
-									<FieldTitleLabel notFirst>{attribute.attribute_name}</FieldTitleLabel>
-
-									<Select
-										value={product.attributes[index]?.attribute_value_id}
-										onChange={(e) => {
-											let newAttributes = [...product.attributes];
-											console.log(newAttributes);
-											newAttributes[index].attribute_value_id = Number(e.target.value);
-											setProduct({ ...product, attributes: newAttributes });
-										}}
-									>
-										{attribute.values.map((attribute) => (
-											<Option value={attribute.attribute_value_id} key={attribute.attribute_value_id}>
-												{attribute.attribute_value}
-											</Option>
-										))}
-									</Select>
-								</div>
-							);
-						})}
 
 						<LabelContainer>
 							<Label>Supplier</Label>

@@ -1,118 +1,120 @@
 import {
-  Button,
-  LabelContainer,
-  Label,
-  FieldContainer,
-  CloseButton,
-  ButtonsContainer,
-  PopupOverlay,
-  PopupContent,
-  HeaderTitle,
-  FieldTitleLabel,
-  InputHolder,
+	Button,
+	LabelContainer,
+	Label,
+	FieldContainer,
+	CloseButton,
+	ButtonsContainer,
+	PopupOverlay,
+	PopupContent,
+	HeaderTitle,
+	FieldTitleLabel,
+	InputHolder,
 } from "@/styled-components/ItemActionModal";
 import { useEffect, useState } from "react";
 
-import { editSupplier, getSuppliers } from "@/api/supplier";
+import { editSupplier, getSupplier } from "@/api/supplier";
 
 const EditSupplierComponent = ({ supplierID, onClose, fetchSuppliers }) => {
-  const [supplier, setSupplier] = useState({
-    supplier_name: "",
-    supplier_address: "",
-    supplier_phone: "",
-    supplier_email: "",
-  });
+	const [supplier, setSupplier] = useState({
+		supplier_name: "",
+		supplier_address: "",
+		supplier_phone: "",
+		supplier_email: "",
+		supplier_status: true,
+	});
 
-  useEffect(() => {
-    fetchSupplierData();
-  }, []);
-  useEffect(() => {
-    console.log(supplier);
-  }, [supplier]);
+	useEffect(() => {
+		fetchSupplierData();
+	}, []);
 
-  const fetchSupplierData = async () => {
-    try {
-      const supplierData = await getSuppliers(supplierID);
-      setProduct(supplierData.supplier);
-      console.log(supplier);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+	useEffect(() => {
+		console.log(supplier);
+	}, [supplier]);
 
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
-    // Append fields to formData for editing
-    console.log(supplier);
-    editSupplier(supplier, supplierID)
-      .then((res) => {
-        console.log(res);
-        fetchSuppliers();
-      })
-      .then(() => {});
-  };
+	const fetchSupplierData = async () => {
+		try {
+			const res = await getSupplier(supplierID);
+			setSupplier(res.supplier);
+			console.log(res);
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
-  return (
-    <PopupOverlay>
-      <PopupContent>
-        <form
-          onSubmit={(e) => handleFormSubmit(e)}
-          enctype="multipart/form-data"
-        >
-          <FieldContainer>
-            <HeaderTitle>Edit Supplier {supplier.supplier_name}</HeaderTitle>
+	const handleFormSubmit = (e) => {
+		e.preventDefault();
+		// Append fields to formData for editing
+		console.log(supplier);
+		editSupplier(supplier, supplierID)
+			.then((res) => {
+				console.log(res);
+				fetchSuppliers();
+			})
+			.then(() => {});
+	};
 
-            <LabelContainer first>
-              <Label>General Information</Label>{" "}
-            </LabelContainer>
-            <div>
-              <FieldTitleLabel> Supplier Name </FieldTitleLabel>
-              <InputHolder
-                type="text"
-                placeholder="Enter new Supplier Name"
-                onChange={(e) => {
-                  setSupplier({ ...supplier, supplier_name: e.target.value });
-                }}
-                required
-                value={supplier.supplier_name}
-              />
+	const editSupplierFunc = async (e) => {
+		e.preventDefault();
+		const res = await editSupplier(supplier, supplierID);
+		res ? fetchSuppliers() : null;
+	};
 
-              <FieldTitleLabel> Supplier Address </FieldTitleLabel>
-              <InputHolder
-                type="text"
-                placeholder="Enter new Supplier Address "
-                onChange={(e) => {
-                  setSupplier({
-                    ...supplier,
-                    supplier_address: e.target.value,
-                  });
-                }}
-                value={supplier.supplier_address}
-              />
+	return (
+		<PopupOverlay>
+			<PopupContent>
+				<form onSubmit={(e) => editSupplierFunc(e)} enctype="multipart/form-data">
+					<FieldContainer>
+						<HeaderTitle>Edit Supplier {supplier.supplier_name}</HeaderTitle>
 
-              <FieldTitleLabel> Supplier Phone No.</FieldTitleLabel>
-              <InputHolder
-                type="text"
-                placeholder="Enter new Supplier Phone no. "
-                onChange={(e) => {
-                  setSupplier({
-                    ...supplier,
-                    supplier_phone: e.target.value,
-                  });
-                }}
-                value={supplier.supplier_phone}
-              />
-            </div>
-          </FieldContainer>
+						<LabelContainer first>
+							<Label>General Information</Label>{" "}
+						</LabelContainer>
+						<div>
+							<FieldTitleLabel>Name </FieldTitleLabel>
+							<InputHolder
+								type="text"
+								onChange={(e) => {
+									setSupplier({ ...supplier, supplier_name: e.target.value });
+								}}
+								required
+								value={supplier.supplier_name}
+							/>
 
-          <ButtonsContainer>
-            <CloseButton onClick={onClose}>Close</CloseButton>
-            <Button type="submit">Save</Button>
-          </ButtonsContainer>
-        </form>
-      </PopupContent>
-    </PopupOverlay>
-  );
+							<FieldTitleLabel>Address </FieldTitleLabel>
+							<InputHolder
+								type="text"
+								onChange={(e) => {
+									setSupplier({
+										...supplier,
+										supplier_address: e.target.value,
+									});
+								}}
+								value={supplier.supplier_address}
+							/>
+
+							<FieldTitleLabel> Phone No.</FieldTitleLabel>
+							<InputHolder
+								type="text"
+								onChange={(e) => {
+									setSupplier({
+										...supplier,
+										supplier_phone: e.target.value,
+									});
+								}}
+								value={supplier.supplier_phone}
+							/>
+						</div>
+					</FieldContainer>
+
+					<ButtonsContainer>
+						<CloseButton onClick={onClose}>Close</CloseButton>
+						<Button type="submit">Save</Button>
+					</ButtonsContainer>
+				</form>
+			</PopupContent>
+		</PopupOverlay>
+	);
 };
 
 export default EditSupplierComponent;

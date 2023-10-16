@@ -23,6 +23,9 @@ const Suppliers = () => {
 	const [suppliersDisplay, setSuppliersDisplay] = useState([]); // Initialize suppliersDisplay
 	const [supplierLoading, setSupplierLoading] = useState([]);
 	const [isEditSupplierPopupOpen, setEditSupplierPopUpOpen] = useState(false);
+
+	const [selectedSupplierId, setSelectedSupplierId] = useState(null);
+
 	const handleSearchChange = (event) => {
 		setSearchQuery(event.target.value);
 		// You can perform any other actions related to search here
@@ -58,8 +61,6 @@ const Suppliers = () => {
 		});
 	};
 
-	const [selectedSupplierId, setSelectedSupplierId] = useState(null);
-
 	return (
 		<DashboardLayout>
 			<PageTitle title="Suppliers" />
@@ -84,7 +85,6 @@ const Suppliers = () => {
 						{supplierLoading
 							? Array.from({ length: 8 }, (_, index) => (
 									<TableRows key={index}>
-										
 										<TableData>
 											<Skeleton width={50} height={20} />
 										</TableData>

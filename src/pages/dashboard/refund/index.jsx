@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from "react";
 import DashboardLayout from "@/components/misc/dashboardLayout";
 import PageTitle from "@/components/misc/pageTitle";
-import Table, { ActionContainer, TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
+import Table, {
+  ActionContainer,
+  TableData,
+  TableHeadings,
+  TableRows,
+} from "@/styled-components/TableComponent";
 import StyledPanel from "@/styled-components/StyledPanel";
-import { faTrash,faEllipsis,faPen } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faEllipsis, faPen } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AddRefundComponent from "@/components/refund/addRefund";
+import EditRefundComponent from "@/components/refund/editRefund";
 import RefundSearchBar from "@/components/refund/SearchBarAndFilter";
 
 const RefundPage = () => {
@@ -13,7 +19,7 @@ const RefundPage = () => {
   const [filteredRefunds, setFilteredRefunds] = useState([]); // Initialize with an empty array
   const [activeActionContainer, setActiveActionContainer] = useState(-1);
   const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false);
-
+  const [isEditPopUpOpen, setIsEditPopUpOpen] = useState(false);
   const handleSearch = (searchTerm) => {
     const filtered = refunds.filter((refund) => {
       return (
@@ -48,13 +54,17 @@ const RefundPage = () => {
     setRefunds(staticRefundData);
     setFilteredRefunds(staticRefundData); // Initialize filteredRefunds with all refunds
   }, []);
-
+  const [selectedRefund, setSelectedRefund] = useState({}); // Initialize with an empty object
   return (
     <DashboardLayout>
       <PageTitle title="Refunds" />
 
       <StyledPanel>
-        <RefundSearchBar onSearch={handleSearch} setIsAddPopUpOpen={setIsAddPopUpOpen} setRefundsDisplay={setRefunds} />
+        <RefundSearchBar
+          onSearch={handleSearch}
+          setIsAddPopUpOpen={setIsAddPopUpOpen}
+          setRefundsDisplay={setRefunds}
+        />
 
         <Table>
           <tbody>
@@ -78,12 +88,23 @@ const RefundPage = () => {
                   <FontAwesomeIcon
                     className="ellipsis"
                     icon={faEllipsis}
-                    onClick={() => (activeActionContainer === index ? setActiveActionContainer(-1) : setActiveActionContainer(index))}
+                    onClick={() =>
+                      activeActionContainer === index
+                        ? setActiveActionContainer(-1)
+                        : setActiveActionContainer(index)
+                    }
                   />
 
                   {activeActionContainer === index && (
-                    <ActionContainer onClick={() => setActiveActionContainer(-1)}>
-                      <p>
+                    <ActionContainer
+                      onClick={() => setActiveActionContainer(-1)}
+                    >
+                      <p
+                        onClick={() => {
+                          setSelectedRefund(refund);
+                          setIsEditPopUpOpen(selectedRefund);
+                        }}
+                      >
                         <FontAwesomeIcon icon={faPen} />
                         Edit
                       </p>
@@ -92,16 +113,21 @@ const RefundPage = () => {
                       </p>
                     </ActionContainer>
                   )}
-               </TableData>
+                </TableData>
               </TableRows>
             ))}
           </tbody>
         </Table>
       </StyledPanel>
 
-      {isAddPopUpOpen && <AddRefundComponent setIsAddPopUpOpen={setIsAddPopUpOpen}  />}
+      {isAddPopUpOpen && (
+        <AddRefundComponent setIsAddPopUpOpen={setIsAddPopUpOpen} />
+      )}
+      {isEditPopUpOpen && (
+        <EditRefundComponent setIsEditPopUpOpen={setIsEditPopUpOpen} />
+      )}
     </DashboardLayout>
   );
 };
 
-export default RefundPage; 
+export default RefundPage;

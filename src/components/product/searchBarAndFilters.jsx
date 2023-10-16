@@ -31,18 +31,45 @@ const SearchBarComponent = ({ setIsAddPopUpOpen, products, setProductDisplay }) 
 	};
 
 	const handleSearch = () => {
-		const query = searchQuery;
+		// const query = searchQuery;
+		// const category = selectedCategory;
+		// console.log(category);
+
+		// let filteredProducts;
+
+		// if (category == "All") {
+		// 	filteredProducts = query ? products.filter((product) => product.product_name.toLowerCase().includes(query.toLowerCase())) : products;
+		// } else {
+		// 	filteredProducts = products.filter(
+		// 		(product) => product.product_name.toLowerCase().includes(query.toLowerCase()) && product.category.name.toLowerCase().includes(category.toLowerCase())
+		// 	);
+		// }
+
+		// setProductDisplay(filteredProducts);
+
+		const queryTerms = searchQuery.split(" ");
 		const category = selectedCategory;
-		console.log(category);
 
 		let filteredProducts;
 
-		if (category == "All") {
-			filteredProducts = query ? products.filter((product) => product.product_name.toLowerCase().includes(query.toLowerCase())) : products;
+		if (category === "All") {
+			filteredProducts = products.filter((product) => {
+				return queryTerms.every(
+					(term) =>
+						product.product_name.toLowerCase().includes(term.toLowerCase()) ||
+						(product.attribute && product.attribute.some((attr) => attr.value.toLowerCase().includes(term.toLowerCase())))
+				);
+			});
 		} else {
-			filteredProducts = products.filter(
-				(product) => product.product_name.toLowerCase().includes(query.toLowerCase()) && product.category.name.toLowerCase().includes(category.toLowerCase())
-			);
+			filteredProducts = products.filter((product) => {
+				return (
+					queryTerms.every(
+						(term) =>
+							product.product_name.toLowerCase().includes(term.toLowerCase()) ||
+							(product.attribute && product.attribute.some((attr) => attr.value.toLowerCase().includes(term.toLowerCase())))
+					) && product.category.name.toLowerCase().includes(category.toLowerCase())
+				);
+			});
 		}
 
 		setProductDisplay(filteredProducts);

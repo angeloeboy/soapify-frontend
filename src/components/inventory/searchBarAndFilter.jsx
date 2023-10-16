@@ -20,7 +20,6 @@ const SearchBarComponent = ({ setIsAddPopUpOpen, inventory, setinventoryDisplay 
 
 	const fetchProducts = () => {
 		getProducts().then((res) => {
-			console.log(res);
 			res.products ? setProducts(res.products) : setProducts([]);
 		});
 	};
@@ -34,20 +33,26 @@ const SearchBarComponent = ({ setIsAddPopUpOpen, inventory, setinventoryDisplay 
 	};
 
 	const handleSearch = () => {
-		const query = searchQuery;
-		// const category = selectedCategory;
-		const product = selectedProduct.product_name;
+		// const query = searchQuery;
+		// // const category = selectedCategory;
+		// const product = selectedProduct.product_name;
+		// let filteredInventory;
+
+		// filteredInventory = query ? inventory.filter((inventory) => inventory.Product.product_name.toLowerCase().includes(query.toLowerCase())) : inventory;
+
+		// setinventoryDisplay(filteredInventory);
+
+		const queryTerms = searchQuery.split(" ");
+
 		let filteredInventory;
 
-		// if (category == "All") {
-		// 	filteredInventory = query ? inventory.filter((inventory) => inventory.Product.product_name.toLowerCase().includes(query.toLowerCase())) : inventory;
-		// } else {
-		// 	filteredInventory = inventory.filter(
-		// 		(inventory) => inventory.Product.product_name.toLowerCase().includes(query.toLowerCase()) && inventory.Product.product.toLowerCase().includes(category.toLowerCase())
-		// 	);
-		// }
-
-		filteredInventory = query ? inventory.filter((inventory) => inventory.Product.product_name.toLowerCase().includes(query.toLowerCase())) : inventory;
+		filteredInventory = inventory.filter((item) => {
+			return queryTerms.every(
+				(term) =>
+					item.Product.product_name.toLowerCase().includes(term.toLowerCase()) ||
+					(item.Product.attribute && item.Product.attribute.some((attr) => attr.value.toLowerCase().includes(term.toLowerCase())))
+			);
+		});
 
 		setinventoryDisplay(filteredInventory);
 	};

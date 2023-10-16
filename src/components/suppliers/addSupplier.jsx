@@ -52,7 +52,7 @@ const AddSupplierComponent = ({ onClose, onButtonClick, fetchSuppliers }) => {
 							<Label>General Information</Label>{" "}
 						</LabelContainer>
 						<div>
-							<FieldTitleLabel> Supplier Name </FieldTitleLabel>
+							<FieldTitleLabel>Name </FieldTitleLabel>
 							<InputHolder
 								type="text"
 								onChange={(e) => {
@@ -62,20 +62,18 @@ const AddSupplierComponent = ({ onClose, onButtonClick, fetchSuppliers }) => {
 								value={supplier.supplier_name}
 							/>
 
-							<FieldTitleLabel> Supplier Address </FieldTitleLabel>
+							<FieldTitleLabel> Address </FieldTitleLabel>
 							<InputHolder
 								type="text"
-								
 								onChange={(e) => {
 									setSupplier({ ...supplier, supplier_address: e.target.value });
 								}}
 								value={supplier.supplier_address}
 							/>
 
-							<FieldTitleLabel> Supplier Phone No.</FieldTitleLabel>
+							<FieldTitleLabel> Phone No.</FieldTitleLabel>
 							<InputHolder
 								type="text"
-								
 								onChange={(e) => {
 									setSupplier({ ...supplier, supplier_phone: e.target.value });
 								}}

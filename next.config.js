@@ -1,4 +1,6 @@
 /** @type {import('next').NextConfig} */
+const link = process.env.NEXT_PUBLIC_API_LINK;
+
 const nextConfig = {
 	output: "standalone",
 	async rewrites() {
@@ -11,7 +13,7 @@ const nextConfig = {
 		return [
 			{
 				source: "/api/:path*",
-				destination: "http://localhost:3001/:path*",
+				destination: `${link}/:path*`,
 			},
 		];
 	},

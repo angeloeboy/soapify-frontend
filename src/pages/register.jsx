@@ -94,6 +94,7 @@ let Register = () => {
 	const [loggingIn, setIsLoggingIn] = useState(false);
 
 	const [errorMessages, setErrorMessages] = useState({
+		email: "",
 		username: "",
 		password: "",
 	});
@@ -126,10 +127,23 @@ let Register = () => {
 				<Form onSubmit={(e) => handleLogin(e)}>
 					<h3>Test Register</h3>
 					<p>
-						Enter your username and password to register. Then <Link href="/login"> Login </Link>
+						Enter your email and password to register. Then <Link href="/login"> Login </Link>
 					</p>
 
 					<div className="formsContainer">
+						<label htmlFor="username">Email</label>
+						<FormField
+							type="text"
+							onChange={(e) => {
+								setCredentials({ ...credentials, email: e.target.value });
+								setErrorMessages({ ...errorMessages, username: "" });
+							}}
+							value={credentials.email}
+							id="email"
+							name="email"
+							error={errorMessages.username ? true : false}
+						/>
+
 						<label htmlFor="username">Username</label>
 						<FormField
 							type="text"

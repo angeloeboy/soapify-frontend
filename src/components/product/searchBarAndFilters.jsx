@@ -72,7 +72,7 @@ const SearchBarComponent = ({ setIsAddPopUpOpen, products, setProductDisplay }) 
 			});
 		}
 
-		setProductDisplay(filteredProducts);
+		// setProductDisplay(filteredProducts);
 	};
 
 	return (

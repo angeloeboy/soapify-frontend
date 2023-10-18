@@ -307,7 +307,7 @@ const Cart = ({ setActiveAction }) => {
 
 	return (
 		<>
-			<ComponentTitle>Order Details</ComponentTitle>
+			<ComponentTitle>Cart</ComponentTitle>
 			{cart.length === 0 && <p>No items in cart</p>}
 
 			<TransitionGroup component={ItemsContainer}>

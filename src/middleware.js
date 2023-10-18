@@ -7,7 +7,6 @@ export async function middleware(req) {
 	const link = process.env.NEXT_PUBLIC_API_LINK || "https://iamangelo.tech/api";
 	// const auth_link = `http://localhost` + "/auth";
 	const auth_link = `${link}/auth`;
-
 	const token = req.cookies.get("token");
 
 	// If accessing dashboard without a token, redirect to home

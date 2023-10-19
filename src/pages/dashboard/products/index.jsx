@@ -1,48 +1,60 @@
-import TopBar from "@/components/misc/topbar";
 import DashboardLayout from "@/components/misc/dashboardLayout";
 
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faTrash, faEllipsis, faFilter, faPlus } from "@fortawesome/free-solid-svg-icons";
 import PageTitle from "@/components/misc/pageTitle";
-import TableControlPanel from "@/styled-components/TableControlPanel";
 import StyledPanel from "@/styled-components/StyledPanel";
 import { useEffect, useState } from "react";
-import { addProduct, getProducts } from "@/api/products";
-import { useRouter } from "next/router";
+import { getProducts } from "@/api/products";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 // import Button from "@/components/misc/button";
 import Table, { ActionContainer, TableData, TableHeadings, TableRows, Status } from "@/styled-components/TableComponent";
-import { ButtonAddAccountType, ButtonAddStatus, ButtonAddProduct } from "@/styled-components/ItemActionModal";
-import { Button } from "@/styled-components/ItemActionModal";
+import { PaginationControl } from "@/styled-components/ItemActionModal";
 
 import AddProductComponent from "@/components/product/addProduct";
 import EditProductComponent from "@/components/product/editProduct";
 
-import SearchBarComponentProduct from "@/components/product/searchBarAndFilters";
 import SearchBarComponent from "@/components/product/searchBarAndFilters";
+import LoadingSkeleton from "@/components/misc/loadingSkeleton";
+import Pagination from "@/components/misc/pagination";
 
 const Products = () => {
 	const [products, setProducts] = useState([]);
 	const [productDisplay, setProductDisplay] = useState([]);
 	const [productsLoading, setProductsLoading] = useState(true);
+	
 	const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false);
 	const [isEditPopupOpen, setEditPopUpOpen] = useState(false);
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
+
+	const [currentPage, setCurrentPage] = useState(1);
+	const itemsPerPage = 10;
+
+	const [filteredProducts, setFilteredProducts] = useState([]);
 
 	useEffect(() => {
 		fetchProducts();
 	}, []);
 
+	useEffect(() => {
+		setProductDisplay(filteredProducts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
+	}, [currentPage, filteredProducts]);
+
 	const fetchProducts = () => {
 		getProducts().then((res) => {
-			console.log(res);
-			res.products ? setProductDisplay(res.products) : setProductDisplay([]);
-			res.products ? setProducts(res.products) : setProducts([]);
+			if (res.products) {
+				setProducts(res.products);
+				console.log(res.products);
+			} else {
+				setProducts([]);
+			}
 			setProductsLoading(false);
+			setFilteredProducts(res.products || []);
 		});
 	};
+
 	const handleClickOutside = (event) => {
 		if (!event.target.closest(".action-container") && !event.target.closest(".ellipsis")) {
 			setActiveActionContainer(null);
@@ -72,9 +84,11 @@ const Products = () => {
 
 		if (product.quantity_in_stock <= product.minimum_reorder_level) {
 			status = "Low";
-		} else if (product.quantity_in_stock < 2 * product.minimum_reorder_level) {
+		}
+		if (product.quantity_in_stock > product.minimum_reorder_level && product.quantity_in_stock < 2 * product.minimum_reorder_level) {
 			status = "Moderate";
-		} else {
+		}
+		if (product.quantity_in_stock >= 2 * product.minimum_reorder_level) {
 			status = "High";
 		}
 
@@ -88,7 +102,13 @@ const Products = () => {
 			<PageTitle title="Products List" />
 
 			<StyledPanel>
-				<SearchBarComponent setIsAddPopUpOpen={setIsAddPopUpOpen} setProductDisplay={setProductDisplay} products={products} />
+				<SearchBarComponent
+					setIsAddPopUpOpen={setIsAddPopUpOpen}
+					setProductDisplay={setProductDisplay}
+					products={products}
+					setFilteredProducts={setFilteredProducts}
+					setCurrentPage={setCurrentPage}
+				/>
 				<Table>
 					<tbody>
 						<TableRows heading>
@@ -102,29 +122,7 @@ const Products = () => {
 
 						{products.length === 0 ? (
 							productsLoading ? (
-								Array.from({ length: 8 }, (_, index) => (
-									<TableRows key={index}>
-										<TableData className="imgContainer">
-											<Skeleton circle={true} height={40} width={40} />
-											{/* <Skeleton width={100} height={20} /> */}
-										</TableData>
-										<TableData>
-											<Skeleton width={50} height={20} />
-										</TableData>
-										<TableData>
-											<Skeleton width={50} height={20} />
-										</TableData>
-										<TableData>
-											<Skeleton width={50} height={20} />
-										</TableData>
-										<TableData>
-											<Skeleton width={50} height={20} />
-										</TableData>
-										<TableData>
-											<Skeleton width={50} height={20} />
-										</TableData>
-									</TableRows>
-								))
+								<LoadingSkeleton columns={5} />
 							) : (
 								<p>No Products found</p>
 							)
@@ -150,10 +148,6 @@ const Products = () => {
 									<TableData>{product.quantity_in_stock}</TableData>
 									<TableData>{product.product_price / 100}</TableData>
 									<TableData>
-										{/* <Status bgColor={"rgba(255, 116, 116, 0.49)"} color={"#EA0000"}>
-											{checkStockStatus(product)}
-										</Status> */}
-
 										{checkStockStatus(product) === "Low" && (
 											<Status bgColor={"rgba(255, 116, 116, 0.49)"} color={"#EA0000"}>
 												{checkStockStatus(product)}
@@ -201,7 +195,15 @@ const Products = () => {
 						)}
 					</tbody>
 				</Table>
+
+				<Pagination
+					totalItems={filteredProducts.length}
+					itemsPerPage={itemsPerPage}
+					currentPage={currentPage}
+					onPageChange={(newPage) => setCurrentPage(newPage)}
+				/>
 			</StyledPanel>
+
 			{isAddPopUpOpen && <AddProductComponent setIsAddPopUpOpen={setIsAddPopUpOpen} onButtonClick={onButtonClick} GetProducts={fetchProducts} />}
 			{isEditPopupOpen && <EditProductComponent onClose={handleCloseEditPopUp} productId={selectedProductId} fetchProducts={fetchProducts} />}
 		</DashboardLayout>

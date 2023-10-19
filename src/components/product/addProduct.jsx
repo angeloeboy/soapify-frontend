@@ -209,6 +209,7 @@ const AddProductComponent = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) 
 				<form onSubmit={(e) => AddProduct(e)} enctype="multipart/form-data">
 					<FieldContainer>
 						<HeaderTitle>Add Products</HeaderTitle>
+
 						<LabelContainer first>
 							<Label>Category</Label>
 						</LabelContainer>
@@ -320,7 +321,7 @@ const AddProductComponent = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) 
 							/>
 						</div>
 						<div>
-							<FieldTitleLabel notFirst>Minimum Stock</FieldTitleLabel>
+							<FieldTitleLabel notFirst>Minimum Reorder Number</FieldTitleLabel>
 							<InputHolder
 								type="number"
 								placeholder="Enter your minimum stock"

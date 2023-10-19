@@ -90,7 +90,7 @@ const Error = styled.p`
 `;
 
 let Register = () => {
-	const [credentials, setCredentials] = useState({ username: "", password: "" });
+	const [credentials, setCredentials] = useState({ username: "", password: "", email: "", confirmPassword: "" });
 	const [loggingIn, setIsLoggingIn] = useState(false);
 
 	const [errorMessages, setErrorMessages] = useState({
@@ -102,6 +102,13 @@ let Register = () => {
 	const handleRegister = (e) => {
 		e.preventDefault();
 		setIsLoggingIn(true);
+
+		if (credentials.confirmPassword !== credentials.password) {
+			setErrorMessages({ ...errorMessages, confirmPassword: "Passwords do not match" });
+			setIsLoggingIn(false);
+			return;
+		}
+
 		register(credentials).then((res) => {
 			setIsLoggingIn(false);
 
@@ -111,10 +118,12 @@ let Register = () => {
 
 			const usernameErrorMessage = errors.find((error) => error.path === "username")?.msg;
 			const passwordErrorMessage = errors.find((error) => error.path === "password")?.msg;
+			const emailErrorMessage = errors.find((error) => error.path === "email")?.msg;
 
 			setErrorMessages({
 				username: usernameErrorMessage || "",
 				password: passwordErrorMessage || "",
+				email: emailErrorMessage || "",
 			});
 		});
 	};
@@ -125,7 +134,7 @@ let Register = () => {
 				<h2 className="appTitle">Soapify</h2>
 
 				<Form onSubmit={(e) => handleLogin(e)}>
-					<h3>Test Register</h3>
+					<h3>Register</h3>
 					<p>
 						Enter your email and password to register. Then <Link href="/login"> Login </Link>
 					</p>
@@ -136,13 +145,14 @@ let Register = () => {
 							type="text"
 							onChange={(e) => {
 								setCredentials({ ...credentials, email: e.target.value });
-								setErrorMessages({ ...errorMessages, username: "" });
+								setErrorMessages({ ...errorMessages, email: "" });
 							}}
 							value={credentials.email}
 							id="email"
 							name="email"
-							error={errorMessages.username ? true : false}
+							error={errorMessages.email ? true : false}
 						/>
+						{errorMessages.email && <Error>{errorMessages.email}</Error>}
 
 						<label htmlFor="username">Username</label>
 						<FormField
@@ -171,6 +181,20 @@ let Register = () => {
 							error={errorMessages.password ? true : false}
 						/>
 						{errorMessages.password && <Error>{errorMessages.password}</Error>}
+
+						<label htmlFor="confirmPassword">Confirm Password</label>
+						<FormField
+							type="password"
+							onChange={(e) => {
+								setCredentials({ ...credentials, confirmPassword: e.target.value });
+								setErrorMessages({ ...errorMessages, confirmPassword: "" });
+							}}
+							value={credentials.confirmPassword}
+							id="confirmPassword"
+							name="confirmPassword"
+							error={errorMessages.confirmPassword ? true : false}
+						/>
+						{errorMessages.confirmPassword && <Error>{errorMessages.confirmPassword}</Error>}
 
 						<Button className="loginBtn" width="100%" onClick={(e) => handleRegister(e)}>
 							{loggingIn ? <FontAwesomeIcon icon={faSpinner} spin /> : "Register"}

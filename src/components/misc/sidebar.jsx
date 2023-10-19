@@ -178,7 +178,6 @@ const sidebarData = [
 			{ title: "Products", link: "/dashboard/products" },
 			{ title: "Inventory List", link: "/dashboard/inventory" },
 			{ title: "Categories", link: "/dashboard/products/categories" },
-			{ title: "Statistics", link: "/dashboard" },
 			{ title: "Suppliers", link: "/dashboard/suppliers" },
 			{ title: "Subcategories", link: "/dashboard/products/subcategories" },
 			{ title: "Attributes", link: "/dashboard/attributes" },

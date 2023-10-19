@@ -64,7 +64,7 @@ const SearchBarComponent = ({ products, setProductDisplay }) => {
 
 		const queryTerms = searchQuery.split(" ");
 		const category = selectedCategory;
-		
+
 		let filteredProducts;
 
 		if (category === "All") {
@@ -125,9 +125,9 @@ const Dropdown = ({ productCategories, handleCategoryChange }) => {
 				>
 					All
 				</DropdownItem>
-				{productCategories.map((option) => (
+				{productCategories.map((option, index) => (
 					<DropdownItem
-						key={option.id}
+						key={index}
 						onClick={() => {
 							setSelectedItem(option.name);
 							setIsOpen(false);

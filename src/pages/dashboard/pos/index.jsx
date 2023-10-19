@@ -166,10 +166,11 @@ const Pos = () => {
 										<ProductComponent
 											product={productGroup.products[0]}
 											index={index}
-											onClick={() => {
-												updateCart(productGroup.products[0], "add");
-												if (activeAction != "cart") setActiveAction("cart");
-											}}
+											// onClick={() => {
+											// 	updateCart(productGroup.products[0], "add");
+											// 	// if (activeAction != "cart") setActiveAction("cart");
+											// }}
+											updateCart={updateCart}
 											key={index}
 											variants={productGroup.products.slice(1)}
 										/>

@@ -318,3 +318,44 @@ export const ButtonsContainer = styled.div`
 	background-color: white;
 	padding: 24px 24px 24px 0px;
 `;
+
+export const PaginationControl = styled.div`
+	display: flex;
+	list-style-type: none;
+	align-items: center;
+	gap: 0.75rem;
+	width: 100%;
+	justify-content: center;
+	margin-top: 2rem;
+	button {
+		color: #555d67;
+		background-color: white;
+		border: 1px solid #dfe5e9;
+		box-shadow: 0 1px 2px rgba(18, 20, 23, 0.06);
+		height: 2rem;
+		font-size: 0.813rem;
+		font-weight: 500 !important;
+		width: 1.85rem;
+		align-items: center;
+		transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+		border-radius: 0.5rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		svg {
+			/* vertical-align: middle; */
+		}
+
+		&:disabled {
+			color: #a2aab4;
+			background-color: #e8edf0;
+			border: none;
+			box-shadow: none;
+		}
+	}
+
+	.active {
+		border: 1px solid #1a69f0;
+	}
+`;

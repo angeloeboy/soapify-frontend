@@ -93,7 +93,7 @@ export const ActionContainer = styled.div`
 	border-radius: 4px;
 	border: 1px solid #dfdfdf;
 	background: #ffffff;
-	width: 100px;
+	width: 130px;
 	/* height: 40px; */
 	text-align: left;
 	position: absolute;

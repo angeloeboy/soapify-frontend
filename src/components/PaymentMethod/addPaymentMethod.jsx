@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import {
 	Button,
@@ -15,6 +15,10 @@ import { HeaderTitle } from "@/styled-components/ItemActionModal";
 import { ButtonsContainer } from "@/styled-components/ItemActionModal";
 import { CloseButton } from "../styled-components/PopUp";
 import { addPaymentMethod } from "@/api/payment_method";
+import NotificationModal from "./../misc/notificationModal";
+
+import { ToastContainer } from "react-toastify";
+import ToastNotifier from "../misc/toastNotifier";
 
 const AddPaymentMethod = ({ setAddPaymentOpen, fetchPaymentMethods }) => {
 	const [paymentMethod, setPaymentMethod] = useState({
@@ -22,10 +26,25 @@ const AddPaymentMethod = ({ setAddPaymentOpen, fetchPaymentMethods }) => {
 		account_no: "",
 	});
 
+	const [notification, setNotification] = useState({
+		text: "",
+		type: "success",
+	});
+	const [showToast, setShowToast] = useState(false);
 	const addPaymentMethodFunc = async () => {
 		const response = await addPaymentMethod(paymentMethod);
-		console.log(response);
-		fetchPaymentMethods();
+
+		if (!response) return;
+
+		//check if response is successful
+		if (response.success) {
+			fetchPaymentMethods();
+			setNotification({ text: response.message, type: "success" });
+			setShowToast((prev) => !prev); // toggle the showToast state
+		} else {
+			setNotification({ text: response.errors[0].message, type: "error" });
+			setShowToast((prev) => !prev); // toggle the showToast state
+		}
 	};
 
 	return (
@@ -47,8 +66,10 @@ const AddPaymentMethod = ({ setAddPaymentOpen, fetchPaymentMethods }) => {
 				</FieldContainer>
 				<ButtonsContainer>
 					<CloseButton onClick={() => setAddPaymentOpen(false)}>Close</CloseButton>
-					<Button onClick={() => addPaymentMethodFunc(paymentMethod)}>Save</Button>
+					<Button onClick={() => addPaymentMethodFunc()}>Save</Button>
 				</ButtonsContainer>
+
+				<ToastNotifier message={notification.text} type={notification.type} key={showToast} />
 			</PopupContent>
 		</PopupOverlay>
 	);

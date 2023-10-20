@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
+const link = process.env.NEXT_PUBLIC_API_LINK || "https://iamangelo.tech/api";
+
 const nextConfig = {
+
   output: "standalone",
   async rewrites() {
     return [

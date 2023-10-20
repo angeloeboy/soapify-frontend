@@ -1,17 +1,19 @@
 import Image from "next/image";
+import { useState } from "react";
 import { styled } from "styled-components";
 
 const Product = styled.div`
-	align-items: center;
-	justify-content: center;
+	display: flex;
+	position: relative;
+	align-self: stretch;
+	justify-content: space-between;
 	border: 1px solid #dddd;
 	flex-direction: column;
 	border-radius: 18px;
 	padding: 25px;
 	margin: 8px;
-	/* width: 31%; */
+	overflow: hidden;
 	width: 100%;
-	z-index: 1;
 	max-width: 269.31px;
 	cursor: ${({ unclickable }) => (unclickable ? "no-drop" : "pointer")};
 	transition: all 0.3s ease;
@@ -77,6 +79,7 @@ const StockTitleContainer = styled.div`
 	justify-content: center;
 	align-items: center;
 `;
+
 const PriceTitle = styled.p`
 	color: #005eff;
 	font-family: DM Sans;
@@ -103,27 +106,134 @@ const Attribute = styled.p`
 	margin: 0px 4px 4px 0px;
 `;
 
-const ProductComponent = ({ product, onClick, index }) => (
-	<Product key={product.product_id} onClick={() => (product.quantity_in_stock <= 0 ? null : onClick())} unclickable={product.quantity_in_stock <= 0}>
-		<Image src="/sabon.png" width={200} height={400} alt="Product image" />
-		<ProductTitle>{product.product_name}</ProductTitle>
-		<PriceTitle>P{product.product_price / 100}</PriceTitle>
-		<Attributes>
-			{product.attribute.map((attribute, attributeIndex) => {
-				const combinedIndex = index * product.attribute.length + attributeIndex;
+const HasVariants = styled.div`
+	position: absolute;
+	top: 25px;
+	right: -20%;
+	color: white;
+	background-color: #1a69f0;
+	padding: 5px 50px;
+	transform: rotate(45deg);
+	font-size: 12px;
+	/* width: 100px; */
+`;
 
-				return (
-					<Attribute color={generateColors(combinedIndex)} key={attributeIndex}>
-						{attribute.name}: {attribute.value}
-					</Attribute>
-				);
-			})}
-		</Attributes>
-		<StockTitleContainer>
-			<StockTitle>Stock: {product.quantity_in_stock}</StockTitle>
-		</StockTitleContainer>
-	</Product>
-);
+const VariantsModalWrapper = styled.div`
+	background-color: rgba(22, 28, 39, 0.425);
+	width: 100vw;
+	height: 100vh;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	backdrop-filter: blur(3.5px);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 9999;
+
+	.group_modal {
+		max-height: 90vh;
+		padding: 20px 18px;
+		max-width: 800.57px;
+		width: 90%;
+		background: rgb(255, 255, 255);
+		border-radius: 15px;
+		overflow: auto;
+		z-index: 100;
+		padding-top: 60px;
+		position: relative;
+
+		.group_item {
+			margin-bottom: 20px;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+
+			.group_item_info {
+				display: flex;
+				align-items: center;
+
+				.group_item_img {
+					margin-right: 20px;
+					width: 95px;
+					height: 54px;
+					border-radius: 13px;
+					img {
+						width: 100%;
+						height: 100%;
+						-o-object-fit: cover;
+						object-fit: cover;
+						overflow: hidden;
+					}
+				}
+				.group_item_price {
+					display: block;
+				}
+			}
+
+			button {
+				width: 100px;
+				height: 36.876px;
+				border-radius: 4px;
+				background: #054dd1;
+				border: none;
+				cursor: pointer;
+				&:hover {
+					background: #0844a6;
+				}
+			}
+			@media (max-width: 768px) {
+				flex-direction: column;
+				align-items: flex-start;
+				.group_item_info {
+					margin-bottom: 10px;
+				}
+			}
+		}
+	}
+`;
+
+const ProductComponent = ({ product, onClick, index, variants, updateCart }) => {
+	const [showVariants, setShowVariants] = useState(false);
+
+	let handleProductClick = () => {
+		if (!variants) {
+			product.quantity_in_stock <= 0 ? null : onClick();
+			return;
+		}
+
+		if (!showVariants) setShowVariants(true);
+	};
+
+	return (
+		<Product key={product.product_id} onClick={() => handleProductClick()} unclickable={product.quantity_in_stock <= 0}>
+			<div>
+				<Image src="/sabon.png" width={200} height={400} alt="Product image" />
+				<ProductTitle>{product.product_name}</ProductTitle>
+				<PriceTitle>P{product.product_price / 100}</PriceTitle>
+				<Attributes>
+					{!variants &&
+						product.attribute.map((attribute, attributeIndex) => {
+							const combinedIndex = index * product.attribute.length + attributeIndex;
+
+							return (
+								<Attribute color={generateColors(combinedIndex)} key={attributeIndex}>
+									{attribute.name}: {attribute.value}
+								</Attribute>
+							);
+						})}
+				</Attributes>
+			</div>
+
+			<StockTitleContainer>
+				<StockTitle>Stock: {product.quantity_in_stock}</StockTitle>
+			</StockTitleContainer>
+			{variants ? <HasVariants>Has {variants.length} Variants</HasVariants> : null}
+			{showVariants && <VariantsContainer variants={variants} updateCart={updateCart} setShowVariants={setShowVariants} />}
+		</Product>
+	);
+};
 
 const generateColors = (index) => {
 	// Helper: Calculate luminance
@@ -164,6 +274,40 @@ const generateColors = (index) => {
 		backgroundColor: bgColor,
 		fontColor: fontColor,
 	};
+};
+
+const VariantsContainer = ({ variants, updateCart, setShowVariants }) => {
+	let handleProductClick = (variant) => {
+		variant.quantity_in_stock <= 0 ? null : updateCart(variant, "add");
+	};
+
+	return (
+		<VariantsModalWrapper>
+			<div className="group_modal">
+				{variants.map((variant, index) => (
+					<div className="group_item" key={index}>
+						<p onClick={() => handleProductClick(variant)}>
+							{variant.product_name}
+							{variant.attribute.map((attribute, index) => {
+								return <span key={index}> | {attribute.value} </span>;
+							})}
+						</p>
+
+						<p className="price">P{variant.product_price / 100}</p>
+					</div>
+				))}
+
+				<p
+					onClick={() => {
+						console.log("testing");
+						setShowVariants(false);
+					}}
+				>
+					close
+				</p>
+			</div>
+		</VariantsModalWrapper>
+	);
 };
 
 export default ProductComponent;

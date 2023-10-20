@@ -55,38 +55,57 @@ const Pos = () => {
 
 	useEffect(() => {
 		// Update width to the actual window width when the component mounts on the client side
+
+		fetchProducts();
+
 		setWindowWidth(window.innerWidth);
 
 		const handleResize = () => setWindowWidth(window.innerWidth);
 
-		// Attach the event listener
 		window.addEventListener("resize", handleResize);
 
-		// Cleanup the event listener on component unmount
 		return () => window.removeEventListener("resize", handleResize);
 	}, []);
-
-	useEffect(() => {
-		fetchProducts();
-	}, []);
-
-	useEffect(() => {
-		console.log(transaction);
-		// setTransaction((prev) => ({ ...prev, total_amount: cart.reduce((acc, item) => acc + item.price * item.quantity, 0) }));
-	}, [transaction]);
 
 	useEffect(() => {
 		setTransaction((prev) => ({ ...prev, total_amount: cart.reduce((acc, item) => acc + item.product_price * item.quantity, 0), items: cart }));
 	}, [cart]);
 
 	useEffect(() => {
-		setProductDisplay(products);
+		console.log(groupProductsByName(products));
+		setProductDisplay(groupProductsByName(products));
+		// setProductDisplay(products);
 	}, [products]);
 
 	const fetchProducts = async () => {
 		const response = await getProducts();
 		setProducts(response.products || []);
 		console.log(response.products);
+	};
+
+	const groupProductsByName = (products) => {
+		//group product by name if theres multiple of them
+		const groupedProducts = products.reduce((acc, product) => {
+			if (!acc[product.product_name]) {
+				acc[product.product_name] = [product];
+			} else {
+				acc[product.product_name].push(product);
+			}
+			return acc;
+		}, {});
+
+		//convert object to array
+		const groupedProductsArray = Object.keys(groupedProducts).map((key) => ({
+			product_name: key,
+			products: groupedProducts[key],
+		}));
+
+		//create an array that gets the first product of each group
+		// const groupedProductsArrayFirst = groupedProductsArray.map((group) => group.products[0]);
+
+		//create an array that gets the first product of each group and adds the quantity of the rest of the products
+
+		return groupedProductsArray;
 	};
 
 	const updateCart = (product, operation) => {
@@ -113,11 +132,11 @@ const Pos = () => {
 			<DashboardLayout>
 				<PageTitle title="POS" />
 				<POSWrapper>
-					<StyledPanel pos>
+					<StyledPanel pos={true}>
 						<SearchBarComponent products={products} setProductDisplay={setProductDisplay} />
 
 						<ProductsList>
-							{productDisplay.map((product, productIndex) => (
+							{/* {productDisplay.map((product, productIndex) => (
 								<ProductComponent
 									product={product}
 									index={productIndex}
@@ -127,7 +146,37 @@ const Pos = () => {
 									}}
 									key={product.product_id}
 								/>
-							))}
+							))} */}
+							{productDisplay.map((productGroup, index) => {
+								if (productGroup.products.length <= 1) {
+									return (
+										<ProductComponent
+											product={productGroup.products[0]}
+											index={index}
+											onClick={() => {
+												updateCart(productGroup.products[0], "add");
+												if (activeAction != "cart") setActiveAction("cart");
+											}}
+											key={index}
+											hasVariants={false}
+										/>
+									);
+								} else {
+									return (
+										<ProductComponent
+											product={productGroup.products[0]}
+											index={index}
+											// onClick={() => {
+											// 	updateCart(productGroup.products[0], "add");
+											// 	// if (activeAction != "cart") setActiveAction("cart");
+											// }}
+											updateCart={updateCart}
+											key={index}
+											variants={productGroup.products.slice(1)}
+										/>
+									);
+								}
+							})}
 						</ProductsList>
 					</StyledPanel>
 

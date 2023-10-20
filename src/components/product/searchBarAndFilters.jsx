@@ -5,7 +5,7 @@ import { styled } from "styled-components";
 import { DropdownHeader, DropdownItem, DropdownMenu, DropdownWrapper, SearchBar, TableControlPanel, Button } from "@/styled-components/TableControlPanel";
 import { getProductCategories } from "@/api/products";
 
-const SearchBarComponent = ({ setIsAddPopUpOpen, products, setProductDisplay }) => {
+const SearchBarComponent = ({ setIsAddPopUpOpen, products, setFilteredProducts, setCurrentPage }) => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [selectedCategory, setSelectedCategory] = useState("All");
 	const [productCategories, setProductCategories] = useState([]);
@@ -31,22 +31,6 @@ const SearchBarComponent = ({ setIsAddPopUpOpen, products, setProductDisplay }) 
 	};
 
 	const handleSearch = () => {
-		// const query = searchQuery;
-		// const category = selectedCategory;
-		// console.log(category);
-
-		// let filteredProducts;
-
-		// if (category == "All") {
-		// 	filteredProducts = query ? products.filter((product) => product.product_name.toLowerCase().includes(query.toLowerCase())) : products;
-		// } else {
-		// 	filteredProducts = products.filter(
-		// 		(product) => product.product_name.toLowerCase().includes(query.toLowerCase()) && product.category.name.toLowerCase().includes(category.toLowerCase())
-		// 	);
-		// }
-
-		// setProductDisplay(filteredProducts);
-
 		const queryTerms = searchQuery.split(" ");
 		const category = selectedCategory;
 
@@ -72,7 +56,8 @@ const SearchBarComponent = ({ setIsAddPopUpOpen, products, setProductDisplay }) 
 			});
 		}
 
-		setProductDisplay(filteredProducts);
+		setFilteredProducts(filteredProducts);
+		setCurrentPage(1); // Reset to the first page after a new search
 	};
 
 	return (

@@ -47,3 +47,13 @@ img {
 ::-webkit-scrollbar-thumb {
 	background: #0649bc;
 }
+
+.toast-container {
+	color: black;
+	font-size: 14px;
+	z-index: 999999999;
+}
+
+.Toastify__progress-bar-theme--light {
+	background: green !important;
+}

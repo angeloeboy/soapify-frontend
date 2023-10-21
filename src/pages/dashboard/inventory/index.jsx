@@ -30,6 +30,8 @@ import AddInventoryComponent from "@/components/inventory/addInventory"; // Impo
 import EditInventoryComponent from "@/components/inventory/editInventory";
 import { getInventory } from "@/api/inventory";
 import SearchBarComponent from "@/components/inventory/searchBarAndFilter";
+import { PaginationControl } from "@/styled-components/ItemActionModal";
+import Pagination from "@/components/misc/pagination";
 
 const InventoryPage = () => {
   const [inventory, setInventory] = useState([]);
@@ -38,8 +40,19 @@ const InventoryPage = () => {
   const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false);
   const [isEditPopUpOpen, setIsEditPopUpOpen] = useState(false);
 
+  const [currentPage, setCurrentPage] = useState(1);
+	const itemsPerPage = 10;
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = currentPage * itemsPerPage;
+  const paginatedInventory = inventoryDisplay.slice(startIndex, endIndex);
+
+
   useEffect(() => {
     fetchInventory();
+
+   
+
 
     document.addEventListener("click", handleClickOutside);
     return () => {
@@ -98,7 +111,7 @@ const InventoryPage = () => {
               <TableHeadings>Actions</TableHeadings>
             </TableRows>
 
-            {inventoryDisplay.map((inventory, index) => (
+            {paginatedInventory.map((inventory, index) => (
               <TableRows key={index}>
                 <TableData bold>
                   {/* <Image src="/product_img2.png" width={40} height={40} alt={"Product image"} /> */}
@@ -153,6 +166,14 @@ const InventoryPage = () => {
             ))}
           </tbody>
         </Table>
+
+        <Pagination
+        totalItems={inventoryDisplay.length}
+        itemsPerPage={itemsPerPage}
+        currentPage={currentPage}
+        onPageChange={(newPage) => setCurrentPage(newPage)}
+       />
+      
       </StyledPanel>
       {isAddPopUpOpen && (
         <AddInventoryComponent

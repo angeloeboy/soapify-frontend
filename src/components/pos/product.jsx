@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { styled } from "styled-components";
 import "react-toastify/dist/ReactToastify.css";
+import { SearchBar } from "@/styled-components/TableControlPanel";
 
 const Product = styled.div`
 	display: flex;
@@ -125,9 +126,7 @@ const VariantsModalWrapper = styled.div`
 	width: 100vw;
 	height: 100vh;
 	position: fixed;
-	/* top: 50%;
-	left: 50%; */
-	/* transform: translate(-50.1%, -50.1%); */
+
 	top: 0px;
 	left: 0px;
 	backdrop-filter: blur(3.5px);
@@ -137,7 +136,7 @@ const VariantsModalWrapper = styled.div`
 	z-index: 9999;
 
 	.group_modal {
-		max-height: 90vh;
+		height: 90vh;
 		padding: 20px 18px;
 		max-width: 800.57px;
 		width: 90%;
@@ -147,9 +146,12 @@ const VariantsModalWrapper = styled.div`
 		z-index: 100;
 		padding-top: 60px;
 		/* position: relative; */
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
+
+		.variants-wrapper {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+		}
 		.group_item {
 			margin-bottom: 20px;
 			display: flex;
@@ -283,38 +285,67 @@ const generateColors = (index) => {
 };
 
 const VariantsContainer = ({ variants, updateCart, setShowVariants }) => {
+	const [variantsV, setVariantsV] = useState(variants);
+	const [search, setSearch] = useState("");
+	const [variantsDisplay, setVariantsDisplay] = useState(variants);
+
 	let handleProductClick = (variant) => {
 		variant.quantity_in_stock <= 0 ? null : updateCart(variant, "add");
 		toast.success("Added to cart");
 	};
 
+	let handleSearch = (e) => {
+		// setSearch(e.target.value);
+		const searchQuery = e.target.value;
+		const queryTerms = searchQuery.split(" ");
+
+		let filteredVariants;
+
+		filteredVariants = variantsV.filter((product) => {
+			return queryTerms.every(
+				(term) =>
+					product.product_name.toLowerCase().includes(term.toLowerCase()) ||
+					(product.attribute && product.attribute.some((attr) => attr.value.toLowerCase().includes(term.toLowerCase())))
+			);
+		});
+
+		setVariantsDisplay(filteredVariants);
+		console.log("teststst");
+	};
+
 	return (
 		<VariantsModalWrapper>
 			<div className="group_modal">
-				{variants.map((variant, index) => (
-					<Product key={variant.product_id} onClick={() => handleProductClick(variant)} unclickable={variant.quantity_in_stock <= 0}>
-						<div>
-							<Image src="/sabon.png" width={200} height={400} alt="Product image" />
-							<ProductTitle>{variant.product_name}</ProductTitle>
-							<PriceTitle>P{variant.product_price / 100}</PriceTitle>
-							<Attributes>
-								{variant.attribute.map((attribute, attributeIndex) => {
-									const combinedIndex = index * variant.attribute.length + attributeIndex;
+				<SearchBar>
+					<input type="text" onChange={(e) => handleSearch(e)} />
+				</SearchBar>
 
-									return (
-										<Attribute color={generateColors(combinedIndex)} key={attributeIndex}>
-											{attribute.name}: {attribute.value}
-										</Attribute>
-									);
-								})}
-							</Attributes>
-						</div>
+				<div className="variants-wrapper">
+					{variantsDisplay.map((variant, index) => (
+						<Product key={variant.product_id} onClick={() => handleProductClick(variant)} unclickable={variant.quantity_in_stock <= 0}>
+							<div>
+								<Image src="/sabon.png" width={200} height={400} alt="Product image" />
+								<ProductTitle>{variant.product_name}</ProductTitle>
+								<PriceTitle>P{variant.product_price / 100}</PriceTitle>
+								<Attributes>
+									{variant.attribute.map((attribute, attributeIndex) => {
+										const combinedIndex = index * variant.attribute.length + attributeIndex;
 
-						<StockTitleContainer>
-							<StockTitle>Stock: {variant.quantity_in_stock}</StockTitle>
-						</StockTitleContainer>
-					</Product>
-				))}
+										return (
+											<Attribute color={generateColors(combinedIndex)} key={attributeIndex}>
+												{attribute.name}: {attribute.value}
+											</Attribute>
+										);
+									})}
+								</Attributes>
+							</div>
+
+							<StockTitleContainer>
+								<StockTitle>Stock: {variant.quantity_in_stock}</StockTitle>
+							</StockTitleContainer>
+						</Product>
+					))}
+				</div>
 
 				<p
 					onClick={() => {

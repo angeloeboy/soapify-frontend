@@ -28,7 +28,7 @@ const StyledPanel = styled.div`
 	${(props) =>
 		props.pos &&
 		`	
-		width: calc(100% - 520px);
+		width: calc(100% - 320px);
 		display: inline-block;
 
 		// @media (max-width: 1500px) {

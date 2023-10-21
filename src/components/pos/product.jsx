@@ -10,11 +10,11 @@ const Product = styled.div`
 	border: 1px solid #dddd;
 	flex-direction: column;
 	border-radius: 18px;
-	padding: 25px;
+	padding: 14px;
 	margin: 8px;
 	overflow: hidden;
 	width: 100%;
-	max-width: 269.31px;
+	max-width: 230.31px;
 	cursor: ${({ unclickable }) => (unclickable ? "no-drop" : "pointer")};
 	transition: all 0.3s ease;
 	opacity: ${({ unclickable }) => (unclickable ? "0.5" : "1")};

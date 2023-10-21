@@ -4,10 +4,9 @@ export async function middleware(req) {
 	// const auth_link = "https://iamangelo.tech/api" + "/auth";
 
 	//get auth link from env variable
-	const link = process.env.NEXT_PUBLIC_API_LINK ? process.env.NEXT_PUBLIC_API_LINK : "https://iamangelo.tech/api";
-
+	const link = process.env.NEXT_PUBLIC_API_LINK || "https://iamangelo.tech/api";
 	// const auth_link = `http://localhost` + "/auth";
-	const auth_link = `${link}/auth`;
+	const auth_link = `https://iamangelo.tech/api/auth`;
 
 	const token = req.cookies.get("token");
 

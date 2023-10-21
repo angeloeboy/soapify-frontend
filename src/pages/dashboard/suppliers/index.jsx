@@ -14,6 +14,9 @@ import "react-loading-skeleton/dist/skeleton.css";
 import AddSupplierComponent from "@/components/suppliers/addSupplier";
 import EditSupplierComponent from "@/components/suppliers/editSupplier";
 import SupplierSearchBarComponent from "@/components/suppliers/searchBarAndFilter";
+import { PaginationControl } from "@/styled-components/ItemActionModal";
+import Pagination from "@/components/misc/pagination";
+
 
 const Suppliers = () => {
 	const [searchQuery, setSearchQuery] = useState(""); // Initialize searchQuery
@@ -25,6 +28,14 @@ const Suppliers = () => {
 	const [isEditSupplierPopupOpen, setEditSupplierPopUpOpen] = useState(false);
 
 	const [selectedSupplierId, setSelectedSupplierId] = useState(null);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = currentPage * itemsPerPage;
+  const paginatedSuppliers = suppliersDisplay.slice(startIndex, endIndex);
+
 
 	const handleSearchChange = (event) => {
 		setSearchQuery(event.target.value);
@@ -99,7 +110,7 @@ const Suppliers = () => {
 										</TableData>
 									</TableRows>
 							  ))
-							: suppliersDisplay.map((supplier, index) => (
+							: paginatedSuppliers.map((supplier, index) => (
 									<TableRows key={supplier.supplier_id}>
 										<TableData>{supplier.supplier_name}</TableData>
 										<TableData>{supplier.supplier_phone}</TableData>
@@ -143,6 +154,14 @@ const Suppliers = () => {
 					//   GetProducts={fetchProducts}
 				/>
 			)}
+
+        <Pagination
+          totalItems={suppliersDisplay.length} // Total number of items
+          itemsPerPage={itemsPerPage}
+          currentPage={currentPage}
+          onPageChange={(newPage) => setCurrentPage(newPage)}
+        />
+
 		</DashboardLayout>
 	);
 };

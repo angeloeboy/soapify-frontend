@@ -13,6 +13,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AddRefundComponent from "@/components/refund/addRefund";
 import EditRefundComponent from "@/components/refund/editRefund";
 import RefundSearchBar from "@/components/refund/SearchBarAndFilter";
+ import { PaginationControl } from "@/styled-components/ItemActionModal";
+ import Pagination from "@/components/misc/pagination";
+
+
 
 const RefundPage = () => {
   const [refunds, setRefunds] = useState([]);
@@ -20,6 +24,13 @@ const RefundPage = () => {
   const [activeActionContainer, setActiveActionContainer] = useState(-1);
   const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false);
   const [isEditPopUpOpen, setIsEditPopUpOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = currentPage * itemsPerPage;
+  const paginatedRefunds = filteredRefunds.slice(startIndex, endIndex);
+
+
   const handleSearch = (searchTerm) => {
     const filtered = refunds.filter((refund) => {
       return (
@@ -30,6 +41,9 @@ const RefundPage = () => {
 
     setFilteredRefunds(filtered);
   };
+
+
+
 
   useEffect(() => {
     // Fetch refund data when the component mounts (can be replaced with API calls)
@@ -77,7 +91,7 @@ const RefundPage = () => {
               <TableHeadings>Actions</TableHeadings>
             </TableRows>
 
-            {filteredRefunds.map((refund, index) => (
+            {paginatedRefunds.map((refund, index) => (
               <TableRows key={index}>
                 <TableData>{refund.customerInfo}</TableData>
                 <TableData>{refund.productName}</TableData>
@@ -118,6 +132,13 @@ const RefundPage = () => {
             ))}
           </tbody>
         </Table>
+        <Pagination
+        totalItems={filteredRefunds.length} // Total number of items
+        itemsPerPage={itemsPerPage}
+        currentPage={currentPage}
+        onPageChange={(newPage) => setCurrentPage(newPage)}
+        />
+ 
       </StyledPanel>
 
       {isAddPopUpOpen && (

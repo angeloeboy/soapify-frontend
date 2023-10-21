@@ -51,9 +51,16 @@ img {
 .toast-container {
 	color: black;
 	font-size: 14px;
-	z-index: 999999999;
 }
 
 .Toastify__progress-bar-theme--light {
 	background: green !important;
+}
+
+/* .Toastify__toast-container--bottom-center {
+	z-index: 999999999 !important;
+} */
+
+:root {
+	--toastify-z-index: 99999999999999 !important;
 }

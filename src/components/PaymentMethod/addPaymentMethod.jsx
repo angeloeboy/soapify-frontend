@@ -17,7 +17,7 @@ import { CloseButton } from "../styled-components/PopUp";
 import { addPaymentMethod } from "@/api/payment_method";
 import NotificationModal from "./../misc/notificationModal";
 
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import ToastNotifier from "../misc/toastNotifier";
 
 const AddPaymentMethod = ({ setAddPaymentOpen, fetchPaymentMethods }) => {
@@ -40,10 +40,14 @@ const AddPaymentMethod = ({ setAddPaymentOpen, fetchPaymentMethods }) => {
 		if (response.success) {
 			fetchPaymentMethods();
 			setNotification({ text: response.message, type: "success" });
-			setShowToast((prev) => !prev); // toggle the showToast state
+			// setShowToast((prev) => !prev); // toggle the showToast state
+			toast.success(response.message);
 		} else {
 			setNotification({ text: response.errors[0].message, type: "error" });
-			setShowToast((prev) => !prev); // toggle the showToast state
+			// setShowToast((prev) => !prev); // toggle the showToast state
+			// console.log(response.errors);
+
+			toast.error(response.errors[0].message);
 		}
 	};
 
@@ -69,7 +73,7 @@ const AddPaymentMethod = ({ setAddPaymentOpen, fetchPaymentMethods }) => {
 					<Button onClick={() => addPaymentMethodFunc()}>Save</Button>
 				</ButtonsContainer>
 
-				<ToastNotifier message={notification.text} type={notification.type} key={showToast} />
+				{/* <ToastNotifier message={notification.text} type={notification.type} key={showToast} /> */}
 			</PopupContent>
 		</PopupOverlay>
 	);

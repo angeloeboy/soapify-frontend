@@ -80,17 +80,18 @@ const CartList = styled.div`
 const Product = styled.div`
 	display: flex;
 	margin-bottom: 38px;
-
+	/* flex-direction: column; */
+	flex-wrap: wrap;
 	img {
 		background-color: white;
 	}
 
 	.productInformation {
-		margin-left: 16px;
-
+		/* margin-left: 16px; */
+		margin-top: 16px;
 		.productName {
 			color: #536686;
-			font-size: 16px;
+			font-size: 14px;
 			font-weight: 700;
 		}
 
@@ -98,15 +99,25 @@ const Product = styled.div`
 			color: #005eff;
 			font-size: 14px;
 			font-weight: 700;
+			margin-top: 16px;
+		}
+
+		.wrapper {
+			display: flex;
+			p {
+				margin-left: 12px;
+			}
 		}
 	}
 
 	.quantity {
 		display: inline-flex;
-		margin-left: auto;
+		/* margin-left: auto; */
 		align-items: center;
 		align-self: flex-end;
 		font-size: 16px;
+		margin-top: 16px;
+		margin-right: auto;
 		p {
 			padding: 0px 16px;
 		}
@@ -156,6 +167,23 @@ const Product = styled.div`
 				color: #f88181 !important;
 			}
 		}
+	}
+
+	.remove {
+		/* width: 100%;
+		margin-top: 20px;
+		font-size: 14px;
+		background-color: #f88181;
+		border: 2px solid #eb5151;
+		color: black;
+		border-radius: 4px;
+		padding: 4px 8px;
+		display: block; */
+		font-size: 14px;
+		color: #ff00007d;
+		text-decoration: underline;
+		cursor: pointer;
+		margin-top: 16px;
 	}
 `;
 
@@ -314,17 +342,35 @@ const Cart = ({ setActiveAction }) => {
 				{cart.map((item) => (
 					<CSSTransition key={item.product_id} timeout={500} classNames="item">
 						<Product key={item.product_id} active={item.quantity > 1}>
-							<FontAwesomeIcon icon={faTrash} onClick={() => updateCart(item, "delete")} className="delete" />
-							<Image src="/sabon.png" width={60} height={60} alt="Product image" />
-							<div className="productInformation">
+							{/* <FontAwesomeIcon icon={faTrash} onClick={() => updateCart(item, "delete")} className="delete" /> */}
+
+							{/* <div className="productInformation">
 								<p className="productName">
 									{item.product_name} |
 									{item.attribute.map((attribute) => {
 										return <> {attribute.value} | </>;
 									})}
 								</p>
+
+								<p className="productPrice">P{item.product_price / 100}</p>
+
+							</div> */}
+
+							<div className="productInformation">
+								<div className="wrapper">
+									<Image src="/sabon.png" width={60} height={60} alt="Product image" />
+
+									<p className="productName">
+										{item.product_name} |
+										{item.attribute.map((attribute) => {
+											return <> {attribute.value} | </>;
+										})}
+									</p>
+								</div>
+
 								<p className="productPrice">P{item.product_price / 100}</p>
 							</div>
+
 							<div className="quantity">
 								<span onClick={() => updateCart(item, "subtract")} className="minus">
 									<FontAwesomeIcon icon={faMinus} />
@@ -370,6 +416,9 @@ const Cart = ({ setActiveAction }) => {
 									<FontAwesomeIcon icon={faPlus} />
 								</span>
 							</div>
+							<p className="remove" onClick={() => updateCart(item, "delete")}>
+								Remove
+							</p>
 						</Product>
 					</CSSTransition>
 				))}

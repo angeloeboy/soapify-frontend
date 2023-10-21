@@ -20,6 +20,7 @@ import SearchBarComponent from "@/components/product/subcategory/searchBarAndFil
 // import AddSubCategory from "@/components/product/subcategory/addSubcategory";
 import EditSubCategory from "@/components/product/subcategory/editSubCategory";
 import AddSubCategoryModal from "@/components/product/subcategory/addSubCategoryModal";
+import Pagination from "@/components/misc/pagination";
 
 // import SearchBarComponent from "@/components/product/product-template/searchBarAndFilters";
 
@@ -57,6 +58,18 @@ const ProductTemplates = () => {
 			setActiveActionContainer(null);
 		}
 	};
+
+	const [currentPage, setCurrentPage] = useState(1);
+	const itemsPerPage = 10; // You can adjust this to your desired number of items per page
+	const startIndex = (currentPage - 1) * itemsPerPage;
+	const endIndex = currentPage * itemsPerPage;
+	const paginatedSubcategories = subcategoryDisplay.slice(startIndex, endIndex);
+
+	const handlePageChange = (newPage) => {
+		setCurrentPage(newPage);
+	  };
+	  
+
 
 	useEffect(() => {
 		document.addEventListener("click", handleClickOutside);
@@ -121,7 +134,7 @@ const ProductTemplates = () => {
 								<p>No Subcategories found</p>
 							)
 						) : (
-							subcategoryDisplay.map((subcategory, index) => (
+							paginatedSubcategories.map((subcategory, index) => (
 								<TableRows key={subcategory.subcategory_id}>
 									<TableData>{subcategory.subcategory_id}</TableData>
 									<TableData>{subcategory.subcategory_name}</TableData>
@@ -155,6 +168,13 @@ const ProductTemplates = () => {
 						)}
 					</tbody>
 				</Table>
+				<Pagination
+					totalItems={subcategoryDisplay.length} // Total number of items
+					itemsPerPage={itemsPerPage}
+					currentPage={currentPage}
+					onPageChange={handlePageChange} // Pass the page change handler
+				/>
+
 			</StyledPanel>
 			{/* {isPopupOpen && (
         <AddSubCategory

@@ -11,18 +11,33 @@ import WarehouseSearchBarComponent from "@/components/warehouse/SearchBarAndFilt
 import { getAllWarehouse } from "@/api/warehouse";
 import EditWarehouse from "@/components/warehouse/editWarehouse";
 import DeactivateModal from "@/components/misc/deactivate";
+import { PaginationControl } from "@/styled-components/ItemActionModal";
+import Pagination from "@/components/misc/pagination";
 
 const Warehouse = () => {
 	const [isAddPopUpOpen, setAddPopUpOpen] = useState(false);
 	const [isEditPopUpOpen, setEditPopUpOpen] = useState(false);
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
-	const [warehouses, setWarehouses] = useState([]);
-	const [clickedId, setClickedId] = useState(null);
+ 	const [clickedId, setClickedId] = useState(null);
 	const [clickedName, setClickedName] = useState(null);
 	const [showDeactivate, setShowDeactivate] = useState(false);
+
+	const [currentPage, setCurrentPage] = useState(1);
+	const itemsPerPage = 10;
+
+	const [warehouses, setWarehouses] = useState([]);
+
+
 	useEffect(() => {
 		fetchWarehouses();
 	}, []);
+
+	const startIndex = (currentPage - 1) * itemsPerPage;
+	const endIndex = currentPage * itemsPerPage;
+	const paginatedWarehouses = warehouses.slice(startIndex, endIndex);
+
+	
+	
 
 	const fetchWarehouses = async () => {
 		const res = await getAllWarehouse();
@@ -46,7 +61,7 @@ const Warehouse = () => {
 							<TableHeadings>Actions</TableHeadings>
 						</TableRows>
 
-						{warehouses.map((warehouse, index) => (
+						{paginatedWarehouses.map((warehouse, index) => (
 							<TableRows key={index}>
 								<TableData>{warehouse.warehouse_id}</TableData>
 								<TableData>{warehouse.warehouse_name}</TableData>
@@ -83,6 +98,13 @@ const Warehouse = () => {
 						))}
 					</tbody>
 				</Table>
+				<Pagination
+  				totalItems={warehouses.length}  
+  				itemsPerPage={itemsPerPage}
+  				currentPage={currentPage}
+  				onPageChange={(newPage) => setCurrentPage(newPage)}
+				/>
+
 			</StyledPanel>
 			{isAddPopUpOpen && <AddWarehouse setAddPopUpOpen={setAddPopUpOpen} fetchWarehouses={fetchWarehouses} />}
 			{isEditPopUpOpen && <EditWarehouse setEditPopUpOpen={setEditPopUpOpen} fetchWarehouses={fetchWarehouses} clickedId={clickedId} />}

@@ -26,7 +26,7 @@ const POSWrapper = styled.div`
 const StickyContainer = styled.div`
 	position: relative;
 	width: 100%;
-	max-width: 500px;
+	max-width: 300px;
 	margin-top: 48px;
 
 	/* @media (max-width: 1200px) {
@@ -136,17 +136,6 @@ const Pos = () => {
 						<SearchBarComponent products={products} setProductDisplay={setProductDisplay} />
 
 						<ProductsList>
-							{/* {productDisplay.map((product, productIndex) => (
-								<ProductComponent
-									product={product}
-									index={productIndex}
-									onClick={() => {
-										updateCart(product, "add");
-										if (activeAction != "cart") setActiveAction("cart");
-									}}
-									key={product.product_id}
-								/>
-							))} */}
 							{productDisplay.map((productGroup, index) => {
 								if (productGroup.products.length <= 1) {
 									return (
@@ -166,10 +155,6 @@ const Pos = () => {
 										<ProductComponent
 											product={productGroup.products[0]}
 											index={index}
-											// onClick={() => {
-											// 	updateCart(productGroup.products[0], "add");
-											// 	// if (activeAction != "cart") setActiveAction("cart");
-											// }}
 											updateCart={updateCart}
 											key={index}
 											variants={productGroup.products.slice(1)}

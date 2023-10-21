@@ -18,12 +18,24 @@ import EditUserComponent from "@/components/user/editUser";
 import PopupContentUser from "@/components/user/addUser";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
+import Pagination from "@/components/misc/pagination";
+
 
 const User = () => {
   const [searchQuery, setSearchQuery] = useState(""); // Initialize searchQuery
   const [isPopupOpen, setPopupOpen] = useState(false);
   const [activeActionContainer, setActiveActionContainer] = useState(-1);
   const [isEditUserPopup, setEditUserPopup] = useState(false);
+
+  const ITEMS_PER_PAGE = 10; // Adjust this to your desired number of items per page
+  const [currentPage, setCurrentPage] = useState(1);
+
+    const paginate = (array, currentPage, itemsPerPage) => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return array.slice(startIndex, startIndex + itemsPerPage);
+  };
+  
+   
 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
@@ -87,6 +99,8 @@ const User = () => {
       type: "User",
     },
   ];
+  const paginatedUserData = paginate(userData, currentPage, ITEMS_PER_PAGE);
+
 
   const [selectedUserId, setSelectedUserId] = useState(null);
   return (
@@ -109,7 +123,7 @@ const User = () => {
               <TableHeadings>Actions</TableHeadings>
             </TableRows>
 
-            {userData.map((user, index) => (
+            {paginatedUserData.map((user, index) => (
               <TableRows key={index}>
                 <TableData bold withImage>
                   <Image
@@ -174,6 +188,14 @@ const User = () => {
           //   GetProducts={fetchProducts}
         />
       )}
+
+      <Pagination
+        itemsPerPage={ITEMS_PER_PAGE}
+        totalItems={userData.length}
+        currentPage={currentPage}
+        onPageChange={(page) => setCurrentPage(page)}
+      />
+
     </DashboardLayout>
   );
 };

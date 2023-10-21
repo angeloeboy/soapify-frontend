@@ -10,6 +10,9 @@ import Sticky from "react-stickynode";
 import SearchBarComponent from "@/components/pos/searchBarAndFilters";
 import ProductComponent from "@/components/pos/product";
 import { addTransaction, getTransactions } from "@/api/transaction";
+import { PaginationControl } from "@/styled-components/ItemActionModal";
+import Pagination from "@/components/misc/pagination";
+
 
 const ProductsList = styled.div`
 	display: flex;
@@ -50,6 +53,14 @@ const Pos = () => {
 		total_amount: 0,
 		items: [],
 	});
+
+	const [currentPage, setCurrentPage] = useState(1);
+	const itemsPerPage = 10;
+	
+	const startIndex = (currentPage - 1) * itemsPerPage;
+	const endIndex = currentPage * itemsPerPage;
+	const paginatedProducts = productDisplay.slice(startIndex, endIndex);
+	
 
 	const [windowWidth, setWindowWidth] = useState(1200);
 
@@ -136,7 +147,7 @@ const Pos = () => {
 						<SearchBarComponent products={products} setProductDisplay={setProductDisplay} />
 
 						<ProductsList>
-							{productDisplay.map((productGroup, index) => {
+							{paginatedProducts.map((productGroup, index) => {
 								if (productGroup.products.length <= 1) {
 									return (
 										<ProductComponent
@@ -172,6 +183,13 @@ const Pos = () => {
 					</StickyContainer>
 				</POSWrapper>
 			</DashboardLayout>
+			<Pagination
+  			totalItems={productDisplay.length} // Total number of items
+     		itemsPerPage={itemsPerPage}
+  			currentPage={currentPage}
+			onPageChange={(newPage) => setCurrentPage(newPage)}
+			/>
+
 		</TransactionContext.Provider>
 	);
 };

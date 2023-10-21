@@ -123,9 +123,11 @@ const VariantsModalWrapper = styled.div`
 	width: 100vw;
 	height: 100vh;
 	position: fixed;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
+	/* top: 50%;
+	left: 50%; */
+	/* transform: translate(-50.1%, -50.1%); */
+	top: 0px;
+	left: 0px;
 	backdrop-filter: blur(3.5px);
 	display: flex;
 	justify-content: center;
@@ -142,8 +144,10 @@ const VariantsModalWrapper = styled.div`
 		overflow: auto;
 		z-index: 100;
 		padding-top: 60px;
-		position: relative;
-
+		/* position: relative; */
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
 		.group_item {
 			margin-bottom: 20px;
 			display: flex;
@@ -285,16 +289,39 @@ const VariantsContainer = ({ variants, updateCart, setShowVariants }) => {
 		<VariantsModalWrapper>
 			<div className="group_modal">
 				{variants.map((variant, index) => (
-					<div className="group_item" key={index}>
-						<p onClick={() => handleProductClick(variant)}>
-							{variant.product_name}
-							{variant.attribute.map((attribute, index) => {
-								return <span key={index}> | {attribute.value} </span>;
-							})}
-						</p>
+					// <div className="group_item" key={index}>
+					// 	<p onClick={() => handleProductClick(variant)}>
+					// 		{variant.product_name}
+					// 		{variant.attribute.map((attribute, index) => {
+					// 			return <span key={index}> | {attribute.value} </span>;
+					// 		})}
+					// 	</p>
 
-						<p className="price">P{variant.product_price / 100}</p>
-					</div>
+					// 	<p className="price">P{variant.product_price / 100}</p>
+					// </div>
+
+					<Product key={variant.product_id} onClick={() => handleProductClick(variant)} unclickable={variant.quantity_in_stock <= 0}>
+						<div>
+							<Image src="/sabon.png" width={200} height={400} alt="Product image" />
+							<ProductTitle>{variant.product_name}</ProductTitle>
+							<PriceTitle>P{variant.product_price / 100}</PriceTitle>
+							<Attributes>
+								{variant.attribute.map((attribute, attributeIndex) => {
+									const combinedIndex = index * variant.attribute.length + attributeIndex;
+
+									return (
+										<Attribute color={generateColors(combinedIndex)} key={attributeIndex}>
+											{attribute.name}: {attribute.value}
+										</Attribute>
+									);
+								})}
+							</Attributes>
+						</div>
+
+						<StockTitleContainer>
+							<StockTitle>Stock: {variant.quantity_in_stock}</StockTitle>
+						</StockTitleContainer>
+					</Product>
 				))}
 
 				<p

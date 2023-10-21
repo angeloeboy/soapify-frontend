@@ -1,6 +1,8 @@
 import Image from "next/image";
 import { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
 import { styled } from "styled-components";
+import "react-toastify/dist/ReactToastify.css";
 
 const Product = styled.div`
 	display: flex;
@@ -283,23 +285,13 @@ const generateColors = (index) => {
 const VariantsContainer = ({ variants, updateCart, setShowVariants }) => {
 	let handleProductClick = (variant) => {
 		variant.quantity_in_stock <= 0 ? null : updateCart(variant, "add");
+		toast.success("Added to cart");
 	};
 
 	return (
 		<VariantsModalWrapper>
 			<div className="group_modal">
 				{variants.map((variant, index) => (
-					// <div className="group_item" key={index}>
-					// 	<p onClick={() => handleProductClick(variant)}>
-					// 		{variant.product_name}
-					// 		{variant.attribute.map((attribute, index) => {
-					// 			return <span key={index}> | {attribute.value} </span>;
-					// 		})}
-					// 	</p>
-
-					// 	<p className="price">P{variant.product_price / 100}</p>
-					// </div>
-
 					<Product key={variant.product_id} onClick={() => handleProductClick(variant)} unclickable={variant.quantity_in_stock <= 0}>
 						<div>
 							<Image src="/sabon.png" width={200} height={400} alt="Product image" />

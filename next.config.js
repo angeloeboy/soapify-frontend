@@ -14,7 +14,7 @@ const nextConfig = {
 		return [
 			{
 				source: "/api/:path*",
-				destination: "http://localhost:3001/:path*",
+				destination: `${link}/:path*`,
 			},
 		];
 	},

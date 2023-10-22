@@ -13,7 +13,6 @@ import { addTransaction, getTransactions } from "@/api/transaction";
 import { PaginationControl } from "@/styled-components/ItemActionModal";
 import Pagination from "@/components/misc/pagination";
 
-
 const ProductsList = styled.div`
 	display: flex;
 	flex-wrap: wrap;
@@ -56,11 +55,10 @@ const Pos = () => {
 
 	const [currentPage, setCurrentPage] = useState(1);
 	const itemsPerPage = 10;
-	
+
 	const startIndex = (currentPage - 1) * itemsPerPage;
 	const endIndex = currentPage * itemsPerPage;
 	const paginatedProducts = productDisplay.slice(startIndex, endIndex);
-	
 
 	const [windowWidth, setWindowWidth] = useState(1200);
 
@@ -184,12 +182,11 @@ const Pos = () => {
 				</POSWrapper>
 			</DashboardLayout>
 			<Pagination
-  			totalItems={productDisplay.length} // Total number of items
-     		itemsPerPage={itemsPerPage}
-  			currentPage={currentPage}
-			onPageChange={(newPage) => setCurrentPage(newPage)}
+				totalItems={productDisplay.length} // Total number of items
+				itemsPerPage={itemsPerPage}
+				currentPage={currentPage}
+				onPageChange={(newPage) => setCurrentPage(newPage)}
 			/>
-
 		</TransactionContext.Provider>
 	);
 };

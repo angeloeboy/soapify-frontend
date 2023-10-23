@@ -3,7 +3,8 @@ import styled from "styled-components";
 import PaymentMethods from "./paymentMethods";
 import { useContext, useState } from "react";
 import Receipt from "./receipt";
-import { TransactionContext } from "@/pages/dashboard/pos";
+import { TransactionContext } from "../context/TransactionContext";
+// import { TransactionContext } from "@/pages/dashboard/pos";
 
 const POSactionsWrapper = styled.div`
 	/* width: 100%; */

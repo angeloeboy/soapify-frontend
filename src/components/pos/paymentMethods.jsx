@@ -3,11 +3,14 @@ import { ComponentTitle } from "@/styled-components/pos";
 import { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import Button from "../misc/button";
-import { TransactionContext } from "@/pages/dashboard/pos";
+// import { TransactionContext } from "@/pages/dashboard/pos";
+import { TransactionContext } from "../context/TransactionContext";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 import { addTransaction } from "@/api/transaction";
+import { toast } from "react-toastify";
 
 const PaymentMethod = styled.div`
 	margin-bottom: 16px;
@@ -61,6 +64,7 @@ const PaymentMethods = (props) => {
 	const [transactionNo, setTransactionNo] = useState("");
 	const [loading, setLoading] = useState(false);
 	const { setTransaction, transaction } = useContext(TransactionContext);
+	const [transactionSuccess, setTransactionSuccess] = useState(false);
 
 	useEffect(() => {
 		fetchPaymentMethods();
@@ -68,8 +72,14 @@ const PaymentMethods = (props) => {
 
 	const initiateTransaction = async () => {
 		setLoading(true);
+
 		const response = await addTransaction(transaction);
 		console.log(response);
+		if (response.status == "Success") {
+			toast.success("Transaction Successful");
+		} else {
+			toast.error(response.errors[0].message);
+		}
 		setLoading(false);
 	};
 

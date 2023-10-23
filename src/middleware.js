@@ -43,6 +43,14 @@ export async function middleware(req) {
 			},
 		});
 
+		let data = await response.json();
+		if (data.user.role_id !== 1) {
+			const url = req.nextUrl.clone();
+			url.pathname = "/user";
+			// return NextResponse.rewrite(url);
+			return NextResponse.redirect(url);
+		}
+
 		const url = req.nextUrl.clone();
 		url.pathname = "/";
 		// return response.ok ? NextResponse.next() : NextResponse.rewrite(url);

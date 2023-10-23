@@ -13,7 +13,6 @@ import { addTransaction, getTransactions } from "@/api/transaction";
 import { PaginationControl } from "@/styled-components/ItemActionModal";
 import Pagination from "@/components/misc/pagination";
 import { TransactionContext } from "@/components/context/TransactionContext";
-// import { TransactionContext } from "../context/TransactionContext";
 
 const ProductsList = styled.div`
 	display: flex;
@@ -93,7 +92,6 @@ const Pos = () => {
 	};
 
 	const groupProductsByName = (products) => {
-		//group product by name if theres multiple of them
 		const groupedProducts = products.reduce((acc, product) => {
 			if (!acc[product.product_name]) {
 				acc[product.product_name] = [product];
@@ -108,11 +106,6 @@ const Pos = () => {
 			product_name: key,
 			products: groupedProducts[key],
 		}));
-
-		//create an array that gets the first product of each group
-		// const groupedProductsArrayFirst = groupedProductsArray.map((group) => group.products[0]);
-
-		//create an array that gets the first product of each group and adds the quantity of the rest of the products
 
 		return groupedProductsArray;
 	};

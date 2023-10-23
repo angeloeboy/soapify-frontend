@@ -5,10 +5,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "../misc/button";
 import Image from "next/image";
 import { useContext, useMemo, useEffect } from "react";
-import { TransactionContext } from "@/pages/dashboard/pos";
+// import { TransactionContext } from "@/pages/dashboard/pos";
+
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { PDFDocument, rgb } from "pdf-lib";
 import { getTransaction } from "@/api/transaction";
+import { TransactionContext } from "../context/TransactionContext";
 
 const CartTable = styled.table`
 	width: 100%;

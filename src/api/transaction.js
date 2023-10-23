@@ -33,7 +33,7 @@ export const addTransaction = async (transaction) => {
 	}
 };
 
-export const getTransaction = async (id) => {
+export const getTransaction = async () => {
 	try {
 		const response = await fetch("/api/transactions/" + id, {
 			method: "GET",
@@ -45,4 +45,16 @@ export const getTransaction = async (id) => {
 	} catch (error) {
 		console.log(error);
 	}
+};
+
+export const getCustomerTransaction = async () => {
+	try {
+		const response = await fetch("/api/transactions/orders", {
+			method: "GET",
+			credentials: "include",
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {}
 };

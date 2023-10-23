@@ -20,6 +20,8 @@ import { getAttributes } from "@/api/attributes";
 import AttributesSearchBarComponent from "@/components/attributes/searchBarAndFilters";
 import AddAttributeComponent from "@/components/attributes/addAttributes";
 import EditAttributeComponent from "@/components/attributes/editAttribute";
+import Pagination from "@/components/misc/pagination";
+import { PaginationControl } from "@/styled-components/ItemActionModal";
 
 const PaymentTable = () => {
   const [activeActionContainer, setActiveActionContainer] = useState(-1);
@@ -27,13 +29,29 @@ const PaymentTable = () => {
 
   const [attributes, setAttributes] = useState([]);
   const [attributesLoading, setAttributesLoading] = useState(false);
-  const [attributesDisplay, setAttributesDisplay] = useState([]); // Define attributesDisplay state variable
   const [isEditAttributeOpen, setEditAttributeOpen] = useState(false); // Define isEditOpen state variable
   const [isPopUpOpen, setPopUpOpen] = useState(false);
+
+  const [currentPage, setCurrentPage] = useState(1);
+	const itemsPerPage = 10;
+
+  const [attributesDisplay, setAttributesDisplay] = useState([]); // Define attributesDisplay state variable
+
+
+  
+
+
 
   useEffect(() => {
     fetchAttributes();
   }, []);
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = currentPage * itemsPerPage;
+  const paginatedAttributes = attributesDisplay.slice(startIndex, endIndex);
+
+
+  
 
   useEffect(() => {
     console.log(isPopUpOpen);
@@ -107,7 +125,7 @@ const PaymentTable = () => {
                     </TableData>
                   </TableRows>
                 ))
-              : attributesDisplay.map((attribute, index) => (
+              : paginatedAttributes.map((attribute, index) => (
                   <TableRows key={attribute.attribute_id}>
                     <TableData>{attribute.attribute_name}</TableData>
                     <TableData>{attribute.values.length}</TableData>
@@ -148,6 +166,14 @@ const PaymentTable = () => {
                 ))}
           </tbody>
         </Table>
+
+        <Pagination
+        totalItems={attributesDisplay.length}
+        itemsPerPage={itemsPerPage}
+        currentPage={currentPage}
+        onPageChange={(newPage) => setCurrentPage(newPage)}
+      />
+      
       </StyledPanel>
       {isPopUpOpen && (
         <AddAttributeComponent

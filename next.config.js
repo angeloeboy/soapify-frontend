@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
-const link = process.env.NEXT_PUBLIC_API_LINK || "https://iamangelo.tech/api";
+// const link = process.env.NEXT_PUBLIC_API_LINK || "https://iamangelo.tech/api";
+const link = process.env.NEXT_PUBLIC_API_LINK ? process.env.NEXT_PUBLIC_API_LINK : "https://iamangelo.tech/api";
 
 const nextConfig = {
 	output: "standalone",
@@ -13,7 +14,7 @@ const nextConfig = {
 		return [
 			{
 				source: "/api/:path*",
-				destination: `http://localhost:3001/:path*`,
+				destination: `${link}/:path*`,
 			},
 		];
 	},

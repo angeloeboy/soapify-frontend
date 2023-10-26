@@ -206,7 +206,7 @@ const ProductComponent = ({ product, onClick, index, variants, updateCart }) => 
 	const [showVariants, setShowVariants] = useState(false);
 
 	let handleProductClick = () => {
-		if (!variants) {
+		if (variants.length == 0) {
 			product.quantity_in_stock <= 0 ? null : onClick();
 			return;
 		}
@@ -221,7 +221,7 @@ const ProductComponent = ({ product, onClick, index, variants, updateCart }) => 
 				<ProductTitle>{product.product_name}</ProductTitle>
 				<PriceTitle>P{product.product_price / 100}</PriceTitle>
 				<Attributes>
-					{!variants &&
+					{variants.length == 0 &&
 						product.attribute.map((attribute, attributeIndex) => {
 							const combinedIndex = index * product.attribute.length + attributeIndex;
 
@@ -237,7 +237,7 @@ const ProductComponent = ({ product, onClick, index, variants, updateCart }) => 
 			<StockTitleContainer>
 				<StockTitle>Stock: {product.quantity_in_stock}</StockTitle>
 			</StockTitleContainer>
-			{variants ? <HasVariants>Has {variants.length} Variants</HasVariants> : null}
+			{variants.length > 0 ? <HasVariants>Has {variants.length} Variants</HasVariants> : null}
 			{showVariants && <VariantsContainer variants={variants} updateCart={updateCart} setShowVariants={setShowVariants} />}
 		</Product>
 	);

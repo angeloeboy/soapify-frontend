@@ -29,31 +29,6 @@ const Orders = () => {
 	};
 
 	useEffect(() => {
-		// // Fetch return data when the component mounts (can be replaced with API calls)
-		// const staticReturnData = [
-		// 	{
-		// 		returnID: "R001",
-		// 		customerInfo: "John Doe",
-		// 		productName: "Product A",
-		// 		dateOfPurchase: "2023-01-15",
-		// 		returnAmount: 50.0,
-		// 		returnReason: "Defective",
-		// 		returnStatus: "Processing",
-		// 	},
-		// 	{
-		// 		returnID: "R002",
-		// 		customerInfo: "Alice Smith",
-		// 		productName: "Product B",
-		// 		dateOfPurchase: "2023-02-20",
-		// 		returnAmount: 30.0,
-		// 		returnReason: "Changed Mind",
-		// 		returnStatus: "Not Completed",
-		// 	},
-		// 	// Add more return objects here as needed
-		// ];
-
-		// setReturns(staticReturnData);
-		// setFilteredReturns(staticReturnData); // Initialize filteredReturns with all returns
 		getTransactions();
 	}, []);
 

@@ -234,9 +234,11 @@ const ProductComponent = ({ product, onClick, index, variants, updateCart }) => 
 				</Attributes>
 			</div>
 
-			<StockTitleContainer>
-				<StockTitle>Stock: {product.quantity_in_stock}</StockTitle>
-			</StockTitleContainer>
+			{variants.length == 0 && (
+				<StockTitleContainer>
+					<StockTitle>Stock: {product.quantity_in_stock}</StockTitle>
+				</StockTitleContainer>
+			)}
 			{variants.length > 0 ? <HasVariants>Has {variants.length} Variants</HasVariants> : null}
 			{showVariants && <VariantsContainer variants={variants} updateCart={updateCart} setShowVariants={setShowVariants} />}
 		</Product>

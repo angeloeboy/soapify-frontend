@@ -58,3 +58,15 @@ export const getCustomerTransaction = async () => {
 		return data;
 	} catch (error) {}
 };
+
+export const getAllTransactions = async () => {
+	try {
+		const response = await fetch("/api/transactions/all", {
+			method: "GET",
+			credentials: "include",
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {}
+};

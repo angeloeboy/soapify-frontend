@@ -24,7 +24,7 @@ const Products = () => {
 	const [products, setProducts] = useState([]);
 	const [productDisplay, setProductDisplay] = useState([]);
 	const [productsLoading, setProductsLoading] = useState(true);
-	
+
 	const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false);
 	const [isEditPopupOpen, setEditPopUpOpen] = useState(false);
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
@@ -129,7 +129,7 @@ const Products = () => {
 						) : (
 							productDisplay.map((product, index) => (
 								<TableRows key={product.product_id}>
-									<TableData bold withImage>
+									<TableData $bold withImage>
 										<Image
 											src={product.image_link == "testimage" ? "/sabon.png" : "/api/" + product.image_link.replace(/\\/g, "/")}
 											alt="My Image"

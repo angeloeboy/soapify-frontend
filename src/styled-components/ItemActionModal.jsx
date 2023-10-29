@@ -327,6 +327,7 @@ export const PaginationControl = styled.div`
 	width: 100%;
 	justify-content: center;
 	margin-top: 2rem;
+
 	button {
 		color: #555d67;
 		background-color: white;
@@ -342,7 +343,7 @@ export const PaginationControl = styled.div`
 		display: flex;
 		align-items: center;
 		justify-content: center;
-
+		cursor: pointer;
 		svg {
 			/* vertical-align: middle; */
 		}

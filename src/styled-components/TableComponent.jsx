@@ -20,12 +20,12 @@ export const TableHeadings = styled.th`
 `;
 
 export const TableData = styled.td`
-	color: ${(props) => (props.bold ? "#002056" : "rgba(0, 32, 86, 0.7)")};
+	color: ${(props) => (props.$bold ? "#002056" : "rgba(0, 32, 86, 0.7)")};
 	text-align: center;
 	font-size: 14px;
 	font-style: normal;
-	font-weight: ${(props) => (props.bold ? "bold" : "400")};
-	text-align: ${(props) => (props.bold ? "left" : "center")};
+	font-weight: ${(props) => (props.$bold ? "bold" : "400")};
+	text-align: ${(props) => (props.$bold ? "left" : "center")};
 
 	line-height: normal;
 	padding: 20px 0px;
@@ -67,6 +67,9 @@ export const TableRows = styled.tr`
 	border-radius: 4px;
 	border: ${(props) => (props.heading ? "1px solid #dfdfdf" : "none")};
 	background: ${(props) => (props.heading ? "#f9f9f9" : "transparent")};
+	&:hover {
+		background: ${(props) => (props.heading ? "#f9f9f9" : "#f9f9f9")};
+	}
 	cursor: ${(props) => (props.heading ? "default" : "pointer")};
 	.ellipsis {
 		width: 16px;

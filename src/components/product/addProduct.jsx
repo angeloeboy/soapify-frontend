@@ -38,6 +38,8 @@ const AddProductComponent = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) 
 		subcategory_id: 0,
 		quantity_in_stock: 0,
 		minimum_reorder_level: 1,
+		isVariant: true,
+		parent_product_id: 1,
 		attributes: [],
 	});
 

@@ -81,9 +81,9 @@ const Pos = () => {
 	}, [cart]);
 
 	useEffect(() => {
-		console.log(groupProductsByName(products));
-		setProductDisplay(groupProductsByName(products));
+		setProductDisplay(groupProductsByParentProductId(products));
 		// setProductDisplay(products);
+		console.log(groupProductsByParentProductId(products));
 	}, [products]);
 
 	const fetchProducts = async () => {
@@ -109,12 +109,23 @@ const Pos = () => {
 			products: groupedProducts[key],
 		}));
 
-		//create an array that gets the first product of each group
-		// const groupedProductsArrayFirst = groupedProductsArray.map((group) => group.products[0]);
-
-		//create an array that gets the first product of each group and adds the quantity of the rest of the products
-
 		return groupedProductsArray;
+	};
+
+	const groupProductsByParentProductId = (products) => {
+		const variants = products.filter((product) => product.parent_product_id !== null);
+
+		const notVariants = products.filter((product) => product.parent_product_id === null);
+
+		notVariants.forEach((product) => {
+			product.variants = variants.filter((variant) => variant.parent_product_id === product.product_id);
+
+			if (product.variants.length > 0) {
+				product.variants.push(product);
+			}
+		});
+
+		return notVariants;
 	};
 
 	const updateCart = (product, operation) => {
@@ -145,31 +156,45 @@ const Pos = () => {
 						<SearchBarComponent products={products} setProductDisplay={setProductDisplay} />
 
 						<ProductsList>
-							{paginatedProducts.map((productGroup, index) => {
-								if (productGroup.products.length <= 1) {
-									return (
-										<ProductComponent
-											product={productGroup.products[0]}
-											index={index}
-											onClick={() => {
-												updateCart(productGroup.products[0], "add");
-												if (activeAction != "cart") setActiveAction("cart");
-											}}
-											key={index}
-											hasVariants={false}
-										/>
-									);
-								} else {
-									return (
-										<ProductComponent
-											product={productGroup.products[0]}
-											index={index}
-											updateCart={updateCart}
-											key={index}
-											variants={productGroup.products.slice(1)}
-										/>
-									);
-								}
+							{paginatedProducts.map((product, index) => {
+								// if (productGroup.products.length <= 1) {
+								// 	return (
+								// 		<ProductComponent
+								// 			product={productGroup.products[0]}
+								// 			index={index}
+								// 			onClick={() => {
+								// 				updateCart(productGroup.products[0], "add");
+								// 				if (activeAction != "cart") setActiveAction("cart");
+								// 			}}
+								// 			key={index}
+								// 			hasVariants={false}
+								// 		/>
+								// 	);
+								// } else {
+								// 	return (
+								// 		<ProductComponent
+								// 			product={productGroup.products[0]}
+								// 			index={index}
+								// 			updateCart={updateCart}
+								// 			key={index}
+								// 			variants={productGroup.products.slice(1)}
+								// 		/>
+								// 	);
+								// }
+								return (
+									<ProductComponent
+										product={product}
+										index={index}
+										onClick={() => {
+											updateCart(product, "add");
+											if (activeAction != "cart") setActiveAction("cart");
+										}}
+										updateCart={updateCart}
+										key={index}
+										hasVariants={product.variants ? true : false}
+										variants={product.variants ? product.variants : []}
+									/>
+								);
 							})}
 						</ProductsList>
 					</StyledPanel>

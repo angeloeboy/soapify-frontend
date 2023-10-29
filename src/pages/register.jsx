@@ -8,11 +8,11 @@ import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 
 const RegisterContainer = styled.div`
-	height: 100vh;
+	/* height: 100vh; */
 	width: 100%;
 	max-width: 770px;
-	padding: 53px 10vw;
-	padding-top: 100px;
+	padding: 100px 10vw;
+
 	.appTitle {
 		text-transform: uppercase;
 		padding-bottom: 19px;
@@ -161,7 +161,7 @@ let Register = () => {
 							id="lastName"
 							name="lastName"
 						/>
-						
+
 						<label htmlFor="username">Email</label>
 						<FormField
 							type="text"

@@ -18,21 +18,9 @@ const PaymentSearchBarComponent = ({ fetchPaymentMethods, setAddPaymentOpen }) =
 		setSearchQuery(e.target.value);
 	};
 
-	const paymentTypeChange = (paymentType) => {
-		setSelectedPaymentType(paymentType);
-	};
-
 	const handleSearch = () => {
 		const paymentType = selectedPaymentType;
 		console.log(paymentType);
-	};
-
-	const handleOpenPopupContentPayment = () => {
-		setIsPopupContentPaymentOpen(true);
-	};
-
-	const handleClosePopupContentPayment = () => {
-		setIsPopupContentPaymentOpen(false);
 	};
 
 	return (

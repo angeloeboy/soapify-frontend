@@ -4,22 +4,53 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
 import { DropdownHeader, DropdownItem, DropdownMenu, DropdownWrapper, SearchBar, TableControlPanel, Button } from "@/styled-components/TableControlPanel";
 
-const OrdersSearchBarComponent = ({ fetchPaymentMethods, setAddPaymentOpen }) => {
+const OrdersSearchBarComponent = ({ setTransactionsDisplay, transactions }) => {
 	const [searchQuery, setSearchQuery] = useState("");
-	const [selectedPaymentType, setSelectedPaymentType] = useState("All");
 
-	useEffect(() => {
-		handleSearch();
-	}, [searchQuery, selectedPaymentType]);
+	const handleSearch = () => {
+		let query = searchQuery;
+		const queryTerms = query.split(" ");
+
+		let filteredTransactions;
+
+		if (queryTerms.length > 1) {
+			filteredTransactions = transactions.filter((transaction) => {
+				return queryTerms.every(
+					(term) =>
+						transaction.transaction_unique_id.toLowerCase().includes(term.toLowerCase()) ||
+						transaction.transaction_user_name.last_name.toLowerCase().includes(term.toLowerCase()) ||
+						transaction.transaction_user_name.first_name.toLowerCase().includes(term.toLowerCase())
+				);
+			});
+		} else {
+			filteredTransactions = transactions.filter((transaction) => {
+				return (
+					transaction.transaction_unique_id.toLowerCase().includes(query.toLowerCase()) ||
+					transaction.transaction_user_name.last_name.toLowerCase().includes(query.toLowerCase()) ||
+					transaction.transaction_user_name.first_name.toLowerCase().includes(query.toLowerCase()) ||
+					transaction.transaction_number.toLowerCase().includes(query.toLowerCase())
+				);
+			});
+		}
+
+		// filteredTransactions = query
+		// 	? transactions.filter((transaction) => {
+		// 			transaction.transaction_unique_id.toLowerCase().includes(query.toLowerCase()) ||
+		// 				transaction.transaction_user_name.last_name.toLowerCase().includes(query.toLowerCase()) ||
+		// 				transaction.transaction_user_name.first_name.toLowerCase().includes(query.toLowerCase());
+		// 	  })
+		// 	: transactions;
+
+		setTransactionsDisplay(filteredTransactions);
+	};
 
 	const handleSearchChange = (e) => {
 		setSearchQuery(e.target.value);
 	};
 
-	const handleSearch = () => {
-		const paymentType = selectedPaymentType;
-		console.log(paymentType);
-	};
+	useEffect(() => {
+		handleSearch();
+	}, [searchQuery]);
 
 	return (
 		<TableControlPanel>

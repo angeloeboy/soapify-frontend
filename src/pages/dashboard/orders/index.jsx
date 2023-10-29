@@ -27,6 +27,19 @@ const Orders = () => {
 		getAllTransactions();
 	}, []);
 
+	const handleClickOutside = (event) => {
+		if (!event.target.closest(".action-container") && !event.target.closest(".ellipsis")) {
+			setActiveActionContainer(null);
+		}
+	};
+
+	useEffect(() => {
+		document.addEventListener("click", handleClickOutside);
+		return () => {
+			document.removeEventListener("click", handleClickOutside);
+		};
+	}, []);
+
 	const getAllTransactions = async () => {
 		const res = await getTransactions();
 		res.transactions ? setTransactions(res.transactions) : setTransactions([]);
@@ -40,7 +53,7 @@ const Orders = () => {
 
 			<StyledPanel>
 				{/* <ReturnSearchBar onSearch={handleSearch} setIsAddPopUpOpen={setIsAddPopUpOpen} setReturnsDisplay={setReturns} /> */}
-				<OrdersSearchBarComponent />
+				<OrdersSearchBarComponent setTransactionsDisplay={setTransactionsDisplay} transactions={transactions} />
 				<Table>
 					<tbody>
 						<TableRows heading>

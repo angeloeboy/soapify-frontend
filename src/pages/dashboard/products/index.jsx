@@ -129,7 +129,7 @@ const Products = () => {
 						) : (
 							productDisplay.map((product, index) => (
 								<TableRows key={product.product_id}>
-									<TableData bold withImage>
+									<TableData $bold withImage>
 										<Image
 											src={product.image_link == "testimage" ? "/sabon.png" : "/api/" + product.image_link.replace(/\\/g, "/")}
 											alt="My Image"

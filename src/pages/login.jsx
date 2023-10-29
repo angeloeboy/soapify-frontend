@@ -95,10 +95,11 @@ const Error = styled.p`
 `;
 
 let Login = () => {
-	const [credentials, setCredentials] = useState({ username: "", password: "" });
+	const [credentials, setCredentials] = useState({ username: "", email: "", password: "" });
 	const [loggingIn, setIsLoggingIn] = useState(false);
 	const [rateLimited, setRateLimited] = useState(false);
 	const [errorMessages, setErrorMessages] = useState({
+		email: "",
 		username: "",
 		password: "",
 	});
@@ -125,11 +126,13 @@ let Login = () => {
 				const errors = res.errors;
 
 				const usernameErrorMessage = errors.find((error) => error.path === "username")?.msg;
+				const emailErrorMessage = errors.find((error) => error.path === "email")?.msg;
 				const passwordErrorMessage = errors.find((error) => error.path === "password")?.msg;
 
 				setErrorMessages({
 					username: usernameErrorMessage || "",
 					password: passwordErrorMessage || "",
+					email: emailErrorMessage || "",
 				});
 			})
 			.catch((err) => {
@@ -138,9 +141,10 @@ let Login = () => {
 				setErrorMessages({
 					username: "",
 					password: "",
+					email: "",
 				});
 
-				setRateLimited(true);
+				// setRateLimited(true);
 			});
 	};
 
@@ -151,10 +155,10 @@ let Login = () => {
 
 				<Form onSubmit={(e) => handleLogin(e)}>
 					<h3>Log In</h3>
-					<p>Enter your username and password to sign in!</p>
+					<p>Enter your email and password to sign in!</p>
 
 					<div className="formsContainer">
-						<label htmlFor="username">Username</label>
+						{/* <label htmlFor="username">Username</label>
 						<FormField
 							type="text"
 							onChange={(e) => {
@@ -166,7 +170,21 @@ let Login = () => {
 							name="username"
 							error={errorMessages.username ? true : false}
 						/>
-						{errorMessages.username && <Error>{errorMessages.username}</Error>}
+						{errorMessages.username && <Error>{errorMessages.username}</Error>} */}
+
+						<label htmlFor="username">Email</label>
+						<FormField
+							type="email"
+							onChange={(e) => {
+								setCredentials({ ...credentials, email: e.target.value });
+								setErrorMessages({ ...errorMessages, email: "" });
+							}}
+							value={credentials.email}
+							id="email"
+							name="email"
+							error={errorMessages.email ? true : false}
+						/>
+						{errorMessages.email && <Error>{errorMessages.email}</Error>}
 
 						<label htmlFor="password">Password</label>
 						<FormField

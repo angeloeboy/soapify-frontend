@@ -8,11 +8,11 @@ import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 
 const RegisterContainer = styled.div`
-	height: 100vh;
+	/* height: 100vh; */
 	width: 100%;
 	max-width: 770px;
-	padding: 53px 10vw;
-	padding-top: 100px;
+	padding: 100px 10vw;
+
 	.appTitle {
 		text-transform: uppercase;
 		padding-bottom: 19px;
@@ -90,7 +90,7 @@ const Error = styled.p`
 `;
 
 let Register = () => {
-	const [credentials, setCredentials] = useState({ username: "", password: "", email: "", confirmPassword: "" });
+	const [credentials, setCredentials] = useState({ username: "", firstName: "", lastName: "", password: "", email: "", confirmPassword: "" });
 	const [loggingIn, setIsLoggingIn] = useState(false);
 
 	const [errorMessages, setErrorMessages] = useState({
@@ -140,6 +140,28 @@ let Register = () => {
 					</p>
 
 					<div className="formsContainer">
+						<label htmlFor="username">First Name</label>
+						<FormField
+							type="text"
+							onChange={(e) => {
+								setCredentials({ ...credentials, firstName: e.target.value });
+							}}
+							value={credentials.firstName}
+							id="firstName"
+							name="firstName"
+						/>
+
+						<label htmlFor="username">Last Name</label>
+						<FormField
+							type="text"
+							onChange={(e) => {
+								setCredentials({ ...credentials, lastName: e.target.value });
+							}}
+							value={credentials.lastName}
+							id="lastName"
+							name="lastName"
+						/>
+
 						<label htmlFor="username">Email</label>
 						<FormField
 							type="text"
@@ -153,20 +175,6 @@ let Register = () => {
 							error={errorMessages.email ? true : false}
 						/>
 						{errorMessages.email && <Error>{errorMessages.email}</Error>}
-
-						<label htmlFor="username">Username</label>
-						<FormField
-							type="text"
-							onChange={(e) => {
-								setCredentials({ ...credentials, username: e.target.value });
-								setErrorMessages({ ...errorMessages, username: "" });
-							}}
-							value={credentials.username}
-							id="username"
-							name="username"
-							error={errorMessages.username ? true : false}
-						/>
-						{errorMessages.username && <Error>{errorMessages.username}</Error>}
 
 						<label htmlFor="password">Password</label>
 						<FormField

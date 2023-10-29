@@ -8,7 +8,7 @@ import "../../styles/globals.css";
 
 const DashboardRight = styled.div`
 	width: 100%;
-	padding-left: ${(props) => (props.isSidebarOpen ? "256px" : "56px")};
+	padding-left: ${(props) => (props.$isSidebarOpen ? "256px" : "56px")};
 	transition: all 0.3s ease;
 
 	@media (max-width: 1500px) {
@@ -48,7 +48,7 @@ let DashboardLayout = ({ children }) => {
 				className="toast-container"
 			/>
 
-			<DashboardRight isSidebarOpen={isSidebarOpen}>
+			<DashboardRight $isSidebarOpen={isSidebarOpen}>
 				<TopBar pageName="Products" />
 
 				<DashboardRightContainer>{children}</DashboardRightContainer>

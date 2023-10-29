@@ -8,6 +8,39 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AddReturnComponent from "@/components/return/addReturn";
 import ReturnSearchBar from "@/components/return/searchBar";
 import { getCustomerTransaction } from "@/api/transaction";
+import styled from "styled-components";
+
+const Circle = styled.span`
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background-color: ${({ status }) => (status === "PENDING" ? "#FFC107" : status === "COMPLETED" ? "#4CAF50" : "#F44336")};
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	margin-right: 6px;
+`;
+
+const Animated = styled.div`
+	@keyframes fadeInFadeOut {
+		0% {
+			opacity: 0.5;
+		}
+		45% {
+			opacity: 1;
+		}
+		100% {
+			opacity: 0.5;
+		}
+	}
+
+	//add animation
+	animation: fadeInFadeOut 1s ease-in-out infinite;
+	display: block;
+	padding: 0.5rem 1rem;
+
+	/* background-color: ${({ status }) => (status === "PENDING" ? "#FFC107" : status === "COMPLETED" ? "#4CAF50" : "#F44336")}; */
+`;
 
 const Orders = () => {
 	const [returns, setReturns] = useState([]);
@@ -29,31 +62,6 @@ const Orders = () => {
 	};
 
 	useEffect(() => {
-		// // Fetch return data when the component mounts (can be replaced with API calls)
-		// const staticReturnData = [
-		// 	{
-		// 		returnID: "R001",
-		// 		customerInfo: "John Doe",
-		// 		productName: "Product A",
-		// 		dateOfPurchase: "2023-01-15",
-		// 		returnAmount: 50.0,
-		// 		returnReason: "Defective",
-		// 		returnStatus: "Processing",
-		// 	},
-		// 	{
-		// 		returnID: "R002",
-		// 		customerInfo: "Alice Smith",
-		// 		productName: "Product B",
-		// 		dateOfPurchase: "2023-02-20",
-		// 		returnAmount: 30.0,
-		// 		returnReason: "Changed Mind",
-		// 		returnStatus: "Not Completed",
-		// 	},
-		// 	// Add more return objects here as needed
-		// ];
-
-		// setReturns(staticReturnData);
-		// setFilteredReturns(staticReturnData); // Initialize filteredReturns with all returns
 		getTransactions();
 	}, []);
 
@@ -89,11 +97,16 @@ const Orders = () => {
 
 						{filteredTransactions.map((transaction, index) => (
 							<TableRows key={transaction.id}>
-								<TableData>{transaction.transaction_id}</TableData>
+								<TableData>{transaction.transaction_unique_id}</TableData>
 								<TableData>{transaction.transaction_number}</TableData>
 								<TableData>{transaction.items.length}</TableData>
 								<TableData>{transaction.payment_method.name}</TableData>
-								<TableData>Good</TableData>
+								<TableData>
+									<Animated status={transaction.status}>
+										<Circle status={transaction.status} />
+										{transaction.status}
+									</Animated>
+								</TableData>
 
 								<TableData>
 									<FontAwesomeIcon

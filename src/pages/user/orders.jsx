@@ -64,11 +64,11 @@ const Orders = () => {
 
 						{filteredTransactions.map((transaction, index) => (
 							<TableRows key={transaction.id}>
-								<TableData>{transaction.transaction_id}</TableData>
+								<TableData>{transaction.transaction_unique_id}</TableData>
 								<TableData>{transaction.transaction_number}</TableData>
 								<TableData>{transaction.items.length}</TableData>
 								<TableData>{transaction.payment_method.name}</TableData>
-								<TableData>Good</TableData>
+								<TableData>{transaction.status}</TableData>
 
 								<TableData>
 									<FontAwesomeIcon

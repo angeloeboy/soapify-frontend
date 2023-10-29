@@ -181,6 +181,7 @@ const sidebarData = [
 			{ title: "Suppliers", link: "/dashboard/suppliers" },
 			{ title: "Subcategories", link: "/dashboard/products/subcategories" },
 			{ title: "Attributes", link: "/dashboard/attributes" },
+			{ title: "Orders", link: "/dashboard/orders" },
 		],
 	},
 	{

@@ -92,26 +92,6 @@ const Pos = () => {
 		console.log(response.products);
 	};
 
-	const groupProductsByName = (products) => {
-		//group product by name if theres multiple of them
-		const groupedProducts = products.reduce((acc, product) => {
-			if (!acc[product.product_name]) {
-				acc[product.product_name] = [product];
-			} else {
-				acc[product.product_name].push(product);
-			}
-			return acc;
-		}, {});
-
-		//convert object to array
-		const groupedProductsArray = Object.keys(groupedProducts).map((key) => ({
-			product_name: key,
-			products: groupedProducts[key],
-		}));
-
-		return groupedProductsArray;
-	};
-
 	const groupProductsByParentProductId = (products) => {
 		const variants = products.filter((product) => product.parent_product_id !== null);
 

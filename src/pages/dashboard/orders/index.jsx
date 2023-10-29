@@ -5,66 +5,46 @@ import Table, { ActionContainer, TableData, TableHeadings, TableRows } from "@/s
 import StyledPanel from "@/styled-components/StyledPanel";
 import { faEllipsis, faTrash, faPen } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import AddReturnComponent from "@/components/return/addReturn";
-import ReturnSearchBar from "@/components/return/searchBar";
-import { getCustomerTransaction } from "@/api/transaction";
+import { getTransactions } from "@/api/transaction";
+import OrdersSearchBarComponent from "@/components/orders/SearchBarOrders";
+import Pagination from "./../../../components/misc/pagination";
 
 const Orders = () => {
-	const [returns, setReturns] = useState([]);
-	const [filteredReturns, setFilteredReturns] = useState([]); // Initialize with an empty array
+	const [transactions, setTransactions] = useState([]);
+	const [transactionsDisplay, setTransactionsDisplay] = useState([]);
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
 	const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false);
+	const [isEditPopUpOpen, setIsEditPopUpOpen] = useState(false);
 
-	const [transactions, setTransactions] = useState([]);
-	const [filteredTransactions, setFilteredTransactions] = useState([]); // Initialize with an empty array
+	const [currentPage, setCurrentPage] = useState(1);
+	const itemsPerPage = 10;
 
-	const handleSearch = (searchTerm) => {
-		const filtered = returns.filter((returnItem) => {
-			return (
-				returnItem.customerInfo.toLowerCase().includes(searchTerm.toLowerCase()) || returnItem.productName.toLowerCase().includes(searchTerm.toLowerCase())
-			);
-		});
+	const startIndex = (currentPage - 1) * itemsPerPage;
+	const endIndex = currentPage * itemsPerPage;
+	const paginatedTransactions = transactionsDisplay.slice(startIndex, endIndex);
 
-		setFilteredReturns(filtered);
+	useEffect(() => {
+		getAllTransactions();
+	}, []);
+
+	const handleClickOutside = (event) => {
+		if (!event.target.closest(".action-container") && !event.target.closest(".ellipsis")) {
+			setActiveActionContainer(null);
+		}
 	};
 
 	useEffect(() => {
-		// // Fetch return data when the component mounts (can be replaced with API calls)
-		// const staticReturnData = [
-		// 	{
-		// 		returnID: "R001",
-		// 		customerInfo: "John Doe",
-		// 		productName: "Product A",
-		// 		dateOfPurchase: "2023-01-15",
-		// 		returnAmount: 50.0,
-		// 		returnReason: "Defective",
-		// 		returnStatus: "Processing",
-		// 	},
-		// 	{
-		// 		returnID: "R002",
-		// 		customerInfo: "Alice Smith",
-		// 		productName: "Product B",
-		// 		dateOfPurchase: "2023-02-20",
-		// 		returnAmount: 30.0,
-		// 		returnReason: "Changed Mind",
-		// 		returnStatus: "Not Completed",
-		// 	},
-		// 	// Add more return objects here as needed
-		// ];
-
-		// setReturns(staticReturnData);
-		// setFilteredReturns(staticReturnData); // Initialize filteredReturns with all returns
-		getTransactions();
+		document.addEventListener("click", handleClickOutside);
+		return () => {
+			document.removeEventListener("click", handleClickOutside);
+		};
 	}, []);
 
-	const getTransactions = async () => {
-		const response = await getCustomerTransaction();
-		if (!response) return;
-		if (response.success) {
-			setTransactions(response.transactions);
-		}
-		setFilteredTransactions(response.transactions);
-		console.log(response.transactions);
+	const getAllTransactions = async () => {
+		const res = await getTransactions();
+		res.transactions ? setTransactions(res.transactions) : setTransactions([]);
+		res.transactions ? setTransactionsDisplay(res.transactions) : setTransactionsDisplay([]);
+		console.log(res.transactions);
 	};
 
 	return (
@@ -73,27 +53,31 @@ const Orders = () => {
 
 			<StyledPanel>
 				{/* <ReturnSearchBar onSearch={handleSearch} setIsAddPopUpOpen={setIsAddPopUpOpen} setReturnsDisplay={setReturns} /> */}
-
+				<OrdersSearchBarComponent setTransactionsDisplay={setTransactionsDisplay} transactions={transactions} />
 				<Table>
 					<tbody>
 						<TableRows heading>
-							<TableHeadings>Order ID</TableHeadings>
 							<TableHeadings>Transaction Number</TableHeadings>
-
+							<TableHeadings>Payment Transaction Number</TableHeadings>
 							<TableHeadings>No. of Products</TableHeadings>
-							<TableHeadings>Payment Method</TableHeadings>
 							<TableHeadings>Status</TableHeadings>
+							<TableHeadings>Ordered By</TableHeadings>
 
 							<TableHeadings>Actions</TableHeadings>
 						</TableRows>
 
-						{filteredTransactions.map((transaction, index) => (
-							<TableRows key={transaction.id}>
-								<TableData>{transaction.transaction_id}</TableData>
+						{paginatedTransactions.map((transaction, index) => (
+							<TableRows
+								key={transaction.transaction_unique_id}
+								onClick={() => {
+									console.log(transaction.items);
+								}}
+							>
+								<TableData $bold>{transaction.transaction_unique_id}</TableData>
 								<TableData>{transaction.transaction_number}</TableData>
 								<TableData>{transaction.items.length}</TableData>
-								<TableData>{transaction.payment_method.name}</TableData>
-								<TableData>Good</TableData>
+								<TableData>{transaction.status}</TableData>
+								<TableData>{`${transaction.transaction_user_name.first_name} ${transaction.transaction_user_name.last_name}`}</TableData>
 
 								<TableData>
 									<FontAwesomeIcon
@@ -118,9 +102,14 @@ const Orders = () => {
 						))}
 					</tbody>
 				</Table>
-			</StyledPanel>
 
-			{isAddPopUpOpen && <AddReturnComponent setIsAddPopUpOpen={setIsAddPopUpOpen} />}
+				<Pagination
+					totalItems={transactionsDisplay.length}
+					itemsPerPage={itemsPerPage}
+					currentPage={currentPage}
+					onPageChange={(newPage) => setCurrentPage(newPage)}
+				/>
+			</StyledPanel>
 		</DashboardLayout>
 	);
 };

@@ -5,9 +5,8 @@ import Table, { ActionContainer, TableData, TableHeadings, TableRows } from "@/s
 import StyledPanel from "@/styled-components/StyledPanel";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
+import AddShelvingComponent from "@/components/shelving/addShelving";
 import ShelvingSearchBar from "@/components/shelving/searchBar";
-import AddShelvingComponent from "@/components/shelving/AddShelving"; // Corrected import
-
 const Shelving = () => {
   const [shelves, setShelves] = useState([]);
   const [filteredShelves, setFilteredShelves] = useState([]); // State to store filtered shelves
@@ -63,7 +62,7 @@ const Shelving = () => {
       <StyledPanel>
         <ShelvingSearchBar
           setIsAddShelfPopupOpen={setIsAddShelfPopupOpen}
-          setShelvesDisplay={setFilteredShelves} // Set filtered shelves
+          setShelvesDisplay={setFilteredShelves}  
           onSearch={handleSearchShelves}
         />
 

@@ -16,14 +16,14 @@ import {
 
 const AddShelvingComponent = ({ setIsAddShelfPopupOpen, getShelvesFunc }) => {
   const [shelfData, setShelfData] = useState({
-    shelfID: 0, // Replace with logic to generate a unique shelf ID
+    shelfID: 0,  
     shelfName: "",
     category: "",
     capacity: 0,
     currentItems: 0,
-    status: "Active", // You can set the default status here
+    status: "Active",  
     description: "",
-    // Add any other shelving-related fields you need
+     
   });
 
   const addShelvingFunc = (e) => {
@@ -37,7 +37,7 @@ const AddShelvingComponent = ({ setIsAddShelfPopupOpen, getShelvesFunc }) => {
     //   console.log(res);
     // });
 
-    getShelvesFunc(); // Call this to refresh the shelf list
+    getShelvesFunc();  
   };
 
   return (

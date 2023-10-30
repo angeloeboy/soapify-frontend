@@ -34,7 +34,7 @@ export const TableData = styled.td`
 	padding-left: ${(props) => (props.bold ? "24px" : "0px")};
 
 	${(props) =>
-		props.withImage &&
+		props.$withImage &&
 		`
         display: flex;
         align-items: center;
@@ -65,12 +65,12 @@ export const TableData = styled.td`
 export const TableRows = styled.tr`
 	border-radius: 4px;
 	border-radius: 4px;
-	border: ${(props) => (props.heading ? "1px solid #dfdfdf" : "none")};
-	background: ${(props) => (props.heading ? "#f9f9f9" : "transparent")};
+	border: ${(props) => (props.$heading ? "1px solid #dfdfdf" : "none")};
+	background: ${(props) => (props.$heading ? "#f9f9f9" : "transparent")};
 	&:hover {
-		background: ${(props) => (props.heading ? "#f9f9f9" : "#f9f9f9")};
+		background: ${(props) => (props.$heading ? "#f9f9f9" : "#f9f9f9")};
 	}
-	cursor: ${(props) => (props.heading ? "default" : "pointer")};
+	cursor: ${(props) => (props.$heading ? "default" : "pointer")};
 	.ellipsis {
 		width: 16px;
 		height: 16px;
@@ -121,7 +121,7 @@ export let Status = styled.span`
 	display: inline-block;
 	padding: 8px;
 	border-radius: 6px;
-	background-color: ${(props) => (props.bgColor ? props.bgColor : "transparent")};
+	background-color: ${(props) => (props.$bgColor ? props.$bgColor : "transparent")};
 	color: ${(props) => (props.color ? props.color : "#fff")};
 	font-weight: bold;
 `;

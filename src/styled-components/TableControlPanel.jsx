@@ -34,10 +34,9 @@ export const SearchBar = styled.div`
 		}
 	}
 
-	
 	@media (max-width: 800px) {
 		width: 100%;
-		input{
+		input {
 			width: 100%;
 		}
 	}
@@ -76,7 +75,7 @@ export const DropdownHeader = styled.div`
 `;
 
 export const DropdownMenu = styled.div`
-	display: ${(props) => (props.isOpen ? "block" : "none")};
+	display: ${(props) => (props.$isOpen ? "block" : "none")};
 	position: absolute;
 	top: 100%;
 	left: 0;

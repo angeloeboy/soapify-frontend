@@ -70,7 +70,7 @@ const InventoryPage = () => {
 				<SearchBarComponent setIsAddPopUpOpen={setIsAddPopUpOpen} setinventoryDisplay={setinventoryDisplay} inventory={inventory} />
 				<Table>
 					<tbody>
-						<TableRows heading>
+						<TableRows $heading>
 							<TableHeadings>Product Name</TableHeadings>
 							<TableHeadings>Attributes</TableHeadings>
 							<TableHeadings>SKU</TableHeadings>

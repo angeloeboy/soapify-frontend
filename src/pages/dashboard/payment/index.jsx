@@ -89,7 +89,7 @@ const PaymentTable = () => {
 				<PaymentSearchBarComponent fetchPaymentMethods={fetchPaymentMethods} setAddPaymentOpen={setAddPaymentOpen} />
 				<Table>
 					<tbody>
-						<TableRows heading>
+						<TableRows $heading>
 							<TableHeadings>Payment Name</TableHeadings>
 							<TableHeadings>Number/Account Number</TableHeadings>
 							<TableHeadings>Created</TableHeadings>

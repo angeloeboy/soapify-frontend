@@ -84,7 +84,7 @@ const Orders = () => {
 
 				<Table>
 					<tbody>
-						<TableRows heading>
+						<TableRows $heading>
 							<TableHeadings>Order ID</TableHeadings>
 							<TableHeadings>Transaction Number</TableHeadings>
 

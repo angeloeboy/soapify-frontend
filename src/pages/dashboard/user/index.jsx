@@ -103,7 +103,7 @@ const User = () => {
 
 				<Table>
 					<tbody>
-						<TableRows heading>
+						<TableRows $heading>
 							<TableHeadings>Name</TableHeadings>
 							<TableHeadings>Username</TableHeadings>
 							<TableHeadings>Status</TableHeadings>
@@ -113,7 +113,7 @@ const User = () => {
 
 						{paginatedUserData.map((user, index) => (
 							<TableRows key={index}>
-								<TableData $bold withImage>
+								<TableData $bold $withImage>
 									<Image src="/product_img2.png" width={40} height={40} alt={"Product image"} />
 									{user.name}
 								</TableData>

@@ -38,9 +38,12 @@ const SearchBarComponent = ({ setIsAddPopUpOpen, products, setFilteredProducts, 
 
 		if (category === "All") {
 			filteredProducts = products.filter((product) => {
+				console.log(product.product_code);
+
 				return queryTerms.every(
 					(term) =>
 						product.product_name.toLowerCase().includes(term.toLowerCase()) ||
+						(product.product_code && product.product_code.toLowerCase().includes(term.toLowerCase())) ||
 						(product.attribute && product.attribute.some((attr) => attr.value.toLowerCase().includes(term.toLowerCase())))
 				);
 			});
@@ -89,7 +92,7 @@ const Dropdown = ({ productCategories, handleCategoryChange }) => {
 				<FontAwesomeIcon icon={faFilter} />
 				{selectedItem}
 			</DropdownHeader>
-			<DropdownMenu isOpen={isOpen}>
+			<DropdownMenu $isOpen={isOpen}>
 				<DropdownItem
 					key={0}
 					onClick={() => {
@@ -100,9 +103,9 @@ const Dropdown = ({ productCategories, handleCategoryChange }) => {
 				>
 					All
 				</DropdownItem>
-				{productCategories.map((option) => (
+				{productCategories.map((option, index) => (
 					<DropdownItem
-						key={option.id}
+						key={index}
 						onClick={() => {
 							setSelectedItem(option.name);
 							setIsOpen(false);

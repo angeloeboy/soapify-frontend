@@ -32,7 +32,7 @@ const PromoSearchBar = ({ setIsAddPopUpOpen, setPromosDisplay }) => {
 //         <FontAwesomeIcon icon={faFilter} />
 //         All
 //       </DropdownHeader>
-//       <DropdownMenu isOpen={isOpen}>
+//       <DropdownMenu $isOpen={isOpen}>
 //         <DropdownItem key={"All"}>All</DropdownItem>
 //       </DropdownMenu>
 //     </DropdownWrapper>

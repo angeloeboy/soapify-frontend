@@ -56,7 +56,7 @@ const Orders = () => {
 				<OrdersSearchBarComponent setTransactionsDisplay={setTransactionsDisplay} transactions={transactions} />
 				<Table>
 					<tbody>
-						<TableRows heading>
+						<TableRows $heading>
 							<TableHeadings>Transaction Number</TableHeadings>
 							<TableHeadings>Payment Transaction Number</TableHeadings>
 							<TableHeadings>No. of Products</TableHeadings>

@@ -86,7 +86,7 @@ const Dropdown = ({ products, handleProductChange }) => {
 				<FontAwesomeIcon icon={faFilter} />
 				{selectedItem}
 			</DropdownHeader>
-			<DropdownMenu isOpen={isOpen}>
+			<DropdownMenu $isOpen={isOpen}>
 				<DropdownItem
 					key={0}
 					onClick={() => {

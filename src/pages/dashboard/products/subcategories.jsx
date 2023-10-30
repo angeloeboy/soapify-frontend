@@ -67,9 +67,7 @@ const ProductTemplates = () => {
 
 	const handlePageChange = (newPage) => {
 		setCurrentPage(newPage);
-	  };
-	  
-
+	};
 
 	useEffect(() => {
 		document.addEventListener("click", handleClickOutside);
@@ -104,7 +102,7 @@ const ProductTemplates = () => {
 				<SearchBarComponent setPopupOpen={setPopupOpen} subCategories={subCategories} setSubcategoryDisplay={setSubcategoryDisplay} />
 				<Table>
 					<tbody>
-						<TableRows heading>
+						<TableRows $heading>
 							<TableHeadings>ID</TableHeadings>
 							<TableHeadings>Name</TableHeadings>
 							<TableHeadings>Attributes</TableHeadings>
@@ -174,7 +172,6 @@ const ProductTemplates = () => {
 					currentPage={currentPage}
 					onPageChange={handlePageChange} // Pass the page change handler
 				/>
-
 			</StyledPanel>
 			{/* {isPopupOpen && (
         <AddSubCategory

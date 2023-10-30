@@ -17,7 +17,6 @@ import SupplierSearchBarComponent from "@/components/suppliers/searchBarAndFilte
 import { PaginationControl } from "@/styled-components/ItemActionModal";
 import Pagination from "@/components/misc/pagination";
 
-
 const Suppliers = () => {
 	const [searchQuery, setSearchQuery] = useState(""); // Initialize searchQuery
 	const [isPopupOpen, setPopupOpen] = useState(false);
@@ -29,13 +28,12 @@ const Suppliers = () => {
 
 	const [selectedSupplierId, setSelectedSupplierId] = useState(null);
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+	const [currentPage, setCurrentPage] = useState(1);
+	const itemsPerPage = 10;
 
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = currentPage * itemsPerPage;
-  const paginatedSuppliers = suppliersDisplay.slice(startIndex, endIndex);
-
+	const startIndex = (currentPage - 1) * itemsPerPage;
+	const endIndex = currentPage * itemsPerPage;
+	const paginatedSuppliers = suppliersDisplay.slice(startIndex, endIndex);
 
 	const handleSearchChange = (event) => {
 		setSearchQuery(event.target.value);
@@ -86,7 +84,7 @@ const Suppliers = () => {
 
 				<Table>
 					<tbody>
-						<TableRows heading>
+						<TableRows $heading>
 							<TableHeadings>Supplier Name</TableHeadings>
 							<TableHeadings>Contact</TableHeadings>
 							<TableHeadings>Address</TableHeadings>
@@ -155,13 +153,12 @@ const Suppliers = () => {
 				/>
 			)}
 
-        <Pagination
-          totalItems={suppliersDisplay.length} // Total number of items
-          itemsPerPage={itemsPerPage}
-          currentPage={currentPage}
-          onPageChange={(newPage) => setCurrentPage(newPage)}
-        />
-
+			<Pagination
+				totalItems={suppliersDisplay.length} // Total number of items
+				itemsPerPage={itemsPerPage}
+				currentPage={currentPage}
+				onPageChange={(newPage) => setCurrentPage(newPage)}
+			/>
 		</DashboardLayout>
 	);
 };

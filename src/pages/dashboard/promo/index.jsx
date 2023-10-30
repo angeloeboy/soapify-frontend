@@ -67,7 +67,7 @@ const PromoPage = () => {
 
 				<Table>
 					<tbody>
-						<TableRows heading>
+						<TableRows $heading>
 							<TableHeadings>Promotion ID</TableHeadings>
 							<TableHeadings>Product Name</TableHeadings>
 							<TableHeadings>Promotion Name</TableHeadings>

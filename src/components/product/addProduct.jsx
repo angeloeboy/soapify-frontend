@@ -38,13 +38,12 @@ const AddProductComponent = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) 
 		subcategory_id: 0,
 		quantity_in_stock: 0,
 		minimum_reorder_level: 1,
-		isVariant: true,
-		parent_product_id: 1,
+		isVariant: false,
+		parent_product_id: 0,
 		attributes: [],
 	});
 
 	useEffect(() => {
-		// fetchSubCategories();
 		fetchProductCategories();
 		fetchSuppliers();
 	}, []);
@@ -52,35 +51,6 @@ const AddProductComponent = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) 
 	useEffect(() => {
 		console.log(product);
 	}, [product]);
-
-	// useEffect(() => {
-	// 	if (categories.length == 0) return;
-	// 	if (suppliers.length == 0) return;
-	// 	if (subCategories.length == 0) return;
-
-	// 	setSubCategories(categories[0]?.subcategories);
-	// 	setAttributes(categories[0]?.subcategories[0]?.attributes);
-	// 	//set initial attributes
-
-	// 	let initialAttributes = categories[0]?.subcategories[0]?.attributes;
-	// 	// console.log(categories[0].subcategories[0].subcategory_id);
-	// 	let attributeArray = [];
-
-	// 	initialAttributes.forEach((attribute) => {
-	// 		attributeArray.push({
-	// 			attribute_id: attribute.attribute_id,
-	// 			attribute_value_id: attribute.values[0].attribute_value_id,
-	// 		});
-	// 	});
-
-	// 	setProduct({
-	// 		...product,
-	// 		supplier_id: suppliers[0]?.supplier_id ?? 0,
-	// 		category_id: categories[0]?.category_id,
-	// 		subcategory_id: categories[0]?.subcategories[0].subcategory_id,
-	// 		attributes: attributeArray,
-	// 	});
-	// }, [categories, suppliers, subCategories]);
 
 	let AddProduct = (e) => {
 		e.preventDefault();
@@ -122,17 +92,7 @@ const AddProductComponent = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) 
 		res ? setSuppliers(res.suppliers) : setSuppliers([]);
 	};
 
-	// let fetchSubCategories = async () => {
-	// 	const res = await getSubCategories();
 
-	// 	if (!res) {
-	// 		setSubCategories([]);
-	// 		setAttributes([]);
-	// 		return;
-	// 	}
-
-	// 	setSubCategories(res.subcategories);
-	// };
 
 	useEffect(() => {
 		if (categories.length == 0) return;

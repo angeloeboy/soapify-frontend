@@ -13,7 +13,7 @@ const SidebarContainer = styled.div`
 	background-color: rgba(0, 32, 86, 1);
 	padding: 20px; /* Add some padding to give space for the button */
 	transition: all 0.3s ease;
-	transform: ${({ visible }) => (!visible ? "translateX(-100%)" : "translateX(0)")};
+	transform: ${({ $visible }) => (!$visible ? "translateX(-100%)" : "translateX(0)")};
 	flex-direction: column;
 	z-index: 101;
 	h1 {
@@ -255,8 +255,8 @@ const Sidebar = (props) => {
 
 	return (
 		<div>
-			<SidebarContainer visible={props.isSidebarOpen}>
-				<ToggleButton visible={sidebarVisible} onClick={handleToggleSidebar}>
+			<SidebarContainer $visible={props.isSidebarOpen}>
+				<ToggleButton onClick={handleToggleSidebar}>
 					{sidebarVisible ? (
 						<Image src="/toggle-sidebar-icon.png" alt="Close Sidebar" width="50" height="50" />
 					) : (

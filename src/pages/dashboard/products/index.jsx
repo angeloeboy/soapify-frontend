@@ -111,7 +111,9 @@ const Products = () => {
 				/>
 				<Table>
 					<tbody>
-						<TableRows heading>
+						<TableRows $heading>
+							<TableHeadings>Product ID</TableHeadings>
+
 							<TableHeadings>Name</TableHeadings>
 							<TableHeadings>Attributes</TableHeadings>
 							<TableHeadings>Stock</TableHeadings>
@@ -129,15 +131,16 @@ const Products = () => {
 						) : (
 							productDisplay.map((product, index) => (
 								<TableRows key={product.product_id}>
-									<TableData $bold withImage>
+									<TableData $bold $withImage>
 										<Image
 											src={product.image_link == "testimage" ? "/sabon.png" : "/api/" + product.image_link.replace(/\\/g, "/")}
 											alt="My Image"
 											width="40"
 											height="40"
 										/>
-										{product.product_name}
+										{product.product_code}
 									</TableData>
+									<TableData>{product.product_name}</TableData>
 									<TableData>
 										<div className="attr_container">
 											{product.attribute.map((attr, index) => {
@@ -149,19 +152,19 @@ const Products = () => {
 									<TableData>{product.product_price / 100}</TableData>
 									<TableData>
 										{checkStockStatus(product) === "Low" && (
-											<Status bgColor={"rgba(255, 116, 116, 0.49)"} color={"#EA0000"}>
+											<Status $bgColor={"rgba(255, 116, 116, 0.49)"} color={"#EA0000"}>
 												{checkStockStatus(product)}
 											</Status>
 										)}
 
 										{checkStockStatus(product) === "Moderate" && (
-											<Status bgColor={"rgba(255, 246, 116, 0.49)"} color={"#312600"}>
+											<Status $bgColor={"rgba(255, 246, 116, 0.49)"} color={"#312600"}>
 												{checkStockStatus(product)}
 											</Status>
 										)}
 
 										{checkStockStatus(product) === "High" && (
-											<Status bgColor={"rgba(179, 255, 116, 0.49)"} color={"#56ea00"}>
+											<Status $bgColor={"rgba(179, 255, 116, 0.49)"} color={"#56ea00"}>
 												{checkStockStatus(product)}
 											</Status>
 										)}

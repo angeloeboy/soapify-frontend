@@ -17,6 +17,7 @@ import AddAttributeComponent from "@/components/attributes/addAttributes";
 import EditAttributeComponent from "@/components/attributes/editAttribute";
 import Pagination from "@/components/misc/pagination";
 import { PaginationControl } from "@/styled-components/ItemActionModal";
+import LoadingSkeleton from "@/components/misc/loadingSkeleton";
 
 const PaymentTable = () => {
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
@@ -90,26 +91,7 @@ const PaymentTable = () => {
 						</TableRows>
 
 						{attributes.length === 0
-							? paymentMethodsLoading &&
-							  Array.from({ length: 8 }, (_, index) => (
-									<TableRows key={index}>
-										<TableData>
-											<Skeleton width={50} height={20} />
-										</TableData>
-										<TableData>
-											<Skeleton width={50} height={20} />
-										</TableData>
-										<TableData>
-											<Skeleton width={50} height={20} />
-										</TableData>
-										<TableData>
-											<Skeleton width={50} height={20} />
-										</TableData>
-										<TableData>
-											<Skeleton width={50} height={20} />
-										</TableData>
-									</TableRows>
-							  ))
+							? attributesLoading && <LoadingSkeleton columns={4} />
 							: paginatedAttributes.map((attribute, index) => (
 									<TableRows key={attribute.attribute_id}>
 										<TableData>{attribute.attribute_name}</TableData>

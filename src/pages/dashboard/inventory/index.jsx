@@ -14,6 +14,7 @@ import { getInventory } from "@/api/inventory";
 import SearchBarComponent from "@/components/inventory/searchBarAndFilter";
 import { PaginationControl } from "@/styled-components/ItemActionModal";
 import Pagination from "@/components/misc/pagination";
+import LoadingSkeleton from "@/components/misc/loadingSkeleton";
 
 const InventoryPage = () => {
 	const [inventory, setInventory] = useState([]);
@@ -21,6 +22,7 @@ const InventoryPage = () => {
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
 	const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false);
 	const [isEditPopUpOpen, setIsEditPopUpOpen] = useState(false);
+	const [inventoryLoading, setInventoryLoading] = useState(true);
 
 	const [currentPage, setCurrentPage] = useState(1);
 	const itemsPerPage = 10;
@@ -45,10 +47,12 @@ const InventoryPage = () => {
 	};
 
 	const fetchInventory = () => {
+		setInventoryLoading(true);
 		getInventory().then((res) => {
 			console.log(res);
 			res.inventory ? setInventory(res.inventory) : setInventory([]);
 			res.inventory ? setinventoryDisplay(res.inventory) : setinventoryDisplay([]);
+			setInventoryLoading(false);
 		});
 	};
 
@@ -79,48 +83,53 @@ const InventoryPage = () => {
 							<TableHeadings>Date Received</TableHeadings>
 							<TableHeadings>Actions</TableHeadings>
 						</TableRows>
+						{inventory.length === 0 ? (
+							inventoryLoading ? (
+								<LoadingSkeleton columns={6} />
+							) : null
+						) : (
+							paginatedInventory.map((inventory, index) => (
+								<TableRows key={index}>
+									<TableData $bold>{inventory.Product.product_name}</TableData>
+									<TableData>
+										<div className="attr_container">
+											{inventory.Product.attribute.map((attr, index) => {
+												return <span key={index}> {attr.value}</span>;
+											})}
+										</div>
+									</TableData>
+									<TableData>test</TableData>
 
-						{paginatedInventory.map((inventory, index) => (
-							<TableRows key={index}>
-								<TableData $bold>{inventory.Product.product_name}</TableData>
-								<TableData>
-									<div className="attr_container">
-										{inventory.Product.attribute.map((attr, index) => {
-											return <span key={index}> {attr.value}</span>;
-										})}
-									</div>
-								</TableData>
-								<TableData>test</TableData>
+									<TableData>{inventory.quantity}</TableData>
+									<TableData>{inventory.current_quantity}</TableData>
+									<TableData>{convertToDateFormat(inventory.date_added)}</TableData>
+									<TableData>
+										<FontAwesomeIcon
+											className="ellipsis"
+											icon={faEllipsis}
+											onClick={() => (activeActionContainer === index ? setActiveActionContainer(-1) : setActiveActionContainer(index))}
+										/>
 
-								<TableData>{inventory.quantity}</TableData>
-								<TableData>{inventory.current_quantity}</TableData>
-								<TableData>{convertToDateFormat(inventory.date_added)}</TableData>
-								<TableData>
-									<FontAwesomeIcon
-										className="ellipsis"
-										icon={faEllipsis}
-										onClick={() => (activeActionContainer === index ? setActiveActionContainer(-1) : setActiveActionContainer(index))}
-									/>
-
-									{activeActionContainer === index && (
-										<ActionContainer onClick={() => setActiveActionContainer(-1)}>
-											<p
-												onClick={() => {
-													setSelectedInventory(inventory);
-													setIsEditPopUpOpen(selectedInventory);
-												}}
-											>
-												<FontAwesomeIcon icon={faPen} />
-												Edit
-											</p>
-											<p>
-												<FontAwesomeIcon icon={faTrash} /> Delete
-											</p>
-										</ActionContainer>
-									)}
-								</TableData>
-							</TableRows>
-						))}
+										{activeActionContainer === index && (
+											<ActionContainer onClick={() => setActiveActionContainer(-1)}>
+												<p
+													onClick={() => {
+														setSelectedInventory(inventory);
+														setIsEditPopUpOpen(selectedInventory);
+													}}
+												>
+													<FontAwesomeIcon icon={faPen} />
+													Edit
+												</p>
+												<p>
+													<FontAwesomeIcon icon={faTrash} /> Delete
+												</p>
+											</ActionContainer>
+										)}
+									</TableData>
+								</TableRows>
+							))
+						)}
 					</tbody>
 				</Table>
 

@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getTransactions } from "@/api/transaction";
 import OrdersSearchBarComponent from "@/components/orders/SearchBarOrders";
 import Pagination from "./../../../components/misc/pagination";
+import LoadingSkeleton from "@/components/misc/loadingSkeleton";
 
 const Orders = () => {
 	const [transactions, setTransactions] = useState([]);
@@ -15,6 +16,7 @@ const Orders = () => {
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
 	const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false);
 	const [isEditPopUpOpen, setIsEditPopUpOpen] = useState(false);
+	const [transactionsLoading, setTransactionsLoading] = useState(true);
 
 	const [currentPage, setCurrentPage] = useState(1);
 	const itemsPerPage = 10;
@@ -41,10 +43,12 @@ const Orders = () => {
 	}, []);
 
 	const getAllTransactions = async () => {
+		setTransactionsLoading(true);
 		const res = await getTransactions();
 		res.transactions ? setTransactions(res.transactions) : setTransactions([]);
 		res.transactions ? setTransactionsDisplay(res.transactions) : setTransactionsDisplay([]);
 		console.log(res.transactions);
+		setTransactionsLoading(false);
 	};
 
 	return (
@@ -65,41 +69,48 @@ const Orders = () => {
 
 							<TableHeadings>Actions</TableHeadings>
 						</TableRows>
+						{transactions.length == 0 ? (
+							transactionsLoading ? (
+								<LoadingSkeleton columns={6} />
+							) : (
+								<p>No transactions found</p>
+							)
+						) : (
+							paginatedTransactions.map((transaction, index) => (
+								<TableRows
+									key={transaction.transaction_unique_id}
+									onClick={() => {
+										console.log(transaction.items);
+									}}
+								>
+									<TableData $bold>{transaction.transaction_unique_id}</TableData>
+									<TableData>{transaction.transaction_number}</TableData>
+									<TableData>{transaction.items.length}</TableData>
+									<TableData>{transaction.status}</TableData>
+									<TableData>{`${transaction.transaction_user_name.first_name} ${transaction.transaction_user_name.last_name}`}</TableData>
 
-						{paginatedTransactions.map((transaction, index) => (
-							<TableRows
-								key={transaction.transaction_unique_id}
-								onClick={() => {
-									console.log(transaction.items);
-								}}
-							>
-								<TableData $bold>{transaction.transaction_unique_id}</TableData>
-								<TableData>{transaction.transaction_number}</TableData>
-								<TableData>{transaction.items.length}</TableData>
-								<TableData>{transaction.status}</TableData>
-								<TableData>{`${transaction.transaction_user_name.first_name} ${transaction.transaction_user_name.last_name}`}</TableData>
+									<TableData>
+										<FontAwesomeIcon
+											className="ellipsis"
+											icon={faEllipsis}
+											onClick={() => (activeActionContainer === index ? setActiveActionContainer(-1) : setActiveActionContainer(index))}
+										/>
 
-								<TableData>
-									<FontAwesomeIcon
-										className="ellipsis"
-										icon={faEllipsis}
-										onClick={() => (activeActionContainer === index ? setActiveActionContainer(-1) : setActiveActionContainer(index))}
-									/>
-
-									{activeActionContainer === index && (
-										<ActionContainer onClick={() => setActiveActionContainer(-1)}>
-											<p>
-												<FontAwesomeIcon icon={faPen} />
-												Edit
-											</p>
-											<p>
-												<FontAwesomeIcon icon={faTrash} /> Delete
-											</p>
-										</ActionContainer>
-									)}
-								</TableData>
-							</TableRows>
-						))}
+										{activeActionContainer === index && (
+											<ActionContainer onClick={() => setActiveActionContainer(-1)}>
+												<p>
+													<FontAwesomeIcon icon={faPen} />
+													Edit
+												</p>
+												<p>
+													<FontAwesomeIcon icon={faTrash} /> Delete
+												</p>
+											</ActionContainer>
+										)}
+									</TableData>
+								</TableRows>
+							))
+						)}
 					</tbody>
 				</Table>
 

@@ -124,7 +124,7 @@ const Products = () => {
 
 						{products.length === 0 ? (
 							productsLoading ? (
-								<LoadingSkeleton columns={5} />
+								<LoadingSkeleton columns={6} />
 							) : (
 								<p>No Products found</p>
 							)

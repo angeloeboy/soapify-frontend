@@ -35,12 +35,12 @@ const Products = () => {
 	const [filteredProducts, setFilteredProducts] = useState([]);
 
 	useEffect(() => {
-		fetchProducts();
-	}, []);
-
-	useEffect(() => {
 		setProductDisplay(filteredProducts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
 	}, [currentPage, filteredProducts]);
+
+	useEffect(() => {
+		fetchProducts();
+	}, []);
 
 	const fetchProducts = () => {
 		getProducts().then((res) => {
@@ -73,10 +73,6 @@ const Products = () => {
 	};
 	const openEditPopUp = (product_id) => {
 		setEditPopUpOpen(true);
-	};
-
-	const onButtonClick = () => {
-		fileInput.current.click();
 	};
 
 	const checkStockStatus = (product) => {
@@ -207,7 +203,7 @@ const Products = () => {
 				/>
 			</StyledPanel>
 
-			{isAddPopUpOpen && <AddProductComponent setIsAddPopUpOpen={setIsAddPopUpOpen} onButtonClick={onButtonClick} GetProducts={fetchProducts} />}
+			{isAddPopUpOpen && <AddProductComponent setIsAddPopUpOpen={setIsAddPopUpOpen} GetProducts={fetchProducts} />}
 			{isEditPopupOpen && <EditProductComponent onClose={handleCloseEditPopUp} productId={selectedProductId} fetchProducts={fetchProducts} />}
 		</DashboardLayout>
 	);

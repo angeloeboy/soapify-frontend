@@ -10,42 +10,53 @@ import TopBar from "@/components/misc/topbar";
 import { useRouter } from "next/router";
 import UserSearchBarComponent from "@/components/misc/userSearchBarAndFilters";
 import EditUserComponent from "@/components/user/editUser";
-import PopupContentUser from "@/components/user/addUser";
+import AddUser from "@/components/user/addUser";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
 import Pagination from "@/components/misc/pagination";
+import { getUsers } from "@/api/users";
 
 const User = () => {
-	const [searchQuery, setSearchQuery] = useState(""); // Initialize searchQuery
-	const [isPopupOpen, setPopupOpen] = useState(false);
+	const [users, setUsers] = useState([]);
+	const [filteredUsers, setFilteredUsers] = useState([]);
+	const [userDisplay, setUserDisplay] = useState([]);
+
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
+	const [isAddUserOpen, setisAddUserOpen] = useState(false);
 	const [isEditUserPopup, setEditUserPopup] = useState(false);
 
-	const ITEMS_PER_PAGE = 10; // Adjust this to your desired number of items per page
+	const [isLoading, setIsLoading] = useState(false);
 	const [currentPage, setCurrentPage] = useState(1);
+	const itemsPerPage = 2;
 
-	const paginate = (array, currentPage, itemsPerPage) => {
-		const startIndex = (currentPage - 1) * itemsPerPage;
-		return array.slice(startIndex, startIndex + itemsPerPage);
-	};
-
-	const handleSearchChange = (event) => {
-		setSearchQuery(event.target.value);
-		// You can perform any other actions related to search here
-	};
-	const router = useRouter();
+	useEffect(() => {
+		setUserDisplay(filteredUsers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
+	}, [currentPage, filteredUsers]);
 
 	const handleClickOutside = (event) => {
 		if (!event.target.closest(".action-container") && !event.target.closest(".ellipsis")) {
 			setActiveActionContainer(null);
 		}
 	};
+
 	useEffect(() => {
 		document.addEventListener("click", handleClickOutside);
 		return () => {
 			document.removeEventListener("click", handleClickOutside);
 		};
 	}, []);
+
+	useEffect(() => {
+		fetchUsers();
+	}, []);
+
+	const fetchUsers = async () => {
+		const res = await getUsers();
+		console.log(res.users);
+		res.users ? setUsers(res.users) : setUsers([]);
+		res.users ? setUserDisplay(res.users) : setUserDisplay([]);
+		res.users ? setFilteredUsers(res.users) : setFilteredUsers([]);
+	};
 
 	const handleCloseEditUserPopUp = () => {
 		setEditUserPopup(false);
@@ -54,52 +65,11 @@ const User = () => {
 		setEditUserPopup(true);
 	};
 
-	const handleClosePopup = () => {
-		setEditUserPopup(false);
-	};
-	const onButtonClick = () => {
-		fileInput.current.click();
-	};
-
-	// useEffect(() => {
-	//   // Fetch your users or any other data here using a similar pattern as in the Products component.
-	//   // For example:
-	//   // fetchUsers().then((res) => {
-	//   //   setUsers(res.users || []);
-	//   // });
-	// }, []);
-	const userData = [
-		{
-			name: "User 1",
-			username: "user1",
-			status: "Active",
-			type: "Admin",
-		},
-		{
-			name: "User 2",
-			username: "user2",
-			status: "Inactive",
-			type: "User",
-		},
-		{
-			name: "User 3",
-			username: "user3",
-			status: "Active",
-			type: "User",
-		},
-	];
-	const paginatedUserData = paginate(userData, currentPage, ITEMS_PER_PAGE);
-
-	const [selectedUserId, setSelectedUserId] = useState(null);
 	return (
 		<DashboardLayout>
 			<PageTitle title="Accounts Lists" />
 			<StyledPanel>
-				<UserSearchBarComponent
-					searchQuery={searchQuery}
-					handleSearchChange={handleSearchChange}
-					// handleOpenPopup={handleOpenPopup} // Pass handleOpenPopup function
-				/>
+				<UserSearchBarComponent users={users} setFilteredUsers={setFilteredUsers} setCurrentPage={setCurrentPage} setIsLoading={setIsLoading} />
 
 				<Table>
 					<tbody>
@@ -111,7 +81,7 @@ const User = () => {
 							<TableHeadings>Actions</TableHeadings>
 						</TableRows>
 
-						{paginatedUserData.map((user, index) => (
+						{userDisplay.map((user, index) => (
 							<TableRows key={index}>
 								<TableData $bold $withImage>
 									<Image src="/product_img2.png" width={40} height={40} alt={"Product image"} />
@@ -151,7 +121,7 @@ const User = () => {
 					</tbody>
 				</Table>
 			</StyledPanel>
-			{isPopupOpen && <PopupContentUser onClose={handleClosePopup} onButtonClick={onButtonClick} />}
+			{isAddUserOpen && <AddUser setisAddUserOpen={setisAddUserOpen} fetchUsers={fetchUsers} />}
 			{isEditUserPopup && (
 				<EditUserComponent
 					onClose={handleCloseEditUserPopUp}
@@ -161,7 +131,7 @@ const User = () => {
 				/>
 			)}
 
-			<Pagination itemsPerPage={ITEMS_PER_PAGE} totalItems={userData.length} currentPage={currentPage} onPageChange={(page) => setCurrentPage(page)} />
+			<Pagination itemsPerPage={itemsPerPage} totalItems={filteredUsers.length} currentPage={currentPage} onPageChange={(page) => setCurrentPage(page)} />
 		</DashboardLayout>
 	);
 };

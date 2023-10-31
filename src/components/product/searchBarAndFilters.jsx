@@ -60,7 +60,7 @@ const SearchBarComponent = ({ setIsAddPopUpOpen, products, setFilteredProducts, 
 		}
 
 		setFilteredProducts(filteredProducts);
-		setCurrentPage(1); // Reset to the first page after a new search
+		setCurrentPage(1);
 	};
 
 	return (

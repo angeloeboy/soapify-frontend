@@ -22,7 +22,7 @@ import { useEffect, useState } from "react";
 import { addProduct, getProductCategories, getProducts, getSubCategories } from "@/api/products";
 import { getSuppliers } from "@/api/supplier";
 
-const AddProductComponent = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
+const AddProductComponent = ({ setIsAddPopUpOpen, GetProducts }) => {
 	const [categories, setCategories] = useState([]);
 	const [suppliers, setSuppliers] = useState([]);
 	const [attributes, setAttributes] = useState([]);
@@ -91,8 +91,6 @@ const AddProductComponent = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) 
 		const res = await getSuppliers();
 		res ? setSuppliers(res.suppliers) : setSuppliers([]);
 	};
-
-
 
 	useEffect(() => {
 		if (categories.length == 0) return;

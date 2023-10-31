@@ -182,6 +182,9 @@ const sidebarData = [
 			{ title: "Subcategories", link: "/dashboard/products/subcategories" },
 			{ title: "Attributes", link: "/dashboard/attributes" },
 			{ title: "Orders", link: "/dashboard/orders" },
+			{ title: "Returns", link: "/dashboard/returns" },
+			{ title: "Refunds", link: "/dashboard/refunds" },
+			{ title: "Promos", link: "/dashboard/promos" },
 		],
 	},
 	{

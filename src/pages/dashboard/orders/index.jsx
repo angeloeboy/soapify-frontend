@@ -9,6 +9,8 @@ import { getTransactions } from "@/api/transaction";
 import OrdersSearchBarComponent from "@/components/orders/SearchBarOrders";
 import Pagination from "./../../../components/misc/pagination";
 import LoadingSkeleton from "@/components/misc/loadingSkeleton";
+import EditOrder from "@/components/orders/editOrder";
+// import EditOrder from "@/components/orders/EditOrders";
 
 const Orders = () => {
 	const [transactions, setTransactions] = useState([]);
@@ -18,6 +20,8 @@ const Orders = () => {
 	const [isEditPopUpOpen, setIsEditPopUpOpen] = useState(false);
 	const [transactionsLoading, setTransactionsLoading] = useState(true);
 
+	const [selectedTransactionId, setSelectedTransactionId] = useState(null);
+	const [selectedTransaction, setSelectedTransaction] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
 	const itemsPerPage = 10;
 
@@ -47,7 +51,6 @@ const Orders = () => {
 		const res = await getTransactions();
 		res.transactions ? setTransactions(res.transactions) : setTransactions([]);
 		res.transactions ? setTransactionsDisplay(res.transactions) : setTransactionsDisplay([]);
-		console.log(res.transactions);
 		setTransactionsLoading(false);
 	};
 
@@ -66,28 +69,25 @@ const Orders = () => {
 							<TableHeadings>No. of Products</TableHeadings>
 							<TableHeadings>Status</TableHeadings>
 							<TableHeadings>Ordered By</TableHeadings>
+							<TableHeadings>Date</TableHeadings>
 
 							<TableHeadings>Actions</TableHeadings>
 						</TableRows>
 						{transactions.length == 0 ? (
 							transactionsLoading ? (
-								<LoadingSkeleton columns={6} />
+								<LoadingSkeleton columns={7} />
 							) : (
 								<p>No transactions found</p>
 							)
 						) : (
 							paginatedTransactions.map((transaction, index) => (
-								<TableRows
-									key={transaction.transaction_unique_id}
-									onClick={() => {
-										console.log(transaction.items);
-									}}
-								>
+								<TableRows key={transaction.transaction_unique_id}>
 									<TableData $bold>{transaction.transaction_unique_id}</TableData>
 									<TableData>{transaction.transaction_number}</TableData>
 									<TableData>{transaction.items.length}</TableData>
 									<TableData>{transaction.status}</TableData>
 									<TableData>{`${transaction.transaction_user_name.first_name} ${transaction.transaction_user_name.last_name}`}</TableData>
+									<TableData>{transaction.createdAt}</TableData>
 
 									<TableData>
 										<FontAwesomeIcon
@@ -98,7 +98,13 @@ const Orders = () => {
 
 										{activeActionContainer === index && (
 											<ActionContainer onClick={() => setActiveActionContainer(-1)}>
-												<p>
+												<p
+													onClick={() => {
+														setSelectedTransactionId(transaction.transaction_id);
+														setSelectedTransaction(transaction);
+														setIsEditPopUpOpen(true);
+													}}
+												>
 													<FontAwesomeIcon icon={faPen} />
 													Edit
 												</p>
@@ -113,7 +119,11 @@ const Orders = () => {
 						)}
 					</tbody>
 				</Table>
+				{isEditPopUpOpen && (
+					<EditOrder setIsEditPopUpOpen={setIsEditPopUpOpen} selectedTransactionId={selectedTransactionId} transaction={selectedTransaction} />
+				)}
 
+				{/* <EditOrder setIsEditPopUpOpen={setIsEditPopUpOpen} /> */}
 				<Pagination
 					totalItems={transactionsDisplay.length}
 					itemsPerPage={itemsPerPage}

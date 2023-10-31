@@ -22,7 +22,7 @@ import { useEffect, useState } from "react";
 
 // import { getUser, editUser, getUserCategories } from "@/api/users";
 
-const EditUserComponent = ({ userId, onClose, GetUsers }) => {
+const EditUser = ({ userId, onClose, GetUsers }) => {
   const [user, setUser] = useState({
     first_name: "",
     last_name: "",
@@ -200,4 +200,4 @@ const EditUserComponent = ({ userId, onClose, GetUsers }) => {
   );
 };
 
-export default EditUserComponent;
+export default EditUser;

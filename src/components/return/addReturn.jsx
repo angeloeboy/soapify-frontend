@@ -1,7 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { Label, Button, LabelContainer, FieldContainer, Centered, CloseButton, ButtonsContainer, PopupOverlay, PopupContent, HeaderTitle, FieldTitleLabel, InputHolder } from "@/styled-components/ItemActionModal";
+import {
+  Label,
+  Button,
+  LabelContainer,
+  FieldContainer,
+  Centered,
+  CloseButton,
+  ButtonsContainer,
+  PopupOverlay,
+  PopupContent,
+  HeaderTitle,
+  FieldTitleLabel,
+  InputHolder,
+} from "@/styled-components/ItemActionModal";
 
-const AddReturnComponent = ({ setIsAddPopUpOpen, getReturnsFunc }) => {
+const AddReturn = ({ setIsAddPopUpOpen, getReturnsFunc }) => {
   const currentDate = new Date().toISOString();
 
   const [returnData, setReturnData] = useState({
@@ -32,11 +45,7 @@ const AddReturnComponent = ({ setIsAddPopUpOpen, getReturnsFunc }) => {
           <FieldContainer>
             <div>
               <FieldTitleLabel>Return ID</FieldTitleLabel>
-              <InputHolder
-                type="text"
-                value={returnData.returnID}
-                readOnly
-              />
+              <InputHolder type="text" value={returnData.returnID} readOnly />
             </div>
             <LabelContainer>
               <Label>Customer Information</Label>
@@ -101,7 +110,9 @@ const AddReturnComponent = ({ setIsAddPopUpOpen, getReturnsFunc }) => {
           </FieldContainer>
 
           <ButtonsContainer>
-            <CloseButton onClick={() => setIsAddPopUpOpen(false)}>Close</CloseButton>
+            <CloseButton onClick={() => setIsAddPopUpOpen(false)}>
+              Close
+            </CloseButton>
             <Button type="submit">Save</Button>
           </ButtonsContainer>
         </form>
@@ -110,4 +121,4 @@ const AddReturnComponent = ({ setIsAddPopUpOpen, getReturnsFunc }) => {
   );
 };
 
-export default AddReturnComponent;
+export default AddReturn;

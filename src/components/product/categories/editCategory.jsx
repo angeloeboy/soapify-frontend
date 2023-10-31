@@ -20,7 +20,7 @@ import {
 import { useEffect, useState } from "react";
 import { editProduct, getProductCategories } from "@/api/products";
 
-const EditCategoryComponent = ({ category_id, onClose, fetchCategories }) => {
+const EditCategory = ({ category_id, onClose, fetchCategories }) => {
   const [category, setCategory] = useState({
     name: "",
   });
@@ -71,4 +71,4 @@ const EditCategoryComponent = ({ category_id, onClose, fetchCategories }) => {
   );
 };
 
-export default EditCategoryComponent;
+export default EditCategory;

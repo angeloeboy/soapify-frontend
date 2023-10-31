@@ -1,342 +1,385 @@
 import {
-	Button,
-	Select,
-	LabelContainer,
-	Label,
-	Option,
-	FieldContainer,
-	ProfilePictureContainer,
-	FileInput,
-	Centered,
-	SecondaryButton,
-	CloseButton,
-	ButtonsContainer,
-	PopupOverlay,
-	PopupContent,
-	HeaderTitle,
-	FieldTitleLabel,
-	InputHolder,
+  Button,
+  Select,
+  LabelContainer,
+  Label,
+  Option,
+  FieldContainer,
+  ProfilePictureContainer,
+  FileInput,
+  Centered,
+  SecondaryButton,
+  CloseButton,
+  ButtonsContainer,
+  PopupOverlay,
+  PopupContent,
+  HeaderTitle,
+  FieldTitleLabel,
+  InputHolder,
 } from "@/styled-components/ItemActionModal";
 
 import { useEffect, useState } from "react";
-import { addProduct, getProductCategories, getProducts, getSubCategories } from "@/api/products";
+import {
+  addProduct,
+  getProductCategories,
+  getProducts,
+  getSubCategories,
+} from "@/api/products";
 import { getSuppliers } from "@/api/supplier";
 
-const AddProductComponent = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
-	const [categories, setCategories] = useState([]);
-	const [suppliers, setSuppliers] = useState([]);
-	const [attributes, setAttributes] = useState([]);
+const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
+  const [categories, setCategories] = useState([]);
+  const [suppliers, setSuppliers] = useState([]);
+  const [attributes, setAttributes] = useState([]);
 
-	const [subCategories, setSubCategories] = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
 
-	const [product, setProduct] = useState({
-		product_name: "",
-		product_desc: "test description",
-		product_price: 0,
-		category_id: 1,
-		supplier_id: 0,
-		subcategory_id: 0,
-		quantity_in_stock: 0,
-		minimum_reorder_level: 1,
-		isVariant: false,
-		parent_product_id: 0,
-		attributes: [],
-	});
+  const [product, setProduct] = useState({
+    product_name: "",
+    product_desc: "test description",
+    product_price: 0,
+    category_id: 1,
+    supplier_id: 0,
+    subcategory_id: 0,
+    quantity_in_stock: 0,
+    minimum_reorder_level: 1,
+    isVariant: false,
+    parent_product_id: 0,
+    attributes: [],
+  });
 
-	useEffect(() => {
-		fetchProductCategories();
-		fetchSuppliers();
-	}, []);
+  useEffect(() => {
+    fetchProductCategories();
+    fetchSuppliers();
+  }, []);
 
-	useEffect(() => {
-		console.log(product);
-	}, [product]);
+  useEffect(() => {
+    console.log(product);
+  }, [product]);
 
-	let AddProduct = (e) => {
-		e.preventDefault();
+  let AddProduct = (e) => {
+    e.preventDefault();
 
-		let formData = new FormData();
+    let formData = new FormData();
 
-		// Append the image to formData
-		formData.append("product_image", e.target.elements.product_image.files[0]);
+    // Append the image to formData
+    formData.append("product_image", e.target.elements.product_image.files[0]);
 
-		// Append each property in the product object to formData
-		for (let key in product) {
-			if (product.hasOwnProperty(key)) {
-				if (key === "attributes") {
-					formData.append(key, JSON.stringify(product[key]));
-				} else {
-					formData.append(key, product[key]);
-				}
-			}
-		}
+    // Append each property in the product object to formData
+    for (let key in product) {
+      if (product.hasOwnProperty(key)) {
+        if (key === "attributes") {
+          formData.append(key, JSON.stringify(product[key]));
+        } else {
+          formData.append(key, product[key]);
+        }
+      }
+    }
 
-		addProduct(formData)
-			.then((res) => {
-				console.log(res);
-				GetProducts();
-			})
-			.catch((error) => {
-				console.error("Error adding product:", error);
-			});
-	};
+    addProduct(formData)
+      .then((res) => {
+        console.log(res);
+        GetProducts();
+      })
+      .catch((error) => {
+        console.error("Error adding product:", error);
+      });
+  };
 
-	let fetchProductCategories = async () => {
-		const res = await getProductCategories();
-		res ? setCategories(res.categories) : setCategories([]);
-		res ? setSubCategories(res.categories[0].subcategories) : setSubCategories([]);
-	};
+  let fetchProductCategories = async () => {
+    const res = await getProductCategories();
+    res ? setCategories(res.categories) : setCategories([]);
+    res
+      ? setSubCategories(res.categories[0].subcategories)
+      : setSubCategories([]);
+  };
 
-	let fetchSuppliers = async () => {
-		const res = await getSuppliers();
-		res ? setSuppliers(res.suppliers) : setSuppliers([]);
-	};
+  let fetchSuppliers = async () => {
+    const res = await getSuppliers();
+    res ? setSuppliers(res.suppliers) : setSuppliers([]);
+  };
 
+  useEffect(() => {
+    if (categories.length == 0) return;
 
+    let initialAttributes = categories[0]?.subcategories[0]?.attributes;
 
-	useEffect(() => {
-		if (categories.length == 0) return;
+    let attributeArray = [];
 
-		let initialAttributes = categories[0]?.subcategories[0]?.attributes;
+    initialAttributes.forEach((attribute) => {
+      attributeArray.push({
+        attribute_id: attribute.attribute_id,
+        attribute_value_id: attribute.values[0].attribute_value_id,
+      });
+    });
 
-		let attributeArray = [];
+    setProduct({
+      ...product,
+      supplier_id: suppliers[0]?.supplier_id ?? 0,
+      category_id: categories[0]?.category_id,
+      subcategory_id: categories[0]?.subcategories[0].subcategory_id,
+      attributes: attributeArray,
+    });
 
-		initialAttributes.forEach((attribute) => {
-			attributeArray.push({
-				attribute_id: attribute.attribute_id,
-				attribute_value_id: attribute.values[0].attribute_value_id,
-			});
-		});
+    setAttributes(categories[0]?.subcategories[0]?.attributes);
+  }, [categories]);
 
-		setProduct({
-			...product,
-			supplier_id: suppliers[0]?.supplier_id ?? 0,
-			category_id: categories[0]?.category_id,
-			subcategory_id: categories[0]?.subcategories[0].subcategory_id,
-			attributes: attributeArray,
-		});
+  let handleCategoryChange = (e) => {
+    let subcategory_id = categories.find(
+      (category) => category.category_id == e.target.value
+    ).subcategories[0].subcategory_id;
+    let initialAttributes = categories.find(
+      (category) => category.category_id == e.target.value
+    ).subcategories[0].attributes;
 
-		setAttributes(categories[0]?.subcategories[0]?.attributes);
-	}, [categories]);
+    let attributeArray = [];
 
-	let handleCategoryChange = (e) => {
-		let subcategory_id = categories.find((category) => category.category_id == e.target.value).subcategories[0].subcategory_id;
-		let initialAttributes = categories.find((category) => category.category_id == e.target.value).subcategories[0].attributes;
+    initialAttributes.forEach((attribute) => {
+      attributeArray.push({
+        attribute_id: attribute.attribute_id,
+        attribute_value_id: attribute.values[0].attribute_value_id,
+      });
+    });
 
-		let attributeArray = [];
+    setProduct({
+      ...product,
+      category_id: Number(e.target.value),
+      subcategory_id: subcategory_id,
+      attributes: attributeArray,
+    });
 
-		initialAttributes.forEach((attribute) => {
-			attributeArray.push({
-				attribute_id: attribute.attribute_id,
-				attribute_value_id: attribute.values[0].attribute_value_id,
-			});
-		});
+    setSubCategories(
+      categories.find((category) => category.category_id == e.target.value)
+        .subcategories
+    );
+    setAttributes(
+      categories.find((category) => category.category_id == e.target.value)
+        .subcategories[0].attributes
+    );
+  };
 
-		setProduct({
-			...product,
-			category_id: Number(e.target.value),
-			subcategory_id: subcategory_id,
-			attributes: attributeArray,
-		});
+  let handleSubCategoryChange = (e) => {
+    let initialAttributes = subCategories.find(
+      (subcategory) => subcategory.subcategory_id == e.target.value
+    ).attributes;
+    console.log(initialAttributes);
 
-		setSubCategories(categories.find((category) => category.category_id == e.target.value).subcategories);
-		setAttributes(categories.find((category) => category.category_id == e.target.value).subcategories[0].attributes);
-	};
+    let attributeArray = [];
 
-	let handleSubCategoryChange = (e) => {
-		let initialAttributes = subCategories.find((subcategory) => subcategory.subcategory_id == e.target.value).attributes;
-		console.log(initialAttributes);
+    initialAttributes.forEach((attribute) => {
+      attributeArray.push({
+        attribute_id: attribute.attribute_id,
+        attribute_value_id: attribute.values[0].attribute_value_id,
+      });
+    });
 
-		let attributeArray = [];
+    setProduct({
+      ...product,
+      subcategory_id: Number(e.target.value),
+      attributes: attributeArray,
+    });
 
-		initialAttributes.forEach((attribute) => {
-			attributeArray.push({
-				attribute_id: attribute.attribute_id,
-				attribute_value_id: attribute.values[0].attribute_value_id,
-			});
-		});
+    setAttributes(
+      subCategories.find(
+        (subcategory) => subcategory.subcategory_id == e.target.value
+      ).attributes
+    );
+  };
 
-		setProduct({
-			...product,
-			subcategory_id: Number(e.target.value),
-			attributes: attributeArray,
-		});
+  return (
+    <PopupOverlay>
+      <PopupContent>
+        <form onSubmit={(e) => AddProduct(e)} enctype="multipart/form-data">
+          <FieldContainer>
+            <HeaderTitle>Add Products</HeaderTitle>
 
-		setAttributes(subCategories.find((subcategory) => subcategory.subcategory_id == e.target.value).attributes);
-	};
+            <LabelContainer first>
+              <Label>Category</Label>
+            </LabelContainer>
+            <div>
+              <FieldTitleLabel notFirst>Category</FieldTitleLabel>
+              <Select
+                value={product.category_id}
+                onChange={(e) => {
+                  if (
+                    categories.find(
+                      (category) => category.category_id == e.target.value
+                    ).subcategories.length == 0
+                  ) {
+                    setSubCategories([]);
+                    setAttributes([]);
+                    setProduct({
+                      ...product,
+                      category_id: Number(e.target.value),
+                      subcategory_id: 0,
+                    });
+                    return;
+                  }
 
-	return (
-		<PopupOverlay>
-			<PopupContent>
-				<form onSubmit={(e) => AddProduct(e)} enctype="multipart/form-data">
-					<FieldContainer>
-						<HeaderTitle>Add Products</HeaderTitle>
+                  handleCategoryChange(e);
+                }}
+              >
+                {categories !== undefined &&
+                  categories.map((category) => (
+                    <Option
+                      value={category.category_id}
+                      key={category.category_id}
+                    >
+                      {category.name}
+                    </Option>
+                  ))}
+              </Select>
+            </div>
 
-						<LabelContainer first>
-							<Label>Category</Label>
-						</LabelContainer>
-						<div>
-							<FieldTitleLabel notFirst>Category</FieldTitleLabel>
-							<Select
-								value={product.category_id}
-								onChange={(e) => {
-									if (categories.find((category) => category.category_id == e.target.value).subcategories.length == 0) {
-										setSubCategories([]);
-										setAttributes([]);
-										setProduct({
-											...product,
-											category_id: Number(e.target.value),
-											subcategory_id: 0,
-										});
-										return;
-									}
+            <div>
+              <FieldTitleLabel>Sub category</FieldTitleLabel>
+              <Select
+                value={product.template_id}
+                onChange={(e) => {
+                  handleSubCategoryChange(e);
+                }}
+              >
+                {subCategories.map((subcategory) => (
+                  <Option
+                    value={subcategory.subcategory_id}
+                    key={subcategory.subcategory_id}
+                  >
+                    {subcategory.subcategory_name}
+                  </Option>
+                ))}
+              </Select>
+            </div>
 
-									handleCategoryChange(e);
-								}}
-							>
-								{categories !== undefined &&
-									categories.map((category) => (
-										<Option value={category.category_id} key={category.category_id}>
-											{category.name}
-										</Option>
-									))}
-							</Select>
-						</div>
+            <LabelContainer>
+              <Label>Attributes</Label>
+            </LabelContainer>
 
-						<div>
-							<FieldTitleLabel>Sub category</FieldTitleLabel>
-							<Select
-								value={product.template_id}
-								onChange={(e) => {
-									handleSubCategoryChange(e);
-								}}
-							>
-								{subCategories.map((subcategory) => (
-									<Option value={subcategory.subcategory_id} key={subcategory.subcategory_id}>
-										{subcategory.subcategory_name}
-									</Option>
-								))}
-							</Select>
-						</div>
+            {attributes.map((attribute, index) => {
+              return (
+                <div key={attribute.attribute_id}>
+                  <FieldTitleLabel notFirst>
+                    {attribute.attribute_name}
+                  </FieldTitleLabel>
 
-						<LabelContainer>
-							<Label>Attributes</Label>
-						</LabelContainer>
+                  <Select
+                    value={product.attributes[index]?.attribute_value_id}
+                    onChange={(e) => {
+                      let newAttributes = [...product.attributes];
+                      console.log(newAttributes);
+                      newAttributes[index].attribute_value_id = Number(
+                        e.target.value
+                      );
+                      setProduct({ ...product, attributes: newAttributes });
+                    }}
+                  >
+                    {attribute.values.map((attribute) => (
+                      <Option
+                        value={attribute.attribute_value_id}
+                        key={attribute.attribute_value_id}
+                      >
+                        {attribute.attribute_value}
+                      </Option>
+                    ))}
+                  </Select>
+                </div>
+              );
+            })}
 
-						{attributes.map((attribute, index) => {
-							return (
-								<div key={attribute.attribute_id}>
-									<FieldTitleLabel notFirst>{attribute.attribute_name}</FieldTitleLabel>
+            <LabelContainer first>
+              <Label>General Information</Label>
+            </LabelContainer>
 
-									<Select
-										value={product.attributes[index]?.attribute_value_id}
-										onChange={(e) => {
-											let newAttributes = [...product.attributes];
-											console.log(newAttributes);
-											newAttributes[index].attribute_value_id = Number(e.target.value);
-											setProduct({ ...product, attributes: newAttributes });
-										}}
-									>
-										{attribute.values.map((attribute) => (
-											<Option value={attribute.attribute_value_id} key={attribute.attribute_value_id}>
-												{attribute.attribute_value}
-											</Option>
-										))}
-									</Select>
-								</div>
-							);
-						})}
+            <div>
+              <FieldTitleLabel> Product Name </FieldTitleLabel>
+              <InputHolder
+                type="text"
+                onChange={(e) => {
+                  setProduct({ ...product, product_name: e.target.value });
+                }}
+                required
+                value={product.product_name}
+              />
+            </div>
+            <div>
+              <FieldTitleLabel notFirst>Price</FieldTitleLabel>
+              <InputHolder
+                type="text"
+                placeholder="Enter your Price"
+                onChange={(e) => {
+                  const validNumberRegex = /^[0-9]*(\.[0-9]*)?$/;
 
-						<LabelContainer first>
-							<Label>General Information</Label>
-						</LabelContainer>
+                  if (e.target.value === "") {
+                    setProduct({ ...product, product_price: "" });
+                  } else if (validNumberRegex.test(e.target.value)) {
+                    setProduct({ ...product, product_price: e.target.value });
+                  }
+                }}
+                pattern="^[0-9]*(\.[0-9]+)?$"
+                title="Please enter a valid number. Decimals are allowed."
+                required
+                value={product.product_price}
+              />
+            </div>
+            <div>
+              <FieldTitleLabel notFirst>Minimum Reorder Number</FieldTitleLabel>
+              <InputHolder
+                type="number"
+                placeholder="Enter your minimum stock"
+                onChange={(e) => {
+                  setProduct({
+                    ...product,
+                    minimum_reorder_level: parseInt(e.target.value, 10),
+                  });
+                }}
+                required
+                value={product.minimum_reorder_level}
+              />
+            </div>
+            <div>
+              <FieldTitleLabel notFirst>Image (optional)</FieldTitleLabel>
+              <ProfilePictureContainer>
+                <Centered>
+                  <input type="file" name="product_image" required />
+                </Centered>
+              </ProfilePictureContainer>
+            </div>
 
-						<div>
-							<FieldTitleLabel> Product Name </FieldTitleLabel>
-							<InputHolder
-								type="text"
-								onChange={(e) => {
-									setProduct({ ...product, product_name: e.target.value });
-								}}
-								required
-								value={product.product_name}
-							/>
-						</div>
-						<div>
-							<FieldTitleLabel notFirst>Price</FieldTitleLabel>
-							<InputHolder
-								type="text"
-								placeholder="Enter your Price"
-								onChange={(e) => {
-									const validNumberRegex = /^[0-9]*(\.[0-9]*)?$/;
+            <LabelContainer>
+              <Label>Supplier</Label>
+            </LabelContainer>
+            <div>
+              <FieldTitleLabel notFirst>Supplier</FieldTitleLabel>
+              <Select
+                value={product.supplier_id}
+                onChange={(e) => {
+                  setProduct({
+                    ...product,
+                    supplier_id: Number(e.target.value),
+                  });
+                }}
+              >
+                {suppliers.map((supplier) => (
+                  <Option
+                    value={supplier.supplier_id}
+                    key={supplier.supplier_id}
+                  >
+                    {supplier.supplier_name}
+                  </Option>
+                ))}
+              </Select>
+            </div>
+          </FieldContainer>
 
-									if (e.target.value === "") {
-										setProduct({ ...product, product_price: "" });
-									} else if (validNumberRegex.test(e.target.value)) {
-										setProduct({ ...product, product_price: e.target.value });
-									}
-								}}
-								pattern="^[0-9]*(\.[0-9]+)?$"
-								title="Please enter a valid number. Decimals are allowed."
-								required
-								value={product.product_price}
-							/>
-						</div>
-						<div>
-							<FieldTitleLabel notFirst>Minimum Reorder Number</FieldTitleLabel>
-							<InputHolder
-								type="number"
-								placeholder="Enter your minimum stock"
-								onChange={(e) => {
-									setProduct({
-										...product,
-										minimum_reorder_level: parseInt(e.target.value, 10),
-									});
-								}}
-								required
-								value={product.minimum_reorder_level}
-							/>
-						</div>
-						<div>
-							<FieldTitleLabel notFirst>Image (optional)</FieldTitleLabel>
-							<ProfilePictureContainer>
-								<Centered>
-									<input type="file" name="product_image" required />
-								</Centered>
-							</ProfilePictureContainer>
-						</div>
-
-						<LabelContainer>
-							<Label>Supplier</Label>
-						</LabelContainer>
-						<div>
-							<FieldTitleLabel notFirst>Supplier</FieldTitleLabel>
-							<Select
-								value={product.supplier_id}
-								onChange={(e) => {
-									setProduct({
-										...product,
-										supplier_id: Number(e.target.value),
-									});
-								}}
-							>
-								{suppliers.map((supplier) => (
-									<Option value={supplier.supplier_id} key={supplier.supplier_id}>
-										{supplier.supplier_name}
-									</Option>
-								))}
-							</Select>
-						</div>
-					</FieldContainer>
-
-					<ButtonsContainer>
-						<CloseButton onClick={() => setIsAddPopUpOpen(false)}>Close</CloseButton>
-						<Button type="submit">Save</Button>
-					</ButtonsContainer>
-				</form>
-			</PopupContent>
-		</PopupOverlay>
-	);
+          <ButtonsContainer>
+            <CloseButton onClick={() => setIsAddPopUpOpen(false)}>
+              Close
+            </CloseButton>
+            <Button type="submit">Save</Button>
+          </ButtonsContainer>
+        </form>
+      </PopupContent>
+    </PopupOverlay>
+  );
 };
 
-export default AddProductComponent;
+export default AddProduct;

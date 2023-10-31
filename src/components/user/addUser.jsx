@@ -20,7 +20,7 @@ import {
   InputHolder,
 } from "@/styled-components/ItemActionModal";
 
-const PopupContentUser = ({ onClose, onButtonClick, fileInput }) => {
+const AddUser = ({ onClose, onButtonClick, fileInput }) => {
   const [fileUploaded, setFileUploaded] = useState(false);
 
   const handleFileUpload = () => {
@@ -101,4 +101,4 @@ const PopupContentUser = ({ onClose, onButtonClick, fileInput }) => {
   );
 };
 
-export default PopupContentUser;
+export default AddUser;

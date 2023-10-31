@@ -33,7 +33,7 @@ export const addTransaction = async (transaction) => {
 	}
 };
 
-export const getTransaction = async () => {
+export const getTransaction = async (id) => {
 	try {
 		const response = await fetch("/api/transactions/" + id, {
 			method: "GET",

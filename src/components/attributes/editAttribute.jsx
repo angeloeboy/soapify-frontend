@@ -15,7 +15,7 @@ import {
   InputHolder,
 } from "@/styled-components/ItemActionModal";
 
-const EditAttributeComponent = ({ onClose, fetchAttributes }) => {
+const EditAttribute = ({ onClose, fetchAttributes }) => {
   const [attribute, setAttribute] = useState({
     attribute_name: "",
     requires_additional_value: false,
@@ -139,4 +139,4 @@ const EditAttributeComponent = ({ onClose, fetchAttributes }) => {
   );
 };
 
-export default EditAttributeComponent;
+export default EditAttribute;

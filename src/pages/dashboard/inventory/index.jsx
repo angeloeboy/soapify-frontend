@@ -8,10 +8,11 @@ import { faEllipsis, faFilter, faPen, faPlus, faPlusCircle, faTrash } from "@for
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TableControlPanel from "@/styled-components/TableControlPanel";
 import { Button, ButtonAddInventory, ButtonAddAccountType, ButtonAddStatus } from "@/styled-components/ItemActionModal";
-import AddInventoryComponent from "@/components/inventory/addInventory"; // Import your popup content component
+import AddInventory from "@/components/inventory/addInventory"; // Import your popup content component
 import EditInventoryComponent from "@/components/inventory/editInventory";
 import { getInventory } from "@/api/inventory";
 import InventorySearchBar from "@/components/inventory/inventorySearchBar";
+
 import { PaginationControl } from "@/styled-components/ItemActionModal";
 import Pagination from "@/components/misc/pagination";
 import LoadingSkeleton from "@/components/misc/loadingSkeleton";
@@ -140,7 +141,7 @@ const InventoryPage = () => {
 					onPageChange={(newPage) => setCurrentPage(newPage)}
 				/>
 			</StyledPanel>
-			{isAddPopUpOpen && <AddInventoryComponent setIsAddPopUpOpen={setIsAddPopUpOpen} getInventoryFunc={fetchInventory} />}
+			{isAddPopUpOpen && <AddInventory setIsAddPopUpOpen={setIsAddPopUpOpen} getInventoryFunc={fetchInventory} />}
 			{isEditPopUpOpen && <EditInventoryComponent setIsEditPopUpOpen={setIsEditPopUpOpen} getInventoryFunc={fetchInventory} />}
 		</DashboardLayout>
 	);

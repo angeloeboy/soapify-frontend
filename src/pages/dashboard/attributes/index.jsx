@@ -7,9 +7,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
 
 import { getAttributes } from "@/api/attributes";
-import AttributesSearchBarComponent from "@/components/attributes/searchBarAndFilters";
-import AddAttributeComponent from "@/components/attributes/addAttributes";
-import EditAttributeComponent from "@/components/attributes/editAttribute";
+import AttributeSearchBar from "@/components/attributes/attributeSearchbar";
+import AddAttribute from "@/components/attributes/addAttributes";
+import EditAttribute from "@/components/attributes/editAttribute";
 import Pagination from "@/components/misc/pagination";
 import LoadingSkeleton from "@/components/misc/loadingSkeleton";
 
@@ -71,7 +71,7 @@ const PaymentTable = () => {
 			<PageTitle title="Attributes" />
 			<StyledPanel>
 				{/* <PaymentSearchBarComponent searchQuery={searchQuery} handleSearchChange={handleSearchChange} handleOpenPopup={handleOpenPopup} /> */}
-				<AttributesSearchBarComponent setPopUpOpen={setPopUpOpen} />
+				<AttributeSearchBar setPopUpOpen={setPopUpOpen} />
 
 				<Table>
 					<tbody>
@@ -125,8 +125,8 @@ const PaymentTable = () => {
 					onPageChange={(newPage) => setCurrentPage(newPage)}
 				/>
 			</StyledPanel>
-			{isPopUpOpen && <AddAttributeComponent setPopUpOpen={setPopUpOpen} fetchAttributes={fetchAttributes} />}
-			{isEditAttributeOpen && <EditAttributeComponent onClose={closeEditAttribute} />}
+			{isPopUpOpen && <AddAttribute setPopUpOpen={setPopUpOpen} fetchAttributes={fetchAttributes} />}
+			{isEditAttributeOpen && <EditAttribute onClose={closeEditAttribute} />}
 		</DashboardLayout>
 	);
 };

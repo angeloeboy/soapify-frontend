@@ -22,7 +22,7 @@ import { useEffect, useState } from "react";
 import { addProduct, getProductCategories, getProducts, getSubCategories } from "@/api/products";
 import { getSuppliers } from "@/api/supplier";
 
-const AddProductComponent = ({ setIsAddPopUpOpen, GetProducts }) => {
+const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 	const [categories, setCategories] = useState([]);
 	const [suppliers, setSuppliers] = useState([]);
 	const [attributes, setAttributes] = useState([]);
@@ -337,4 +337,4 @@ const AddProductComponent = ({ setIsAddPopUpOpen, GetProducts }) => {
 	);
 };
 
-export default AddProductComponent;
+export default AddProduct;

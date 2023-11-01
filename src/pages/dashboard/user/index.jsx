@@ -9,7 +9,7 @@ import { Button } from "@/styled-components/ItemActionModal";
 import TopBar from "@/components/misc/topbar";
 import { useRouter } from "next/router";
 import UserSearchBarComponent from "@/components/misc/userSearchBarAndFilters";
-import EditUserComponent from "@/components/user/editUser";
+import EditUser from "@/components/user/editUser";
 import AddUser from "@/components/user/addUser";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
@@ -27,7 +27,7 @@ const User = () => {
 
 	const [isLoading, setIsLoading] = useState(false);
 	const [currentPage, setCurrentPage] = useState(1);
-	const itemsPerPage = 2;
+	const itemsPerPage = 10;
 
 	useEffect(() => {
 		setUserDisplay(filteredUsers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
@@ -123,7 +123,7 @@ const User = () => {
 			</StyledPanel>
 			{isAddUserOpen && <AddUser setisAddUserOpen={setisAddUserOpen} fetchUsers={fetchUsers} />}
 			{isEditUserPopup && (
-				<EditUserComponent
+				<EditUser
 					onClose={handleCloseEditUserPopUp}
 					// productId={selectedProductId}
 					//   onButtonClick={onButtonClick}

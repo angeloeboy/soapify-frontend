@@ -13,8 +13,8 @@ import "react-loading-skeleton/dist/skeleton.css";
 import Table, { ActionContainer, TableData, TableHeadings, TableRows, Status } from "@/styled-components/TableComponent";
 import { PaginationControl } from "@/styled-components/ItemActionModal";
 
-import AddProductComponent from "@/components/product/addProduct";
-import EditProductComponent from "@/components/product/editProduct";
+import AddProduct from "@/components/product/addProduct";
+import EditProduct from "@/components/product/editProduct";
 
 import ProductSearchBar from "@/components/product/productSearchBar";
 import LoadingSkeleton from "@/components/misc/loadingSkeleton";
@@ -200,8 +200,8 @@ const Products = () => {
 				/>
 			</StyledPanel>
 
-			{isAddPopUpOpen && <AddProductComponent setIsAddPopUpOpen={setIsAddPopUpOpen} GetProducts={fetchProducts} />}
-			{isEditPopupOpen && <EditProductComponent onClose={handleCloseEditPopUp} productId={selectedProductId} fetchProducts={fetchProducts} />}
+			{isAddPopUpOpen && <AddProduct setIsAddPopUpOpen={setIsAddPopUpOpen} GetProducts={fetchProducts} />}
+			{isEditPopupOpen && <EditProduct onClose={handleCloseEditPopUp} productId={selectedProductId} fetchProducts={fetchProducts} />}
 		</DashboardLayout>
 	);
 };

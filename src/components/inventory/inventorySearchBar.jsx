@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { DropdownHeader, DropdownItem, DropdownMenu, DropdownWrapper, SearchBar, TableControlPanel, Button } from "@/styled-components/TableControlPanel";
 import { getProducts } from "@/api/products";
 
-const SearchBarComponent = ({ setIsAddPopUpOpen, inventory, setinventoryDisplay }) => {
+const InventorySearchBar = ({ setIsAddPopUpOpen, inventory, setinventoryDisplay }) => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [selectedProduct, setSelectedProduct] = useState("All");
 	const [productCategories, setProductCategories] = useState([]);
@@ -33,15 +33,6 @@ const SearchBarComponent = ({ setIsAddPopUpOpen, inventory, setinventoryDisplay 
 	};
 
 	const handleSearch = () => {
-		// const query = searchQuery;
-		// // const category = selectedCategory;
-		// const product = selectedProduct.product_name;
-		// let filteredInventory;
-
-		// filteredInventory = query ? inventory.filter((inventory) => inventory.Product.product_name.toLowerCase().includes(query.toLowerCase())) : inventory;
-
-		// setinventoryDisplay(filteredInventory);
-
 		const queryTerms = searchQuery.split(" ");
 
 		let filteredInventory;
@@ -114,4 +105,4 @@ const Dropdown = ({ products, handleProductChange }) => {
 	);
 };
 
-export default SearchBarComponent;
+export default InventorySearchBar;

@@ -11,7 +11,7 @@ import { Button, ButtonAddInventory, ButtonAddAccountType, ButtonAddStatus } fro
 import AddInventoryComponent from "@/components/inventory/addInventory"; // Import your popup content component
 import EditInventoryComponent from "@/components/inventory/editInventory";
 import { getInventory } from "@/api/inventory";
-import SearchBarComponent from "@/components/inventory/searchBarAndFilter";
+import InventorySearchBar from "@/components/inventory/inventorySearchBar";
 import { PaginationControl } from "@/styled-components/ItemActionModal";
 import Pagination from "@/components/misc/pagination";
 import LoadingSkeleton from "@/components/misc/loadingSkeleton";
@@ -71,7 +71,7 @@ const InventoryPage = () => {
 			<PageTitle title="Inventory" />
 
 			<StyledPanel>
-				<SearchBarComponent setIsAddPopUpOpen={setIsAddPopUpOpen} setinventoryDisplay={setinventoryDisplay} inventory={inventory} />
+				<InventorySearchBar setIsAddPopUpOpen={setIsAddPopUpOpen} setinventoryDisplay={setinventoryDisplay} inventory={inventory} />
 				<Table>
 					<tbody>
 						<TableRows $heading>

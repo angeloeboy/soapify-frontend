@@ -16,7 +16,7 @@ import { PaginationControl } from "@/styled-components/ItemActionModal";
 import AddProductComponent from "@/components/product/addProduct";
 import EditProductComponent from "@/components/product/editProduct";
 
-import SearchBarComponent from "@/components/product/searchBarAndFilters";
+import ProductSearchBar from "@/components/product/productSearchBar";
 import LoadingSkeleton from "@/components/misc/loadingSkeleton";
 import Pagination from "@/components/misc/pagination";
 
@@ -24,6 +24,7 @@ const Products = () => {
 	const [products, setProducts] = useState([]);
 	const [productDisplay, setProductDisplay] = useState([]);
 	const [productsLoading, setProductsLoading] = useState(true);
+	// const [filteredProducts, setFilteredProducts] = useState([]);
 
 	const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false);
 	const [isEditPopupOpen, setEditPopUpOpen] = useState(false);
@@ -32,11 +33,13 @@ const Products = () => {
 	const [currentPage, setCurrentPage] = useState(1);
 	const itemsPerPage = 10;
 
-	const [filteredProducts, setFilteredProducts] = useState([]);
+	// useEffect(() => {
+	// 	setProductDisplay(filteredProducts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
+	// }, [currentPage, filteredProducts]);
 
-	useEffect(() => {
-		setProductDisplay(filteredProducts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
-	}, [currentPage, filteredProducts]);
+	const startIndex = (currentPage - 1) * itemsPerPage;
+	const endIndex = currentPage * itemsPerPage;
+	const paginatedProducts = productDisplay.slice(startIndex, endIndex);
 
 	useEffect(() => {
 		fetchProducts();
@@ -46,12 +49,12 @@ const Products = () => {
 		getProducts().then((res) => {
 			if (res.products) {
 				setProducts(res.products);
+				setProductDisplay(res.products);
 				console.log(res.products);
 			} else {
 				setProducts([]);
 			}
 			setProductsLoading(false);
-			setFilteredProducts(res.products || []);
 		});
 	};
 
@@ -98,13 +101,7 @@ const Products = () => {
 			<PageTitle title="Products List" />
 
 			<StyledPanel>
-				<SearchBarComponent
-					setIsAddPopUpOpen={setIsAddPopUpOpen}
-					setProductDisplay={setProductDisplay}
-					products={products}
-					setFilteredProducts={setFilteredProducts}
-					setCurrentPage={setCurrentPage}
-				/>
+				<ProductSearchBar setIsAddPopUpOpen={setIsAddPopUpOpen} setProductDisplay={setProductDisplay} products={products} setCurrentPage={setCurrentPage} />
 				<Table>
 					<tbody>
 						<TableRows $heading>
@@ -125,7 +122,7 @@ const Products = () => {
 								<p>No Products found</p>
 							)
 						) : (
-							productDisplay.map((product, index) => (
+							paginatedProducts.map((product, index) => (
 								<TableRows key={product.product_id}>
 									<TableData $bold $withImage>
 										<Image
@@ -196,7 +193,7 @@ const Products = () => {
 				</Table>
 
 				<Pagination
-					totalItems={filteredProducts.length}
+					totalItems={productDisplay.length}
 					itemsPerPage={itemsPerPage}
 					currentPage={currentPage}
 					onPageChange={(newPage) => setCurrentPage(newPage)}

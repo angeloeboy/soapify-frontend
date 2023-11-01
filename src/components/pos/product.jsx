@@ -292,7 +292,12 @@ const VariantsContainer = ({ variants, updateCart, setShowVariants }) => {
 	const [variantsDisplay, setVariantsDisplay] = useState(variants);
 
 	let handleProductClick = (variant) => {
-		variant.quantity_in_stock <= 0 ? null : updateCart(variant, "add");
+		const remove_variants = { ...variant };
+		delete remove_variants.variants;
+
+		console.log(remove_variants);
+
+		variant.quantity_in_stock <= 0 ? null : updateCart(remove_variants, "add");
 		toast.success("Added to cart");
 	};
 

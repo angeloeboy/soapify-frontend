@@ -71,8 +71,6 @@ const PaymentMethods = (props) => {
 	}, []);
 
 	const initiateTransaction = async () => {
-		setLoading(true);
-
 		const response = await addTransaction(transaction);
 		console.log(response);
 		if (response.status == "Success") {
@@ -81,6 +79,7 @@ const PaymentMethods = (props) => {
 			toast.error(response.errors[0].message);
 		}
 		setLoading(false);
+		console.log(transaction);
 	};
 
 	const fetchPaymentMethods = () => {

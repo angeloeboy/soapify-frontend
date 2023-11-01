@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { DropdownHeader, DropdownItem, DropdownMenu, DropdownWrapper, SearchBar, TableControlPanel, Button } from "@/styled-components/TableControlPanel";
 import { getProducts } from "@/api/products";
 
-const InventorySearchBar = ({ setIsAddPopUpOpen, inventory, setinventoryDisplay }) => {
+const InventorySearchBar = ({ setIsAddPopUpOpen, inventory, setinventoryDisplay, setCurrentPage }) => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [selectedProduct, setSelectedProduct] = useState("All");
 	const [productCategories, setProductCategories] = useState([]);
@@ -41,11 +41,13 @@ const InventorySearchBar = ({ setIsAddPopUpOpen, inventory, setinventoryDisplay 
 			return queryTerms.every(
 				(term) =>
 					item.Product.product_name.toLowerCase().includes(term.toLowerCase()) ||
+					item.Product.product_code.toLowerCase().includes(term.toLowerCase()) ||
 					(item.Product.attribute && item.Product.attribute.some((attr) => attr.value.toLowerCase().includes(term.toLowerCase())))
 			);
 		});
 
 		setinventoryDisplay(filteredInventory);
+		setCurrentPage(1);
 	};
 
 	return (

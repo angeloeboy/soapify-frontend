@@ -12,15 +12,19 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
 import AddShelving from "@/components/shelving/addShelving";
 import ShelvingSearchBar from "@/components/shelving/shelvingSearchBar";
+import Pagination from "@/components/misc/pagination";
+
 const Shelving = () => {
   const [shelves, setShelves] = useState([]);
-  const [filteredShelves, setFilteredShelves] = useState([]); // State to store filtered shelves
+  const [filteredShelves, setFilteredShelves] = useState([]);
   const [activeActionContainer, setActiveActionContainer] = useState(-1);
   const [isAddShelfPopupOpen, setIsAddShelfPopupOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 1; // Number of items to display per page.
 
   useEffect(() => {
-    // Simulated static shelving data
-    const staticShelvingData = [
+     const staticShelvingData = [
+
       {
         shelfID: "S001",
         shelfName: "Shelf A",
@@ -39,7 +43,27 @@ const Shelving = () => {
         status: "Active",
         description: "This shelf is for Liquid Soap.",
       },
-    ];
+      {
+        shelfID: "S001",
+        shelfName: "Shelf A",
+        category: "Bar Soap",
+        capacity: 50,
+        currentItems: 30,
+        status: "Active",
+        description: "This shelf is for Bar Soap.",
+      },
+      {
+        shelfID: "S002",
+        shelfName: "Shelf B",
+        category: "Liquid Soap",
+        capacity: 20,
+        currentItems: 15,
+        status: "Active",
+        description: "This shelf is for Liquid Soap.",
+      }
+
+      
+     ];
 
     setShelves(staticShelvingData);
     setFilteredShelves(staticShelvingData);
@@ -53,7 +77,12 @@ const Shelving = () => {
     );
 
     setFilteredShelves(filteredShelves);
+    setCurrentPage(1); // Reset to the first page when searching.
   };
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = currentPage * itemsPerPage;
+  const paginatedShelves = filteredShelves.slice(startIndex, endIndex);
 
   return (
     <DashboardLayout>
@@ -79,7 +108,7 @@ const Shelving = () => {
               <TableHeadings>Actions</TableHeadings>
             </TableRows>
 
-            {filteredShelves.map((shelf, index) => (
+            {paginatedShelves.map((shelf, index) => (
               <TableRows key={shelf.shelfID}>
                 <TableData>{shelf.shelfID}</TableData>
                 <TableData>{shelf.shelfName}</TableData>
@@ -117,6 +146,13 @@ const Shelving = () => {
             ))}
           </tbody>
         </Table>
+
+        <Pagination
+          totalItems={filteredShelves.length}
+          itemsPerPage={itemsPerPage}
+          currentPage={currentPage}
+          onPageChange={(newPage) => setCurrentPage(newPage)}
+        />
       </StyledPanel>
 
       {isAddShelfPopupOpen && (

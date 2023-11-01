@@ -72,7 +72,12 @@ const InventoryPage = () => {
 			<PageTitle title="Inventory" />
 
 			<StyledPanel>
-				<InventorySearchBar setIsAddPopUpOpen={setIsAddPopUpOpen} setinventoryDisplay={setinventoryDisplay} inventory={inventory} />
+				<InventorySearchBar
+					setIsAddPopUpOpen={setIsAddPopUpOpen}
+					setinventoryDisplay={setinventoryDisplay}
+					inventory={inventory}
+					setCurrentPage={setCurrentPage}
+				/>
 				<Table>
 					<tbody>
 						<TableRows $heading>
@@ -91,7 +96,10 @@ const InventoryPage = () => {
 						) : (
 							paginatedInventory.map((inventory, index) => (
 								<TableRows key={index}>
-									<TableData $bold>{inventory.Product.product_name}</TableData>
+									<TableData $bold>
+										{" "}
+										{inventory.Product.product_code} - {inventory.Product.product_name}
+									</TableData>
 									<TableData>
 										<div className="attr_container">
 											{inventory.Product.attribute.map((attr, index) => {

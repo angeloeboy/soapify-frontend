@@ -54,7 +54,7 @@ export async function middleware(req) {
 
 			const url = req.nextUrl.clone();
 			url.pathname = "/";
-			console.log("test");
+			// console.log("test");
 			// return response.ok ? NextResponse.next() : NextResponse.rewrite(url);
 			return response.ok ? NextResponse.next() : NextResponse.redirect(url);
 		}

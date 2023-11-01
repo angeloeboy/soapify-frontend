@@ -1,5 +1,5 @@
-const { FontAwesomeIcon } = require("@fortawesome/react-fontawesome");
 import { useEffect, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
 import {
   DropdownHeader,
@@ -13,7 +13,7 @@ import {
 
 import PopupContentWarehouse from "./addWarehouse"; // Import the warehouse popup component
 
-const WarehouseSearchBar = ({ setAddPopUpOpen }) => {
+const WarehouseSearchBar = ({ setAddPopUpOpen, warehouses, setFilteredWarehouses }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
 
@@ -30,8 +30,13 @@ const WarehouseSearchBar = ({ setAddPopUpOpen }) => {
   };
 
   const handleSearch = () => {
-    const category = selectedCategory;
-    console.log(category);
+    const filteredWarehouses = warehouses.filter((warehouse) => {
+      const matchCategory = selectedCategory === "All" || warehouse.category === selectedCategory;
+      const matchSearchQuery = warehouse.name.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchCategory && matchSearchQuery;
+    });
+
+    setFilteredWarehouses(filteredWarehouses);
   };
 
   return (
@@ -45,10 +50,6 @@ const WarehouseSearchBar = ({ setAddPopUpOpen }) => {
           onChange={handleSearchChange}
         />
       </SearchBar>
-      {/* <div>
-				<p>Warehouse Location</p>
-				<WarehouseDropDown warehouseTypeChange={warehouseTypeChange} />
-			</div> */}
       <div>
         <Button
           style={{ marginTop: "28px", padding: "16px 24px" }}
@@ -60,31 +61,5 @@ const WarehouseSearchBar = ({ setAddPopUpOpen }) => {
     </TableControlPanel>
   );
 };
-
-// const WarehouseDropDown = ({ warehouseTypeChange }) => {
-// 	const [isWarehouseDropDownOpen, setIsWarehouseDropDownOpen] = useState(false);
-// 	const [selectedItem, setSelectedItem] = useState("All");
-
-// 	return (
-// 		<DropdownWrapper onClick={() => setIsWarehouseDropDownOpen(!isWarehouseDropDownOpen)}>
-// 			<DropdownHeader>
-// 				<FontAwesomeIcon icon={faFilter} />
-// 				{selectedItem}
-// 			</DropdownHeader>
-// 			<DropdownMenu isWarehouseDropDownOpen={isWarehouseDropDownOpen}>
-// 				<DropdownItem
-// 					key={0}
-// 					onClick={() => {
-// 						setSelectedItem("All");
-// 						setIsWarehouseDropDownOpen(false);
-// 						warehouseTypeChange("All");
-// 					}}
-// 				>
-// 					All
-// 				</DropdownItem>
-// 			</DropdownMenu>
-// 		</DropdownWrapper>
-// 	);
-// };
 
 export default WarehouseSearchBar;

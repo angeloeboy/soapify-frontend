@@ -8,6 +8,8 @@ import { getProductCategories } from "@/api/products";
 const ProductSearchBar = ({ setIsAddPopUpOpen, products, setProductDisplay, setCurrentPage }) => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [selectedCategory, setSelectedCategory] = useState("All");
+	const [selectedStatus, setSelectedStatus] = useState("All");
+
 	const [productCategories, setProductCategories] = useState([]);
 
 	useEffect(() => {
@@ -16,7 +18,7 @@ const ProductSearchBar = ({ setIsAddPopUpOpen, products, setProductDisplay, setC
 
 	useEffect(() => {
 		handleSearch();
-	}, [searchQuery, selectedCategory]);
+	}, [searchQuery, selectedCategory, selectedStatus]);
 
 	const fetchProductCategories = async () => {
 		const response = await getProductCategories();
@@ -40,11 +42,14 @@ const ProductSearchBar = ({ setIsAddPopUpOpen, products, setProductDisplay, setC
 			filteredProducts = products.filter((product) => {
 				console.log(product.product_code);
 
-				return queryTerms.every(
-					(term) =>
-						product.product_name.toLowerCase().includes(term.toLowerCase()) ||
-						(product.product_code && product.product_code.toLowerCase().includes(term.toLowerCase())) ||
-						(product.attribute && product.attribute.some((attr) => attr.value.toLowerCase().includes(term.toLowerCase())))
+				return (
+					queryTerms.every(
+						(term) =>
+							product.product_name.toLowerCase().includes(term.toLowerCase()) ||
+							(product.product_code && product.product_code.toLowerCase().includes(term.toLowerCase())) ||
+							(product.attribute && product.attribute.some((attr) => attr.value.toLowerCase().includes(term.toLowerCase())))
+					) &&
+					(selectedStatus == "All" || product.isActive === selectedStatus)
 				);
 			});
 		} else {
@@ -54,7 +59,9 @@ const ProductSearchBar = ({ setIsAddPopUpOpen, products, setProductDisplay, setC
 						(term) =>
 							product.product_name.toLowerCase().includes(term.toLowerCase()) ||
 							(product.attribute && product.attribute.some((attr) => attr.value.toLowerCase().includes(term.toLowerCase())))
-					) && product.category.name.toLowerCase().includes(category.toLowerCase())
+					) &&
+					product.category.name.toLowerCase().includes(category.toLowerCase()) &&
+					(selectedStatus == "All" || product.isActive === selectedStatus)
 				);
 			});
 		}
@@ -72,6 +79,10 @@ const ProductSearchBar = ({ setIsAddPopUpOpen, products, setProductDisplay, setC
 			<div>
 				<p> Category</p>
 				<Dropdown productCategories={productCategories} handleCategoryChange={handleCategoryChange} />
+			</div>
+			<div>
+				<p> Status</p>
+				<StatusDropdown setSelectedStatus={setSelectedStatus} />
 			</div>
 
 			<div>
@@ -113,6 +124,46 @@ const Dropdown = ({ productCategories, handleCategoryChange }) => {
 						}}
 					>
 						{option.name}
+					</DropdownItem>
+				))}
+			</DropdownMenu>
+		</DropdownWrapper>
+	);
+};
+
+const StatusDropdown = ({ selectedStatus, setSelectedStatus }) => {
+	const [isOpen, setIsOpen] = useState(false);
+	const [selectedItem, setSelectedItem] = useState("All");
+	const [status, setStatus] = useState(["Active", "Inactive"]);
+
+	return (
+		<DropdownWrapper onClick={() => setIsOpen(!isOpen)}>
+			<DropdownHeader>
+				<FontAwesomeIcon icon={faFilter} />
+				{selectedItem}
+			</DropdownHeader>
+			<DropdownMenu $isOpen={isOpen}>
+				<DropdownItem
+					key={0}
+					onClick={() => {
+						setSelectedItem("All");
+						setSelectedStatus("All");
+						setIsOpen(false);
+					}}
+				>
+					All
+				</DropdownItem>
+				{status.map((option, index) => (
+					<DropdownItem
+						key={index + 1}
+						onClick={() => {
+							setSelectedItem(option);
+							setSelectedStatus(option === "Active" ? true : false);
+							setIsOpen(false);
+							// handleCategoryChange(option.name);
+						}}
+					>
+						{option}
 					</DropdownItem>
 				))}
 			</DropdownMenu>

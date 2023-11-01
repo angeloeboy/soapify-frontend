@@ -31,6 +31,7 @@ import { Button } from "@/styled-components/ItemActionModal";
 import CategoriesSearchBar from "@/components/product/categories/categoriesSearchBar";
 import AddCategories from "./../../../components/product/categories/addCategories";
 import EditCategory from "@/components/product/categories/editCategory";
+import Pagination from "@/components/misc/pagination";
 const Categories = () => {
   const [categories, setCategories] = useState([]);
   const [categoriesDisplay, setCategoriesDisplay] = useState([]);
@@ -38,29 +39,41 @@ const Categories = () => {
   const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false);
   const [isEditCategoryOpen, setEditCategoryOpen] = useState(false);
   const [activeActionContainer, setActiveActionContainer] = useState(-1);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 1;
 
   useEffect(() => {
     fetchCategories();
-  }, []);
+  }, [currentPage]);
 
   const fetchCategories = () => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = currentPage * itemsPerPage;
     getProductCategories().then((res) => {
       console.log(res);
       res.categories
-        ? setCategoriesDisplay(res.categories)
+        ? setCategories(res.categories)
+        : setCategories([]);
+      res.categories
+        ? setCategoriesDisplay(res.categories.slice(startIndex, endIndex))
         : setCategoriesDisplay([]);
-      res.categories ? setCategories(res.categories) : setCategories([]);
       setCategoriesLoading(false);
     });
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
   };
 
   const openEditPopUp = (category_id) => {
     setEditCategoryOpen(true);
   };
+
   const closeEditPopUp = () => {
     setEditCategoryOpen(false);
   };
 
+  
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   return (
@@ -158,6 +171,14 @@ const Categories = () => {
           setEditCategoryOpen={setEditCategoryOpen}
         />
       )}
+
+      <Pagination
+        totalItems={categoriesDisplay.length} // Total number of items
+        itemsPerPage={itemsPerPage}
+        currentPage={currentPage}
+        onPageChange={(newPage) => setCurrentPage(newPage)}
+      />  
+
     </DashboardLayout>
   );
 };

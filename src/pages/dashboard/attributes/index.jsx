@@ -3,140 +3,160 @@ import styled from "styled-components";
 import DashboardLayout from "@/components/misc/dashboardLayout";
 import StyledPanel from "@/styled-components/StyledPanel";
 import PageTitle from "@/components/misc/pageTitle";
-import Table, { ActionContainer, TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
+import Table, {
+  ActionContainer,
+  TableData,
+  TableHeadings,
+  TableRows,
+} from "@/styled-components/TableComponent";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
-import PaymentSearchBarComponent from "@/components/PaymentMethod/SearchBarPaymentMethod";
+import PaymentSearchBarComponent from "@/components/PaymentMethod/paymentMethodSearchBar";
 import { getPaymentMethods } from "@/api/pos";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import EditPaymentMethodComponent from "./../../../components/PaymentMethod/editPaymentMethod";
+import EditPaymentMethodComponent from "../../../components/PaymentMethod/editPayment";
 import { getAttributes } from "@/api/attributes";
-import AttributesSearchBarComponent from "@/components/attributes/searchBarAndFilters";
-import AddAttributeComponent from "@/components/attributes/addAttributes";
-import EditAttributeComponent from "@/components/attributes/editAttribute";
+import AttributeSearchBar from "@/components/attributes/attributeSearchbar";
+import AddAttribute from "@/components/attributes/addAttributes";
+import EditAttribute from "@/components/attributes/editAttribute";
 import Pagination from "@/components/misc/pagination";
 import { PaginationControl } from "@/styled-components/ItemActionModal";
 import LoadingSkeleton from "@/components/misc/loadingSkeleton";
 
 const PaymentTable = () => {
-	const [activeActionContainer, setActiveActionContainer] = useState(-1);
-	const [paymentMethodsLoading, setPaymentMethodsLoading] = useState(false); // Define paymentMethodsLoading state variable
+  const [activeActionContainer, setActiveActionContainer] = useState(-1);
+  const [paymentMethodsLoading, setPaymentMethodsLoading] = useState(false); // Define paymentMethodsLoading state variable
 
-	const [attributes, setAttributes] = useState([]);
-	const [attributesLoading, setAttributesLoading] = useState(false);
-	const [isEditAttributeOpen, setEditAttributeOpen] = useState(false); // Define isEditOpen state variable
-	const [isPopUpOpen, setPopUpOpen] = useState(false);
+  const [attributes, setAttributes] = useState([]);
+  const [attributesLoading, setAttributesLoading] = useState(false);
+  const [isEditAttributeOpen, setEditAttributeOpen] = useState(false); // Define isEditOpen state variable
+  const [isPopUpOpen, setPopUpOpen] = useState(false);
 
-	const [currentPage, setCurrentPage] = useState(1);
-	const itemsPerPage = 10;
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
-	const [attributesDisplay, setAttributesDisplay] = useState([]); // Define attributesDisplay state variable
+  const [attributesDisplay, setAttributesDisplay] = useState([]); // Define attributesDisplay state variable
 
-	useEffect(() => {
-		fetchAttributes();
-	}, []);
+  useEffect(() => {
+    fetchAttributes();
+  }, []);
 
-	const startIndex = (currentPage - 1) * itemsPerPage;
-	const endIndex = currentPage * itemsPerPage;
-	const paginatedAttributes = attributesDisplay.slice(startIndex, endIndex);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = currentPage * itemsPerPage;
+  const paginatedAttributes = attributesDisplay.slice(startIndex, endIndex);
 
-	useEffect(() => {
-		console.log(isPopUpOpen);
-	}, [isPopUpOpen]);
+  useEffect(() => {
+    console.log(isPopUpOpen);
+  }, [isPopUpOpen]);
 
-	const handleClosePopup = () => {
-		setPopupOpen(false);
-	};
+  const handleClosePopup = () => {
+    setPopupOpen(false);
+  };
 
-	const closeEditAttribute = () => {
-		setEditAttributeOpen(false);
-	};
-	const openEditAttribute = () => {
-		setEditAttributeOpen(true);
-	};
+  const closeEditAttribute = () => {
+    setEditAttributeOpen(false);
+  };
+  const openEditAttribute = () => {
+    setEditAttributeOpen(true);
+  };
 
-	const fetchAttributes = async () => {
-		const res = await getAttributes();
+  const fetchAttributes = async () => {
+    const res = await getAttributes();
 
-		if (!res) {
-			setAttributes([]);
-			setAttributesDisplay([]);
-			setAttributesLoading(false);
-			return;
-		}
+    if (!res) {
+      setAttributes([]);
+      setAttributesDisplay([]);
+      setAttributesLoading(false);
+      return;
+    }
 
-		res.attributes ? setAttributes(res.attributes) : setAttributes([]);
-		res.attributes ? setAttributesDisplay(res.attributes) : setAttributesDisplay([]);
-		setAttributesLoading(false);
-		console.log(res.attributes);
-	};
+    res.attributes ? setAttributes(res.attributes) : setAttributes([]);
+    res.attributes
+      ? setAttributesDisplay(res.attributes)
+      : setAttributesDisplay([]);
+    setAttributesLoading(false);
+    console.log(res.attributes);
+  };
 
-	const [selectedAttribute, setSelectedAttribute] = useState(null);
+  const [selectedAttribute, setSelectedAttribute] = useState(null);
 
-	return (
-		<DashboardLayout>
-			<PageTitle title="Attributes" />
-			<StyledPanel>
-				{/* <PaymentSearchBarComponent searchQuery={searchQuery} handleSearchChange={handleSearchChange} handleOpenPopup={handleOpenPopup} /> */}
-				<AttributesSearchBarComponent setPopUpOpen={setPopUpOpen} />
+  return (
+    <DashboardLayout>
+      <PageTitle title="Attributes" />
+      <StyledPanel>
+        {/* <PaymentSearchBarComponent searchQuery={searchQuery} handleSearchChange={handleSearchChange} handleOpenPopup={handleOpenPopup} /> */}
+        <AttributeSearchBar setPopUpOpen={setPopUpOpen} />
 
-				<Table>
-					<tbody>
-						<TableRows $heading>
-							<TableHeadings>Attribute Name</TableHeadings>
-							<TableHeadings>Choices</TableHeadings>
-							<TableHeadings>Additional info?</TableHeadings>
-							<TableHeadings>Actions</TableHeadings>
-						</TableRows>
+        <Table>
+          <tbody>
+            <TableRows $heading>
+              <TableHeadings>Attribute Name</TableHeadings>
+              <TableHeadings>Choices</TableHeadings>
+              <TableHeadings>Additional info?</TableHeadings>
+              <TableHeadings>Actions</TableHeadings>
+            </TableRows>
 
-						{attributes.length === 0
-							? attributesLoading && <LoadingSkeleton columns={4} />
-							: paginatedAttributes.map((attribute, index) => (
-									<TableRows key={attribute.attribute_id}>
-										<TableData>{attribute.attribute_name}</TableData>
-										<TableData>{attribute.values.length}</TableData>
+            {attributes.length === 0
+              ? attributesLoading && <LoadingSkeleton columns={4} />
+              : paginatedAttributes.map((attribute, index) => (
+                  <TableRows key={attribute.attribute_id}>
+                    <TableData>{attribute.attribute_name}</TableData>
+                    <TableData>{attribute.values.length}</TableData>
 
-										<TableData>{attribute.requires_additional_value ? "Yes" : "No"}</TableData>
-										<TableData>
-											<FontAwesomeIcon
-												className="ellipsis"
-												icon={faEllipsis}
-												onClick={() => (activeActionContainer === index ? setActiveActionContainer(-1) : setActiveActionContainer(index))}
-											/>
+                    <TableData>
+                      {attribute.requires_additional_value ? "Yes" : "No"}
+                    </TableData>
+                    <TableData>
+                      <FontAwesomeIcon
+                        className="ellipsis"
+                        icon={faEllipsis}
+                        onClick={() =>
+                          activeActionContainer === index
+                            ? setActiveActionContainer(-1)
+                            : setActiveActionContainer(index)
+                        }
+                      />
 
-											{activeActionContainer === index && (
-												<ActionContainer onClick={() => setActiveActionContainer(-1)}>
-													<p
-														onClick={() => {
-															setSelectedAttribute(attribute);
-															openEditAttribute(selectedAttribute);
-														}}
-													>
-														<FontAwesomeIcon icon={faPen} /> Edit
-													</p>
-													<p>
-														<FontAwesomeIcon icon={faTrash} /> Delete
-													</p>
-												</ActionContainer>
-											)}
-										</TableData>
-									</TableRows>
-							  ))}
-					</tbody>
-				</Table>
+                      {activeActionContainer === index && (
+                        <ActionContainer
+                          onClick={() => setActiveActionContainer(-1)}
+                        >
+                          <p
+                            onClick={() => {
+                              setSelectedAttribute(attribute);
+                              openEditAttribute(selectedAttribute);
+                            }}
+                          >
+                            <FontAwesomeIcon icon={faPen} /> Edit
+                          </p>
+                          <p>
+                            <FontAwesomeIcon icon={faTrash} /> Delete
+                          </p>
+                        </ActionContainer>
+                      )}
+                    </TableData>
+                  </TableRows>
+                ))}
+          </tbody>
+        </Table>
 
-				<Pagination
-					totalItems={attributesDisplay.length}
-					itemsPerPage={itemsPerPage}
-					currentPage={currentPage}
-					onPageChange={(newPage) => setCurrentPage(newPage)}
-				/>
-			</StyledPanel>
-			{isPopUpOpen && <AddAttributeComponent setPopUpOpen={setPopUpOpen} fetchAttributes={fetchAttributes} />}
-			{isEditAttributeOpen && <EditAttributeComponent onClose={closeEditAttribute} />}
-		</DashboardLayout>
-	);
+        <Pagination
+          totalItems={attributesDisplay.length}
+          itemsPerPage={itemsPerPage}
+          currentPage={currentPage}
+          onPageChange={(newPage) => setCurrentPage(newPage)}
+        />
+      </StyledPanel>
+      {isPopUpOpen && (
+        <AddAttribute
+          setPopUpOpen={setPopUpOpen}
+          fetchAttributes={fetchAttributes}
+        />
+      )}
+      {isEditAttributeOpen && <EditAttribute onClose={closeEditAttribute} />}
+    </DashboardLayout>
+  );
 };
 
 export default PaymentTable;

@@ -14,16 +14,15 @@ import {
   InputHolder,
 } from "@/styled-components/ItemActionModal";
 
-const AddShelvingComponent = ({ setIsAddShelfPopupOpen, getShelvesFunc }) => {
+const AddShelving = ({ setIsAddShelfPopupOpen, getShelvesFunc }) => {
   const [shelfData, setShelfData] = useState({
-    shelfID: 0,  
+    shelfID: 0,
     shelfName: "",
     category: "",
     capacity: 0,
     currentItems: 0,
-    status: "Active",  
+    status: "Active",
     description: "",
-     
   });
 
   const addShelvingFunc = (e) => {
@@ -37,7 +36,7 @@ const AddShelvingComponent = ({ setIsAddShelfPopupOpen, getShelvesFunc }) => {
     //   console.log(res);
     // });
 
-    getShelvesFunc();  
+    getShelvesFunc();
   };
 
   return (
@@ -48,11 +47,7 @@ const AddShelvingComponent = ({ setIsAddShelfPopupOpen, getShelvesFunc }) => {
           <FieldContainer>
             <div>
               <FieldTitleLabel>Shelf ID</FieldTitleLabel>
-              <InputHolder
-                type="text"
-                value={shelfData.shelfID}
-                readOnly
-              />
+              <InputHolder type="text" value={shelfData.shelfID} readOnly />
             </div>
             <div>
               <FieldTitleLabel>Shelf Name</FieldTitleLabel>
@@ -96,11 +91,7 @@ const AddShelvingComponent = ({ setIsAddShelfPopupOpen, getShelvesFunc }) => {
             </div>
             <div>
               <FieldTitleLabel>Status</FieldTitleLabel>
-              <InputHolder
-                type="text"
-                value={shelfData.status}
-                readOnly
-              />
+              <InputHolder type="text" value={shelfData.status} readOnly />
             </div>
             <div>
               <FieldTitleLabel>Description</FieldTitleLabel>
@@ -112,7 +103,7 @@ const AddShelvingComponent = ({ setIsAddShelfPopupOpen, getShelvesFunc }) => {
                 }
               />
             </div>
-           </FieldContainer>
+          </FieldContainer>
 
           <ButtonsContainer>
             <CloseButton onClick={() => setIsAddShelfPopupOpen(false)}>
@@ -126,4 +117,4 @@ const AddShelvingComponent = ({ setIsAddShelfPopupOpen, getShelvesFunc }) => {
   );
 };
 
-export default AddShelvingComponent;
+export default AddShelving;

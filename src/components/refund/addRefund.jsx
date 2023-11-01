@@ -16,7 +16,7 @@ import {
 import { useEffect, useState } from "react";
 // import { addRefund } from "@/api/products"; // Adjust the API import based on your requirements
 
-const AddRefundComponent = ({ setIsAddPopUpOpen, getRefundsFunc }) => {
+const AddRefund = ({ setIsAddPopUpOpen, getRefundsFunc }) => {
   const currentDate = new Date().toISOString();
 
   const [refund, setRefund] = useState({
@@ -102,4 +102,4 @@ const AddRefundComponent = ({ setIsAddPopUpOpen, getRefundsFunc }) => {
   );
 };
 
-export default AddRefundComponent;
+export default AddRefund;

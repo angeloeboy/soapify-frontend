@@ -8,7 +8,7 @@ import Table, { ActionContainer, TableData, TableHeadings, TableRows } from "@/s
 import { Button } from "@/styled-components/ItemActionModal";
 import TopBar from "@/components/misc/topbar";
 import { useRouter } from "next/router";
-import UserSearchBarComponent from "@/components/misc/userSearchBarAndFilters";
+import UserSearchBarComponent from "@/components/user/userSearchbar";
 import EditUser from "@/components/user/editUser";
 import AddUser from "@/components/user/addUser";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -20,24 +20,25 @@ const User = () => {
 	const [users, setUsers] = useState([]);
 	const [filteredUsers, setFilteredUsers] = useState([]);
 	const [userDisplay, setUserDisplay] = useState([]);
-
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
 	const [isAddUserOpen, setisAddUserOpen] = useState(false);
 	const [isEditUserPopup, setEditUserPopup] = useState(false);
-
 	const [isLoading, setIsLoading] = useState(false);
 	const [currentPage, setCurrentPage] = useState(1);
-	const itemsPerPage = 10;
-
-	useEffect(() => {
-		setUserDisplay(filteredUsers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
-	}, [currentPage, filteredUsers]);
-
+	const itemsPerPage = 5;
+      
 	const handleClickOutside = (event) => {
 		if (!event.target.closest(".action-container") && !event.target.closest(".ellipsis")) {
 			setActiveActionContainer(null);
 		}
 	};
+
+	useEffect(() => {
+		const startIndex = (currentPage - 1) * itemsPerPage;
+		const endIndex = currentPage * itemsPerPage;
+		const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
+		setUserDisplay(paginatedUsers);
+	  }, [currentPage, filteredUsers]);
 
 	useEffect(() => {
 		document.addEventListener("click", handleClickOutside);
@@ -69,7 +70,7 @@ const User = () => {
 		<DashboardLayout>
 			<PageTitle title="Accounts Lists" />
 			<StyledPanel>
-				<UserSearchBarComponent users={users} setFilteredUsers={setFilteredUsers} setCurrentPage={setCurrentPage} setIsLoading={setIsLoading} />
+			<UserSearchBarComponent users={users} setFilteredUsers={setFilteredUsers} setCurrentPage={setCurrentPage} setIsLoading={setIsLoading} />
 
 				<Table>
 					<tbody>
@@ -131,7 +132,10 @@ const User = () => {
 				/>
 			)}
 
-			<Pagination itemsPerPage={itemsPerPage} totalItems={filteredUsers.length} currentPage={currentPage} onPageChange={(page) => setCurrentPage(page)} />
+			<Pagination itemsPerPage={itemsPerPage} 
+						totalItems={filteredUsers.length} 
+						currentPage={currentPage} 
+						onPageChange={(page) => setCurrentPage(page)} />
 		</DashboardLayout>
 	);
 };

@@ -32,11 +32,9 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction }) => {
 					))}
 				</FieldContainer>
 				<ButtonsContainer>
-					<CloseButton onClick={() => setIsEditPopUpOpen(false)}>Close </CloseButton>
+					<CloseButton onClick={() => setIsOrdersInfoOpen(false)}>Close </CloseButton>
 					<Button onClick={() => addPaymentMethodFunc()}>Save</Button>
 				</ButtonsContainer>
-
-				{/* <ToastNotifier message={notification.text} type={notification.type} key={showToast} /> */}
 			</PopupContent>
 		</PopupOverlay>
 	);

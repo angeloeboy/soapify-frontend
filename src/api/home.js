@@ -12,9 +12,9 @@ export const getHomeData = async () => {
   }
 };
 
-export const getProductStats = async () => {
+export const getProductStats = async (id, year) => {
   try {
-    const response = await fetch("/api/product/stats/2023/10/23", {
+    const response = await fetch(`/api/product/${id}/stats/${year}`, {
       method: "GET",
       credentials: "include",
     });

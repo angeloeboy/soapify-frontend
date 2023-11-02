@@ -10,7 +10,41 @@ import OrdersSearchBar from "@/components/orders/ordersSearchBar";
 import Pagination from "./../../../components/misc/pagination";
 import LoadingSkeleton from "@/components/misc/loadingSkeleton";
 import EditOrder from "@/components/orders/editOrder";
+import styled from "styled-components";
+import OrdersInfo from "@/components/orders/ordersInfo";
 // import EditOrder from "@/components/orders/EditOrders";
+
+const Circle = styled.span`
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background-color: ${({ status }) => (status === "PENDING" ? "#FFC107" : status === "COMPLETED" ? "#4CAF50" : "#F44336")};
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	margin-right: 6px;
+`;
+
+const Animated = styled.div`
+	@keyframes fadeInFadeOut {
+		0% {
+			opacity: 0.5;
+		}
+		45% {
+			opacity: 1;
+		}
+		100% {
+			opacity: 0.5;
+		}
+	}
+
+	//add animation
+	animation: fadeInFadeOut 1s ease-in-out infinite;
+	display: block;
+	padding: 0.5rem 1rem;
+
+	/* background-color: ${({ status }) => (status === "PENDING" ? "#FFC107" : status === "COMPLETED" ? "#4CAF50" : "#F44336")}; */
+`;
 
 const Orders = () => {
 	const [transactions, setTransactions] = useState([]);
@@ -18,6 +52,8 @@ const Orders = () => {
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
 	const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false);
 	const [isEditPopUpOpen, setIsEditPopUpOpen] = useState(false);
+	const [isOrdersInfoOpen, setIsOrdersInfoOpen] = useState(false);
+
 	const [transactionsLoading, setTransactionsLoading] = useState(true);
 
 	const [selectedTransactionId, setSelectedTransactionId] = useState(null);
@@ -91,11 +127,22 @@ const Orders = () => {
 							)
 						) : (
 							paginatedTransactions.map((transaction, index) => (
-								<TableRows key={transaction.transaction_unique_id}>
+								<TableRows
+									key={transaction.transaction_unique_id}
+									onClick={() => {
+										setSelectedTransactionId(transaction);
+										setIsOrdersInfoOpen(true);
+									}}
+								>
 									<TableData $bold>{transaction.transaction_unique_id}</TableData>
 									<TableData>{transaction.transaction_number}</TableData>
 									<TableData>{transaction.items.length}</TableData>
-									<TableData>{transaction.status}</TableData>
+									<TableData>
+										<Animated status={transaction.status}>
+											<Circle status={transaction.status} />
+											{transaction.status}
+										</Animated>
+									</TableData>
 									<TableData>{`${transaction.transaction_user_name.first_name} ${transaction.transaction_user_name.last_name}`}</TableData>
 									<TableData>{convertToDateFormat(transaction.createdAt)}</TableData>
 
@@ -132,6 +179,7 @@ const Orders = () => {
 				{isEditPopUpOpen && (
 					<EditOrder setIsEditPopUpOpen={setIsEditPopUpOpen} selectedTransactionId={selectedTransactionId} transaction={selectedTransaction} />
 				)}
+				{isOrdersInfoOpen && <OrdersInfo setIsOrdersInfoOpen={setIsOrdersInfoOpen} selectedTransaction={selectedTransactionId} />}
 
 				{/* <EditOrder setIsEditPopUpOpen={setIsEditPopUpOpen} /> */}
 				<Pagination

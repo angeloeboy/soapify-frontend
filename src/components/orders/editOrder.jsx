@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
-import styled from "styled-components";
+import React, { useState } from "react";
 import {
 	Button,
 	FieldContainer,
@@ -9,16 +8,11 @@ import {
 	LabelContainer,
 	PopupContent,
 	PopupOverlay,
-	SecondaryButton,
+	HeaderTitle,
+	ButtonsContainer,
 } from "@/styled-components/ItemActionModal";
-import { HeaderTitle } from "@/styled-components/ItemActionModal";
-import { ButtonsContainer } from "@/styled-components/ItemActionModal";
 import { CloseButton } from "../styled-components/PopUp";
-import { addPaymentMethod } from "@/api/payment_method";
-import NotificationModal from "./../misc/notificationModal";
 
-import { ToastContainer, toast } from "react-toastify";
-import ToastNotifier from "../misc/toastNotifier";
 import { getTransaction } from "@/api/transaction";
 
 const EditOrder = ({ setIsEditPopUpOpen, selectedTransactionId, transaction }) => {

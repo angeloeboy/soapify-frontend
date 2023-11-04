@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { getHomeData } from "@/api/home";
 import Widget from "@/components/home/widget";
 import ProductPerformance from "@/components/home/productPerformance";
-import LineGraph from "@/components/home/linegraph";
+import AnnualRevenueGraph from "@/components/home/annualRevenueGraph";
 
 const Dashboard = () => {
   const [data, setData] = useState({});
@@ -67,20 +67,16 @@ const Dashboard = () => {
 
   return (
     <DashboardLayout>
-      {/* <p>Total Transactions: </p>
-			<p>{data.total_transactions}</p>
-
-			<p>Todays Transactions: </p>
-			<p>{data.todays_transactions && data.todays_transactions.length}</p> */}
-      {/* Date selection input fields */}
-
-      <Widget title="Sales Overview" width="50%" data={salesData} />
-      <Widget title="Orders Overview" width="50%" data={ordersData} />
-      <ProductPerformance />
-
-      {data.annual_sales_stats && (
-        <LineGraph annualSalesData={data.annual_sales_stats} />
-      )}
+      <div style={{ display: "flex" }}>
+        <Widget title="Sales Overview" width="50%" data={salesData} />
+        <Widget title="Orders Overview" width="50%" data={ordersData} />
+      </div>
+      <div style={{ display: "flex" }}>
+        {data.annual_sales_stats && (
+          <AnnualRevenueGraph annualSalesData={data.annual_sales_stats} />
+        )}
+        <ProductPerformance width="50%" />
+      </div>
     </DashboardLayout>
   );
 };

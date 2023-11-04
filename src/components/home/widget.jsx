@@ -7,7 +7,8 @@ const WidgetContainer = styled.div`
   background: #fff;
   padding: 28px;
   display: inline-block;
-  width: ${(props) => `calc(${props.width} - 2%)` || "100%"};
+  width: 50%;
+  height: 200px;
   margin: 1%;
   .title {
     color: #000;

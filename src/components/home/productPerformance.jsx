@@ -9,7 +9,7 @@ const LineGraphContainer = styled.div`
   background: #fff;
   padding: 28px;
   display: inline-block;
-  width: 60%;
+  width: 49%;
   height: 500px;
   margin: 1%;
   .title {
@@ -71,8 +71,16 @@ const ProductPerformance = () => {
     setProductStats(productStats.transactions);
     console.log("Product ID:", selectedProduct);
     console.log("Product Transactions", productStats.transactions);
-    // Use setInterval to add a new year every 365 days
 
+    if (
+      !productStats.transactions ||
+      Object.keys(productStats.transactions).length === 0
+    ) {
+      window.alert("Selected Product has no transactions as of now.");
+      return; // Return to prevent further chart updates
+
+      // Use setInterval to add a new year every 365 days
+    }
     if (productStats.transactions) {
       const labels = [
         "Jan",
@@ -88,13 +96,17 @@ const ProductPerformance = () => {
         "Nov",
         "Dec",
       ];
+      const initialData = Array(labels.length).fill(0);
 
+      const data = productStats.transactions
+        ? Object.values(productStats.transactions)
+        : initialData;
       setChartData({
         labels,
         datasets: [
           {
             label: "Units Sold",
-            data: Object.values(productStats.transactions),
+            data,
             borderColor: "rgb(75, 192, 192)",
             fill: false,
           },

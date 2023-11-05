@@ -108,6 +108,7 @@ const InventoryPage = () => {
 									</TableData> */}
 
 									<TableData> {inventory.Product.product_name}</TableData>
+									<TableData> Test</TableData>
 
 									<TableData>{inventory.quantity}</TableData>
 									<TableData>{inventory.current_quantity}</TableData>

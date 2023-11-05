@@ -4,9 +4,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import DashboardLayout from "@/components/misc/dashboardLayout";
 import PageTitle from "@/components/misc/pageTitle";
 import StyledPanel from "@/styled-components/StyledPanel";
-import { TableData,TableRows,TableHeadings } from "@/styled-components/TableComponent";
+import { TableData,TableRows,TableHeadings,ActionContainer } from "@/styled-components/TableComponent";
 import Table from "@/styled-components/TableComponent";
-import { faFilter, faPlus, faEdit, faEllipsis } from "@fortawesome/free-solid-svg-icons";
+import { faFilter, faPlus, faEdit, faEllipsis,faPen,faTrash} from "@fortawesome/free-solid-svg-icons";
 import Pagination from "@/components/misc/pagination";
 import {
   DropdownHeader,
@@ -17,13 +17,14 @@ import {
   TableControlPanel,
   Button,
 } from "@/styled-components/TableControlPanel";
-
+import EditWarehouseArea from "@/components/warehouseArea/editWarehouseAre";
 import AddWarehouseArea from "@/components/warehouseArea/addWarehouseArea";  
 import WarehouseAreaSearchBar from "@/components/warehouseArea/warehouseAreSearchBar";
 
 const WarehouseAreas = () => {
   const [showAddPopUp, setShowAddPopUp] = useState(false); // Add this line
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
+  const [editingWarehouseArea, setEditingWarehouseArea] = useState(null);
 
   const [warehouseAreas, setWarehouseAreas] = useState([
     {
@@ -65,6 +66,17 @@ const WarehouseAreas = () => {
   const endIndex = currentPage * itemsPerPage;
   const paginatedAreas = filteredWarehouseAreas.slice(startIndex, endIndex);
 
+  const handleEditClick = (index) => {
+    setActiveActionContainer(index);
+    setEditingWarehouseArea(warehouseAreas[index]);
+  };
+  const handleEditSave = (updatedWarehouseArea) => {
+    // Update the warehouse area in your data source, e.g., an array or API
+    // Also update the state or data source for the warehouse areas
+    setActiveActionContainer(-1);
+  };
+
+
   return (
     <DashboardLayout>
       <PageTitle title="Warehouse Areas List" />
@@ -96,30 +108,21 @@ const WarehouseAreas = () => {
                   <TableData>{area.areaType}</TableData>
                   <TableData>{area.capacity}</TableData>
                   <TableData>{area.location}</TableData>
-                  {/* <TableData>
-										<FontAwesomeIcon
-											className="ellipsis"
-											icon={faEllipsis}
-											onClick={() => (activeActionContainer === index ? setActiveActionContainer(-1) : setActiveActionContainer(index))}
-										/>
+                  <TableData>
+                  <FontAwesomeIcon
+                      className="ellipsis"
+                      icon={faPen}
+                      onClick={() => handleEditClick(index)}
+                    />
 
-										{activeActionContainer === index && (
-											<ActionContainer onClick={() => setActiveActionContainer(-1)}>
-												<p
-													onClick={() => {
-														setSelectedProductId(product.product_id);
-														openEditPopUp(selectedProductId);
-													}}
-												>
-													<FontAwesomeIcon icon={faPen} />
-													Edit
-												</p>
-												<p>
-													<FontAwesomeIcon icon={faTrash} /> Delete
-												</p>
-											</ActionContainer>
-										)}
-									</TableData> */}
+                    {activeActionContainer === index && (
+                      <EditWarehouseArea
+                        warehouseAreaData={editingWarehouseArea}
+                        onClose={() => setActiveActionContainer(-1)}
+                      />
+                    )}
+
+                </TableData>
                 </TableRows>
               ))
             )}

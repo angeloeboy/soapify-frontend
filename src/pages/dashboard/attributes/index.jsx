@@ -6,7 +6,7 @@ import Table, { ActionContainer, TableData, TableHeadings, TableRows } from "@/s
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
 
-import { getAttributes } from "@/api/attributes";
+import { deleteAttribute, getAttributes } from "@/api/attributes";
 import AttributeSearchBar from "@/components/attributes/attributeSearchbar";
 import AddAttribute from "@/components/attributes/addAttributes";
 import EditAttribute from "@/components/attributes/editAttribute";
@@ -64,6 +64,17 @@ const PaymentTable = () => {
 		setAttributesLoading(false);
 	};
 
+	const deleteAttributeFunc = async (attribute_id) => {
+		const res = await deleteAttribute(attribute_id);
+		console.log(res);
+
+		if (!res) {
+			return;
+		}
+
+		fetchAttributes();
+	};
+
 	const [selectedAttribute, setSelectedAttribute] = useState(null);
 
 	return (
@@ -107,7 +118,7 @@ const PaymentTable = () => {
 													>
 														<FontAwesomeIcon icon={faPen} /> Edit
 													</p>
-													<p>
+													<p onClick={() => deleteAttributeFunc(attribute.attribute_id)}>
 														<FontAwesomeIcon icon={faTrash} /> Delete
 													</p>
 												</ActionContainer>

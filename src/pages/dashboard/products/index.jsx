@@ -108,7 +108,7 @@ const Products = () => {
 							<TableHeadings>Product ID</TableHeadings>
 
 							<TableHeadings>Name</TableHeadings>
-							<TableHeadings>Attributes</TableHeadings>
+							{/* <TableHeadings>Attributes</TableHeadings> */}
 							<TableHeadings>Stock</TableHeadings>
 							<TableHeadings>Price</TableHeadings>
 							<TableHeadings>Stock Status</TableHeadings>
@@ -134,13 +134,13 @@ const Products = () => {
 										{product.product_code}
 									</TableData>
 									<TableData>{product.product_name}</TableData>
-									<TableData>
+									{/* <TableData>
 										<div className="attr_container">
 											{product.attribute.map((attr, index) => {
 												return <span key={index}> {attr.value}</span>;
 											})}
 										</div>
-									</TableData>
+									</TableData> */}
 									<TableData>{product.quantity_in_stock}</TableData>
 									<TableData>{product.product_price / 100}</TableData>
 									<TableData>

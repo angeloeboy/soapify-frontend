@@ -32,3 +32,20 @@ export const addAttribute = async (attribute) => {
 		console.log(error);
 	}
 };
+
+export const deleteAttribute = async (id) => {
+	try {
+		const response = await fetch(`/api/attributes/${id}`, {
+			method: "DELETE",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			credentials: "include",
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.log(error)
+	}
+};

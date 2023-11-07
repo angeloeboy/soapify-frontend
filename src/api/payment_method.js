@@ -47,3 +47,39 @@ export const editPayment = async (id, paymentMethod) => {
 		return data;
 	} catch (error) {}
 };
+
+
+export const deactivatePaymentMethod = async (payment_method_id, paymentMethod) => {
+	try {
+		const response = await fetch(`/api/paymentMethods/deactivate/${payment_method_id}`, {
+			method: "PUT",
+			credentials: "include",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(paymentMethod),
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};
+export const activatePaymentMethod = async (payment_method_id, paymentMethod) => {
+	try {
+		const response = await fetch(`/api/paymentMethods/activate/${payment_method_id}`, {
+			method: "PUT",
+			credentials: "include",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(paymentMethod),
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};

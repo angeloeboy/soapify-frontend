@@ -20,6 +20,7 @@ import Pagination from "@/components/misc/pagination";
 import "react-toastify/dist/ReactToastify.css";
 
 import { toast } from "react-toastify";
+import { useRouter } from "next/router";
 
 const Products = () => {
 	const [products, setProducts] = useState([]);
@@ -39,6 +40,7 @@ const Products = () => {
 	const endIndex = currentPage * itemsPerPage;
 	const paginatedProducts = productDisplay.slice(startIndex, endIndex);
 
+	const router = useRouter();
 	useEffect(() => {
 		fetchProducts();
 	}, []);
@@ -89,6 +91,13 @@ const Products = () => {
 
 		toast.success("Product sucessfuly activated");
 		fetchProducts();
+	};
+
+	const handleAddInventoryClick = (productId) => {
+		router.push({
+			pathname: "/dashboard/inventory",
+			query: { productId, openModal: "true" },
+		});
 	};
 
 	const handleClickOutside = (event) => {
@@ -200,6 +209,7 @@ const Products = () => {
 												</p>
 												<p onClick={() => activateProductFunc(product.product_id)}>Reactivate</p>
 												<p onClick={() => deactivateProductFunc(product.product_id)}>Deactivate</p>
+												{/* <p onClick={() => handleAddInventoryClick(product.product_id)}>Add Inventory</p> */}
 											</ActionContainer>
 										)}
 									</TableData>

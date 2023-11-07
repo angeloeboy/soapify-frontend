@@ -12,11 +12,30 @@ import {
 	ButtonsContainer,
 } from "@/styled-components/ItemActionModal";
 import { CloseButton } from "../styled-components/PopUp";
+import { setTransactionStatus } from "@/api/transaction";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction }) => {
+const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransactions }) => {
 	useEffect(() => {
 		console.log(selectedTransaction.items);
 	}, []);
+
+	const markAsDone = async () => {
+		const res = await setTransactionStatus(selectedTransaction.transaction_id, "DONE");
+		console.log(res);
+
+		if (res.status === "Success") {
+			toast.success("Transaction status updated");
+			setIsOrdersInfoOpen(false);
+			console.log("Success");
+			fetchTransactions();
+			return;
+		}
+
+		toast.error(res.message);
+	};
+
 	return (
 		<PopupOverlay>
 			<PopupContent>
@@ -31,6 +50,9 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction }) => {
 						</div>
 					))}
 				</FieldContainer>
+
+				<p>Status: {selectedTransaction.status}</p>
+				<button onClick={() => markAsDone()}>Mark as done</button>
 				<ButtonsContainer>
 					<CloseButton onClick={() => setIsOrdersInfoOpen(false)}>Close </CloseButton>
 					<Button onClick={() => addPaymentMethodFunc()}>Save</Button>

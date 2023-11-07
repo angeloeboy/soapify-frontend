@@ -59,3 +59,41 @@ export const editWarehouse = async (warehouse_id, warehouse) => {
 		console.log(error);
 	}
 };
+
+export const deactivateWarehouse = async (warehouse_id, warehouse) => {
+	try {
+		const response = await fetch(`/api/warehouse/deactivate/${warehouse_id}`, {
+			method: "PUT",
+			credentials: "include",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(warehouse),
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+
+export const reactivateWarehouse = async (warehouse_id, warehouse) => {
+	try {
+		const response = await fetch(`/api/warehouse/reactivate/${warehouse_id}`, {
+			method: "PUT",
+			credentials: "include",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(warehouse),
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};
+

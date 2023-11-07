@@ -83,13 +83,23 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 
 	let fetchProductCategories = async () => {
 		const res = await getProductCategories();
-		res ? setCategories(res.categories) : setCategories([]);
-		res ? setSubCategories(res.categories[0].subcategories) : setSubCategories([]);
+
+		//get categories that are active
+		const activeCategories = res.categories.filter((category) => category.isActive == 1);
+		const activeSubcategories = res.categories[0].subcategories.filter((subcategory) => subcategory.isActive == 1);
+
+		console.log(activeCategories);
+
+		res ? setCategories(activeCategories) : setCategories([]);
+		res ? setSubCategories(activeSubcategories) : setSubCategories([]);
 	};
 
 	let fetchSuppliers = async () => {
 		const res = await getSuppliers();
-		res ? setSuppliers(res.suppliers) : setSuppliers([]);
+
+		const activeSuppliers = res.suppliers.filter((supplier) => supplier.isActive == 1);
+
+		res ? setSuppliers(activeSuppliers) : setSuppliers([]);
 	};
 
 	useEffect(() => {

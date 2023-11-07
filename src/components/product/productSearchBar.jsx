@@ -1,9 +1,10 @@
 const { FontAwesomeIcon } = require("@fortawesome/react-fontawesome");
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { styled } from "styled-components";
 import { DropdownHeader, DropdownItem, DropdownMenu, DropdownWrapper, SearchBar, TableControlPanel, Button } from "@/styled-components/TableControlPanel";
 import { getProductCategories } from "@/api/products";
+import useOutsideClick from "@/hooks/useOutsideclick";
 
 const ProductSearchBar = ({ setIsAddPopUpOpen, products, setProductDisplay, setCurrentPage }) => {
 	const [searchQuery, setSearchQuery] = useState("");
@@ -19,7 +20,7 @@ const ProductSearchBar = ({ setIsAddPopUpOpen, products, setProductDisplay, setC
 
 	useEffect(() => {
 		handleSearch();
-	}, [searchQuery, selectedCategory, selectedStatus, selectedProductStatus]);
+	}, [searchQuery, selectedCategory, selectedStatus, selectedProductStatus, products]);
 
 	const fetchProductCategories = async () => {
 		const response = await getProductCategories();
@@ -102,9 +103,14 @@ const ProductSearchBar = ({ setIsAddPopUpOpen, products, setProductDisplay, setC
 const Dropdown = ({ productCategories, handleCategoryChange }) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const [selectedItem, setSelectedItem] = useState("All");
+	const dropdownRef = useRef(null);
+
+	useOutsideClick(dropdownRef, () => {
+		if (isOpen) setIsOpen(false);
+	});
 
 	return (
-		<DropdownWrapper onClick={() => setIsOpen(!isOpen)}>
+		<DropdownWrapper ref={dropdownRef} onClick={() => setIsOpen(!isOpen)}>
 			<DropdownHeader>
 				<FontAwesomeIcon icon={faFilter} />
 				{selectedItem}
@@ -141,9 +147,13 @@ const StatusDropdown = ({ selectedStatus, setSelectedStatus }) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const [selectedItem, setSelectedItem] = useState("All");
 	const [status, setStatus] = useState(["Active", "Inactive"]);
+	const dropdownRef = useRef(null);
 
+	useOutsideClick(dropdownRef, () => {
+		if (isOpen) setIsOpen(false);
+	});
 	return (
-		<DropdownWrapper onClick={() => setIsOpen(!isOpen)}>
+		<DropdownWrapper ref={dropdownRef} onClick={() => setIsOpen(!isOpen)}>
 			<DropdownHeader>
 				<FontAwesomeIcon icon={faFilter} />
 				{selectedItem}
@@ -181,9 +191,14 @@ const StockStatusDropdown = ({ selectedProductStatus, setSelectedProductStatus }
 	const [isOpen, setIsOpen] = useState(false);
 	const [selectedItem, setSelectedItem] = useState("All");
 	const [status, setStatus] = useState(["Low", "Moderate", "High"]);
+	const dropdownRef = useRef(null);
 
+	useOutsideClick(dropdownRef, () => {
+		if (isOpen) setIsOpen(false);
+	});
+	
 	return (
-		<DropdownWrapper onClick={() => setIsOpen(!isOpen)}>
+		<DropdownWrapper ref={dropdownRef} onClick={() => setIsOpen(!isOpen)}>
 			<DropdownHeader>
 				<FontAwesomeIcon icon={faFilter} />
 				{selectedItem}

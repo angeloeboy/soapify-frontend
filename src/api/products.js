@@ -66,6 +66,40 @@ export const editProduct = async (product, product_id) => {
 	}
 };
 
+export const deactivateProduct = async (product_id) => {
+	try {
+		const response = await fetch(`/api/product/deactivate/${product_id}`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			credentials: "include",
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const activateProduct = async (product_id) => {
+	try {
+		const response = await fetch(`/api/product/activate/${product_id}`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			credentials: "include",
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};
+
 //product categories
 
 export const getProductCategories = async () => {

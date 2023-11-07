@@ -6,12 +6,10 @@ import { faPen, faTrash, faEllipsis, faFilter, faPlus } from "@fortawesome/free-
 import PageTitle from "@/components/misc/pageTitle";
 import StyledPanel from "@/styled-components/StyledPanel";
 import { useEffect, useState } from "react";
-import { getProducts } from "@/api/products";
-import Skeleton from "react-loading-skeleton";
+import { deactivateProduct, getProducts, activateProduct } from "@/api/products";
 import "react-loading-skeleton/dist/skeleton.css";
 // import Button from "@/components/misc/button";
 import Table, { ActionContainer, TableData, TableHeadings, TableRows, Status } from "@/styled-components/TableComponent";
-import { PaginationControl } from "@/styled-components/ItemActionModal";
 
 import AddProduct from "@/components/product/addProduct";
 import EditProduct from "@/components/product/editProduct";
@@ -19,28 +17,30 @@ import EditProduct from "@/components/product/editProduct";
 import ProductSearchBar from "@/components/product/productSearchBar";
 import LoadingSkeleton from "@/components/misc/loadingSkeleton";
 import Pagination from "@/components/misc/pagination";
+import "react-toastify/dist/ReactToastify.css";
+
+import { toast } from "react-toastify";
+import { useRouter } from "next/router";
 
 const Products = () => {
 	const [products, setProducts] = useState([]);
 	const [productDisplay, setProductDisplay] = useState([]);
 	const [productsLoading, setProductsLoading] = useState(true);
-	// const [filteredProducts, setFilteredProducts] = useState([]);
 
 	const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false);
 	const [isEditPopupOpen, setEditPopUpOpen] = useState(false);
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
 
+	const [selectedProductId, setSelectedProductId] = useState(null);
+
 	const [currentPage, setCurrentPage] = useState(1);
 	const itemsPerPage = 10;
-
-	// useEffect(() => {
-	// 	setProductDisplay(filteredProducts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
-	// }, [currentPage, filteredProducts]);
 
 	const startIndex = (currentPage - 1) * itemsPerPage;
 	const endIndex = currentPage * itemsPerPage;
 	const paginatedProducts = productDisplay.slice(startIndex, endIndex);
 
+	const router = useRouter();
 	useEffect(() => {
 		fetchProducts();
 	}, []);
@@ -72,6 +72,34 @@ const Products = () => {
 		});
 	};
 
+	const deactivateProductFunc = async (product_id) => {
+		const res = await deactivateProduct(product_id);
+
+		if (!res) {
+			return;
+		}
+		toast.success("Product successfully deactivated");
+		fetchProducts();
+	};
+
+	const activateProductFunc = async (product_id) => {
+		const res = await activateProduct(product_id);
+
+		if (!res) {
+			return;
+		}
+
+		toast.success("Product sucessfuly activated");
+		fetchProducts();
+	};
+
+	const handleAddInventoryClick = (productId) => {
+		router.push({
+			pathname: "/dashboard/inventory",
+			query: { productId, openModal: "true" },
+		});
+	};
+
 	const handleClickOutside = (event) => {
 		if (!event.target.closest(".action-container") && !event.target.closest(".ellipsis")) {
 			setActiveActionContainer(null);
@@ -91,24 +119,6 @@ const Products = () => {
 	const openEditPopUp = (product_id) => {
 		setEditPopUpOpen(true);
 	};
-
-	const checkStockStatus = (product) => {
-		let status = "";
-
-		if (product.quantity_in_stock <= product.minimum_reorder_level) {
-			status = "Low";
-		}
-		if (product.quantity_in_stock > product.minimum_reorder_level && product.quantity_in_stock < 2 * product.minimum_reorder_level) {
-			status = "Moderate";
-		}
-		if (product.quantity_in_stock >= 2 * product.minimum_reorder_level) {
-			status = "High";
-		}
-
-		return status;
-	};
-
-	const [selectedProductId, setSelectedProductId] = useState(null);
 
 	return (
 		<DashboardLayout>
@@ -197,6 +207,9 @@ const Products = () => {
 												<p>
 													<FontAwesomeIcon icon={faTrash} /> Delete
 												</p>
+												<p onClick={() => activateProductFunc(product.product_id)}>Reactivate</p>
+												<p onClick={() => deactivateProductFunc(product.product_id)}>Deactivate</p>
+												{/* <p onClick={() => handleAddInventoryClick(product.product_id)}>Add Inventory</p> */}
 											</ActionContainer>
 										)}
 									</TableData>

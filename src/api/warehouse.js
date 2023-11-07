@@ -78,10 +78,9 @@ export const deactivateWarehouse = async (warehouse_id, warehouse) => {
 	}
 };
 
-
 export const reactivateWarehouse = async (warehouse_id, warehouse) => {
 	try {
-		const response = await fetch(`/api/warehouse/reactivate/${warehouse_id}`, {
+		const response = await fetch(`/api/warehouse/activate/${warehouse_id}`, {
 			method: "PUT",
 			credentials: "include",
 			headers: {
@@ -96,4 +95,3 @@ export const reactivateWarehouse = async (warehouse_id, warehouse) => {
 		console.log(error);
 	}
 };
-

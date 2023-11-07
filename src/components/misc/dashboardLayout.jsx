@@ -35,7 +35,7 @@ let DashboardLayout = ({ children }) => {
 		<>
 			<Sidebar setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} />
 			<ToastContainer
-				position="bottom-center"
+				position="top-right"
 				autoClose={2000}
 				hideProgressBar={false}
 				newestOnTop={false}

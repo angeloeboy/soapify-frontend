@@ -75,8 +75,8 @@ const Dashboard = () => {
         {data.annual_sales_stats && (
           <AnnualRevenueGraph annualSalesData={data.annual_sales_stats} />
         )}
-        <ProductPerformance width="50%" />
       </div>
+      <ProductPerformance width="50%" />
     </DashboardLayout>
   );
 };

@@ -48,9 +48,23 @@ const Products = () => {
 	const fetchProducts = () => {
 		getProducts().then((res) => {
 			if (res.products) {
-				setProducts(res.products);
-				setProductDisplay(res.products);
-				console.log(res.products);
+				let products = res.products;
+
+				products.map((product) => {
+					//check product status and add to product object
+					if (product.quantity_in_stock <= product.minimum_reorder_level) {
+						product.status = "Low";
+					}
+					if (product.quantity_in_stock > product.minimum_reorder_level && product.quantity_in_stock < 2 * product.minimum_reorder_level) {
+						product.status = "Moderate";
+					}
+					if (product.quantity_in_stock >= 2 * product.minimum_reorder_level) {
+						product.status = "High";
+					}
+				});
+				console.log(products);
+				setProducts(products);
+				setProductDisplay(products);
 			} else {
 				setProducts([]);
 			}
@@ -144,21 +158,21 @@ const Products = () => {
 									<TableData>{product.quantity_in_stock}</TableData>
 									<TableData>{product.product_price / 100}</TableData>
 									<TableData>
-										{checkStockStatus(product) === "Low" && (
+										{product.status === "Low" && (
 											<Status $bgColor={"rgba(255, 116, 116, 0.49)"} color={"#EA0000"}>
-												{checkStockStatus(product)}
+												{product.status}
 											</Status>
 										)}
 
-										{checkStockStatus(product) === "Moderate" && (
+										{product.status === "Moderate" && (
 											<Status $bgColor={"rgba(255, 246, 116, 0.49)"} color={"#312600"}>
-												{checkStockStatus(product)}
+												{product.status}
 											</Status>
 										)}
 
-										{checkStockStatus(product) === "High" && (
+										{product.status === "High" && (
 											<Status $bgColor={"rgba(179, 255, 116, 0.49)"} color={"#56ea00"}>
-												{checkStockStatus(product)}
+												{product.status}
 											</Status>
 										)}
 									</TableData>

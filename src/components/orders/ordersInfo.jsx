@@ -21,8 +21,8 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 		console.log(selectedTransaction.items);
 	}, []);
 
-	const markAsDone = async () => {
-		const res = await setTransactionStatus(selectedTransaction.transaction_id, "DONE");
+	const updateStatus = async (status) => {
+		const res = await setTransactionStatus(selectedTransaction.transaction_id, status);
 		console.log(res);
 
 		if (res.status === "Success") {
@@ -34,6 +34,26 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 		}
 
 		toast.error(res.message);
+	};
+
+	const markAsPending = async () => {
+		await updateStatus("PENDING");
+	};
+
+	const markAsPaid = async () => {
+		await updateStatus("PAID");
+	};
+
+	const markAsCancelled = async () => {
+		await updateStatus("CANCELLED");
+	};
+
+	const markAsRefunded = async () => {
+		await updateStatus("REFUNDED");
+	};
+
+	const markAsDone = async () => {
+		await updateStatus("DONE");
 	};
 
 	return (
@@ -49,10 +69,15 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 							<p>Quantity: {item.quantity}</p>
 						</div>
 					))}
+
+					<p>Status: {selectedTransaction.status}</p>
+					<button onClick={() => markAsPending()}>Mark as pending</button>
+					<button onClick={() => markAsPaid()}>Mark as paid</button>
+					<button onClick={() => markAsCancelled()}>Mark as cancelled</button>
+					<button onClick={() => markAsRefunded()}>Mark as refunded</button>
+					<button onClick={() => markAsDone()}>Mark as done</button>
 				</FieldContainer>
 
-				<p>Status: {selectedTransaction.status}</p>
-				<button onClick={() => markAsDone()}>Mark as done</button>
 				<ButtonsContainer>
 					<CloseButton onClick={() => setIsOrdersInfoOpen(false)}>Close </CloseButton>
 					<Button onClick={() => addPaymentMethodFunc()}>Save</Button>

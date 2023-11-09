@@ -62,7 +62,6 @@ const Products = () => {
 						product.status = "High";
 					}
 				});
-				console.log(products);
 				setProducts(products);
 				setProductDisplay(products);
 			} else {

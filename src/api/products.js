@@ -51,7 +51,7 @@ export const addProduct = async (product) => {
 export const editProduct = async (product, product_id) => {
 	try {
 		const response = await fetch(`/api/product/edit/${product_id}`, {
-			method: "POST",
+			method: "PUT",
 			headers: {
 				"Content-Type": "application/json",
 			},

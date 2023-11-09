@@ -42,7 +42,6 @@ const ProductSearchBar = ({ setIsAddPopUpOpen, products, setProductDisplay, setC
 
 		if (category === "All") {
 			filteredProducts = products.filter((product) => {
-				console.log(product.product_code);
 
 				return (
 					queryTerms.every(

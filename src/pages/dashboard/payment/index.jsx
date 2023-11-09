@@ -10,7 +10,7 @@ import Table, {
   TableRows,
 } from "@/styled-components/TableComponent";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsis, faPen, faTrash,faXmarkCircle,faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 import PaymentMethodSearchBar from "@/components/PaymentMethod/paymentMethodSearchBar";
 import { getPaymentMethods } from "@/api/pos";
 import Skeleton from "react-loading-skeleton";
@@ -19,6 +19,7 @@ import EditPayment from "../../../components/PaymentMethod/editPayment";
 import AddPayment from "@/components/PaymentMethod/addPayment";
 import LoadingSkeleton from "@/components/misc/loadingSkeleton";
 import Pagination from "@/components/misc/pagination";
+import { activatePaymentMethod, deactivatePaymentMethod } from "@/api/payment_method";
 
 const PaymentTable = () => {
   const [paymentMethods, setPaymentMethods] = useState([]);
@@ -107,6 +108,29 @@ const PaymentTable = () => {
   const closeEditPayment = () => {
     setEditPaymentOpen(false);
   };
+  const deactivatePaymentMethodFunc = async (payment_method_id) => {
+		const res = await deactivatePaymentMethod(payment_method_id);
+		console.log(res);
+
+		if (!res) {
+			return;
+		}
+
+		fetchPaymentMethods();
+	};
+
+  const activatePaymentMethodFunc = async (payment_method_id) => {
+		const res = await activatePaymentMethod(payment_method_id);
+		console.log(res);
+
+		if (!res) {
+			return;
+		}
+
+		fetchPaymentMethods();
+	};
+
+
 
   return (
     <DashboardLayout>
@@ -160,6 +184,18 @@ const PaymentTable = () => {
                           <p>
                             <FontAwesomeIcon icon={faTrash} /> Delete
                           </p>
+                          <p
+                            onClick={() =>  deactivatePaymentMethodFunc(method.payment_method_id)}
+                          >
+												<FontAwesomeIcon icon={faXmarkCircle} /> Deactivate Payment Method
+											</p>
+                      <p
+												onClick={() =>  activatePaymentMethodFunc(method.payment_method_id)}
+											>
+												<FontAwesomeIcon icon={faCheckCircle} /> Reactivate Payment Method
+											</p>
+
+
                         </ActionContainer>
                       )}
                     </TableData>

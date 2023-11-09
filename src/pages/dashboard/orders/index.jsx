@@ -18,7 +18,7 @@ const Circle = styled.span`
 	width: 10px;
 	height: 10px;
 	border-radius: 50%;
-	background-color: ${({ status }) => (status === "PENDING" ? "#FFC107" : status === "COMPLETED" ? "#4CAF50" : "#F44336")};
+	background-color: ${({ status }) => (status === "PENDING" ? "#FFC107" : status === "DONE" ? "#4CAF50" : "#F44336")};
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -39,7 +39,8 @@ const Animated = styled.div`
 	}
 
 	//add animation
-	animation: fadeInFadeOut 1s ease-in-out infinite;
+	/* animation: fadeInFadeOut 1s ease-in-out infinite; */
+	animation: ${({ status }) => (status === "PENDING" ? "fadeInFadeOut 1s ease-in-out infinite" : "")};
 	display: block;
 	padding: 0.5rem 1rem;
 
@@ -179,7 +180,9 @@ const Orders = () => {
 				{isEditPopUpOpen && (
 					<EditOrder setIsEditPopUpOpen={setIsEditPopUpOpen} selectedTransactionId={selectedTransactionId} transaction={selectedTransaction} />
 				)}
-				{isOrdersInfoOpen && <OrdersInfo setIsOrdersInfoOpen={setIsOrdersInfoOpen} selectedTransaction={selectedTransactionId} />}
+				{isOrdersInfoOpen && (
+					<OrdersInfo setIsOrdersInfoOpen={setIsOrdersInfoOpen} selectedTransaction={selectedTransactionId} fetchTransactions={getAllTransactions} />
+				)}
 
 				{/* <EditOrder setIsEditPopUpOpen={setIsEditPopUpOpen} /> */}
 				<Pagination

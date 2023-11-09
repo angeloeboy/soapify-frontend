@@ -5,14 +5,16 @@ import StyledPanel from "@/styled-components/StyledPanel";
 import PageTitle from "@/components/misc/pageTitle";
 import Table, { ActionContainer, TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faCheckCircle, faEllipsis, faPen, faTrash, faTrashCan, faXmarkCircle } from "@fortawesome/free-solid-svg-icons";
 import AddWarehouse from "@/components/warehouse/addWarehouse";
 import WarehouseSearchBar from "@/components/warehouse/warehouseSearchBar";
-import { getAllWarehouse } from "@/api/warehouse";
+import { deactivateWarehouse, deleteWarehouse, getAllWarehouse, reactivateWarehouse } from "@/api/warehouse";
 import EditWarehouse from "@/components/warehouse/editWarehouse";
 import DeactivateModal from "@/components/misc/deactivate";
 import { PaginationControl } from "@/styled-components/ItemActionModal";
 import Pagination from "@/components/misc/pagination";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Warehouse = () => {
 	const [isAddPopUpOpen, setAddPopUpOpen] = useState(false);
@@ -42,7 +44,37 @@ const Warehouse = () => {
 		res ? setWarehouseDisplay(res.warehouses) : setWarehouseDisplay([]);
 	};
 
-	const deactivateWarehouse = async () => {};
+	const deactivateWarehouseFunc = async (warehouse_id) => {
+		const res = await deactivateWarehouse(warehouse_id);
+		console.log(res);
+		if (!res) {
+			return;
+		}
+
+		if (res.errors && res.errors.length > 0) {
+			toast.error(res.errors[0].message);
+			return;
+		}
+
+		toast.success(res.message);
+		fetchWarehouses();
+	};
+
+	const reactivateWarehouseFunc = async (warehouse_id) => {
+		const res = await reactivateWarehouse(warehouse_id);
+		console.log(res);
+		if (!res) {
+			return;
+		}
+
+		if (res.errors && res.errors.length > 0) {
+			toast.error(res.errors[0].message);
+			return;
+		}
+
+		toast.success(res.message);
+		fetchWarehouses();
+	};
 
 	return (
 		<DashboardLayout>
@@ -61,6 +93,7 @@ const Warehouse = () => {
 							<TableHeadings>Warehouse ID</TableHeadings>
 							<TableHeadings>Warehouse Name</TableHeadings>
 							<TableHeadings>Location</TableHeadings>
+							<TableHeadings>Status</TableHeadings>
 							<TableHeadings>Actions</TableHeadings>
 						</TableRows>
 
@@ -69,6 +102,8 @@ const Warehouse = () => {
 								<TableData>{warehouse.warehouse_id}</TableData>
 								<TableData>{warehouse.warehouse_name}</TableData>
 								<TableData>{warehouse.warehouse_location}</TableData>
+								<TableData>{warehouse.isActive ? "Active" : "Not active"}</TableData>
+
 								<TableData>
 									<FontAwesomeIcon
 										className="ellipsis"
@@ -93,6 +128,13 @@ const Warehouse = () => {
 												}}
 											>
 												<FontAwesomeIcon icon={faTrash} /> Delete
+											</p>
+
+											<p onClick={() => deactivateWarehouseFunc(warehouse.warehouse_id)}>
+												<FontAwesomeIcon icon={faXmarkCircle} /> Deactivate Warehouse
+											</p>
+											<p onClick={() => reactivateWarehouseFunc(warehouse.warehouse_id)}>
+												<FontAwesomeIcon icon={faCheckCircle} /> Reactivate Warehouse
 											</p>
 										</ActionContainer>
 									)}

@@ -16,12 +16,19 @@ import InventorySearchBar from "@/components/inventory/inventorySearchBar";
 import { PaginationControl } from "@/styled-components/ItemActionModal";
 import Pagination from "@/components/misc/pagination";
 import LoadingSkeleton from "@/components/misc/loadingSkeleton";
+import { useRouter } from "next/router";
 
 const InventoryPage = () => {
+	// const {productId, openModal} =
+	const router = useRouter();
+
+	const { productId, openModal } = router.query;
+
 	const [inventory, setInventory] = useState([]);
 	const [inventoryDisplay, setinventoryDisplay] = useState([]);
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
 	const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false);
+
 	const [isEditPopUpOpen, setIsEditPopUpOpen] = useState(false);
 	const [inventoryLoading, setInventoryLoading] = useState(true);
 
@@ -34,12 +41,17 @@ const InventoryPage = () => {
 
 	useEffect(() => {
 		fetchInventory();
+		console.log(openModal);
 
 		document.addEventListener("click", handleClickOutside);
 		return () => {
 			document.removeEventListener("click", handleClickOutside);
 		};
 	}, []);
+
+	useEffect(() => {
+		setIsAddPopUpOpen(openModal)
+	}, [productId, openModal]);
 
 	const handleClickOutside = (event) => {
 		if (!event.target.closest(".action-container") && !event.target.closest(".ellipsis")) {
@@ -66,7 +78,9 @@ const InventoryPage = () => {
 		});
 		return formattedDate;
 	};
+
 	const [selectedInventory, setSelectedInventory] = useState(null);
+
 	return (
 		<DashboardLayout>
 			<PageTitle title="Inventory" />
@@ -150,7 +164,7 @@ const InventoryPage = () => {
 					onPageChange={(newPage) => setCurrentPage(newPage)}
 				/>
 			</StyledPanel>
-			{isAddPopUpOpen && <AddInventory setIsAddPopUpOpen={setIsAddPopUpOpen} getInventoryFunc={fetchInventory} />}
+			{isAddPopUpOpen && <AddInventory setIsAddPopUpOpen={setIsAddPopUpOpen} getInventoryFunc={fetchInventory} productId={productId}/>}
 			{isEditPopUpOpen && <EditInventoryComponent setIsEditPopUpOpen={setIsEditPopUpOpen} getInventoryFunc={fetchInventory} />}
 		</DashboardLayout>
 	);

@@ -22,11 +22,11 @@ import { useEffect, useState } from "react";
 import { addProduct, getProducts } from "@/api/products";
 import { addInventory } from "@/api/inventory";
 
-const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc }) => {
+const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId }) => {
 	const currentDate = new Date().toISOString();
 
 	const [inventory, setInventory] = useState({
-		product_id: 0,
+		product_id: productId ? parseInt(productId) : 0,
 		quantity: 1,
 		date_added: currentDate,
 		date_updated: currentDate,
@@ -34,18 +34,16 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc }) => {
 
 	const [products, setProducts] = useState([]);
 
-	useEffect(() => {
-		console.log(inventory);
-	}, [inventory]);
-
 	const fetchProducts = () => {
 		getProducts().then((res) => {
 			console.log(res);
 			res ? setProducts(res.products) : setProducts([]);
-			if (res.products.length > 0) {
-				setInventory({ ...inventory, product_id: res.products[0].product_id });
-			}
+			// if (res.products.length > 0) {
+			// 	setInventory({ ...inventory, product_id: res.products[0].product_id });
+			// }
 		});
+
+		console.log(inventory);
 	};
 
 	const addInventoryFunc = async (e) => {

@@ -112,6 +112,13 @@ const Products = () => {
 		};
 	}, []);
 
+	const goToInventoryPageAndAddInventory = (product_id) => {
+		router.push({
+			pathname: "/dashboard/inventory",
+			query: { productId: product_id, openModal: "true" },
+		});
+	};
+
 	const handleCloseEditPopUp = () => {
 		setEditPopUpOpen(false);
 	};
@@ -206,6 +213,7 @@ const Products = () => {
 												<p>
 													<FontAwesomeIcon icon={faTrash} /> Delete
 												</p>
+												<p onClick={() => goToInventoryPageAndAddInventory(product.product_id)}>Add Inventory</p>
 												<p onClick={() => activateProductFunc(product.product_id)}>Reactivate</p>
 												<p onClick={() => deactivateProductFunc(product.product_id)}>Deactivate</p>
 												{/* <p onClick={() => handleAddInventoryClick(product.product_id)}>Add Inventory</p> */}

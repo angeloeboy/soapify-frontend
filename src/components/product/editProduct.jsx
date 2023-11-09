@@ -20,6 +20,8 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { getProduct, editProduct, getProductCategories, getSubCategories } from "@/api/products";
 import { getSuppliers } from "@/api/supplier";
+import { toast } from "react-toastify";
+import "react-loading-skeleton/dist/skeleton.css";
 
 const EditProduct = ({ productId, onClose, fetchProducts }) => {
 	const [categories, setCategories] = useState([]);
@@ -163,6 +165,10 @@ const EditProduct = ({ productId, onClose, fetchProducts }) => {
 		e.preventDefault();
 		const res = await editProduct(product, productId);
 		console.log(res);
+
+		fetchProducts();
+
+		toast.success("Product updated successfully");
 	};
 
 	return (

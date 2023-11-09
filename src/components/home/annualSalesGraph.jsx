@@ -22,7 +22,7 @@ const LineGraphContainer = styled.div`
   }
 `;
 
-const AnnualRevenueGraph = ({ annualSalesData }) => {
+const AnnualSalesGraph = ({ annualSalesData }) => {
   const months = [
     "January",
     "February",
@@ -89,12 +89,12 @@ const AnnualRevenueGraph = ({ annualSalesData }) => {
 
   return (
     <LineGraphContainer>
-      <p className="title">Annual Revenue</p>
-      <p className="totalSales">Total Revenue: ₱ {totalSales.toFixed(2)}</p>
+      <p className="title">Annual Sales</p>
+      <p className="totalSales">Total Sales: ₱ {totalSales.toFixed(2)}</p>
       {/* <Line data={data} options={options} /> */}
       <Bar data={chartData} options={options} />
     </LineGraphContainer>
   );
 };
 
-export default AnnualRevenueGraph;
+export default AnnualSalesGraph;

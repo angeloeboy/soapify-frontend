@@ -8,6 +8,9 @@ const LineGraphContainer = styled.div`
   border: 1px solid #dfdfdf;
   background: #fff;
   padding: 20px;
+  width: 50%;
+  margin-left: 25%;
+
   display: flex;
   flex-direction: column;
   align-items: flex-start; /* Adjust alignment to top left */
@@ -38,13 +41,14 @@ const LineGraphContainer = styled.div`
   }
 
   .chart-container {
+    padding-left: 80px;
     width: 100%;
     margin-top: 10px; /* Add space between selections and the chart */
   }
 
   .summary {
     font-size: 14px;
-    margin-top: 10px; /* Add space between the chart and the summary */
+    margin-top: 5px; /* Add space between the chart and the summary */
   }
 `;
 

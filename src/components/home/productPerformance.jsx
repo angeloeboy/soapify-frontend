@@ -59,7 +59,6 @@ const ProductPerformance = () => {
   const [productsList, setProductsList] = useState([]); // List of products
   const [productStats, setProductStats] = useState([]); // Product stats
   const [totalUnitsSold, setTotalUnitsSold] = useState(0);
-  const [percentageChange, setPercentageChange] = useState(0); // Percentage change in sales
 
   const calculatePercentageChange = () => {
     if (chartData.labels.length < 2 || !chartData.datasets[0].data) {
@@ -128,6 +127,7 @@ const ProductPerformance = () => {
     calculatePercentageChange();
   }, [selectedYear]);
 
+  //get products list from backend
   const fetchProducts = () => {
     getProducts()
       .then((res) => {
@@ -135,6 +135,7 @@ const ProductPerformance = () => {
         if (Array.isArray(res.products)) {
           setProductsList(res.products);
           calculateTotalUnitsSold();
+          // console.log("Products List:", productsList);
         } else {
           setProductsList([]);
         }
@@ -147,8 +148,9 @@ const ProductPerformance = () => {
   const fetchData = async () => {
     const productStats = await getProductStats(selectedProduct, selectedYear);
     setProductStats(productStats.transactions);
-    console.log("Product ID:", selectedProduct);
-    console.log("Product Transactions", productStats.transactions);
+    // console.log("product stats: ", productStats);
+    // console.log("Product ID:", selectedProduct);
+    // console.log("Product Transactions", productStats.transactions);
 
     if (
       !productStats.transactions ||

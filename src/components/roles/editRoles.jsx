@@ -16,7 +16,7 @@ import {
 } from "@/styled-components/ItemActionModal";
 import { addRoles, getPermissions } from "@/api/roles";
 
-const EditRoles = ({ setIsAddPopUpOpen, fetchRoles, clickedRole }) => {
+const EditRoles = ({ setIsEditPopUpOpen, fetchRoles, clickedRole }) => {
 	const [role, setRole] = useState({
 		role_name: "",
 		permissions: [],
@@ -44,11 +44,14 @@ const EditRoles = ({ setIsAddPopUpOpen, fetchRoles, clickedRole }) => {
 
 	useEffect(() => {
 		fetchPermissions();
+		setRole(clickedRole);
 	}, []);
 
 	useEffect(() => {
-		setRole(clickedRole);
-	}, []);
+		console.log(role);
+	}, [role]);
+
+	useEffect;
 
 	const handleCheckboxChange = (event) => {
 		const { value, checked } = event.target;
@@ -95,17 +98,15 @@ const EditRoles = ({ setIsAddPopUpOpen, fetchRoles, clickedRole }) => {
 													name={permission.permission_name}
 													value={permission.permission_id}
 													onChange={handleCheckboxChange} // Attach the event handler
-													checked={() => {
-														if (clickedRole.permissions.includes(permission.permission_id)) {
-															return true;
-														} else {
-															return false;
-														}
-													}}
+													// checked={() => {
+													// 	if (clickedRole.permissions.includes(permission.permission_id)) {
+													// 		return true;
+													// 	} else {
+													// 		return false;
+													// 	}
+													// }}
 												/>
-												<label htmlFor={permission.permission_id}>
-													{permission.permission_name} {clickedRole.permissions.includes(permission.permission_id) ? "true" : "false"}
-												</label>
+												<label htmlFor={permission.permission_id}>{permission.permission_name}</label>
 											</CheckboxWrapper>
 										);
 									})}

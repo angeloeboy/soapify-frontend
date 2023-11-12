@@ -84,7 +84,7 @@ const ProductTemplates = () => {
   };
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10; // You can adjust this to your desired number of items per page
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = currentPage * itemsPerPage;
   const paginatedSubcategories = subcategoryDisplay.slice(startIndex, endIndex);
@@ -203,8 +203,11 @@ const ProductTemplates = () => {
         <Pagination
           totalItems={subcategoryDisplay.length} // Total number of items
           itemsPerPage={itemsPerPage}
-          currentPage={currentPage}
-          onPageChange={handlePageChange} // Pass the page change handler
+					currentPage={currentPage}
+					onPageChange={setCurrentPage}
+					itemsPerPageOptions={[5, 10, 15, 20]}
+					defaultItemsPerPage={10}
+					setItemsPerPage={setItemsPerPage}
         />
       </StyledPanel>
       {/* {isPopupOpen && (

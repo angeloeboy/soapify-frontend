@@ -47,3 +47,24 @@ export const addRoles = async (role) => {
 		return data;
 	} catch (error) {}
 };
+
+export const editRoles = async (role) => {
+	try {
+		const res = await fetch(`/api/role/${role.role_id}/permissions`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				role_name: role.role_name,
+				permissions: role.permissions,
+			}),
+			credentials: "include",
+		});
+
+		const data = await res.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};

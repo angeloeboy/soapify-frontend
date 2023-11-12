@@ -6,12 +6,10 @@ import { faPen, faTrash, faEllipsis, faFilter, faPlus } from "@fortawesome/free-
 import PageTitle from "@/components/misc/pageTitle";
 import StyledPanel from "@/styled-components/StyledPanel";
 import { useEffect, useState } from "react";
-import { getProducts } from "@/api/products";
-import Skeleton from "react-loading-skeleton";
+import { deactivateProduct, getProducts, activateProduct } from "@/api/products";
 import "react-loading-skeleton/dist/skeleton.css";
 // import Button from "@/components/misc/button";
 import Table, { ActionContainer, TableData, TableHeadings, TableRows, Status } from "@/styled-components/TableComponent";
-import { PaginationControl } from "@/styled-components/ItemActionModal";
 
 import AddProduct from "@/components/product/addProduct";
 import EditProduct from "@/components/product/editProduct";
@@ -19,11 +17,12 @@ import EditProduct from "@/components/product/editProduct";
 import ProductSearchBar from "@/components/product/productSearchBar";
 import LoadingSkeleton from "@/components/misc/loadingSkeleton";
 import Pagination from "@/components/misc/pagination";
-import { usePermissions } from "@/components/context/PermissionsContext";
+import "react-toastify/dist/ReactToastify.css";
+
+import { toast } from "react-toastify";
+import { useRouter } from "next/router";
 
 const Products = () => {
-	const { permissions } = usePermissions();
-
 	const [products, setProducts] = useState([]);
 	const [productDisplay, setProductDisplay] = useState([]);
 	const [productsLoading, setProductsLoading] = useState(true);
@@ -32,32 +31,71 @@ const Products = () => {
 	const [isEditPopupOpen, setEditPopUpOpen] = useState(false);
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
 
+	const [selectedProductId, setSelectedProductId] = useState(null);
+
 	const [currentPage, setCurrentPage] = useState(1);
-	const [pagePerItem, setPagePerItem] = useState(10);
+	const itemsPerPage = 10;
 
-	// useEffect(() => {
-	// 	setProductDisplay(filteredProducts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
-	// }, [currentPage, filteredProducts]);
-
-	const startIndex = (currentPage - 1) * pagePerItem;
-	const endIndex = currentPage * pagePerItem;
+	const startIndex = (currentPage - 1) * itemsPerPage;
+	const endIndex = currentPage * itemsPerPage;
 	const paginatedProducts = productDisplay.slice(startIndex, endIndex);
 
+	const router = useRouter();
 	useEffect(() => {
-		console.log(permissions);
 		fetchProducts();
 	}, []);
 
 	const fetchProducts = () => {
 		getProducts().then((res) => {
 			if (res.products) {
-				setProducts(res.products);
-				setProductDisplay(res.products);
-				console.log(res.products);
+				let products = res.products;
+
+				products.map((product) => {
+					//check product status and add to product object
+					if (product.quantity_in_stock <= product.minimum_reorder_level) {
+						product.status = "Low";
+					}
+					if (product.quantity_in_stock > product.minimum_reorder_level && product.quantity_in_stock < 2 * product.minimum_reorder_level) {
+						product.status = "Moderate";
+					}
+					if (product.quantity_in_stock >= 2 * product.minimum_reorder_level) {
+						product.status = "High";
+					}
+				});
+				setProducts(products);
+				setProductDisplay(products);
 			} else {
 				setProducts([]);
 			}
 			setProductsLoading(false);
+		});
+	};
+
+	const deactivateProductFunc = async (product_id) => {
+		const res = await deactivateProduct(product_id);
+
+		if (!res) {
+			return;
+		}
+		toast.success("Product successfully deactivated");
+		fetchProducts();
+	};
+
+	const activateProductFunc = async (product_id) => {
+		const res = await activateProduct(product_id);
+
+		if (!res) {
+			return;
+		}
+
+		toast.success("Product sucessfuly activated");
+		fetchProducts();
+	};
+
+	const handleAddInventoryClick = (productId) => {
+		router.push({
+			pathname: "/dashboard/inventory",
+			query: { productId, openModal: "true" },
 		});
 	};
 
@@ -74,30 +112,19 @@ const Products = () => {
 		};
 	}, []);
 
+	const goToInventoryPageAndAddInventory = (product_id) => {
+		router.push({
+			pathname: "/dashboard/inventory",
+			query: { productId: product_id, openModal: "true" },
+		});
+	};
+
 	const handleCloseEditPopUp = () => {
 		setEditPopUpOpen(false);
 	};
 	const openEditPopUp = (product_id) => {
 		setEditPopUpOpen(true);
 	};
-
-	const checkStockStatus = (product) => {
-		let status = "";
-
-		if (product.quantity_in_stock <= product.minimum_reorder_level) {
-			status = "Low";
-		}
-		if (product.quantity_in_stock > product.minimum_reorder_level && product.quantity_in_stock < 2 * product.minimum_reorder_level) {
-			status = "Moderate";
-		}
-		if (product.quantity_in_stock >= 2 * product.minimum_reorder_level) {
-			status = "High";
-		}
-
-		return status;
-	};
-
-	const [selectedProductId, setSelectedProductId] = useState(null);
 
 	return (
 		<DashboardLayout>
@@ -111,7 +138,7 @@ const Products = () => {
 							<TableHeadings>Product ID</TableHeadings>
 
 							<TableHeadings>Name</TableHeadings>
-							<TableHeadings>Attributes</TableHeadings>
+							{/* <TableHeadings>Attributes</TableHeadings> */}
 							<TableHeadings>Stock</TableHeadings>
 							<TableHeadings>Price</TableHeadings>
 							<TableHeadings>Stock Status</TableHeadings>
@@ -137,31 +164,31 @@ const Products = () => {
 										{product.product_code}
 									</TableData>
 									<TableData>{product.product_name}</TableData>
-									<TableData>
+									{/* <TableData>
 										<div className="attr_container">
 											{product.attribute.map((attr, index) => {
 												return <span key={index}> {attr.value}</span>;
 											})}
 										</div>
-									</TableData>
+									</TableData> */}
 									<TableData>{product.quantity_in_stock}</TableData>
 									<TableData>{product.product_price / 100}</TableData>
 									<TableData>
-										{checkStockStatus(product) === "Low" && (
+										{product.status === "Low" && (
 											<Status $bgColor={"rgba(255, 116, 116, 0.49)"} color={"#EA0000"}>
-												{checkStockStatus(product)}
+												{product.status}
 											</Status>
 										)}
 
-										{checkStockStatus(product) === "Moderate" && (
+										{product.status === "Moderate" && (
 											<Status $bgColor={"rgba(255, 246, 116, 0.49)"} color={"#312600"}>
-												{checkStockStatus(product)}
+												{product.status}
 											</Status>
 										)}
 
-										{checkStockStatus(product) === "High" && (
+										{product.status === "High" && (
 											<Status $bgColor={"rgba(179, 255, 116, 0.49)"} color={"#56ea00"}>
-												{checkStockStatus(product)}
+												{product.status}
 											</Status>
 										)}
 									</TableData>
@@ -186,6 +213,10 @@ const Products = () => {
 												<p>
 													<FontAwesomeIcon icon={faTrash} /> Delete
 												</p>
+												<p onClick={() => goToInventoryPageAndAddInventory(product.product_id)}>Add Inventory</p>
+												<p onClick={() => activateProductFunc(product.product_id)}>Reactivate</p>
+												<p onClick={() => deactivateProductFunc(product.product_id)}>Deactivate</p>
+												{/* <p onClick={() => handleAddInventoryClick(product.product_id)}>Add Inventory</p> */}
 											</ActionContainer>
 										)}
 									</TableData>
@@ -197,7 +228,7 @@ const Products = () => {
 
 				<Pagination
 					totalItems={productDisplay.length}
-					itemsPerPage={pagePerItem}
+					itemsPerPage={itemsPerPage}
 					currentPage={currentPage}
 					onPageChange={(newPage) => setCurrentPage(newPage)}
 				/>

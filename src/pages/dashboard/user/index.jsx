@@ -27,7 +27,6 @@ const User = () => {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [pagePerItem, setPagePerItem] = useState(5);
 
-      
 	const handleClickOutside = (event) => {
 		if (!event.target.closest(".action-container") && !event.target.closest(".ellipsis")) {
 			setActiveActionContainer(null);
@@ -39,7 +38,7 @@ const User = () => {
 		const endIndex = currentPage * pagePerItem;
 		const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
 		setUserDisplay(paginatedUsers);
-	  }, [currentPage, filteredUsers]);
+	}, [currentPage, filteredUsers]);
 
 	useEffect(() => {
 		document.addEventListener("click", handleClickOutside);
@@ -71,7 +70,7 @@ const User = () => {
 		<DashboardLayout>
 			<PageTitle title="Accounts Lists" />
 			<StyledPanel>
-			<UserSearchBarComponent users={users} setFilteredUsers={setFilteredUsers} setCurrentPage={setCurrentPage} setIsLoading={setIsLoading} />
+				<UserSearchBarComponent users={users} setFilteredUsers={setFilteredUsers} setCurrentPage={setCurrentPage} setIsLoading={setIsLoading} />
 
 				<Table>
 					<tbody>
@@ -87,11 +86,11 @@ const User = () => {
 							<TableRows key={index}>
 								<TableData $bold $withImage>
 									<Image src="/product_img2.png" width={40} height={40} alt={"Product image"} />
-									{user.name}
+									{user.first_name.charAt(0).toUpperCase() + user.first_name.slice(1)} {user.last_name.charAt(0).toUpperCase() + user.last_name.slice(1)}
 								</TableData>
 								<TableData>{user.username}</TableData>
-								<TableData>{user.status}</TableData>
-								<TableData>{user.type}</TableData>
+								<TableData>{user.isActive}</TableData>
+								<TableData>{user.role.role_name}</TableData>
 								<TableData>
 									<FontAwesomeIcon
 										className="ellipsis"
@@ -133,10 +132,7 @@ const User = () => {
 				/>
 			)}
 
-			<Pagination itemsPerPage={pagePerItem} 
-						totalItems={filteredUsers.length} 
-						currentPage={currentPage} 
-						onPageChange={(page) => setCurrentPage(page)} />
+			<Pagination itemsPerPage={pagePerItem} totalItems={filteredUsers.length} currentPage={currentPage} onPageChange={(page) => setCurrentPage(page)} />
 		</DashboardLayout>
 	);
 };

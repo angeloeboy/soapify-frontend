@@ -164,13 +164,7 @@ const Products = () => {
 										{product.product_code}
 									</TableData>
 									<TableData>{product.product_name}</TableData>
-									{/* <TableData>
-										<div className="attr_container">
-											{product.attribute.map((attr, index) => {
-												return <span key={index}> {attr.value}</span>;
-											})}
-										</div>
-									</TableData> */}
+
 									<TableData>{product.quantity_in_stock}</TableData>
 									<TableData>{product.product_price / 100}</TableData>
 									<TableData>
@@ -213,7 +207,8 @@ const Products = () => {
 												<p>
 													<FontAwesomeIcon icon={faTrash} /> Delete
 												</p>
-												<p onClick={() => goToInventoryPageAndAddInventory(product.product_id)}>Add Inventory</p>
+												{product.isActive && <p onClick={() => goToInventoryPageAndAddInventory(product.product_id)}>Add Inventory</p>}
+
 												<p onClick={() => activateProductFunc(product.product_id)}>Reactivate</p>
 												<p onClick={() => deactivateProductFunc(product.product_id)}>Deactivate</p>
 												{/* <p onClick={() => handleAddInventoryClick(product.product_id)}>Add Inventory</p> */}

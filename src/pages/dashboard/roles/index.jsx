@@ -58,6 +58,8 @@ const Roles = () => {
 						<TableRows $heading>
 							<TableHeadings>Role </TableHeadings>
 							<TableHeadings># of Users</TableHeadings>
+							<TableHeadings># of Permissions</TableHeadings>
+
 							<TableHeadings>Actions</TableHeadings>
 						</TableRows>
 
@@ -71,6 +73,8 @@ const Roles = () => {
 									<TableData>{role.role_name}</TableData>
 
 									<TableData>{role.users}</TableData>
+									<TableData>{role.permissions.length}</TableData>
+
 									<TableData>
 										<FontAwesomeIcon
 											className="ellipsis"
@@ -103,7 +107,7 @@ const Roles = () => {
 				<Pagination totalItems={rolesDisplay.length} itemsPerPage={pagePerItem} currentPage={currentPage} onPageChange={(newPage) => setCurrentPage(newPage)} />
 			</StyledPanel>
 
-			{isAddPopUpOpen && <AddRoles setIsAddPopUpOpen={setIsAddPopUpOpen} />}
+			{isAddPopUpOpen && <AddRoles setIsAddPopUpOpen={setIsAddPopUpOpen} fetchRoles={fetchRoles}/>}
 		</DashboardLayout>
 	);
 };

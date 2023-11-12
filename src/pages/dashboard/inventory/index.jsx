@@ -31,13 +31,15 @@ const InventoryPage = () => {
 
 	const [isEditPopUpOpen, setIsEditPopUpOpen] = useState(false);
 	const [inventoryLoading, setInventoryLoading] = useState(true);
-
 	const [currentPage, setCurrentPage] = useState(1);
-	const itemsPerPage = 10;
+	const [pagePerItem, setPagePerItem] = useState(10);  
 
-	const startIndex = (currentPage - 1) * itemsPerPage;
-	const endIndex = currentPage * itemsPerPage;
+	 
+	const startIndex = (currentPage - 1) * pagePerItem;
+	const endIndex = currentPage * pagePerItem;
 	const paginatedInventory = inventoryDisplay.slice(startIndex, endIndex);
+
+ 
 
 	useEffect(() => {
 		fetchInventory();
@@ -47,11 +49,12 @@ const InventoryPage = () => {
 		return () => {
 			document.removeEventListener("click", handleClickOutside);
 		};
-	}, []);
+	}, [currentPage, pagePerItem]);
 
 	useEffect(() => {
-		setIsAddPopUpOpen(openModal)
-	}, [productId, openModal]);
+		setIsAddPopUpOpen(Boolean(openModal));
+	  }, [openModal, productId]);
+	  
 
 	const handleClickOutside = (event) => {
 		if (!event.target.closest(".action-container") && !event.target.closest(".ellipsis")) {
@@ -159,7 +162,7 @@ const InventoryPage = () => {
 
 				<Pagination
 					totalItems={inventoryDisplay.length}
-					itemsPerPage={itemsPerPage}
+					itemsPerPage={pagePerItem}
 					currentPage={currentPage}
 					onPageChange={(newPage) => setCurrentPage(newPage)}
 				/>

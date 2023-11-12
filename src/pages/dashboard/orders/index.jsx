@@ -60,15 +60,13 @@ const Orders = () => {
 	const [selectedTransactionId, setSelectedTransactionId] = useState(null);
 	const [selectedTransaction, setSelectedTransaction] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
-	const itemsPerPage = 10;
+	const [pagePerItem, setPagePerItem] = useState(10);
 
-	const startIndex = (currentPage - 1) * itemsPerPage;
-	const endIndex = currentPage * itemsPerPage;
-	const paginatedTransactions = transactionsDisplay.slice(startIndex, endIndex);
+ 
 
 	useEffect(() => {
 		getAllTransactions();
-	}, []);
+	}, [currentPage, pagePerItem]);
 
 	const handleClickOutside = (event) => {
 		if (!event.target.closest(".action-container") && !event.target.closest(".ellipsis")) {
@@ -100,6 +98,10 @@ const Orders = () => {
 		res.transactions ? setTransactionsDisplay(res.transactions) : setTransactionsDisplay([]);
 		setTransactionsLoading(false);
 	};
+
+	const startIndex = (currentPage - 1) * pagePerItem;
+	const endIndex = currentPage * pagePerItem;
+	const paginatedTransactions = transactionsDisplay.slice(startIndex, endIndex);
 
 	return (
 		<DashboardLayout>
@@ -187,7 +189,7 @@ const Orders = () => {
 				{/* <EditOrder setIsEditPopUpOpen={setIsEditPopUpOpen} /> */}
 				<Pagination
 					totalItems={transactionsDisplay.length}
-					itemsPerPage={itemsPerPage}
+					itemsPerPage={pagePerItem}
 					currentPage={currentPage}
 					onPageChange={(newPage) => setCurrentPage(newPage)}
 				/>

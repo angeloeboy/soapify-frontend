@@ -160,7 +160,6 @@ const ProductPerformance = () => {
       !productStats.transactions ||
       Object.keys(productStats.transactions).length === 0
     ) {
-      window.alert("Selected Product has no transactions as of now.");
       return; // Return to prevent further chart updates
     }
 

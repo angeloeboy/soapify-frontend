@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import jwt from "jsonwebtoken";
 
 export async function middleware(req) {
 	// const auth_link = "https://iamangelo.tech/api" + "/auth";
@@ -8,15 +9,31 @@ export async function middleware(req) {
 
 	// const auth_link = `http://localhost` + "/auth";
 	const auth_link = `${link}/auth`;
-
 	const token = req.cookies.get("token");
+	const secretKey = process.env.JWT_SECRET_KEY;
+	let permissions = [];
+
+	if (req.nextUrl.pathname.startsWith("/api/") || req.nextUrl.pathname.includes("/_next/")) {
+		return NextResponse.next();
+	}
 
 	try {
+		if (token) {
+			try {
+				const decoded = jwt.decode(token.value, secretKey);
+				permissions = decoded.permissions || [];
+			} catch (verifyError) {
+				console.error("JWT verification error:", verifyError);
+				const url = req.nextUrl.clone();
+				url.pathname = "/login";
+				return NextResponse.redirect(url);
+			}
+		}
+
 		// If accessing dashboard without a token, redirect to home
 		if (req.nextUrl.pathname.startsWith("/dashboard") && !token) {
 			const url = req.nextUrl.clone();
 			url.pathname = "/";
-			// return NextResponse.rewrite(url);
 			return NextResponse.redirect(url);
 		}
 
@@ -31,7 +48,6 @@ export async function middleware(req) {
 			if (response.ok) {
 				const url = req.nextUrl.clone();
 				url.pathname = "/dashboard";
-				// return NextResponse.rewrite(url);
 				return NextResponse.redirect(url);
 			}
 		}
@@ -48,19 +64,25 @@ export async function middleware(req) {
 			if (data.user.role_id !== 1) {
 				const url = req.nextUrl.clone();
 				url.pathname = "/user";
-				// return NextResponse.rewrite(url);
 				return NextResponse.redirect(url);
 			}
 
 			const url = req.nextUrl.clone();
 			url.pathname = "/";
-			// console.log("test");
-			// return response.ok ? NextResponse.next() : NextResponse.rewrite(url);
+
 			return response.ok ? NextResponse.next() : NextResponse.redirect(url);
 		}
 
-		return NextResponse.next();
+		const next_response = NextResponse.next();
+		next_response.cookies.set("permissions", JSON.stringify(permissions), {
+			httpOnly: false,
+			path: "/",
+		});
+
+		return next_response;
+		// return NextResponse.next();
 	} catch (error) {
+		console.error("Error in middleware:", error);
 		const url = req.nextUrl.clone();
 		url.pathname = "/";
 		return NextResponse.redirect(url);

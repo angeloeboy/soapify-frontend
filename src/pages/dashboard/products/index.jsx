@@ -21,8 +21,10 @@ import "react-toastify/dist/ReactToastify.css";
 
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
+import { usePermissions } from "@/components/context/PermissionsContext";
 
 const Products = () => {
+	const { permissions } = usePermissions();
 	const [products, setProducts] = useState([]);
 	const [productDisplay, setProductDisplay] = useState([]);
 	const [productsLoading, setProductsLoading] = useState(true);
@@ -42,6 +44,7 @@ const Products = () => {
 
 	const router = useRouter();
 	useEffect(() => {
+		console.log(permissions);
 		fetchProducts();
 	}, []);
 

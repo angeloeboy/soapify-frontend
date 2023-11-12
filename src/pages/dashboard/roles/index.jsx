@@ -11,13 +11,15 @@ import LoadingSkeleton from "@/components/misc/loadingSkeleton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AddRoles from "@/components/roles/addRoles";
 import RolesSearchBar from "./../../../components/roles/rolesSearchBar";
+import EditRoles from "@/components/roles/editRoles";
 
 const Roles = () => {
 	const [roles, setRoles] = useState([]);
 	const [rolesDisplay, setRolesDisplay] = useState([]);
 	const [rolesLoading, setRolesLoading] = useState(false);
 	const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false);
-
+	const [isEditPopUpOpen, setIsEditPopUpOpen] = useState(false);
+	const [clickedRole, setClickedRole] = useState({});
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
 
 	const [currentPage, setCurrentPage] = useState(1);
@@ -85,10 +87,10 @@ const Roles = () => {
 										{activeActionContainer === index && (
 											<ActionContainer onClick={() => setActiveActionContainer(-1)}>
 												<p
-												// onClick={() => {
-												// 	setSelectedInventory(inventory);
-												// 	setIsEditPopUpOpen(selectedInventory);
-												// }}
+													onClick={() => {
+														setClickedRole(role);
+														setIsEditPopUpOpen(true);
+													}}
 												>
 													<FontAwesomeIcon icon={faPen} />
 													Edit
@@ -107,7 +109,8 @@ const Roles = () => {
 				<Pagination totalItems={rolesDisplay.length} itemsPerPage={pagePerItem} currentPage={currentPage} onPageChange={(newPage) => setCurrentPage(newPage)} />
 			</StyledPanel>
 
-			{isAddPopUpOpen && <AddRoles setIsAddPopUpOpen={setIsAddPopUpOpen} fetchRoles={fetchRoles}/>}
+			{isAddPopUpOpen && <AddRoles setIsAddPopUpOpen={setIsAddPopUpOpen} fetchRoles={fetchRoles} />}
+			{isEditPopUpOpen && <EditRoles setIsEditPopUpOpen={setIsEditPopUpOpen} fetchRoles={fetchRoles} clickedRole={clickedRole} />}
 		</DashboardLayout>
 	);
 };

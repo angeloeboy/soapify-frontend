@@ -59,11 +59,12 @@ const WarehouseAreas = () => {
 
   const [filteredWarehouseAreas, setFilteredWarehouseAreas] = useState([...warehouseAreas]);
 
-  const itemsPerPage = 10;
-  const currentPage = 1; // Set the current page as needed
+  const [currentPage, setCurrentPage] = useState(1);
+	const [pagePerItem, setPagePerItem] = useState(10);
 
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = currentPage * itemsPerPage;
+
+  const startIndex = (currentPage - 1) * pagePerItem;
+  const endIndex = currentPage * pagePerItem;
   const paginatedAreas = filteredWarehouseAreas.slice(startIndex, endIndex);
 
   const handleEditClick = (index) => {
@@ -134,7 +135,7 @@ const WarehouseAreas = () => {
             // fetchWarehouseAreas
           />
         )}
-        <Pagination totalItems={filteredWarehouseAreas.length} itemsPerPage={itemsPerPage} currentPage={currentPage} />
+        <Pagination totalItems={filteredWarehouseAreas.length} itemsPerPage={pagePerItem} currentPage={currentPage} />
       </StyledPanel>
     </DashboardLayout>
   );

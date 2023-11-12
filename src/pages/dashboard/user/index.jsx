@@ -25,7 +25,8 @@ const User = () => {
 	const [isEditUserPopup, setEditUserPopup] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const [currentPage, setCurrentPage] = useState(1);
-	const itemsPerPage = 5;
+	const [pagePerItem, setPagePerItem] = useState(5);
+
       
 	const handleClickOutside = (event) => {
 		if (!event.target.closest(".action-container") && !event.target.closest(".ellipsis")) {
@@ -34,8 +35,8 @@ const User = () => {
 	};
 
 	useEffect(() => {
-		const startIndex = (currentPage - 1) * itemsPerPage;
-		const endIndex = currentPage * itemsPerPage;
+		const startIndex = (currentPage - 1) * pagePerItem;
+		const endIndex = currentPage * pagePerItem;
 		const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
 		setUserDisplay(paginatedUsers);
 	  }, [currentPage, filteredUsers]);
@@ -132,7 +133,7 @@ const User = () => {
 				/>
 			)}
 
-			<Pagination itemsPerPage={itemsPerPage} 
+			<Pagination itemsPerPage={pagePerItem} 
 						totalItems={filteredUsers.length} 
 						currentPage={currentPage} 
 						onPageChange={(page) => setCurrentPage(page)} />

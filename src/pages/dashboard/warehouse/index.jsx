@@ -25,7 +25,8 @@ const Warehouse = () => {
 	const [showDeactivate, setShowDeactivate] = useState(false);
 
 	const [currentPage, setCurrentPage] = useState(1);
-	const itemsPerPage = 10;
+	const [pagePerItem, setPagePerItem] = useState(10);
+
 
 	const [warehouses, setWarehouses] = useState([]);
 	const [warehouseDisplay, setWarehouseDisplay] = useState([]); // Initialize suppliersDisplay
@@ -34,8 +35,8 @@ const Warehouse = () => {
 		fetchWarehouses();
 	}, []);
 
-	const startIndex = (currentPage - 1) * itemsPerPage;
-	const endIndex = currentPage * itemsPerPage;
+	const startIndex = (currentPage - 1) * pagePerItem;
+	const endIndex = currentPage * pagePerItem;
 	const paginatedWarehouses = warehouseDisplay.slice(startIndex, endIndex);
 
 	const fetchWarehouses = async () => {
@@ -143,7 +144,7 @@ const Warehouse = () => {
 						))}
 					</tbody>
 				</Table>
-				<Pagination totalItems={warehouses.length} itemsPerPage={itemsPerPage} currentPage={currentPage} onPageChange={(newPage) => setCurrentPage(newPage)} />
+				<Pagination totalItems={warehouses.length} itemsPerPage={pagePerItem} currentPage={currentPage} onPageChange={(newPage) => setCurrentPage(newPage)} />
 			</StyledPanel>
 			{isAddPopUpOpen && <AddWarehouse setAddPopUpOpen={setAddPopUpOpen} fetchWarehouses={fetchWarehouses} />}
 			{isEditPopUpOpen && <EditWarehouse setEditPopUpOpen={setEditPopUpOpen} fetchWarehouses={fetchWarehouses} clickedId={clickedId} />}

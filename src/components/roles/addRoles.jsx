@@ -39,6 +39,7 @@ const AddRoles = ({ setIsAddPopUpOpen, fetchRoles }) => {
 		const res = await addRoles(role);
 
 		console.log(res.message);
+		fetchRoles();
 	};
 
 	useEffect(() => {

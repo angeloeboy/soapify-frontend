@@ -22,13 +22,42 @@ const PaymentTable = () => {
 	const [isPopUpOpen, setPopUpOpen] = useState(false);
 
 	const [currentPage, setCurrentPage] = useState(1);
-	const itemsPerPage = 10;
-
+	const [pagePerItem, setPagePerItem] = useState(4); // Set an initial value
 	const [attributesDisplay, setAttributesDisplay] = useState([]); // Define attributesDisplay state variable
+	const [paginatedAttributes, setPaginatedAttributes] = useState([]); // Define paginatedAttributes state variable
+    
+	const fetchAttributes = async () => {
+		const res = await getAttributes();
+	
+		if (!res) {
+		  setAttributes([]);
+		  setAttributesDisplay([]); // Initialize attributesDisplay
+		  setPaginatedAttributes([]); // Initialize paginatedAttributes
+		  setAttributesLoading(false);
+		  return;
+		}
+	
+		const attributesArray = res.attributes || [];
+		setAttributes(attributesArray);
+		setAttributesDisplay(attributesArray);
+		// Use setPagePerItem here
+		setPaginatedAttributes(attributesArray.slice(0, pagePerItem)); // Initialize paginatedAttributes with the first page
+		setAttributesLoading(false);
+	  };
 
-	const startIndex = (currentPage - 1) * itemsPerPage;
-	const endIndex = currentPage * itemsPerPage;
-	const paginatedAttributes = attributesDisplay.slice(startIndex, endIndex);
+	  useEffect(() => {
+		// Step 3: Use pagePerItem state in the useEffect
+		fetchAttributes();
+	  }, [pagePerItem]); // Fetch attributes when pagePerItem changes
+ 
+	useEffect(() => {
+		// Use setAttributesDisplay instead of attributesDisplay
+		const startIndex = (currentPage - 1) * pagePerItem;
+		const endIndex = currentPage * pagePerItem;
+		const paginatedAttributesSlice = attributesDisplay.slice(startIndex, endIndex);
+		setPaginatedAttributes(paginatedAttributesSlice);
+	  }, [currentPage, attributesDisplay, pagePerItem]);
+	
 
 	useEffect(() => {
 		fetchAttributes();
@@ -49,21 +78,7 @@ const PaymentTable = () => {
 		setEditAttributeOpen(true);
 	};
 
-	const fetchAttributes = async () => {
-		const res = await getAttributes();
-
-		if (!res) {
-			setAttributes([]);
-			setAttributesDisplay([]);
-			setAttributesLoading(false);
-			return;
-		}
-
-		res.attributes ? setAttributes(res.attributes) : setAttributes([]);
-		res.attributes ? setAttributesDisplay(res.attributes) : setAttributesDisplay([]);
-		setAttributesLoading(false);
-	};
-
+	 
 	const deleteAttributeFunc = async (attribute_id) => {
 		const res = await deleteAttribute(attribute_id);
 		console.log(res);
@@ -131,7 +146,7 @@ const PaymentTable = () => {
 
 				<Pagination
 					totalItems={attributesDisplay.length}
-					itemsPerPage={itemsPerPage}
+					itemsPerPage={pagePerItem}
 					currentPage={currentPage}
 					onPageChange={(newPage) => setCurrentPage(newPage)}
 				/>

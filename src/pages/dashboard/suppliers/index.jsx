@@ -64,10 +64,12 @@ const Suppliers = () => {
 		setSupplierLoading(true);
 		getSuppliers().then((res) => {
 			console.log(res);
+			console.log("testing");
 			setSuppliers(res.suppliers || []);
 			setSuppliersDisplay(res.suppliers || []);
 			setSupplierLoading(false);
 		});
+		setSupplierLoading(false);
 	};
 
 	return (

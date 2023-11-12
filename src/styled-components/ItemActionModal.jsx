@@ -360,3 +360,12 @@ export const PaginationControl = styled.div`
 		border: 1px solid #1a69f0;
 	}
 `;
+
+export const CheckboxWrapper = styled.div`
+	display: flex;
+	align-items: center;
+	/* justify-content: center; */
+	padding: 4px 1rem;
+	margin-top: 10px;
+	margin-bottom: 10px;
+`;

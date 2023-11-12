@@ -44,7 +44,9 @@ const Pagination = ({ totalItems, currentPage, onPageChange,setItemsPerPage,item
             </svg>
           </button>
 
-          {/* Add the dropdown for items per page here */}
+        
+        </PaginationControl>
+      )}
           <div>
             Show{" "}
             <select value={itemsPerPage} onChange={handleItemsPerPageChange}>
@@ -56,8 +58,6 @@ const Pagination = ({ totalItems, currentPage, onPageChange,setItemsPerPage,item
             </select>{" "}
             rows per page
           </div>
-        </PaginationControl>
-      )}
     </>
   );
 };

@@ -32,16 +32,13 @@ const InventoryPage = () => {
 	const [isEditPopUpOpen, setIsEditPopUpOpen] = useState(false);
 	const [inventoryLoading, setInventoryLoading] = useState(true);
 	const [currentPage, setCurrentPage] = useState(1);
-	const [itemsPerPage, setItemsPerPage] = useState();
+	const [itemsPerPage, setItemsPerPage] = useState(10);
 
 	const startIndex = (currentPage - 1) * itemsPerPage;
 	const endIndex = Math.min(currentPage * itemsPerPage, inventoryDisplay.length);
 	const paginatedInventory = inventoryDisplay.slice(startIndex, endIndex);
 	
-	const setCurrentPageHandler = (newPage, itemsPerPage) => {
- 		setCurrentPage(newPage);
-		setItemsPerPage(itemsPerPage); 
-	  };
+	 
 
 	useEffect(() => {
 		fetchInventory();
@@ -163,13 +160,14 @@ const InventoryPage = () => {
 				</Table>
 
 				<Pagination
-						setItemsPerPage={setItemsPerPage}
-						totalItems={inventoryDisplay.length}
+ 						totalItems={inventoryDisplay.length}
 						itemsPerPage={itemsPerPage}  //   this is correct
 						currentPage={currentPage}
 						onPageChange={setCurrentPage}
 						itemsPerPageOptions={[5, 10, 15, 20]} // Customize these options as needed
 						defaultItemsPerPage={10}
+						setItemsPerPage={setItemsPerPage}
+
       			/>
 
 			</StyledPanel>

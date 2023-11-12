@@ -23,10 +23,10 @@ const RefundPage = () => {
   const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false);
   const [isEditPopUpOpen, setIsEditPopUpOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-	const [pagePerItem, setPagePerItem] = useState(10);
+	const [itemsPerPage, setItemsPerPage] = useState(10);
 
-  const startIndex = (currentPage - 1) * pagePerItem;
-  const endIndex = currentPage * pagePerItem;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = currentPage * itemsPerPage;
   const paginatedRefunds = filteredRefunds.slice(startIndex, endIndex);
 
   const handleSearch = (searchTerm) => {
@@ -129,10 +129,13 @@ const RefundPage = () => {
         </Table>
         <Pagination
           totalItems={filteredRefunds.length} // Total number of items
-          itemsPerPage={pagePerItem}
+          itemsPerPage={itemsPerPage}
           currentPage={currentPage}
-          onPageChange={(newPage) => setCurrentPage(newPage)}
-        />
+          onPageChange={setCurrentPage}
+          itemsPerPageOptions={[5, 10, 15, 20]}
+          defaultItemsPerPage={10}
+          setItemsPerPage={setItemsPerPage}
+          />
       </StyledPanel>
 
       {isAddPopUpOpen && <AddRefund setIsAddPopUpOpen={setIsAddPopUpOpen} />}

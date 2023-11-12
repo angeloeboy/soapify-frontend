@@ -23,10 +23,10 @@ import { usePermissions } from "@/components/context/PermissionsContext";
 
 const Products = () => {
 	const { permissions } = usePermissions();
+
 	const [products, setProducts] = useState([]);
 	const [productDisplay, setProductDisplay] = useState([]);
 	const [productsLoading, setProductsLoading] = useState(true);
-	// const [filteredProducts, setFilteredProducts] = useState([]);
 
 	const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false);
 	const [isEditPopupOpen, setEditPopUpOpen] = useState(false);

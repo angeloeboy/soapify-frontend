@@ -5,7 +5,8 @@ import { useEffect, useState } from "react";
 import { getHomeData } from "@/api/home";
 import Widget from "@/components/home/widget";
 import ProductPerformance from "@/components/home/productPerformance";
-import AnnualRevenueGraph from "@/components/home/annualRevenueGraph";
+import AnnualSalesGraph from "@/components/home/annualSalesGraph";
+import ProductSalesGraph from "@/components/home/productSalesGraph";
 
 const Dashboard = () => {
   const [data, setData] = useState({});
@@ -73,10 +74,11 @@ const Dashboard = () => {
       </div>
       <div style={{ display: "flex" }}>
         {data.annual_sales_stats && (
-          <AnnualRevenueGraph annualSalesData={data.annual_sales_stats} />
+          <AnnualSalesGraph annualSalesData={data.annual_sales_stats} />
         )}
+        <ProductSalesGraph />
       </div>
-      <ProductPerformance width="50%" />
+      <ProductPerformance />
     </DashboardLayout>
   );
 };

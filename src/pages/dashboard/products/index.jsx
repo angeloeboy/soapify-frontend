@@ -19,8 +19,10 @@ import EditProduct from "@/components/product/editProduct";
 import ProductSearchBar from "@/components/product/productSearchBar";
 import LoadingSkeleton from "@/components/misc/loadingSkeleton";
 import Pagination from "@/components/misc/pagination";
+import { usePermissions } from "@/components/context/PermissionsContext";
 
 const Products = () => {
+	const { permissions } = usePermissions();
 	const [products, setProducts] = useState([]);
 	const [productDisplay, setProductDisplay] = useState([]);
 	const [productsLoading, setProductsLoading] = useState(true);
@@ -31,7 +33,7 @@ const Products = () => {
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
 
 	const [currentPage, setCurrentPage] = useState(1);
-	const [pagePerItem, setPagePerItem] = useState(10); 
+	const [pagePerItem, setPagePerItem] = useState(10);
 
 	// useEffect(() => {
 	// 	setProductDisplay(filteredProducts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
@@ -42,6 +44,7 @@ const Products = () => {
 	const paginatedProducts = productDisplay.slice(startIndex, endIndex);
 
 	useEffect(() => {
+		console.log(permissions);
 		fetchProducts();
 	}, []);
 

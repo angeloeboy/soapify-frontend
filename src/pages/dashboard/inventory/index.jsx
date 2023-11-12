@@ -37,8 +37,11 @@ const InventoryPage = () => {
 	const startIndex = (currentPage - 1) * itemsPerPage;
 	const endIndex = Math.min(currentPage * itemsPerPage, inventoryDisplay.length);
 	const paginatedInventory = inventoryDisplay.slice(startIndex, endIndex);
-	
-	 
+
+	const setCurrentPageHandler = (newPage, itemsPerPage) => {
+		setCurrentPage(newPage);
+		setItemsPerPage(itemsPerPage);
+	};
 
 	useEffect(() => {
 		fetchInventory();
@@ -52,8 +55,7 @@ const InventoryPage = () => {
 
 	useEffect(() => {
 		setIsAddPopUpOpen(Boolean(openModal));
-	  }, [openModal, productId]);
-	  
+	}, [openModal, productId]);
 
 	const handleClickOutside = (event) => {
 		if (!event.target.closest(".action-container") && !event.target.closest(".ellipsis")) {
@@ -160,18 +162,16 @@ const InventoryPage = () => {
 				</Table>
 
 				<Pagination
- 						totalItems={inventoryDisplay.length}
-						itemsPerPage={itemsPerPage}  //   this is correct
-						currentPage={currentPage}
-						onPageChange={setCurrentPage}
-						itemsPerPageOptions={[5, 10, 15, 20]} // Customize these options as needed
-						defaultItemsPerPage={10}
-						setItemsPerPage={setItemsPerPage}
-
-      			/>
-
+					setItemsPerPage={setItemsPerPage}
+					totalItems={inventoryDisplay.length}
+					itemsPerPage={itemsPerPage} //   this is correct
+					currentPage={currentPage}
+					onPageChange={setCurrentPage}
+					itemsPerPageOptions={[5, 10, 15, 20]} // Customize these options as needed
+					defaultItemsPerPage={10}
+				/>
 			</StyledPanel>
-			{isAddPopUpOpen && <AddInventory setIsAddPopUpOpen={setIsAddPopUpOpen} getInventoryFunc={fetchInventory} productId={productId}/>}
+			{isAddPopUpOpen && <AddInventory setIsAddPopUpOpen={setIsAddPopUpOpen} getInventoryFunc={fetchInventory} productId={productId} />}
 			{isEditPopUpOpen && <EditInventoryComponent setIsEditPopUpOpen={setIsEditPopUpOpen} getInventoryFunc={fetchInventory} />}
 		</DashboardLayout>
 	);

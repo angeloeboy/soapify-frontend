@@ -9,11 +9,14 @@ import { getRoles } from "@/api/roles";
 import Pagination from "@/components/misc/pagination";
 import LoadingSkeleton from "@/components/misc/loadingSkeleton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import AddRoles from "@/components/roles/addRoles";
+import RolesSearchBar from "./../../../components/roles/rolesSearchBar";
 
 const Roles = () => {
 	const [roles, setRoles] = useState([]);
 	const [rolesDisplay, setRolesDisplay] = useState([]);
 	const [rolesLoading, setRolesLoading] = useState(false);
+	const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false);
 
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
 
@@ -46,9 +49,10 @@ const Roles = () => {
 
 	return (
 		<DashboardLayout>
-			<PageTitle title="Returns" />
-
+			<PageTitle title="Roles" />
 			<StyledPanel>
+				<RolesSearchBar setIsAddPopUpOpen={setIsAddPopUpOpen} roles={roles} setRolesDisplay={setRolesDisplay} setCurrentPage={setCurrentPage} />
+
 				<Table>
 					<tbody>
 						<TableRows $heading>
@@ -62,7 +66,7 @@ const Roles = () => {
 								<LoadingSkeleton columns={6} />
 							) : null
 						) : (
-							roles.map((role, index) => (
+							paginatedRoles.map((role, index) => (
 								<TableRows key={index}>
 									<TableData>{role.role_name}</TableData>
 
@@ -96,11 +100,10 @@ const Roles = () => {
 						)}
 					</tbody>
 				</Table>
+				<Pagination totalItems={rolesDisplay.length} itemsPerPage={pagePerItem} currentPage={currentPage} onPageChange={(newPage) => setCurrentPage(newPage)} />
 			</StyledPanel>
 
-			{/* {isAddPopUpOpen && <AddReturn setIsAddPopUpOpen={setIsAddPopUpOpen} />} */}
-
-			<Pagination totalItems={rolesDisplay.length} itemsPerPage={pagePerItem} currentPage={currentPage} onPageChange={(newPage) => setCurrentPage(newPage)} />
+			{isAddPopUpOpen && <AddRoles setIsAddPopUpOpen={setIsAddPopUpOpen} />}
 		</DashboardLayout>
 	);
 };

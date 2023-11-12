@@ -31,19 +31,13 @@ const Products = () => {
 	const [isEditPopupOpen, setEditPopUpOpen] = useState(false);
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
 
-
 	const [currentPage, setCurrentPage] = useState(1);
-	const [itemPerPage, setItemsPerPage] = useState(10);
+	const [itemsPerPage, setItemsPerPage] = useState(10);
 
 	const [selectedProductId, setSelectedProductId] = useState(null);
 
-
-	const [currentPage, setCurrentPage] = useState(1);
-	const itemsPerPage = 10;
-
-
-	const startIndex = (currentPage - 1) * itemPerPage;
-	const endIndex = currentPage * itemPerPage;
+	const startIndex = (currentPage - 1) * itemsPerPage;
+	const endIndex = currentPage * itemsPerPage;
 
 	const paginatedProducts = productDisplay.slice(startIndex, endIndex);
 
@@ -229,7 +223,7 @@ const Products = () => {
 				</Table>
 
 				<Pagination
-					totalItems={productDisplay.length}=
+					totalItems={productDisplay.length}
 					itemsPerPage={itemsPerPage}
 					currentPage={currentPage}
 					onPageChange={setCurrentPage}

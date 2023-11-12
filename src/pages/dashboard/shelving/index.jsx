@@ -19,7 +19,7 @@ const Shelving = () => {
   const [filteredShelves, setFilteredShelves] = useState([]);
   const [activeActionContainer, setActiveActionContainer] = useState(-1);
   const [isAddShelfPopupOpen, setIsAddShelfPopupOpen] = useState(false);
-  const [pagePerItem, setPagePerItem] = useState(4);
+  const [itemsPerPage, setItemsPerPage] = useState(2);
   const [currentPage, setCurrentPage] = useState(1);
 
 
@@ -81,8 +81,8 @@ const Shelving = () => {
     setCurrentPage(1); // Reset to the first page when searching.
   };
 
-  const startIndex = (currentPage - 1) * pagePerItem;
-  const endIndex = currentPage * pagePerItem;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = currentPage * itemsPerPage;
   const paginatedShelves = filteredShelves.slice(startIndex, endIndex);
 
   return (
@@ -150,9 +150,12 @@ const Shelving = () => {
 
         <Pagination
           totalItems={filteredShelves.length}
-          itemsPerPage={pagePerItem}
+          itemsPerPage={itemsPerPage}
           currentPage={currentPage}
-          onPageChange={(newPage) => setCurrentPage(newPage)}
+          onPageChange={setCurrentPage}
+          itemsPerPageOptions={[5, 10, 15, 20]}
+          defaultItemsPerPage={10}
+          setItemsPerPage={setItemsPerPage}
         />
       </StyledPanel>
 

@@ -32,14 +32,16 @@ const InventoryPage = () => {
 	const [isEditPopUpOpen, setIsEditPopUpOpen] = useState(false);
 	const [inventoryLoading, setInventoryLoading] = useState(true);
 	const [currentPage, setCurrentPage] = useState(1);
-	const [pagePerItem, setPagePerItem] = useState(10);  
+	const [itemsPerPage, setItemsPerPage] = useState(10);
 
-	 
-	const startIndex = (currentPage - 1) * pagePerItem;
-	const endIndex = currentPage * pagePerItem;
+	const startIndex = (currentPage - 1) * itemsPerPage;
+	const endIndex = Math.min(currentPage * itemsPerPage, inventoryDisplay.length);
 	const paginatedInventory = inventoryDisplay.slice(startIndex, endIndex);
 
- 
+	const setCurrentPageHandler = (newPage, itemsPerPage) => {
+		setCurrentPage(newPage);
+		setItemsPerPage(itemsPerPage);
+	};
 
 	useEffect(() => {
 		fetchInventory();
@@ -49,12 +51,11 @@ const InventoryPage = () => {
 		return () => {
 			document.removeEventListener("click", handleClickOutside);
 		};
-	}, [currentPage, pagePerItem]);
+	}, [currentPage, itemsPerPage]);
 
 	useEffect(() => {
 		setIsAddPopUpOpen(Boolean(openModal));
-	  }, [openModal, productId]);
-	  
+	}, [openModal, productId]);
 
 	const handleClickOutside = (event) => {
 		if (!event.target.closest(".action-container") && !event.target.closest(".ellipsis")) {
@@ -161,13 +162,16 @@ const InventoryPage = () => {
 				</Table>
 
 				<Pagination
+					setItemsPerPage={setItemsPerPage}
 					totalItems={inventoryDisplay.length}
-					itemsPerPage={pagePerItem}
+					itemsPerPage={itemsPerPage} //   this is correct
 					currentPage={currentPage}
-					onPageChange={(newPage) => setCurrentPage(newPage)}
+					onPageChange={setCurrentPage}
+					itemsPerPageOptions={[5, 10, 15, 20]} // Customize these options as needed
+					defaultItemsPerPage={10}
 				/>
 			</StyledPanel>
-			{isAddPopUpOpen && <AddInventory setIsAddPopUpOpen={setIsAddPopUpOpen} getInventoryFunc={fetchInventory} productId={productId}/>}
+			{isAddPopUpOpen && <AddInventory setIsAddPopUpOpen={setIsAddPopUpOpen} getInventoryFunc={fetchInventory} productId={productId} />}
 			{isEditPopUpOpen && <EditInventoryComponent setIsEditPopUpOpen={setIsEditPopUpOpen} getInventoryFunc={fetchInventory} />}
 		</DashboardLayout>
 	);

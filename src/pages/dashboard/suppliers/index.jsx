@@ -29,10 +29,10 @@ const Suppliers = () => {
 	const [selectedSupplierId, setSelectedSupplierId] = useState(null);
 
 	const [currentPage, setCurrentPage] = useState(1);
-	const itemsPerPage = 10;
+	const [pagePerItem, setPagePerItem] = useState(10);
 
-	const startIndex = (currentPage - 1) * itemsPerPage;
-	const endIndex = currentPage * itemsPerPage;
+	const startIndex = (currentPage - 1) * pagePerItem;
+	const endIndex = currentPage * pagePerItem;
 	const paginatedSuppliers = suppliersDisplay.slice(startIndex, endIndex);
 
 	const handleSearchChange = (event) => {
@@ -155,7 +155,7 @@ const Suppliers = () => {
 
 			<Pagination
 				totalItems={suppliersDisplay.length} // Total number of items
-				itemsPerPage={itemsPerPage}
+				itemsPerPage={pagePerItem}
 				currentPage={currentPage}
 				onPageChange={(newPage) => setCurrentPage(newPage)}
 			/>

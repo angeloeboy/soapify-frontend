@@ -153,60 +153,260 @@ const SubMenu = styled.div`
 `;
 // SIDEBAR DATA
 
+// const Sidebar = (props) => {
+// 	const { permissions } = usePermissions();
+
+// 	const [isLoggingOut, setIsLoggingOut] = useState(false);
+// 	const [rolePermissions, setRolePermissions] = useState(permissions);
+
+// 	// Initialize sidebar state
+// 	const sidebarData = [
+// 		{
+// 			title: "Dashboard",
+// 			icon: "/home-icon.png",
+// 			link: "/dashboard",
+// 			hasSubmenu: true,
+// 			submenus: [
+// 				{ title: "POS", link: "/dashboard/pos" },
+// 				{ title: "Sales Overview", link: "/" },
+// 				{ title: "Orders", link: "/dashboard/orders" },
+// 				{ title: "Returns", link: "/dashboard/returns" },
+// 				{ title: "Refunds", link: "/dashboard/refunds" },
+// 				{ title: "Promos", link: "/dashboard/promos" },
+// 			],
+// 		},
+
+// 		{
+// 			title: "Inventory",
+// 			icon: "/inventory-icon.png",
+// 			link: "/dashboard/products",
+// 			hasSubmenu: true,
+// 			submenus: [
+// 				...(rolePermissions.includes("read:products") ? [{ title: "Product List", link: "/dashboard/products" }] : []),
+// 				// { title: "Inventory List", link: "/dashboard/inventory" },
+// 				...(rolePermissions.includes("read:inventory") ? [{ title: "Inventory List", link: "/dashboard/inventory" }] : []),
+// 				{ title: "Categories", link: "/dashboard/products/categories" },
+// 				{ title: "Suppliers", link: "/dashboard/suppliers" },
+// 				{ title: "Subcategories", link: "/dashboard/products/subcategories" },
+// 				{ title: "Attributes", link: "/dashboard/attributes" },
+// 				{ title: "Orders", link: "/dashboard/orders" },
+
+// 				{ title: "Shelving", link: "/dashboard/shelving" },
+// 			],
+// 		},
+// 		{
+// 			title: "Settings",
+// 			icon: "/settings-icon.png",
+// 			link: "/settings",
+// 			hasSubmenu: true,
+// 			submenus: [
+// 				{ title: "Users", link: "/dashboard/user" },
+// 				{ title: "Warehouse", link: "/dashboard/warehouse" },
+// 				{ title: "Payment Methods", link: "/dashboard/payment" },
+// 			],
+// 		},
+// 	];
+
+// 	const [sidebarState, setSidebarState] = useState({
+// 		submenuOpen: Array(sidebarData.length).fill(false),
+// 		sidebarVisible: true,
+// 		activeMenuIndex: -1,
+// 		activeSubmenuItemIndex: -1,
+// 	});
+// 	const { submenuOpen, sidebarVisible, activeMenuIndex, activeSubmenuItemIndex } = sidebarState;
+// 	useEffect(() => {
+// 		const storedSidebarState = JSON.parse(localStorage.getItem("sidebarState"));
+
+// 		if (storedSidebarState) {
+// 			setSidebarState((prevState) => ({
+// 				...prevState,
+// 				...storedSidebarState,
+// 			}));
+// 		}
+// 	}, []);
+
+// 	useEffect(() => {
+// 		setRolePermissions(permissions);
+// 	}, [permissions]);
+
+// 	// Toggle the sidebar's visibility
+// 	const handleToggleSidebar = () => {
+// 		props.setIsSidebarOpen(!props.isSidebarOpen);
+// 		console.log("test");
+// 	};
+
+// 	// Toggle submenu open/close and manage active indices
+// 	const handleSubMenuToggle = (index) => {
+// 		setSidebarState((prevState) => {
+// 			const newSubmenuOpen = prevState.submenuOpen.map((isOpen, i) => (i === index ? !isOpen : false));
+// 			return {
+// 				...prevState,
+// 				activeMenuIndex: index,
+// 				submenuOpen: newSubmenuOpen,
+// 				activeSubmenuItemIndex: -1, // Reset the active submenu index
+// 			};
+// 		});
+// 	};
+
+// 	// Update localStorage when state changes
+// 	useEffect(() => {
+// 		localStorage.setItem("sidebarState", JSON.stringify(sidebarState));
+// 	}, [sidebarState]);
+
+// 	const handleLogout = async () => {
+// 		setIsLoggingOut(true);
+// 		await logout();
+
+// 		setTimeout(() => {
+// 			window.location.href = "/login";
+// 		}, 1000);
+// 	};
+
+// 	return (
+// 		<div>
+// 			<SidebarContainer $visible={props.isSidebarOpen}>
+// 				<ToggleButton onClick={handleToggleSidebar}>
+// 					{sidebarVisible ? (
+// 						<Image src="/toggle-sidebar-icon.png" alt="Close Sidebar" width="50" height="50" />
+// 					) : (
+// 						<Image src="/toggle-sidebar-icon.png" alt="Open Sidebar" width="50" height="50" />
+// 					)}
+// 				</ToggleButton>
+// 				<h1>SOAPIFY</h1>
+// 				<MenuContainer>
+// 					{sidebarData.map((menuItem, index) =>
+// 						menuItem.hasSubmenu ? (
+// 							<Menu key={index}>
+// 								<div className={`menuTextContainer ${activeMenuIndex === index ? "active" : ""}`} onClick={() => handleSubMenuToggle(index)}>
+// 									<Image src={menuItem.icon} alt={menuItem.title} width="24" height="24" />
+// 									{menuItem.title}
+// 								</div>
+// 								{menuItem.hasSubmenu && submenuOpen[index] && (
+// 									<SubMenu>
+// 										{menuItem.submenus.map((submenuItem, subIndex) => (
+// 											<Link
+// 												key={subIndex}
+// 												href={submenuItem.link}
+// 												className={activeSubmenuItemIndex === subIndex ? "active" : ""}
+// 												onClick={() =>
+// 													setSidebarState((prevState) => ({
+// 														...prevState,
+// 														activeSubmenuItemIndex: subIndex,
+// 													}))
+// 												}
+// 											>
+// 												{submenuItem.title}
+// 											</Link>
+// 										))}
+// 									</SubMenu>
+// 								)}
+// 							</Menu>
+// 						) : (
+// 							<Menu key={index}>
+// 								<Link
+// 									href={menuItem.link}
+// 									className={`menuTextContainer ${activeMenuIndex === index ? "active" : ""}`}
+// 									onClick={() => handleSubMenuToggle(index)}
+// 								>
+// 									<Image src={menuItem.icon} alt={menuItem.title} width="24" height="24" />
+// 									{menuItem.title}
+// 								</Link>
+// 							</Menu>
+// 						)
+// 					)}
+
+// 					<Menu>
+// 						<p
+// 							className={`menuTextContainer `}
+// 							onClick={() => {
+// 								handleLogout();
+// 							}}
+// 						>
+// 							<Image src="/inventory-icon.png" alt="/inventory-icon.png" width="24" height="24" />
+// 							Log out
+// 							{isLoggingOut && <Image src="/loading.svg" alt="loading" width="24" height="24" className="loading" />}
+// 						</p>
+// 					</Menu>
+// 				</MenuContainer>
+// 			</SidebarContainer>
+// 		</div>
+// 	);
+// };
+
+// export default Sidebar;
+
 const Sidebar = (props) => {
 	const { permissions } = usePermissions();
 
 	const [isLoggingOut, setIsLoggingOut] = useState(false);
 	const [rolePermissions, setRolePermissions] = useState(permissions);
+	const [sidebarData, setSidebarData] = useState([]);
 
-	// Initialize sidebar state
-	const sidebarData = [
-		{
-			title: "Dashboard",
-			icon: "/home-icon.png",
-			link: "/dashboard",
-			hasSubmenu: true,
-			submenus: [
-				{ title: "POS", link: "/dashboard/pos" },
-				{ title: "Sales Overview", link: "/" },
-				{ title: "Orders", link: "/dashboard/orders" },
-				{ title: "Returns", link: "/dashboard/returns" },
-				{ title: "Refunds", link: "/dashboard/refunds" },
-				{ title: "Promos", link: "/dashboard/promos" },
-			],
-		},
+	// Function to generate sidebar data based on permissions
+	const generateSidebarData = (rolePermissions) => {
+		return [
+			// Dashboard data (always shown)
+			{
+				title: "Dashboard",
+				icon: "/home-icon.png",
+				link: "/dashboard",
+				hasSubmenu: true,
+				submenus: [
+					{ title: "POS", link: "/dashboard/pos" },
+					{ title: "Sales Overview", link: "/" },
+					{ title: "Orders", link: "/dashboard/orders" },
+					{ title: "Returns", link: "/dashboard/returns" },
+					{ title: "Refunds", link: "/dashboard/refunds" },
+					{ title: "Promos", link: "/dashboard/promos" },
+				],
+			},
+			// Inventory data (conditionally shown)
+			rolePermissions.includes("read:products") || rolePermissions.includes("read:inventory")
+				? {
+						title: "Inventory",
+						icon: "/inventory-icon.png",
+						link: "/dashboard/products",
+						hasSubmenu: true,
+						submenus: [
+							...(rolePermissions.includes("read:products") ? [{ title: "Product List", link: "/dashboard/products" }] : []),
+							...(rolePermissions.includes("read:inventory") ? [{ title: "Inventory List", link: "/dashboard/inventory" }] : []),
+							{ title: "Categories", link: "/dashboard/products/categories" },
+							{ title: "Suppliers", link: "/dashboard/suppliers" },
+							{ title: "Subcategories", link: "/dashboard/products/subcategories" },
+							{ title: "Attributes", link: "/dashboard/attributes" },
+							{ title: "Orders", link: "/dashboard/orders" },
 
-		{
-			title: "Inventory",
-			icon: "/inventory-icon.png",
-			link: "/dashboard/products",
-			hasSubmenu: true,
-			submenus: [
-				...(rolePermissions.includes("read:products") ? [{ title: "Product List", link: "/dashboard/products" }] : []),
-				// { title: "Inventory List", link: "/dashboard/inventory" },
-				...(rolePermissions.includes("read:inventory") ? [{ title: "Inventory List", link: "/dashboard/inventory" }] : []),
-				{ title: "Categories", link: "/dashboard/products/categories" },
-				{ title: "Suppliers", link: "/dashboard/suppliers" },
-				{ title: "Subcategories", link: "/dashboard/products/subcategories" },
-				{ title: "Attributes", link: "/dashboard/attributes" },
-				{ title: "Orders", link: "/dashboard/orders" },
+							{ title: "Shelving", link: "/dashboard/shelving" },
+						],
+				  }
+				: null,
+			{
+				title: "Settings",
+				icon: "/settings-icon.png",
+				link: "/settings",
+				hasSubmenu: true,
+				submenus: [
+					{ title: "Users", link: "/dashboard/user" },
+					{ title: "Warehouse", link: "/dashboard/warehouse" },
+					{ title: "Payment Methods", link: "/dashboard/payment" },
+				],
+			},
+		].filter(Boolean); // Remove null values
+	};
 
-				{ title: "Shelving", link: "/dashboard/shelving" },
-			],
-		},
-		{
-			title: "Settings",
-			icon: "/settings-icon.png",
-			link: "/settings",
-			hasSubmenu: true,
-			submenus: [
-				{ title: "Users", link: "/dashboard/user" },
-				{ title: "Warehouse", link: "/dashboard/warehouse" },
-				{ title: "Payment Methods", link: "/dashboard/payment" },
-			],
-		},
-	];
+	// Effect to update sidebarData when permissions change
+	useEffect(() => {
+		setSidebarData(generateSidebarData(rolePermissions));
+	}, [rolePermissions]);
 
+	// Load permissions from context
+	useEffect(() => {
+		if (permissions && permissions.length > 0) {
+			setRolePermissions(permissions);
+		}
+	}, [permissions]);
+
+	// Rest of your existing sidebar state and handlers
 	const [sidebarState, setSidebarState] = useState({
 		submenuOpen: Array(sidebarData.length).fill(false),
 		sidebarVisible: true,
@@ -214,29 +414,25 @@ const Sidebar = (props) => {
 		activeSubmenuItemIndex: -1,
 	});
 	const { submenuOpen, sidebarVisible, activeMenuIndex, activeSubmenuItemIndex } = sidebarState;
+
 	useEffect(() => {
 		const storedSidebarState = JSON.parse(localStorage.getItem("sidebarState"));
-
 		if (storedSidebarState) {
 			setSidebarState((prevState) => ({
 				...prevState,
 				...storedSidebarState,
 			}));
 		}
-
 	}, []);
 
 	useEffect(() => {
 		setRolePermissions(permissions);
 	}, [permissions]);
 
-	// Toggle the sidebar's visibility
 	const handleToggleSidebar = () => {
 		props.setIsSidebarOpen(!props.isSidebarOpen);
-		console.log("test");
 	};
 
-	// Toggle submenu open/close and manage active indices
 	const handleSubMenuToggle = (index) => {
 		setSidebarState((prevState) => {
 			const newSubmenuOpen = prevState.submenuOpen.map((isOpen, i) => (i === index ? !isOpen : false));
@@ -244,19 +440,18 @@ const Sidebar = (props) => {
 				...prevState,
 				activeMenuIndex: index,
 				submenuOpen: newSubmenuOpen,
-				activeSubmenuItemIndex: -1, // Reset the active submenu index
+				activeSubmenuItemIndex: -1,
 			};
 		});
 	};
 
-	// Update localStorage when state changes
 	useEffect(() => {
 		localStorage.setItem("sidebarState", JSON.stringify(sidebarState));
 	}, [sidebarState]);
 
 	const handleLogout = async () => {
 		setIsLoggingOut(true);
-		await logout();
+		await logout(); // Ensure you have the logout function implemented
 
 		setTimeout(() => {
 			window.location.href = "/login";

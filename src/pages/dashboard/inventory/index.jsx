@@ -99,9 +99,11 @@ const InventoryPage = () => {
 				<Table>
 					<tbody>
 						<TableRows $heading>
+							<TableHeadings>Batch No.</TableHeadings>
 							<TableHeadings>Product Id</TableHeadings>
 
 							<TableHeadings>Product Name</TableHeadings>
+
 							{/* <TableHeadings>Attributes</TableHeadings> */}
 							<TableHeadings>SKU</TableHeadings>
 							<TableHeadings>Quantity</TableHeadings>
@@ -116,16 +118,10 @@ const InventoryPage = () => {
 						) : (
 							paginatedInventory.map((inventory, index) => (
 								<TableRows key={index}>
-									<TableData $bold>{inventory.Product.product_code}</TableData>
-									{/* <TableData>
-										<div className="attr_container">
-											{inventory.Product.attribute.map((attr, index) => {
-												return <span key={index}> {attr.value}</span>;
-											})}
-										</div>
-									</TableData> */}
-
+									<TableData $bold>{inventory.batch_no}</TableData>
+									<TableData>{inventory.Product.product_code}</TableData>
 									<TableData> {inventory.Product.product_name}</TableData>
+
 									<TableData> Test</TableData>
 
 									<TableData>{inventory.quantity}</TableData>

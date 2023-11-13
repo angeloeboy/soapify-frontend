@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from "react";
 import DashboardLayout from "@/components/misc/dashboardLayout";
 import PageTitle from "@/components/misc/pageTitle";
-import Table, { ActionContainer, TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
+import Table, {
+  ActionContainer,
+  TableData,
+  TableHeadings,
+  TableRows,
+} from "@/styled-components/TableComponent";
 import StyledPanel from "@/styled-components/StyledPanel";
 import { faEllipsis, faTrash, faPen } from "@fortawesome/free-solid-svg-icons";
-
+import PdfExporter from "@/components/misc/pdfExporter";
 import { getRoles } from "@/api/roles";
 import Pagination from "@/components/misc/pagination";
 import LoadingSkeleton from "@/components/misc/loadingSkeleton";
@@ -14,105 +19,133 @@ import RolesSearchBar from "./../../../components/roles/rolesSearchBar";
 import EditRoles from "@/components/roles/editRoles";
 
 const Roles = () => {
-	const [roles, setRoles] = useState([]);
-	const [rolesDisplay, setRolesDisplay] = useState([]);
-	const [rolesLoading, setRolesLoading] = useState(false);
-	const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false);
-	const [isEditPopUpOpen, setIsEditPopUpOpen] = useState(false);
-	const [clickedRole, setClickedRole] = useState({});
-	const [activeActionContainer, setActiveActionContainer] = useState(-1);
+  const [roles, setRoles] = useState([]);
+  const [rolesDisplay, setRolesDisplay] = useState([]);
+  const [rolesLoading, setRolesLoading] = useState(false);
+  const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false);
+  const [isEditPopUpOpen, setIsEditPopUpOpen] = useState(false);
+  const [clickedRole, setClickedRole] = useState({});
+  const [activeActionContainer, setActiveActionContainer] = useState(-1);
 
-	const [currentPage, setCurrentPage] = useState(1);
-	const [pagePerItem, setPagePerItem] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagePerItem, setPagePerItem] = useState(10);
 
-	const startIndex = (currentPage - 1) * pagePerItem;
-	const endIndex = currentPage * pagePerItem;
-	const paginatedRoles = rolesDisplay.slice(startIndex, endIndex);
+  const startIndex = (currentPage - 1) * pagePerItem;
+  const endIndex = currentPage * pagePerItem;
+  const paginatedRoles = rolesDisplay.slice(startIndex, endIndex);
 
-	const fetchRoles = async () => {
-		setRolesLoading(true);
-		const res = await getRoles();
+  const fetchRoles = async () => {
+    setRolesLoading(true);
+    const res = await getRoles();
 
-		if (res) {
-			setRoles(res.roles);
-			setRolesDisplay(res.roles);
-		}
+    if (res) {
+      setRoles(res.roles);
+      setRolesDisplay(res.roles);
+    }
 
-		setRolesLoading(false);
-	};
+    setRolesLoading(false);
+  };
 
-	useEffect(() => {
-		fetchRoles();
-	}, []);
+  useEffect(() => {
+    fetchRoles();
+  }, []);
 
-	useEffect(() => {
-		console.log(roles);
-	}, [roles]);
+  useEffect(() => {
+    console.log(roles);
+  }, [roles]);
 
-	return (
-		<DashboardLayout>
-			<PageTitle title="Roles" />
-			<StyledPanel>
-				<RolesSearchBar setIsAddPopUpOpen={setIsAddPopUpOpen} roles={roles} setRolesDisplay={setRolesDisplay} setCurrentPage={setCurrentPage} />
+  return (
+    <DashboardLayout>
+      <PageTitle title="Roles" />
+      <StyledPanel>
+        <RolesSearchBar
+          setIsAddPopUpOpen={setIsAddPopUpOpen}
+          roles={roles}
+          setRolesDisplay={setRolesDisplay}
+          setCurrentPage={setCurrentPage}
+        />
 
-				<Table>
-					<tbody>
-						<TableRows $heading>
-							<TableHeadings>Role </TableHeadings>
-							<TableHeadings># of Users</TableHeadings>
-							<TableHeadings># of Permissions</TableHeadings>
+        <Table id="roles-table">
+          <tbody>
+            <TableRows $heading>
+              <TableHeadings>Role </TableHeadings>
+              <TableHeadings># of Users</TableHeadings>
+              <TableHeadings># of Permissions</TableHeadings>
 
-							<TableHeadings>Actions</TableHeadings>
-						</TableRows>
+              <TableHeadings>Actions</TableHeadings>
+            </TableRows>
 
-						{roles.length === 0 ? (
-							rolesLoading ? (
-								<LoadingSkeleton columns={6} />
-							) : null
-						) : (
-							paginatedRoles.map((role, index) => (
-								<TableRows key={index}>
-									<TableData>{role.role_name}</TableData>
+            {roles.length === 0 ? (
+              rolesLoading ? (
+                <LoadingSkeleton columns={6} />
+              ) : null
+            ) : (
+              paginatedRoles.map((role, index) => (
+                <TableRows key={index}>
+                  <TableData>{role.role_name}</TableData>
 
-									<TableData>{role.users}</TableData>
-									<TableData>{role.permissions.length}</TableData>
+                  <TableData>{role.users}</TableData>
+                  <TableData>{role.permissions.length}</TableData>
 
-									<TableData>
-										<FontAwesomeIcon
-											className="ellipsis"
-											icon={faEllipsis}
-											onClick={() => (activeActionContainer === index ? setActivecAtionContainer(-1) : setActiveActionContainer(index))}
-										/>
+                  <TableData>
+                    <FontAwesomeIcon
+                      className="ellipsis"
+                      icon={faEllipsis}
+                      onClick={() =>
+                        activeActionContainer === index
+                          ? setActivecAtionContainer(-1)
+                          : setActiveActionContainer(index)
+                      }
+                    />
 
-										{activeActionContainer === index && (
-											<ActionContainer onClick={() => setActiveActionContainer(-1)}>
-												<p
-													onClick={() => {
-														setClickedRole(role);
-														setIsEditPopUpOpen(true);
-													}}
-												>
-													<FontAwesomeIcon icon={faPen} />
-													Edit
-												</p>
-												<p>
-													<FontAwesomeIcon icon={faTrash} /> Delete
-												</p>
-											</ActionContainer>
-										)}
-									</TableData>
-								</TableRows>
-							))
-						)}
-					</tbody>
-				</Table>
-				<Pagination totalItems={rolesDisplay.length} itemsPerPage={pagePerItem} currentPage={currentPage} onPageChange={(newPage) => setCurrentPage(newPage)} />
-			</StyledPanel>
+                    {activeActionContainer === index && (
+                      <ActionContainer
+                        onClick={() => setActiveActionContainer(-1)}
+                      >
+                        <p
+                          onClick={() => {
+                            setClickedRole(role);
+                            setIsEditPopUpOpen(true);
+                          }}
+                        >
+                          <FontAwesomeIcon icon={faPen} />
+                          Edit
+                        </p>
+                        <p>
+                          <FontAwesomeIcon icon={faTrash} /> Delete
+                        </p>
+                      </ActionContainer>
+                    )}
+                  </TableData>
+                </TableRows>
+              ))
+            )}
+          </tbody>
+        </Table>
+        <PdfExporter tableId="roles-table" filename="roles.pdf" />
+        <Pagination
+          totalItems={rolesDisplay.length}
+          itemsPerPage={pagePerItem}
+          currentPage={currentPage}
+          onPageChange={(newPage) => setCurrentPage(newPage)}
+        />
+      </StyledPanel>
 
-			{isAddPopUpOpen && <AddRoles setIsAddPopUpOpen={setIsAddPopUpOpen} fetchRoles={fetchRoles} />}
-			{isEditPopUpOpen && <EditRoles setIsEditPopUpOpen={setIsEditPopUpOpen} fetchRoles={fetchRoles} clickedRole={clickedRole} />}
-		</DashboardLayout>
-	);
+      {isAddPopUpOpen && (
+        <AddRoles
+          setIsAddPopUpOpen={setIsAddPopUpOpen}
+          fetchRoles={fetchRoles}
+        />
+      )}
+      {isEditPopUpOpen && (
+        <EditRoles
+          setIsEditPopUpOpen={setIsEditPopUpOpen}
+          fetchRoles={fetchRoles}
+          clickedRole={clickedRole}
+        />
+      )}
+    </DashboardLayout>
+  );
 };
 
 export default Roles;

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import DashboardLayout from "@/components/misc/dashboardLayout";
 import PageTitle from "@/components/misc/pageTitle";
+import PdfExporter from "@/components/misc/pdfExporter";
 import Table, {
   ActionContainer,
   TableData,
@@ -73,7 +74,7 @@ const PromoPage = () => {
           setPromotionsDisplay={setPromotions}
         />
 
-        <Table>
+        <Table id="promos-table">
           <tbody>
             <TableRows $heading>
               <TableHeadings>Promotion ID</TableHeadings>
@@ -134,6 +135,7 @@ const PromoPage = () => {
             ))}
           </tbody>
         </Table>
+        <PdfExporter tableId="promos-table" fileName="promos.pdf" />
       </StyledPanel>
 
       {isAddPopUpOpen && (

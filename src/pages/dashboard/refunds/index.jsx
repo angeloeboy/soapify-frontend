@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import DashboardLayout from "@/components/misc/dashboardLayout";
 import PageTitle from "@/components/misc/pageTitle";
+import PdfExporter from "@/components/misc/pdfExporter";
 import Table, {
   ActionContainer,
   TableData,
@@ -23,7 +24,7 @@ const RefundPage = () => {
   const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false);
   const [isEditPopUpOpen, setIsEditPopUpOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-	const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = currentPage * itemsPerPage;
@@ -75,7 +76,7 @@ const RefundPage = () => {
           setRefundsDisplay={setRefunds}
         />
 
-        <Table>
+        <Table id="refunds-table">
           <tbody>
             <TableRows $heading>
               <TableHeadings>Customer Info</TableHeadings>
@@ -127,6 +128,7 @@ const RefundPage = () => {
             ))}
           </tbody>
         </Table>
+        <PdfExporter tableId="refunds-table" fileName="refunds.pdf" />
         <Pagination
           totalItems={filteredRefunds.length} // Total number of items
           itemsPerPage={itemsPerPage}
@@ -135,7 +137,7 @@ const RefundPage = () => {
           itemsPerPageOptions={[5, 10, 15, 20]}
           defaultItemsPerPage={10}
           setItemsPerPage={setItemsPerPage}
-          />
+        />
       </StyledPanel>
 
       {isAddPopUpOpen && <AddRefund setIsAddPopUpOpen={setIsAddPopUpOpen} />}

@@ -21,6 +21,7 @@ import {
 import { useEffect, useState } from "react";
 import { addProduct, getProducts } from "@/api/products";
 import { addInventory } from "@/api/inventory";
+import { toast } from "react-toastify";
 
 const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId }) => {
 	const currentDate = new Date().toISOString();
@@ -37,7 +38,9 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId }) => {
 	const fetchProducts = () => {
 		getProducts().then((res) => {
 			console.log(res);
-			res ? setProducts(res.products) : setProducts([]);
+			const activeProducts = res.products.filter((product) => product.isActive);
+
+			res ? setProducts(activeProducts) : setProducts([]);
 			// if (res.products.length > 0) {
 			// 	setInventory({ ...inventory, product_id: res.products[0].product_id });
 			// }
@@ -48,11 +51,21 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId }) => {
 
 	const addInventoryFunc = async (e) => {
 		e.preventDefault();
-		await addInventory(inventory).then((res) => {
-			console.log(res);
-		});
+		// await addInventory(inventory).then((res) => {
+		// 	console.log(res);
+		// });
+		// toast.success("Successfully added inventory");
+		// await getInventoryFunc();
 
-		await getInventoryFunc();
+		const res = await addInventory(inventory);
+
+		if (res.status == "Success") {
+			toast.success("Successfully added inventory");
+			await getInventoryFunc();
+			setIsAddPopUpOpen(false);
+		} else {
+			toast.error(res.errors[0].message);
+		}
 	};
 
 	useEffect(() => {

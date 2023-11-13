@@ -4,6 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { logout } from "@/api/auth";
 import { usePermissions } from "../context/PermissionsContext";
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const SidebarContainer = styled.div`
 	position: fixed;
@@ -101,6 +103,24 @@ const Menu = styled.div`
 		&.active {
 			border: 1px solid black;
 			background-color: #1a69f0;
+		}
+		display: flex;
+		align-items: center;
+
+		span {
+			margin-right: 10%;
+			margin-left: auto;
+			svg {
+				transform: rotate(-90deg);
+				path: {
+					color: #0a48b3;
+				}
+			}
+			&.active {
+				svg {
+					transform: rotate(0deg);
+				}
+			}
 		}
 	}
 `;
@@ -476,6 +496,10 @@ const Sidebar = (props) => {
 								<div className={`menuTextContainer ${activeMenuIndex === index ? "active" : ""}`} onClick={() => handleSubMenuToggle(index)}>
 									<Image src={menuItem.icon} alt={menuItem.title} width="24" height="24" />
 									{menuItem.title}
+
+									<span className={`${activeMenuIndex === index && menuItem.hasSubmenu && submenuOpen[index] ? "active" : ""}`}>
+										<FontAwesomeIcon icon={faChevronDown} />
+									</span>
 								</div>
 								{menuItem.hasSubmenu && submenuOpen[index] && (
 									<SubMenu>

@@ -25,7 +25,7 @@ const Warehouse = () => {
 	const [showDeactivate, setShowDeactivate] = useState(false);
 
 	const [currentPage, setCurrentPage] = useState(1);
-	const [pagePerItem, setPagePerItem] = useState(10);
+	const [itemsPerPage, setItemsPerPage] = useState(10);
 
 
 	const [warehouses, setWarehouses] = useState([]);
@@ -35,8 +35,8 @@ const Warehouse = () => {
 		fetchWarehouses();
 	}, []);
 
-	const startIndex = (currentPage - 1) * pagePerItem;
-	const endIndex = currentPage * pagePerItem;
+	const startIndex = (currentPage - 1) * itemsPerPage;
+	const endIndex = currentPage * itemsPerPage;
 	const paginatedWarehouses = warehouseDisplay.slice(startIndex, endIndex);
 
 	const fetchWarehouses = async () => {
@@ -144,7 +144,14 @@ const Warehouse = () => {
 						))}
 					</tbody>
 				</Table>
-				<Pagination totalItems={warehouses.length} itemsPerPage={pagePerItem} currentPage={currentPage} onPageChange={(newPage) => setCurrentPage(newPage)} />
+				<Pagination totalItems={warehouses.length}  
+				itemsPerPage={itemsPerPage}
+				currentPage={currentPage}
+				onPageChange={setCurrentPage}
+				itemsPerPageOptions={[5, 10, 15, 20]}
+				defaultItemsPerPage={10}
+				setItemsPerPage={setItemsPerPage}
+			/>		
 			</StyledPanel>
 			{isAddPopUpOpen && <AddWarehouse setAddPopUpOpen={setAddPopUpOpen} fetchWarehouses={fetchWarehouses} />}
 			{isEditPopUpOpen && <EditWarehouse setEditPopUpOpen={setEditPopUpOpen} fetchWarehouses={fetchWarehouses} clickedId={clickedId} />}

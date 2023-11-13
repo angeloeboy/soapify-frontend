@@ -22,8 +22,8 @@ const PaymentTable = () => {
 	const [isPopUpOpen, setPopUpOpen] = useState(false);
 
 	const [currentPage, setCurrentPage] = useState(1);
-	const [pagePerItem, setPagePerItem] = useState(4); // Set an initial value
-	const [attributesDisplay, setAttributesDisplay] = useState([]); // Define attributesDisplay state variable
+	const [itemsPerPage, setItemsPerPage] = useState(10);
+ 	const [attributesDisplay, setAttributesDisplay] = useState([]); // Define attributesDisplay state variable
 	const [paginatedAttributes, setPaginatedAttributes] = useState([]); // Define paginatedAttributes state variable
     
 	const fetchAttributes = async () => {
@@ -41,22 +41,22 @@ const PaymentTable = () => {
 		setAttributes(attributesArray);
 		setAttributesDisplay(attributesArray);
 		// Use setPagePerItem here
-		setPaginatedAttributes(attributesArray.slice(0, pagePerItem)); // Initialize paginatedAttributes with the first page
+		setPaginatedAttributes(attributesArray.slice(0, itemsPerPage)); // Initialize paginatedAttributes with the first page
 		setAttributesLoading(false);
 	  };
 
 	  useEffect(() => {
 		// Step 3: Use pagePerItem state in the useEffect
 		fetchAttributes();
-	  }, [pagePerItem]); // Fetch attributes when pagePerItem changes
+	  }, [itemsPerPage]); // Fetch attributes when pagePerItem changes
  
 	useEffect(() => {
 		// Use setAttributesDisplay instead of attributesDisplay
-		const startIndex = (currentPage - 1) * pagePerItem;
-		const endIndex = currentPage * pagePerItem;
+		const startIndex = (currentPage - 1) * itemsPerPage;
+		const endIndex = currentPage * itemsPerPage;
 		const paginatedAttributesSlice = attributesDisplay.slice(startIndex, endIndex);
 		setPaginatedAttributes(paginatedAttributesSlice);
-	  }, [currentPage, attributesDisplay, pagePerItem]);
+	  }, [currentPage, attributesDisplay, itemsPerPage]);
 	
 
 	useEffect(() => {
@@ -146,10 +146,14 @@ const PaymentTable = () => {
 
 				<Pagination
 					totalItems={attributesDisplay.length}
-					itemsPerPage={pagePerItem}
+					itemsPerPage={itemsPerPage}
 					currentPage={currentPage}
-					onPageChange={(newPage) => setCurrentPage(newPage)}
+					onPageChange={setCurrentPage}
+					itemsPerPageOptions={[5, 10, 15, 20]}
+					defaultItemsPerPage={10}
+					setItemsPerPage={setItemsPerPage}
 				/>
+
 			</StyledPanel>
 			{isPopUpOpen && <AddAttribute setPopUpOpen={setPopUpOpen} fetchAttributes={fetchAttributes} />}
 			{isEditAttributeOpen && <EditAttribute onClose={closeEditAttribute} />}

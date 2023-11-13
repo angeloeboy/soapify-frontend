@@ -33,7 +33,7 @@ const PaymentTable = () => {
   const [clickedId, setClickedId] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [pagePerItem, setPagePerItem] = useState(10);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   const [filteredPayments, setFilteredPayments] = useState([]);
 
@@ -44,11 +44,11 @@ const PaymentTable = () => {
   useEffect(() => {
     setPaymentMethodsDisplay(
       filteredPayments.slice(
-        (currentPage - 1) * pagePerItem,
-        currentPage * pagePerItem
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
       )
     );
-  }, [currentPage, filteredPayments, pagePerItem]);
+  }, [currentPage, filteredPayments, itemsPerPage]);
 
   const fetchPaymentMethods = () => {
     setPaymentMethodsLoading(true);
@@ -206,9 +206,12 @@ const PaymentTable = () => {
 
         <Pagination
           totalItems={filteredPayments.length}
-          itemsPerPage={pagePerItem}
-          currentPage={currentPage}
-          onPageChange={(newPage) => setCurrentPage(newPage)}
+          itemsPerPage={itemsPerPage}
+					currentPage={currentPage}
+					onPageChange={setCurrentPage}
+					itemsPerPageOptions={[5, 10, 15, 20]}
+					defaultItemsPerPage={10}
+					setItemsPerPage={setItemsPerPage}
         />
       </StyledPanel>
       {isEditPaymentOpen && (

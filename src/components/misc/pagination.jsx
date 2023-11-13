@@ -37,6 +37,24 @@ const Pagination = ({ totalItems, currentPage, onPageChange, setItemsPerPage, it
 						</button>
 					))}
 
+<<<<<<< HEAD
+        
+        </PaginationControl>
+      )}
+          <div>
+            Show{" "}
+            <select value={itemsPerPage} onChange={handleItemsPerPageChange}>
+              {itemsPerPageOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>{" "}
+            rows per page
+          </div>
+    </>
+  );
+=======
 					<button onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))} disabled={currentPage === totalPages}>
 						<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
 							<path d="M7.5 5L12.5 10L7.5 15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
@@ -60,6 +78,7 @@ const Pagination = ({ totalItems, currentPage, onPageChange, setItemsPerPage, it
 			</div>
 		</>
 	);
+>>>>>>> dff09cf7a72cf5b2dfc0642d987b56967d411afa
 };
 
 export default Pagination;

@@ -15,7 +15,8 @@ import {
 	CheckboxWrapper,
 } from "@/styled-components/ItemActionModal";
 import { addRoles, editRoles, getPermissions } from "@/api/roles";
-
+import {  toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const EditRoles = ({ setIsEditPopUpOpen, fetchRoles, clickedRole }) => {
 	const [role, setRole] = useState({
 		role_id: "",
@@ -39,6 +40,9 @@ const EditRoles = ({ setIsEditPopUpOpen, fetchRoles, clickedRole }) => {
 		const res = await editRoles(role);
 		console.log(res.message);
 		fetchRoles();
+
+		toast.success("Role successfully edited");
+		setIsEditPopUpOpen(false)
 	};
 
 	useEffect(() => {

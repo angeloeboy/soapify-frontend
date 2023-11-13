@@ -131,11 +131,11 @@ export async function middleware(req) {
 			});
 
 			let data = await response.json();
-			if (data.user.role_id !== 1) {
-				const url = req.nextUrl.clone();
-				url.pathname = "/user";
-				return NextResponse.redirect(url);
-			}
+			// if (data.user.role_id !== 1) {
+			// 	const url = req.nextUrl.clone();
+			// 	url.pathname = "/user";
+			// 	return NextResponse.redirect(url);
+			// }
 
 			const url = req.nextUrl.clone();
 			url.pathname = "/";

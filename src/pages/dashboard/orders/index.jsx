@@ -51,7 +51,6 @@ const Orders = () => {
 	const [transactions, setTransactions] = useState([]);
 	const [transactionsDisplay, setTransactionsDisplay] = useState([]);
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
-	const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false);
 	const [isEditPopUpOpen, setIsEditPopUpOpen] = useState(false);
 	const [isOrdersInfoOpen, setIsOrdersInfoOpen] = useState(false);
 
@@ -62,7 +61,9 @@ const Orders = () => {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [itemsPerPage, setItemsPerPage] = useState(10);
 
- 
+	const startIndex = (currentPage - 1) * itemsPerPage;
+	const endIndex = currentPage * itemsPerPage;
+	const paginatedTransactions = transactionsDisplay.slice(startIndex, endIndex);
 
 	useEffect(() => {
 		getAllTransactions();
@@ -97,11 +98,8 @@ const Orders = () => {
 		res.transactions ? setTransactions(res.transactions) : setTransactions([]);
 		res.transactions ? setTransactionsDisplay(res.transactions) : setTransactionsDisplay([]);
 		setTransactionsLoading(false);
+		console.log(res.transactions);
 	};
-
-	const startIndex = (currentPage - 1) * itemsPerPage;
-	const endIndex = currentPage * itemsPerPage;
-	const paginatedTransactions = transactionsDisplay.slice(startIndex, endIndex);
 
 	return (
 		<DashboardLayout>
@@ -125,9 +123,7 @@ const Orders = () => {
 						{transactions.length == 0 ? (
 							transactionsLoading ? (
 								<LoadingSkeleton columns={7} />
-							) : (
-								<p>No transactions found</p>
-							)
+							) : null
 						) : (
 							paginatedTransactions.map((transaction, index) => (
 								<TableRows
@@ -187,7 +183,7 @@ const Orders = () => {
 				)}
 
 				{/* <EditOrder setIsEditPopUpOpen={setIsEditPopUpOpen} /> */}
-				<Pagination
+				{/* <Pagination
 					totalItems={transactionsDisplay.length}
 					itemsPerPage={itemsPerPage}
 					currentPage={currentPage}
@@ -195,6 +191,14 @@ const Orders = () => {
 					itemsPerPageOptions={[5, 10, 15, 20]}
 					defaultItemsPerPage={10}
 					setItemsPerPage={setItemsPerPage}
+				/> */}
+
+				<Pagination
+					setItemsPerPage={setItemsPerPage}
+					totalItems={transactionsDisplay.length}
+					itemsPerPage={itemsPerPage} //   this is correct
+					currentPage={currentPage}
+					onPageChange={setCurrentPage}
 				/>
 			</StyledPanel>
 		</DashboardLayout>

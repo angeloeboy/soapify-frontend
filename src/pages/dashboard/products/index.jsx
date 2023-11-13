@@ -31,19 +31,13 @@ const Products = () => {
 	const [isEditPopupOpen, setEditPopUpOpen] = useState(false);
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
 
-
 	const [currentPage, setCurrentPage] = useState(1);
-	const [itemPerPage, setItemsPerPage] = useState(10);
+	const [itemsPerPage, setItemsPerPage] = useState(10);
 
 	const [selectedProductId, setSelectedProductId] = useState(null);
 
-
-	const [currentPage, setCurrentPage] = useState(1);
-	const itemsPerPage = 10;
-
-
-	const startIndex = (currentPage - 1) * itemPerPage;
-	const endIndex = currentPage * itemPerPage;
+	const startIndex = (currentPage - 1) * itemsPerPage;
+	const endIndex = currentPage * itemsPerPage;
 
 	const paginatedProducts = productDisplay.slice(startIndex, endIndex);
 
@@ -171,13 +165,7 @@ const Products = () => {
 										{product.product_code}
 									</TableData>
 									<TableData>{product.product_name}</TableData>
-									{/* <TableData>
-										<div className="attr_container">
-											{product.attribute.map((attr, index) => {
-												return <span key={index}> {attr.value}</span>;
-											})}
-										</div>
-									</TableData> */}
+
 									<TableData>{product.quantity_in_stock}</TableData>
 									<TableData>{product.product_price / 100}</TableData>
 									<TableData>
@@ -220,7 +208,8 @@ const Products = () => {
 												<p>
 													<FontAwesomeIcon icon={faTrash} /> Delete
 												</p>
-												<p onClick={() => goToInventoryPageAndAddInventory(product.product_id)}>Add Inventory</p>
+												{product.isActive && <p onClick={() => goToInventoryPageAndAddInventory(product.product_id)}>Add Inventory</p>}
+
 												<p onClick={() => activateProductFunc(product.product_id)}>Reactivate</p>
 												<p onClick={() => deactivateProductFunc(product.product_id)}>Deactivate</p>
 												{/* <p onClick={() => handleAddInventoryClick(product.product_id)}>Add Inventory</p> */}
@@ -234,7 +223,7 @@ const Products = () => {
 				</Table>
 
 				<Pagination
-					totalItems={productDisplay.length}=
+					totalItems={productDisplay.length}
 					itemsPerPage={itemsPerPage}
 					currentPage={currentPage}
 					onPageChange={setCurrentPage}

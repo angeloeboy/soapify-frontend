@@ -8,6 +8,9 @@ const LineGraphContainer = styled.div`
   border: 1px solid #dfdfdf;
   background: #fff;
   padding: 20px;
+  width: 50%;
+  margin-left: 25%;
+
   display: flex;
   flex-direction: column;
   align-items: flex-start; /* Adjust alignment to top left */
@@ -38,13 +41,14 @@ const LineGraphContainer = styled.div`
   }
 
   .chart-container {
+    padding-left: 80px;
     width: 100%;
     margin-top: 10px; /* Add space between selections and the chart */
   }
 
   .summary {
     font-size: 14px;
-    margin-top: 10px; /* Add space between the chart and the summary */
+    margin-top: 5px; /* Add space between the chart and the summary */
   }
 `;
 
@@ -59,7 +63,6 @@ const ProductPerformance = () => {
   const [productsList, setProductsList] = useState([]); // List of products
   const [productStats, setProductStats] = useState([]); // Product stats
   const [totalUnitsSold, setTotalUnitsSold] = useState(0);
-  const [percentageChange, setPercentageChange] = useState(0); // Percentage change in sales
 
   const calculatePercentageChange = () => {
     if (chartData.labels.length < 2 || !chartData.datasets[0].data) {
@@ -128,6 +131,7 @@ const ProductPerformance = () => {
     calculatePercentageChange();
   }, [selectedYear]);
 
+  //get products list from backend
   const fetchProducts = () => {
     getProducts()
       .then((res) => {
@@ -135,6 +139,7 @@ const ProductPerformance = () => {
         if (Array.isArray(res.products)) {
           setProductsList(res.products);
           calculateTotalUnitsSold();
+          // console.log("Products List:", productsList);
         } else {
           setProductsList([]);
         }
@@ -147,14 +152,14 @@ const ProductPerformance = () => {
   const fetchData = async () => {
     const productStats = await getProductStats(selectedProduct, selectedYear);
     setProductStats(productStats.transactions);
-    console.log("Product ID:", selectedProduct);
-    console.log("Product Transactions", productStats.transactions);
+    // console.log("product stats: ", productStats);
+    // console.log("Product ID:", selectedProduct);
+    // console.log("Product Transactions", productStats.transactions);
 
     if (
       !productStats.transactions ||
       Object.keys(productStats.transactions).length === 0
     ) {
-      window.alert("Selected Product has no transactions as of now.");
       return; // Return to prevent further chart updates
     }
 

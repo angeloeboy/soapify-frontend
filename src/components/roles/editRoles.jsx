@@ -14,10 +14,12 @@ import {
 	InputHolder,
 	CheckboxWrapper,
 } from "@/styled-components/ItemActionModal";
-import { addRoles, getPermissions } from "@/api/roles";
-
-const AddRoles = ({ setIsAddPopUpOpen, fetchRoles }) => {
+import { addRoles, editRoles, getPermissions } from "@/api/roles";
+import {  toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+const EditRoles = ({ setIsEditPopUpOpen, fetchRoles, clickedRole }) => {
 	const [role, setRole] = useState({
+		role_id: "",
 		role_name: "",
 		permissions: [],
 	});
@@ -29,26 +31,38 @@ const AddRoles = ({ setIsAddPopUpOpen, fetchRoles }) => {
 
 		if (res) {
 			setPermissions(res.permissions);
-			console.log(res.permissions);
 		}
 	};
 
-	const addRolesFunc = async (e) => {
+	const editRole = async (e) => {
 		e.preventDefault();
-
-		const res = await addRoles(role);
-
+		console.log(role);
+		const res = await editRoles(role);
 		console.log(res.message);
 		fetchRoles();
+
+		toast.success("Role successfully edited");
+		setIsEditPopUpOpen(false)
 	};
 
 	useEffect(() => {
 		fetchPermissions();
+
+		let role_name = clickedRole.role_name;
+		let permissions = clickedRole.permissions;
+		let role_id = clickedRole.role_id;
+		let permissionIds = permissions.map((permission) => {
+			return permission.permission_id;
+		});
+
+		setRole({ role_id: role_id, role_name: role_name, permissions: permissionIds });
 	}, []);
 
-	useEffect(() => {
-		console.log(role);
-	}, [role]);
+	// useEffect(() => {
+	// 	console.log(role);
+	// }, [role]);
+
+	useEffect;
 
 	const handleCheckboxChange = (event) => {
 		const { value, checked } = event.target;
@@ -56,7 +70,7 @@ const AddRoles = ({ setIsAddPopUpOpen, fetchRoles }) => {
 			const permissions = new Set(prevRole.permissions);
 
 			if (checked) {
-				permissions.add(value);
+				permissions.add(parseInt(value));
 			} else {
 				permissions.delete(value);
 			}
@@ -68,7 +82,7 @@ const AddRoles = ({ setIsAddPopUpOpen, fetchRoles }) => {
 	return (
 		<PopupOverlay>
 			<PopupContent>
-				<form onSubmit={(e) => addRolesFunc(e)}>
+				<form onSubmit={(e) => editRole(e)}>
 					<HeaderTitle>Add Role</HeaderTitle>
 					<LabelContainer>
 						<Label>Role Information</Label>
@@ -94,9 +108,10 @@ const AddRoles = ({ setIsAddPopUpOpen, fetchRoles }) => {
 													id={permission.permission_id}
 													name={permission.permission_name}
 													value={permission.permission_id}
-													onChange={handleCheckboxChange} // Attach the event handler
+													onChange={handleCheckboxChange}
+													checked={role.permissions.includes(permission.permission_id)}
 												/>
-												<label htmlFor={permission.permission_id}> {permission.permission_name}</label>
+												<label htmlFor={permission.permission_id}>{permission.permission_name}</label>
 											</CheckboxWrapper>
 										);
 									})}
@@ -106,8 +121,8 @@ const AddRoles = ({ setIsAddPopUpOpen, fetchRoles }) => {
 					</FieldContainer>
 
 					<ButtonsContainer>
-						<CloseButton onClick={() => setIsAddPopUpOpen(false)}>Close</CloseButton>
-						<Button type="submit" onClick={(e) => addRolesFunc(e)}>
+						<CloseButton onClick={() => setIsEditPopUpOpen(false)}>Close</CloseButton>
+						<Button type="submit" onClick={(e) => editRole(e)}>
 							Save
 						</Button>
 					</ButtonsContainer>
@@ -117,4 +132,4 @@ const AddRoles = ({ setIsAddPopUpOpen, fetchRoles }) => {
 	);
 };
 
-export default AddRoles;
+export default EditRoles;

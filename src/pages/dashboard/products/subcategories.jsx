@@ -1,6 +1,6 @@
 import TopBar from "@/components/misc/topbar";
 import DashboardLayout from "@/components/misc/dashboardLayout";
-
+import PdfExporter from "@/components/misc/pdfExporter";
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -128,7 +128,7 @@ const ProductTemplates = () => {
           subCategories={subCategories}
           setSubcategoryDisplay={setSubcategoryDisplay}
         />
-        <Table>
+        <Table id="subcategories-table">
           <tbody>
             <TableRows $heading>
               <TableHeadings>ID</TableHeadings>
@@ -200,14 +200,18 @@ const ProductTemplates = () => {
             )}
           </tbody>
         </Table>
+        <PdfExporter
+          tableId="subcategories-table"
+          fileName="subcategories.pdf"
+        />
         <Pagination
           totalItems={subcategoryDisplay.length} // Total number of items
           itemsPerPage={itemsPerPage}
-					currentPage={currentPage}
-					onPageChange={setCurrentPage}
-					itemsPerPageOptions={[5, 10, 15, 20]}
-					defaultItemsPerPage={10}
-					setItemsPerPage={setItemsPerPage}
+          currentPage={currentPage}
+          onPageChange={setCurrentPage}
+          itemsPerPageOptions={[5, 10, 15, 20]}
+          defaultItemsPerPage={10}
+          setItemsPerPage={setItemsPerPage}
         />
       </StyledPanel>
       {/* {isPopupOpen && (

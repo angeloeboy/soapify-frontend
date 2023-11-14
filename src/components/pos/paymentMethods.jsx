@@ -88,7 +88,8 @@ const PaymentMethods = (props) => {
 
 			if (res.paymentMethods.length <= 0 || !res) return;
 
-			res ? setPaymentMethods(res.paymentMethods) : setPaymentMethods([]);
+			let activePaymentMethod = res.paymentMethods.filter((payment) => payment.isActive);
+			res ? setPaymentMethods(activePaymentMethod) : setPaymentMethods([]);
 
 			setTransaction((prev) => ({ ...prev, payment_method_id: res.paymentMethods[0].payment_method_id }));
 		});

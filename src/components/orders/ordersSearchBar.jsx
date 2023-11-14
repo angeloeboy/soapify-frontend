@@ -15,43 +15,25 @@ const OrdersSearchBar = ({ setTransactionsDisplay, transactions, setCurrentPage 
 
 		let filteredTransactions;
 
-		// if (queryTerms.length > 1) {
-		// 	filteredTransactions = transactions.filter((transaction) => {
-		// 		return (
-		// 			(queryTerms.every(
-		// 				(term) =>
-		// 					transaction.transaction_unique_id.toLowerCase().includes(term.toLowerCase()) ||
-		// 					transaction.transaction_user_name.last_name.toLowerCase().includes(term.toLowerCase()) ||
-		// 					transaction.transaction_user_name.first_name.toLowerCase().includes(term.toLowerCase())
-		// 			) &&
-		// 				selectedOrderStatus == "All") ||
-		// 			transaction.status === selectedOrderStatus
-		// 		);
-		// 	});
-		// } else {
-		// 	filteredTransactions = transactions.filter((transaction) => {
-		// 		return (
-		// 			(transaction.transaction_unique_id.toLowerCase().includes(query.toLowerCase()) ||
-		// 				transaction.transaction_user_name.last_name.toLowerCase().includes(query.toLowerCase()) ||
-		// 				transaction.transaction_user_name.first_name.toLowerCase().includes(query.toLowerCase()) ||
-		// 				transaction.transaction_number.toLowerCase().includes(query.toLowerCase())) &&
-		// 			(selectedOrderStatus == "All" || transaction.status === selectedOrderStatus)
-		// 		);
-		// 	});
-		// }
-
 		filteredTransactions = transactions.filter((transaction) => {
-			return (
-				(queryTerms.every(
-					(term) =>
-						transaction.transaction_unique_id.toLowerCase().includes(term.toLowerCase()) ||
-						transaction.transaction_user_name.last_name.toLowerCase().includes(term.toLowerCase()) ||
-						transaction.transaction_user_name.first_name.toLowerCase().includes(term.toLowerCase())
-				) &&
-					selectedOrderStatus == "All") ||
-				transaction.status === selectedOrderStatus
-			);
+			// Check if transaction matches query terms
+			const matchesQuery = queryTerms.every((term) => {
+				return (
+					transaction.transaction_unique_id.toLowerCase().includes(term.toLowerCase()) ||
+					transaction.transaction_user_name.last_name.toLowerCase().includes(term.toLowerCase()) ||
+					transaction.transaction_user_name.first_name.toLowerCase().includes(term.toLowerCase())
+				);
+			});
+
+			// return matchesQuery;
+
+			// Check if transaction status matches the selected order status
+			const matchesStatus = selectedOrderStatus === "All" || transaction.status === selectedOrderStatus;
+		
+			// Return true if both conditions are met
+			return matchesQuery && matchesStatus;
 		});
+
 		console.log(selectedOrderStatus);
 		setTransactionsDisplay(filteredTransactions);
 		setCurrentPage(1);
@@ -63,7 +45,7 @@ const OrdersSearchBar = ({ setTransactionsDisplay, transactions, setCurrentPage 
 
 	useEffect(() => {
 		handleSearch();
-	}, [searchQuery, transactions, selectedOrderStatus]);
+	}, [searchQuery, selectedOrderStatus]);
 
 	return (
 		<TableControlPanel>

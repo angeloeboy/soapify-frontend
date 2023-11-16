@@ -28,7 +28,7 @@ export const getProductStats = async (id, year) => {
 
 //connect to websocket
 export const connectToWebSocket = (onMessageReceived) => {
-	const wsURL = process.env.NEXT_PUBLIC_WEBSOCKET_URL || "wss://iamangelo.tech"; // Default URL
+	const wsURL = process.env.NEXT_PUBLIC_WEBSOCKET_URL || "wss://iamangelo.tech/api"; // Default URL
 	let webSocket;
 
 	try {

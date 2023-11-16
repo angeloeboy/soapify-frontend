@@ -133,22 +133,22 @@ export async function middleware(req) {
 			let data = await response.json();
 			console.log(data);
 
-			// if (data.user.role_id !== 1) {
-			// 	const url = req.nextUrl.clone();
-			// 	url.pathname = "/user";
-			// 	return NextResponse.redirect(url);
-			// }
+			if (data.user.role_id !== 1) {
+				const url = req.nextUrl.clone();
+				url.pathname = "/user";
+				return NextResponse.redirect(url);
+			}
 
-			// const url = req.nextUrl.clone();
-			// url.pathname = "/";
-			// // Set cookies here as well
-			// const next_response = response.ok ? NextResponse.next() : NextResponse.redirect(url);
-			// next_response.cookies.set("permissions", JSON.stringify(permissions), {
-			// 	httpOnly: false,
-			// 	path: "/",
-			// });
+			const url = req.nextUrl.clone();
+			url.pathname = "/";
+			// Set cookies here as well
+			const next_response = response.ok ? NextResponse.next() : NextResponse.redirect(url);
+			next_response.cookies.set("permissions", JSON.stringify(permissions), {
+				httpOnly: false,
+				path: "/",
+			});
 
-			// return next_response;
+			return next_response;
 		}
 
 		// Set cookies for all other routes

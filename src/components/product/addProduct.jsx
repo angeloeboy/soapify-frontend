@@ -6,9 +6,7 @@ import {
 	Option,
 	FieldContainer,
 	ProfilePictureContainer,
-	FileInput,
 	Centered,
-	SecondaryButton,
 	CloseButton,
 	ButtonsContainer,
 	PopupOverlay,
@@ -21,6 +19,7 @@ import {
 import { useEffect, useState } from "react";
 import { addProduct, getProductCategories, getProducts, getSubCategories } from "@/api/products";
 import { getSuppliers } from "@/api/supplier";
+import { toast } from "react-toastify";
 
 const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 	const [categories, setCategories] = useState([]);
@@ -30,18 +29,39 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 	const [subCategories, setSubCategories] = useState([]);
 
 	const [product, setProduct] = useState({
+		// product_name: "",
+		// product_desc: "test description",
+		// product_price: 0,
+		// category_id: 1,
+		// supplier_id: 0,
+		// subcategory_id: 0,
+		// quantity_in_stock: 0,
+		// minimum_reorder_level: 1,
+		// isVariant: false,
+		// parent_product_id: 0,
+		// attributes: [],
+
 		product_name: "",
 		product_desc: "test description",
-		product_price: 0,
 		category_id: 1,
 		supplier_id: 0,
 		subcategory_id: 0,
-		quantity_in_stock: 0,
-		minimum_reorder_level: 1,
-		isVariant: false,
-		parent_product_id: 0,
+		parent_product_id: 1,
 		attributes: [],
+		addAsBox: false,
+		addAsPc: true,
+		boxDetails: {
+			product_price: 0,
+			minimum_reorder_level: 0,
+			pcsPerBox: 0,
+		},
+		pcDetails: {
+			product_price: 0,
+			minimum_reorder_level: 0,
+		},
 	});
+
+	// const [product, setProduct] =
 
 	useEffect(() => {
 		fetchProductCategories();
@@ -52,7 +72,7 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 		console.log(product);
 	}, [product]);
 
-	let AddProduct = (e) => {
+	let AddProduct = async (e) => {
 		e.preventDefault();
 
 		let formData = new FormData();
@@ -63,22 +83,35 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 		// Append each property in the product object to formData
 		for (let key in product) {
 			if (product.hasOwnProperty(key)) {
-				if (key === "attributes") {
+				// Check if the property is 'attributes', 'boxDetails', or 'pcDetails'
+				if (key === "attributes" || key === "boxDetails" || key === "pcDetails") {
+					// Convert the object to a JSON string and append it
 					formData.append(key, JSON.stringify(product[key]));
 				} else {
+					// Append other properties as they are
 					formData.append(key, product[key]);
 				}
 			}
 		}
 
-		addProduct(formData)
-			.then((res) => {
-				console.log(res);
-				GetProducts();
-			})
-			.catch((error) => {
-				console.error("Error adding product:", error);
-			});
+		// addProduct(formData)
+		// 	.then((res) => {
+		// 		console.log(res);
+		// 		GetProducts();
+		// 	})
+		// 	.catch((error) => {
+		// 		console.error("Error adding product:", error);
+		// 	});
+
+		const res = await addProduct(formData);
+		console.log(res);
+		if (!res) return;
+		if (res.status !== "Success") return toast.error(res.errors[0].message);
+
+		toast.success("Product added successfully");
+		GetProducts();
+
+		setIsAddPopUpOpen(false);
 	};
 
 	let fetchProductCategories = async () => {
@@ -179,9 +212,32 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 				<form onSubmit={(e) => AddProduct(e)} enctype="multipart/form-data">
 					<FieldContainer>
 						<HeaderTitle>Add Products</HeaderTitle>
-
 						<LabelContainer first>
-							<Label>Category</Label>
+							<Label>Basic Information</Label>
+						</LabelContainer>
+
+						<div>
+							<FieldTitleLabel> Product Name </FieldTitleLabel>
+							<InputHolder
+								type="text"
+								onChange={(e) => {
+									setProduct({ ...product, product_name: e.target.value });
+								}}
+								required
+								value={product.product_name}
+							/>
+						</div>
+
+						<div>
+							<FieldTitleLabel notFirst>Image (optional)</FieldTitleLabel>
+							<ProfilePictureContainer>
+								<Centered>
+									<input type="file" name="product_image" required />
+								</Centered>
+							</ProfilePictureContainer>
+						</div>
+						<LabelContainer first>
+							<Label>Category and Subcategory</Label>
 						</LabelContainer>
 						<div>
 							<FieldTitleLabel notFirst>Category</FieldTitleLabel>
@@ -255,64 +311,227 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 							);
 						})}
 
-						<LabelContainer first>
-							<Label>General Information</Label>
+						<LabelContainer>
+							<Label>Box and Pc Information (If applicable)</Label>
 						</LabelContainer>
 
 						<div>
-							<FieldTitleLabel> Product Name </FieldTitleLabel>
-							<InputHolder
-								type="text"
+							<FieldTitleLabel>Sell As</FieldTitleLabel>
+							<Select
+								value={product.addAsBox && product.addAsPc ? "Both" : product.addAsBox ? "Box" : "Piece"}
 								onChange={(e) => {
-									setProduct({ ...product, product_name: e.target.value });
-								}}
-								required
-								value={product.product_name}
-							/>
-						</div>
-						<div>
-							<FieldTitleLabel notFirst>Price</FieldTitleLabel>
-							<InputHolder
-								type="text"
-								placeholder="Enter your Price"
-								onChange={(e) => {
-									const validNumberRegex = /^[0-9]*(\.[0-9]*)?$/;
+									if (e.target.value === "Both") {
+										setProduct({
+											...product,
+											addAsBox: true,
+											addAsPc: true,
+										});
 
-									if (e.target.value === "") {
-										setProduct({ ...product, product_price: "" });
-									} else if (validNumberRegex.test(e.target.value)) {
-										setProduct({ ...product, product_price: e.target.value });
+										return;
+									}
+
+									if (e.target.value === "Box") {
+										setProduct({
+											...product,
+											addAsBox: true,
+											addAsPc: false,
+										});
+
+										return;
+									}
+
+									if (e.target.value === "Piece") {
+										setProduct({
+											...product,
+											addAsBox: false,
+											addAsPc: true,
+										});
+
+										return;
 									}
 								}}
-								pattern="^[0-9]*(\.[0-9]+)?$"
-								title="Please enter a valid number. Decimals are allowed."
-								required
-								value={product.product_price}
-							/>
+							>
+								<Option value={"Piece"}>Piece</Option>
+								<Option value={"Box"}>Box</Option>
+								<Option value={"Both"}>Both</Option>
+							</Select>
 						</div>
-						<div>
-							<FieldTitleLabel notFirst>Minimum Reorder Number</FieldTitleLabel>
-							<InputHolder
-								type="number"
-								placeholder="Enter your minimum stock"
-								onChange={(e) => {
-									setProduct({
-										...product,
-										minimum_reorder_level: parseInt(e.target.value, 10),
-									});
-								}}
-								required
-								value={product.minimum_reorder_level}
-							/>
-						</div>
-						<div>
-							<FieldTitleLabel notFirst>Image (optional)</FieldTitleLabel>
-							<ProfilePictureContainer>
-								<Centered>
-									<input type="file" name="product_image" required />
-								</Centered>
-							</ProfilePictureContainer>
-						</div>
+						<LabelContainer>
+							<Label>Pricing and Stock Information</Label>
+						</LabelContainer>
+						{product.addAsBox && (
+							<>
+								<div>
+									<FieldTitleLabel>Box Price</FieldTitleLabel>
+									<InputHolder
+										type="number"
+										min="0"
+										onChange={(e) => {
+											// Regular expression to allow only positive numbers and decimals
+											const validPositiveNumberRegex = /^[0-9]*(\.[0-9]+)?$/;
+
+											if (e.target.value === "") {
+												setProduct({
+													...product,
+													boxDetails: {
+														...product.boxDetails,
+														product_price: "",
+													},
+												});
+											} else if (validPositiveNumberRegex.test(e.target.value)) {
+												setProduct({
+													...product,
+													boxDetails: {
+														...product.boxDetails,
+														product_price: Number(e.target.value),
+													},
+												});
+											}
+										}}
+										pattern="^[0-9]*(\.[0-9]+)?$"
+										title="Please enter a valid positive number. Decimals are allowed."
+										required
+										value={product.boxDetails.product_price}
+									/>
+								</div>
+
+								<div>
+									<FieldTitleLabel>Pieces per Box</FieldTitleLabel>
+									<InputHolder
+										type="number"
+										min="0"
+										onChange={(e) => {
+											// Regular expression to allow only positive whole numbers
+											const validPositiveWholeNumberRegex = /^[0-9]+$/;
+
+											if (e.target.value === "") {
+												setProduct({
+													...product,
+													boxDetails: {
+														...product.boxDetails,
+														pcsPerBox: "",
+													},
+												});
+											} else if (validPositiveWholeNumberRegex.test(e.target.value)) {
+												setProduct({
+													...product,
+													boxDetails: {
+														...product.boxDetails,
+														pcsPerBox: Number(e.target.value),
+													},
+												});
+											}
+										}}
+										pattern="^[0-9]+$"
+										title="Please enter a valid positive whole number."
+										required
+										value={product.boxDetails.pcsPerBox}
+									/>
+								</div>
+								<div>
+									<FieldTitleLabel notFirst>Box Reorder Threshold</FieldTitleLabel>
+									<InputHolder
+										type="number"
+										min="0"
+										onChange={(e) => {
+											// Regular expression to allow only positive whole numbers
+											const validPositiveWholeNumberRegex = /^[0-9]+$/;
+
+											if (e.target.value === "") {
+												setProduct({
+													...product,
+													boxDetails: {
+														...product.boxDetails,
+														minimum_reorder_level: "",
+													},
+												});
+											} else if (validPositiveWholeNumberRegex.test(e.target.value)) {
+												setProduct({
+													...product,
+													boxDetails: {
+														...product.boxDetails,
+														minimum_reorder_level: Number(e.target.value),
+													},
+												});
+											}
+										}}
+										pattern="^[0-9]+$"
+										title="Please enter a valid positive whole number."
+										required
+										value={product.boxDetails.minimum_reorder_level}
+									/>
+								</div>
+							</>
+						)}
+
+						{product.addAsPc && (
+							<>
+								<div>
+									<FieldTitleLabel>Per piece Price</FieldTitleLabel>
+									<InputHolder
+										type="number"
+										min="0"
+										onChange={(e) => {
+											const validPositiveNumberRegex = /^[0-9]*(\.[0-9]+)?$/;
+
+											if (e.target.value === "") {
+												setProduct({
+													...product,
+													pcDetails: {
+														...product.pcDetails,
+														product_price: "",
+													},
+												});
+											} else if (validPositiveNumberRegex.test(e.target.value)) {
+												setProduct({
+													...product,
+													pcDetails: {
+														...product.pcDetails,
+														product_price: Number(e.target.value),
+													},
+												});
+											}
+										}}
+										pattern="^[0-9]*(\.[0-9]+)?$"
+										title="Please enter a valid positive number. Decimals are allowed."
+										required
+										value={product.pcDetails.product_price}
+									/>
+								</div>
+								<div>
+									<FieldTitleLabel notFirst>Per piece Reorder Threshold</FieldTitleLabel>
+
+									<InputHolder
+										type="text"
+										onChange={(e) => {
+											const validPositiveWholeNumberRegex = /^[0-9]+$/; // Regex updated to allow only whole numbers
+
+											if (e.target.value === "") {
+												setProduct({
+													...product,
+													pcDetails: {
+														...product.pcDetails,
+														minimum_reorder_level: "",
+													},
+												});
+											} else if (validPositiveWholeNumberRegex.test(e.target.value)) {
+												setProduct({
+													...product,
+													pcDetails: {
+														...product.pcDetails,
+														minimum_reorder_level: Number(e.target.value),
+													},
+												});
+											}
+										}}
+										pattern="^[0-9]+$" // Pattern attribute updated to match the regex
+										title="Please enter a valid positive whole number."
+										required
+										value={product.pcDetails.minimum_reorder_level} // Assuming the correct state path
+									/>
+								</div>
+							</>
+						)}
 
 						<LabelContainer>
 							<Label>Supplier</Label>

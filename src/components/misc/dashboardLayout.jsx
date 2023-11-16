@@ -31,7 +31,6 @@ const DashboardRightContainer = styled.div`
 
 let DashboardLayout = ({ children }) => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
 	return (
 		<WebSocketProvider>
 			<Sidebar setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} />

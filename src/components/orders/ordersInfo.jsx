@@ -56,6 +56,11 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 		await updateStatus("DONE");
 	};
 
+	const batchInfo = (batch_info) => {
+		let jsonBatchInfo = JSON.parse(batch_info);
+		return jsonBatchInfo;
+	};
+
 	return (
 		<PopupOverlay>
 			<PopupContent>
@@ -67,6 +72,17 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 							<p>Name: {item.product.product_name}</p>
 							<p>Price: {item.product.product_price}</p>
 							<p>Quantity: {item.quantity}</p>
+							
+							<div>
+								{batchInfo(item.batch_info).map((info, index) => {
+									return (
+										<div key={index}>
+											<p>Batch Number: {info.batch_no}</p>
+											<p>Quantity: {info.quantity}</p>
+										</div>
+									);
+								})}
+							</div>
 						</div>
 					))}
 

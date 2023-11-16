@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import DashboardLayout from "@/components/misc/dashboardLayout";
 import PageTitle from "@/components/misc/pageTitle";
+import PdfExporter from "@/components/misc/pdfExporter";
 import Table, {
   ActionContainer,
   TableData,
@@ -19,12 +20,11 @@ const Shelving = () => {
   const [filteredShelves, setFilteredShelves] = useState([]);
   const [activeActionContainer, setActiveActionContainer] = useState(-1);
   const [isAddShelfPopupOpen, setIsAddShelfPopupOpen] = useState(false);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 1; // Number of items to display per page.
 
   useEffect(() => {
-     const staticShelvingData = [
-
+    const staticShelvingData = [
       {
         shelfID: "S001",
         shelfName: "Shelf A",
@@ -60,10 +60,8 @@ const Shelving = () => {
         currentItems: 15,
         status: "Active",
         description: "This shelf is for Liquid Soap.",
-      }
-
-      
-     ];
+      },
+    ];
 
     setShelves(staticShelvingData);
     setFilteredShelves(staticShelvingData);
@@ -95,7 +93,7 @@ const Shelving = () => {
           onSearch={handleSearchShelves}
         />
 
-        <Table>
+        <Table id="shelving-table">
           <tbody>
             <TableRows $heading>
               <TableHeadings>Shelf ID</TableHeadings>
@@ -146,12 +144,15 @@ const Shelving = () => {
             ))}
           </tbody>
         </Table>
-
+        <PdfExporter tableId="shelving-table" filename="shelving" />
         <Pagination
           totalItems={filteredShelves.length}
           itemsPerPage={itemsPerPage}
           currentPage={currentPage}
-          onPageChange={(newPage) => setCurrentPage(newPage)}
+          onPageChange={setCurrentPage}
+          itemsPerPageOptions={[5, 10, 15, 20]}
+          defaultItemsPerPage={10}
+          setItemsPerPage={setItemsPerPage}
         />
       </StyledPanel>
 

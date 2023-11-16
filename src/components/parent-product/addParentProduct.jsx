@@ -19,7 +19,7 @@ import { addPaymentMethod } from "@/api/payment_method";
 import { toast } from "react-toastify";
 import { addParentProduct } from "@/api/parent_product";
 
-const AddParentProduct = ({ setAddParentProductOpen, fetchParentProducts }) => {
+const AddParentProduct = ({ setAddParentProductOpen, fetchParentProducts}) => {
 	const [parentProduct, setParentProduc] = useState({
 		name: "",
 	});

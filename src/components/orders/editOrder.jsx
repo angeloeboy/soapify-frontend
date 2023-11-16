@@ -28,10 +28,6 @@ const EditOrder = ({ setIsEditPopUpOpen, selectedTransactionId, transaction }) =
 
 	const [showToast, setShowToast] = useState(false);
 
-	// useEffect(() => {
-	// 	fetchTransaction();
-	// }, []);
-
 	const fetchTransaction = async () => {
 		const res = await getTransaction(selectedTransactionId);
 		console.log(res.transaction);

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import DashboardLayout from "@/components/misc/dashboardLayout";
 import PageTitle from "@/components/misc/pageTitle";
+import PdfExporter from "@/components/misc/pdfExporter";
 import Table, {
   ActionContainer,
   TableData,
@@ -70,7 +71,7 @@ const ReturnPage = () => {
           setReturnsDisplay={setReturns}
         />
 
-        <Table>
+        <Table id="returns-table">
           <tbody>
             <TableRows $heading>
               <TableHeadings>Return ID</TableHeadings>
@@ -121,6 +122,7 @@ const ReturnPage = () => {
             ))}
           </tbody>
         </Table>
+        <PdfExporter tableId="returns-table" fileName="return.pdf" />
       </StyledPanel>
 
       {isAddPopUpOpen && <AddReturn setIsAddPopUpOpen={setIsAddPopUpOpen} />}

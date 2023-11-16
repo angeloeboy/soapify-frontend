@@ -13,6 +13,7 @@ import { addTransaction, getTransactions } from "@/api/transaction";
 import { PaginationControl } from "@/styled-components/ItemActionModal";
 import Pagination from "@/components/misc/pagination";
 import { TransactionContext } from "@/components/context/TransactionContext";
+import { getParentProduct } from "@/api/parent_product";
 // import { TransactionContext } from "../context/TransactionContext";
 
 const ProductsList = styled.div`
@@ -55,10 +56,6 @@ const Pos = () => {
 	const [cart, setCart] = useState([]);
 	const [productDisplay, setProductDisplay] = useState([]);
 	const [activeAction, setActiveAction] = useState("cart");
-	const [products, setProducts] = useState([]);
-	const [cart, setCart] = useState([]);
-	const [productDisplay, setProductDisplay] = useState([]);
-	const [activeAction, setActiveAction] = useState("cart");
 
 	const [transaction, setTransaction] = useState({
 		payment_method_id: undefined,
@@ -66,47 +63,20 @@ const Pos = () => {
 		total_amount: 0,
 		items: [],
 	});
-	const [transaction, setTransaction] = useState({
-		payment_method_id: undefined,
-		transaction_number: "",
-		total_amount: 0,
-		items: [],
-	});
 
-	const [currentPage, setCurrentPage] = useState(1);
-	const itemsPerPage = 10;
-	const [currentPage, setCurrentPage] = useState(1);
-	const itemsPerPage = 10;
+	const [parentProducts, setParentProducts] = useState([]);
 
-	const startIndex = (currentPage - 1) * itemsPerPage;
-	const endIndex = currentPage * itemsPerPage;
-	const paginatedProducts = productDisplay.slice(startIndex, endIndex);
-	const startIndex = (currentPage - 1) * itemsPerPage;
-	const endIndex = currentPage * itemsPerPage;
-	const paginatedProducts = productDisplay.slice(startIndex, endIndex);
-
-	const [windowWidth, setWindowWidth] = useState(1200);
 	const [windowWidth, setWindowWidth] = useState(1200);
 
 	useEffect(() => {
-		// Update width to the actual window width when the component mounts on the client side
-	useEffect(() => {
-		// Update width to the actual window width when the component mounts on the client side
-
 		fetchProducts();
-		fetchProducts();
-
-		setWindowWidth(window.innerWidth);
+		fetchParentProducts();
 		setWindowWidth(window.innerWidth);
 
 		const handleResize = () => setWindowWidth(window.innerWidth);
-		const handleResize = () => setWindowWidth(window.innerWidth);
 
 		window.addEventListener("resize", handleResize);
-		window.addEventListener("resize", handleResize);
 
-		return () => window.removeEventListener("resize", handleResize);
-	}, []);
 		return () => window.removeEventListener("resize", handleResize);
 	}, []);
 
@@ -117,24 +87,14 @@ const Pos = () => {
 			items: cart,
 		}));
 	}, [cart]);
-	useEffect(() => {
-		setTransaction((prev) => ({
-			...prev,
-			total_amount: cart.reduce((acc, item) => acc + item.product_price * item.quantity, 0),
-			items: cart,
-		}));
-	}, [cart]);
 
 	useEffect(() => {
 		setProductDisplay(groupProductsByParentProductId(products));
-		// setProductDisplay(products);
-		console.log(groupProductsByParentProductId(products));
-	}, [products]);
-	useEffect(() => {
-		setProductDisplay(groupProductsByParentProductId(products));
-		// setProductDisplay(products);
-		console.log(groupProductsByParentProductId(products));
-	}, [products]);
+	}, [products, parentProducts]);
+
+	// useEffect(() => {
+	// 	console.log(productDisplay)
+	// }, [productDisplay]);
 
 	const fetchProducts = async () => {
 		const response = await getProducts();
@@ -144,16 +104,19 @@ const Pos = () => {
 		console.log(response.products);
 	};
 
+	const fetchParentProducts = async () => {
+		const response = await getParentProduct();
+		console.log(response);
+
+		if (!response) return;
+
+		setParentProducts(response.parentProducts);
+	};
+
 	const groupProductsByParentProductId = (products) => {
 		const variants = products.filter((product) => product.parent_product_id !== null);
-	const groupProductsByParentProductId = (products) => {
-		const variants = products.filter((product) => product.parent_product_id !== null);
-
-		const notVariants = products.filter((product) => product.parent_product_id === null);
 		const notVariants = products.filter((product) => product.parent_product_id === null);
 
-		notVariants.forEach((product) => {
-			product.variants = variants.filter((variant) => variant.parent_product_id === product.product_id);
 		notVariants.forEach((product) => {
 			product.variants = variants.filter((variant) => variant.parent_product_id === product.product_id);
 
@@ -161,18 +124,23 @@ const Pos = () => {
 				product.variants.push(product);
 			}
 		});
-			if (product.variants.length > 0) {
-				product.variants.push(product);
-			}
+
+		groupProductsByParentProductId2(products);
+
+		return notVariants;
+	};
+
+	const groupProductsByParentProductId2 = (products) => {
+		let parentProduct = parentProducts.map((parentProduct) => {
+			return {
+				...parentProduct,
+				products: products.filter((product) => product.parent_product_id === parentProduct.parent_product_id),
+			};
 		});
 
-		return notVariants;
-	};
-		return notVariants;
+		console.log(parentProduct);
 	};
 
-	const updateCart = (product, operation) => {
-		const existingProduct = cart.find((item) => item.product_id === product.product_id);
 	const updateCart = (product, operation) => {
 		const existingProduct = cart.find((item) => item.product_id === product.product_id);
 
@@ -191,39 +159,7 @@ const Pos = () => {
 		}
 		setCart(updatedCart);
 	};
-		let updatedCart;
-		if (operation === "add") {
-			updatedCart = existingProduct
-				? cart.map((item) => (item.product_id === product.product_id ? { ...item, quantity: item.quantity + 1 } : item))
-				: [...cart, { ...product, quantity: 1 }];
-		} else if (operation === "subtract" && existingProduct) {
-			updatedCart =
-				existingProduct.quantity === 1 || existingProduct.quantity < 0
-					? cart.filter((item) => item.product_id !== product.product_id)
-					: cart.map((item) => (item.product_id === product.product_id ? { ...item, quantity: item.quantity - 1 } : item));
-		} else if (operation === "delete" && existingProduct) {
-			updatedCart = cart.filter((item) => item.product_id !== product.product_id);
-		}
-		setCart(updatedCart);
-	};
 
-	return (
-		<TransactionContext.Provider
-			value={{
-				setTransaction,
-				transaction,
-				cart,
-				updateCart,
-				setCart,
-				activeAction,
-				setActiveAction,
-			}}
-		>
-			<DashboardLayout>
-				<PageTitle title="POS" />
-				<POSWrapper>
-					<StyledPanel pos={true}>
-						<PosSearchBar products={products} setProductDisplay={setProductDisplay} />
 	return (
 		<TransactionContext.Provider
 			value={{
@@ -243,21 +179,23 @@ const Pos = () => {
 						<PosSearchBar products={products} setProductDisplay={setProductDisplay} />
 
 						<ProductsList>
-							{paginatedProducts.map((product, index) => {
-								return (
-									<ProductComponent
-										product={product}
-										index={index}
-										onClick={() => {
-											updateCart(product, "add");
-											if (activeAction != "cart") setActiveAction("cart");
-										}}
-										updateCart={updateCart}
-										key={index}
-										hasVariants={product.variants ? true : false}
-										variants={product.variants ? product.variants : []}
-									/>
-								);
+							{productDisplay.map((product, index) => {
+								if (product.quantity_in_stock > 0) {
+									return (
+										<ProductComponent
+											product={product}
+											index={index}
+											onClick={() => {
+												updateCart(product, "add");
+												if (activeAction != "cart") setActiveAction("cart");
+											}}
+											updateCart={updateCart}
+											key={index}
+											hasVariants={product.variants ? true : false}
+											variants={product.variants ? product.variants : []}
+										/>
+									);
+								}
 							})}
 						</ProductsList>
 					</StyledPanel>
@@ -269,27 +207,6 @@ const Pos = () => {
 					</StickyContainer>
 				</POSWrapper>
 			</DashboardLayout>
-			<Pagination
-				totalItems={productDisplay.length} // Total number of items
-				itemsPerPage={itemsPerPage}
-				currentPage={currentPage}
-				onPageChange={(newPage) => setCurrentPage(newPage)}
-			/>
-		</TransactionContext.Provider>
-	);
-					<StickyContainer>
-						<Sticky enabled={windowWidth > 1200 ? true : false} top={20}>
-							<POSactions />
-						</Sticky>
-					</StickyContainer>
-				</POSWrapper>
-			</DashboardLayout>
-			<Pagination
-				totalItems={productDisplay.length} // Total number of items
-				itemsPerPage={itemsPerPage}
-				currentPage={currentPage}
-				onPageChange={(newPage) => setCurrentPage(newPage)}
-			/>
 		</TransactionContext.Provider>
 	);
 };

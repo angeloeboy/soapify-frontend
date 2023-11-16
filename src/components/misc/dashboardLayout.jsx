@@ -30,7 +30,6 @@ const DashboardRightContainer = styled.div`
 
 let DashboardLayout = ({ children }) => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
 	return (
 		<>
 			<Sidebar setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} />

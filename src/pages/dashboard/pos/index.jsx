@@ -13,9 +13,14 @@ import { addTransaction, getTransactions } from "@/api/transaction";
 import { PaginationControl } from "@/styled-components/ItemActionModal";
 import Pagination from "@/components/misc/pagination";
 import { TransactionContext } from "@/components/context/TransactionContext";
+import { getParentProduct } from "@/api/parent_product";
 // import { TransactionContext } from "../context/TransactionContext";
 
 const ProductsList = styled.div`
+	display: flex;
+	flex-wrap: wrap;
+	/* max-width: 1200px; */
+	align-items: center;
 	display: flex;
 	flex-wrap: wrap;
 	/* max-width: 1200px; */
@@ -25,9 +30,15 @@ const ProductsList = styled.div`
 const POSWrapper = styled.div`
 	display: flex;
 	justify-content: space-between;
+	display: flex;
+	justify-content: space-between;
 `;
 
 const StickyContainer = styled.div`
+	position: relative;
+	width: 100%;
+	max-width: 300px;
+	margin-top: 48px;
 	position: relative;
 	width: 100%;
 	max-width: 300px;
@@ -53,20 +64,13 @@ const Pos = () => {
 		items: [],
 	});
 
-	const [currentPage, setCurrentPage] = useState(1);
-	const itemsPerPage = 10;
-
-	const startIndex = (currentPage - 1) * itemsPerPage;
-	const endIndex = currentPage * itemsPerPage;
-	const paginatedProducts = productDisplay.slice(startIndex, endIndex);
+	const [parentProducts, setParentProducts] = useState([]);
 
 	const [windowWidth, setWindowWidth] = useState(1200);
 
 	useEffect(() => {
-		// Update width to the actual window width when the component mounts on the client side
-
 		fetchProducts();
-
+		fetchParentProducts();
 		setWindowWidth(window.innerWidth);
 
 		const handleResize = () => setWindowWidth(window.innerWidth);
@@ -86,19 +90,31 @@ const Pos = () => {
 
 	useEffect(() => {
 		setProductDisplay(groupProductsByParentProductId(products));
-		// setProductDisplay(products);
-		console.log(groupProductsByParentProductId(products));
-	}, [products]);
+	}, [products, parentProducts]);
+
+	// useEffect(() => {
+	// 	console.log(productDisplay)
+	// }, [productDisplay]);
 
 	const fetchProducts = async () => {
 		const response = await getProducts();
-		setProducts(response.products || []);
+		const filteredProducts = response.products.filter((product) => product.isActive);
+
+		setProducts(filteredProducts || []);
 		console.log(response.products);
+	};
+
+	const fetchParentProducts = async () => {
+		const response = await getParentProduct();
+		console.log(response);
+
+		if (!response) return;
+
+		setParentProducts(response.parentProducts);
 	};
 
 	const groupProductsByParentProductId = (products) => {
 		const variants = products.filter((product) => product.parent_product_id !== null);
-
 		const notVariants = products.filter((product) => product.parent_product_id === null);
 
 		notVariants.forEach((product) => {
@@ -109,7 +125,20 @@ const Pos = () => {
 			}
 		});
 
+		groupProductsByParentProductId2(products);
+
 		return notVariants;
+	};
+
+	const groupProductsByParentProductId2 = (products) => {
+		let parentProduct = parentProducts.map((parentProduct) => {
+			return {
+				...parentProduct,
+				products: products.filter((product) => product.parent_product_id === parentProduct.parent_product_id),
+			};
+		});
+
+		console.log(parentProduct);
 	};
 
 	const updateCart = (product, operation) => {
@@ -150,21 +179,23 @@ const Pos = () => {
 						<PosSearchBar products={products} setProductDisplay={setProductDisplay} />
 
 						<ProductsList>
-							{paginatedProducts.map((product, index) => {
-								return (
-									<ProductComponent
-										product={product}
-										index={index}
-										onClick={() => {
-											updateCart(product, "add");
-											if (activeAction != "cart") setActiveAction("cart");
-										}}
-										updateCart={updateCart}
-										key={index}
-										hasVariants={product.variants ? true : false}
-										variants={product.variants ? product.variants : []}
-									/>
-								);
+							{productDisplay.map((product, index) => {
+								if (product.quantity_in_stock > 0) {
+									return (
+										<ProductComponent
+											product={product}
+											index={index}
+											onClick={() => {
+												updateCart(product, "add");
+												if (activeAction != "cart") setActiveAction("cart");
+											}}
+											updateCart={updateCart}
+											key={index}
+											hasVariants={product.variants ? true : false}
+											variants={product.variants ? product.variants : []}
+										/>
+									);
+								}
 							})}
 						</ProductsList>
 					</StyledPanel>
@@ -176,12 +207,6 @@ const Pos = () => {
 					</StickyContainer>
 				</POSWrapper>
 			</DashboardLayout>
-			<Pagination
-				totalItems={productDisplay.length} // Total number of items
-				itemsPerPage={itemsPerPage}
-				currentPage={currentPage}
-				onPageChange={(newPage) => setCurrentPage(newPage)}
-			/>
 		</TransactionContext.Provider>
 	);
 };

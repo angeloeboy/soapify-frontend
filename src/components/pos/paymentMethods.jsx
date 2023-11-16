@@ -71,8 +71,6 @@ const PaymentMethods = (props) => {
 	}, []);
 
 	const initiateTransaction = async () => {
-		setLoading(true);
-
 		const response = await addTransaction(transaction);
 		console.log(response);
 		if (response.status == "Success") {
@@ -81,6 +79,7 @@ const PaymentMethods = (props) => {
 			toast.error(response.errors[0].message);
 		}
 		setLoading(false);
+		console.log(transaction);
 	};
 
 	const fetchPaymentMethods = () => {
@@ -89,7 +88,8 @@ const PaymentMethods = (props) => {
 
 			if (res.paymentMethods.length <= 0 || !res) return;
 
-			res ? setPaymentMethods(res.paymentMethods) : setPaymentMethods([]);
+			let activePaymentMethod = res.paymentMethods.filter((payment) => payment.isActive);
+			res ? setPaymentMethods(activePaymentMethod) : setPaymentMethods([]);
 
 			setTransaction((prev) => ({ ...prev, payment_method_id: res.paymentMethods[0].payment_method_id }));
 		});

@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import DashboardLayout from "@/components/misc/dashboardLayout";
 import StyledPanel from "@/styled-components/StyledPanel";
+import PdfExporter from "@/components/misc/pdfExporter";
 import PageTitle from "@/components/misc/pageTitle";
 import Table, {
   ActionContainer,
@@ -34,7 +35,7 @@ const Suppliers = () => {
   const [selectedSupplierId, setSelectedSupplierId] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = currentPage * itemsPerPage;
@@ -69,10 +70,12 @@ const Suppliers = () => {
     setSupplierLoading(true);
     getSuppliers().then((res) => {
       console.log(res);
+      console.log("testing");
       setSuppliers(res.suppliers || []);
       setSuppliersDisplay(res.suppliers || []);
       setSupplierLoading(false);
     });
+    setSupplierLoading(false);
   };
 
   return (
@@ -87,7 +90,7 @@ const Suppliers = () => {
           setSuppliersDisplay={setSuppliersDisplay}
         />
 
-        <Table>
+        <Table id="suppliers-table">
           <tbody>
             <TableRows $heading>
               <TableHeadings>Supplier Name</TableHeadings>
@@ -152,6 +155,16 @@ const Suppliers = () => {
                 ))}
           </tbody>
         </Table>
+        <PdfExporter tableId="suppliers-table" filename="suppliers" />
+        <Pagination
+          totalItems={suppliersDisplay.length} // Total number of items
+          itemsPerPage={itemsPerPage}
+          currentPage={currentPage}
+          onPageChange={setCurrentPage}
+          itemsPerPageOptions={[5, 10, 15, 20]}
+          defaultItemsPerPage={10}
+          setItemsPerPage={setItemsPerPage}
+        />
       </StyledPanel>
       {isPopupOpen && (
         <AddSupplier
@@ -168,13 +181,6 @@ const Suppliers = () => {
           //   GetProducts={fetchProducts}
         />
       )}
-
-      <Pagination
-        totalItems={suppliersDisplay.length} // Total number of items
-        itemsPerPage={itemsPerPage}
-        currentPage={currentPage}
-        onPageChange={(newPage) => setCurrentPage(newPage)}
-      />
     </DashboardLayout>
   );
 };

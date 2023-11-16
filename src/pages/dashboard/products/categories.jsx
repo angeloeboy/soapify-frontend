@@ -15,7 +15,7 @@ import TableControlPanel from "@/styled-components/TableControlPanel";
 import StyledPanel from "@/styled-components/StyledPanel";
 import { useEffect, useState } from "react";
 import { addProduct, getProductCategories, getProducts } from "@/api/products";
-
+import PdfExporter from "@/components/misc/pdfExporter";
 import { useRouter } from "next/router";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -31,6 +31,7 @@ import { Button } from "@/styled-components/ItemActionModal";
 import CategoriesSearchBar from "@/components/product/categories/categoriesSearchBar";
 import AddCategories from "./../../../components/product/categories/addCategories";
 import EditCategory from "@/components/product/categories/editCategory";
+import Pagination from "@/components/misc/pagination";
 const Categories = () => {
   const [categories, setCategories] = useState([]);
   const [categoriesDisplay, setCategoriesDisplay] = useState([]);
@@ -38,25 +39,36 @@ const Categories = () => {
   const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false);
   const [isEditCategoryOpen, setEditCategoryOpen] = useState(false);
   const [activeActionContainer, setActiveActionContainer] = useState(-1);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = currentPage * itemsPerPage;
+  const paginatedCategories = categoriesDisplay.slice(startIndex, endIndex);
 
   useEffect(() => {
     fetchCategories();
-  }, []);
+  }, [currentPage]);
 
   const fetchCategories = () => {
     getProductCategories().then((res) => {
       console.log(res);
+      res.categories ? setCategories(res.categories) : setCategories([]);
       res.categories
         ? setCategoriesDisplay(res.categories)
         : setCategoriesDisplay([]);
-      res.categories ? setCategories(res.categories) : setCategories([]);
       setCategoriesLoading(false);
     });
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
   };
 
   const openEditPopUp = (category_id) => {
     setEditCategoryOpen(true);
   };
+
   const closeEditPopUp = () => {
     setEditCategoryOpen(false);
   };
@@ -74,7 +86,7 @@ const Categories = () => {
           categories={categories}
         />
 
-        <Table>
+        <Table id="categories-table">
           <tbody>
             <TableRows $heading>
               <TableHeadings>Name</TableHeadings>
@@ -102,7 +114,7 @@ const Categories = () => {
                 <p>No Categories found</p>
               )
             ) : (
-              categoriesDisplay.map((category, index) => (
+              paginatedCategories.map((category, index) => (
                 <TableRows key={category.category_id}>
                   <TableData>{category.name}</TableData>
 
@@ -145,6 +157,16 @@ const Categories = () => {
             )}
           </tbody>
         </Table>
+        <PdfExporter tableId="categories-table" fileName="categories.pdf" />
+        <Pagination
+          totalItems={categoriesDisplay.length} // Total number of items
+          itemsPerPage={itemsPerPage}
+          currentPage={currentPage}
+          onPageChange={setCurrentPage}
+          itemsPerPageOptions={[5, 10, 15, 20]}
+          defaultItemsPerPage={10}
+          setItemsPerPage={setItemsPerPage}
+        />
       </StyledPanel>
       {isAddPopUpOpen && (
         <AddCategories

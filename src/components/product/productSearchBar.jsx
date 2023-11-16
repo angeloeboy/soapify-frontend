@@ -1,14 +1,16 @@
 const { FontAwesomeIcon } = require("@fortawesome/react-fontawesome");
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { styled } from "styled-components";
 import { DropdownHeader, DropdownItem, DropdownMenu, DropdownWrapper, SearchBar, TableControlPanel, Button } from "@/styled-components/TableControlPanel";
 import { getProductCategories } from "@/api/products";
+import useOutsideClick from "@/hooks/useOutsideclick";
 
 const ProductSearchBar = ({ setIsAddPopUpOpen, products, setProductDisplay, setCurrentPage }) => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [selectedCategory, setSelectedCategory] = useState("All");
 	const [selectedStatus, setSelectedStatus] = useState("All");
+	const [selectedProductStatus, setSelectedProductStatus] = useState("All");
 
 	const [productCategories, setProductCategories] = useState([]);
 
@@ -18,7 +20,7 @@ const ProductSearchBar = ({ setIsAddPopUpOpen, products, setProductDisplay, setC
 
 	useEffect(() => {
 		handleSearch();
-	}, [searchQuery, selectedCategory, selectedStatus]);
+	}, [searchQuery, selectedCategory, selectedStatus, selectedProductStatus, products]);
 
 	const fetchProductCategories = async () => {
 		const response = await getProductCategories();
@@ -35,12 +37,11 @@ const ProductSearchBar = ({ setIsAddPopUpOpen, products, setProductDisplay, setC
 	const handleSearch = () => {
 		const queryTerms = searchQuery.split(" ");
 		const category = selectedCategory;
-
+		const productStatus = selectedProductStatus;
 		let filteredProducts;
 
 		if (category === "All") {
 			filteredProducts = products.filter((product) => {
-				console.log(product.product_code);
 
 				return (
 					queryTerms.every(
@@ -49,7 +50,8 @@ const ProductSearchBar = ({ setIsAddPopUpOpen, products, setProductDisplay, setC
 							(product.product_code && product.product_code.toLowerCase().includes(term.toLowerCase())) ||
 							(product.attribute && product.attribute.some((attr) => attr.value.toLowerCase().includes(term.toLowerCase())))
 					) &&
-					(selectedStatus == "All" || product.isActive === selectedStatus)
+					(selectedStatus == "All" || product.isActive === selectedStatus) &&
+					(selectedProductStatus == "All" || product.status === selectedProductStatus)
 				);
 			});
 		} else {
@@ -61,7 +63,8 @@ const ProductSearchBar = ({ setIsAddPopUpOpen, products, setProductDisplay, setC
 							(product.attribute && product.attribute.some((attr) => attr.value.toLowerCase().includes(term.toLowerCase())))
 					) &&
 					product.category.name.toLowerCase().includes(category.toLowerCase()) &&
-					(selectedStatus == "All" || product.isActive === selectedStatus)
+					(selectedStatus == "All" || product.isActive === selectedStatus) &&
+					(selectedProductStatus == "All" || product.status === selectedProductStatus)
 				);
 			});
 		}
@@ -84,7 +87,10 @@ const ProductSearchBar = ({ setIsAddPopUpOpen, products, setProductDisplay, setC
 				<p> Status</p>
 				<StatusDropdown setSelectedStatus={setSelectedStatus} />
 			</div>
-
+			<div>
+				<p>Stock Status</p>
+				<StockStatusDropdown setSelectedProductStatus={setSelectedProductStatus} />
+			</div>
 			<div>
 				<p> Add </p>
 				<Button onClick={() => setIsAddPopUpOpen(true)}>+ Add Product</Button>
@@ -96,9 +102,14 @@ const ProductSearchBar = ({ setIsAddPopUpOpen, products, setProductDisplay, setC
 const Dropdown = ({ productCategories, handleCategoryChange }) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const [selectedItem, setSelectedItem] = useState("All");
+	const dropdownRef = useRef(null);
+
+	useOutsideClick(dropdownRef, () => {
+		if (isOpen) setIsOpen(false);
+	});
 
 	return (
-		<DropdownWrapper onClick={() => setIsOpen(!isOpen)}>
+		<DropdownWrapper ref={dropdownRef} onClick={() => setIsOpen(!isOpen)}>
 			<DropdownHeader>
 				<FontAwesomeIcon icon={faFilter} />
 				{selectedItem}
@@ -135,9 +146,13 @@ const StatusDropdown = ({ selectedStatus, setSelectedStatus }) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const [selectedItem, setSelectedItem] = useState("All");
 	const [status, setStatus] = useState(["Active", "Inactive"]);
+	const dropdownRef = useRef(null);
 
+	useOutsideClick(dropdownRef, () => {
+		if (isOpen) setIsOpen(false);
+	});
 	return (
-		<DropdownWrapper onClick={() => setIsOpen(!isOpen)}>
+		<DropdownWrapper ref={dropdownRef} onClick={() => setIsOpen(!isOpen)}>
 			<DropdownHeader>
 				<FontAwesomeIcon icon={faFilter} />
 				{selectedItem}
@@ -161,6 +176,50 @@ const StatusDropdown = ({ selectedStatus, setSelectedStatus }) => {
 							setSelectedStatus(option === "Active" ? true : false);
 							setIsOpen(false);
 							// handleCategoryChange(option.name);
+						}}
+					>
+						{option}
+					</DropdownItem>
+				))}
+			</DropdownMenu>
+		</DropdownWrapper>
+	);
+};
+
+const StockStatusDropdown = ({ selectedProductStatus, setSelectedProductStatus }) => {
+	const [isOpen, setIsOpen] = useState(false);
+	const [selectedItem, setSelectedItem] = useState("All");
+	const [status, setStatus] = useState(["Low", "Moderate", "High"]);
+	const dropdownRef = useRef(null);
+
+	useOutsideClick(dropdownRef, () => {
+		if (isOpen) setIsOpen(false);
+	});
+	
+	return (
+		<DropdownWrapper ref={dropdownRef} onClick={() => setIsOpen(!isOpen)}>
+			<DropdownHeader>
+				<FontAwesomeIcon icon={faFilter} />
+				{selectedItem}
+			</DropdownHeader>
+			<DropdownMenu $isOpen={isOpen}>
+				<DropdownItem
+					key={0}
+					onClick={() => {
+						setSelectedItem("All");
+						setSelectedProductStatus("All");
+						setIsOpen(false);
+					}}
+				>
+					All
+				</DropdownItem>
+				{status.map((option, index) => (
+					<DropdownItem
+						key={index + 1}
+						onClick={() => {
+							setSelectedItem(option);
+							setSelectedProductStatus(option);
+							setIsOpen(false);
 						}}
 					>
 						{option}

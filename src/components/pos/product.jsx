@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { styled } from "styled-components";
 import "react-toastify/dist/ReactToastify.css";
@@ -291,8 +291,20 @@ const VariantsContainer = ({ variants, updateCart, setShowVariants }) => {
 	const [search, setSearch] = useState("");
 	const [variantsDisplay, setVariantsDisplay] = useState(variants);
 
+	useEffect(() => {
+		const activeVariants = variantsV.filter((variant) => variant.isActive == 1);
+
+		setVariantsDisplay(activeVariants);
+		setVariantsV(activeVariants);
+	}, [variants]);
+
 	let handleProductClick = (variant) => {
-		variant.quantity_in_stock <= 0 ? null : updateCart(variant, "add");
+		const remove_variants = { ...variant };
+		delete remove_variants.variants;
+
+		console.log(remove_variants);
+
+		variant.quantity_in_stock <= 0 ? null : updateCart(remove_variants, "add");
 		toast.success("Added to cart");
 	};
 

@@ -8,6 +8,7 @@ import Table, {
   TableRows,
 } from "@/styled-components/TableComponent";
 import StyledPanel from "@/styled-components/StyledPanel";
+import PdfExporter from "@/components/misc/pdfExporter";
 import { faEllipsis, faTrash, faPen } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getTransactions } from "@/api/transaction";
@@ -15,20 +16,67 @@ import OrdersSearchBar from "@/components/orders/ordersSearchBar";
 import Pagination from "./../../../components/misc/pagination";
 import LoadingSkeleton from "@/components/misc/loadingSkeleton";
 import EditOrder from "@/components/orders/editOrder";
+import styled from "styled-components";
+import OrdersInfo from "@/components/orders/ordersInfo";
 // import EditOrder from "@/components/orders/EditOrders";
+
+const Circle = styled.span`
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: ${({ status }) =>
+    status === "PENDING"
+      ? "#FFC107"
+      : status === "DONE"
+      ? "#4CAF50"
+      : "#F44336"};
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 6px;
+`;
+
+const Animated = styled.div`
+  @keyframes fadeInFadeOut {
+    0% {
+      opacity: 0.5;
+    }
+    45% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0.5;
+    }
+  }
+
+  //add animation
+  /* animation: fadeInFadeOut 1s ease-in-out infinite; */
+  animation: ${({ status }) =>
+    status === "PENDING" ? "fadeInFadeOut 1s ease-in-out infinite" : ""};
+  display: block;
+  padding: 0.5rem 1rem;
+
+  /* background-color: ${({ status }) =>
+    status === "PENDING"
+      ? "#FFC107"
+      : status === "COMPLETED"
+      ? "#4CAF50"
+      : "#F44336"}; */
+`;
 
 const Orders = () => {
   const [transactions, setTransactions] = useState([]);
   const [transactionsDisplay, setTransactionsDisplay] = useState([]);
   const [activeActionContainer, setActiveActionContainer] = useState(-1);
-  const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false);
   const [isEditPopUpOpen, setIsEditPopUpOpen] = useState(false);
+  const [isOrdersInfoOpen, setIsOrdersInfoOpen] = useState(false);
+
   const [transactionsLoading, setTransactionsLoading] = useState(true);
 
   const [selectedTransactionId, setSelectedTransactionId] = useState(null);
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = currentPage * itemsPerPage;
@@ -36,7 +84,7 @@ const Orders = () => {
 
   useEffect(() => {
     getAllTransactions();
-  }, []);
+  }, [currentPage, itemsPerPage]);
 
   const handleClickOutside = (event) => {
     if (
@@ -54,6 +102,16 @@ const Orders = () => {
     };
   }, []);
 
+  const convertToDateFormat = (date) => {
+    let newDate = new Date(date);
+    let formattedDate = newDate.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+    return formattedDate;
+  };
+
   const getAllTransactions = async () => {
     setTransactionsLoading(true);
     const res = await getTransactions();
@@ -62,6 +120,7 @@ const Orders = () => {
       ? setTransactionsDisplay(res.transactions)
       : setTransactionsDisplay([]);
     setTransactionsLoading(false);
+    console.log(res.transactions);
   };
 
   return (
@@ -73,8 +132,9 @@ const Orders = () => {
         <OrdersSearchBar
           setTransactionsDisplay={setTransactionsDisplay}
           transactions={transactions}
+          setCurrentPage={setCurrentPage}
         />
-        <Table>
+        <Table id="orders-table">
           <tbody>
             <TableRows $heading>
               <TableHeadings>Transaction Number</TableHeadings>
@@ -89,20 +149,31 @@ const Orders = () => {
             {transactions.length == 0 ? (
               transactionsLoading ? (
                 <LoadingSkeleton columns={7} />
-              ) : (
-                <p>No transactions found</p>
-              )
+              ) : null
             ) : (
               paginatedTransactions.map((transaction, index) => (
-                <TableRows key={transaction.transaction_unique_id}>
+                <TableRows
+                  key={transaction.transaction_unique_id}
+                  onClick={() => {
+                    setSelectedTransactionId(transaction);
+                    setIsOrdersInfoOpen(true);
+                  }}
+                >
                   <TableData $bold>
                     {transaction.transaction_unique_id}
                   </TableData>
                   <TableData>{transaction.transaction_number}</TableData>
                   <TableData>{transaction.items.length}</TableData>
-                  <TableData>{transaction.status}</TableData>
+                  <TableData>
+                    <Animated status={transaction.status}>
+                      <Circle status={transaction.status} />
+                      {transaction.status}
+                    </Animated>
+                  </TableData>
                   <TableData>{`${transaction.transaction_user_name.first_name} ${transaction.transaction_user_name.last_name}`}</TableData>
-                  <TableData>{transaction.createdAt}</TableData>
+                  <TableData>
+                    {convertToDateFormat(transaction.createdAt)}
+                  </TableData>
 
                   <TableData>
                     <FontAwesomeIcon
@@ -142,6 +213,7 @@ const Orders = () => {
             )}
           </tbody>
         </Table>
+        <PdfExporter tableId="orders-table" fileName="orders.pdf" />
         {isEditPopUpOpen && (
           <EditOrder
             setIsEditPopUpOpen={setIsEditPopUpOpen}
@@ -149,13 +221,31 @@ const Orders = () => {
             transaction={selectedTransaction}
           />
         )}
+        {isOrdersInfoOpen && (
+          <OrdersInfo
+            setIsOrdersInfoOpen={setIsOrdersInfoOpen}
+            selectedTransaction={selectedTransactionId}
+            fetchTransactions={getAllTransactions}
+          />
+        )}
 
         {/* <EditOrder setIsEditPopUpOpen={setIsEditPopUpOpen} /> */}
+        {/* <Pagination
+					totalItems={transactionsDisplay.length}
+					itemsPerPage={itemsPerPage}
+					currentPage={currentPage}
+					onPageChange={setCurrentPage}
+					itemsPerPageOptions={[5, 10, 15, 20]}
+					defaultItemsPerPage={10}
+					setItemsPerPage={setItemsPerPage}
+				/> */}
+
         <Pagination
+          setItemsPerPage={setItemsPerPage}
           totalItems={transactionsDisplay.length}
-          itemsPerPage={itemsPerPage}
+          itemsPerPage={itemsPerPage} //   this is correct
           currentPage={currentPage}
-          onPageChange={(newPage) => setCurrentPage(newPage)}
+          onPageChange={setCurrentPage}
         />
       </StyledPanel>
     </DashboardLayout>

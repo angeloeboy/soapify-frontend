@@ -5,6 +5,7 @@ import { useState } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../../styles/globals.css";
+import { WebSocketProvider } from "../context/WebsocketContext";
 
 const DashboardRight = styled.div`
 	width: 100%;
@@ -30,12 +31,11 @@ const DashboardRightContainer = styled.div`
 
 let DashboardLayout = ({ children }) => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
 	return (
-		<>
+		<WebSocketProvider>
 			<Sidebar setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} />
 			<ToastContainer
-				position="bottom-center"
+				position="top-right"
 				autoClose={2000}
 				hideProgressBar={false}
 				newestOnTop={false}
@@ -53,7 +53,7 @@ let DashboardLayout = ({ children }) => {
 
 				<DashboardRightContainer>{children}</DashboardRightContainer>
 			</DashboardRight>
-		</>
+		</WebSocketProvider>
 	);
 };
 

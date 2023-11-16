@@ -10,15 +10,27 @@ import Table, {
   TableRows,
 } from "@/styled-components/TableComponent";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
+import {
+  faEllipsis,
+  faPen,
+  faTrash,
+  faXmarkCircle,
+  faCheckCircle,
+} from "@fortawesome/free-solid-svg-icons";
 import PaymentMethodSearchBar from "@/components/PaymentMethod/paymentMethodSearchBar";
 import { getPaymentMethods } from "@/api/pos";
+import PdfExporter from "@/components/misc/pdfExporter";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import EditPayment from "../../../components/PaymentMethod/editPayment";
 import AddPayment from "@/components/PaymentMethod/addPayment";
 import LoadingSkeleton from "@/components/misc/loadingSkeleton";
 import Pagination from "@/components/misc/pagination";
+import {
+  activatePaymentMethod,
+  deactivatePaymentMethod,
+} from "@/api/payment_method";
+import { toast } from "react-toastify";
 
 const PaymentTable = () => {
   const [paymentMethods, setPaymentMethods] = useState([]);
@@ -32,7 +44,7 @@ const PaymentTable = () => {
   const [clickedId, setClickedId] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   const [filteredPayments, setFilteredPayments] = useState([]);
 
@@ -47,7 +59,7 @@ const PaymentTable = () => {
         currentPage * itemsPerPage
       )
     );
-  }, [currentPage, filteredPayments]);
+  }, [currentPage, filteredPayments, itemsPerPage]);
 
   const fetchPaymentMethods = () => {
     setPaymentMethodsLoading(true);
@@ -107,6 +119,30 @@ const PaymentTable = () => {
   const closeEditPayment = () => {
     setEditPaymentOpen(false);
   };
+  const deactivatePaymentMethodFunc = async (payment_method_id) => {
+    const res = await deactivatePaymentMethod(payment_method_id);
+    console.log(res);
+
+    if (!res) {
+      toast.error("Something went wrong");
+      return;
+    }
+    toast.success(res.message);
+    fetchPaymentMethods();
+  };
+
+  const activatePaymentMethodFunc = async (payment_method_id) => {
+    const res = await activatePaymentMethod(payment_method_id);
+    console.log(res);
+
+    if (!res) {
+      toast.error("Something went wrong");
+      return;
+    }
+    toast.success(res.message);
+
+    fetchPaymentMethods();
+  };
 
   return (
     <DashboardLayout>
@@ -116,12 +152,14 @@ const PaymentTable = () => {
           fetchPaymentMethods={fetchPaymentMethods}
           setAddPaymentOpen={setAddPaymentOpen}
         />
-        <Table>
+        <Table id="payment-table">
           <tbody>
             <TableRows $heading>
               <TableHeadings>Payment Name</TableHeadings>
               <TableHeadings>Number/Account Number</TableHeadings>
               <TableHeadings>Created</TableHeadings>
+              <TableHeadings>Status</TableHeadings>
+
               <TableHeadings>Actions</TableHeadings>
             </TableRows>
 
@@ -134,6 +172,10 @@ const PaymentTable = () => {
                     <TableData>
                       {formatDateToMonthDayYear(method.createdAt)}
                     </TableData>
+                    <TableData>
+                      {method.isActive ? "Active" : "Inactive"}
+                    </TableData>
+
                     <TableData>
                       <FontAwesomeIcon
                         className="ellipsis"
@@ -160,6 +202,26 @@ const PaymentTable = () => {
                           <p>
                             <FontAwesomeIcon icon={faTrash} /> Delete
                           </p>
+                          <p
+                            onClick={() =>
+                              deactivatePaymentMethodFunc(
+                                method.payment_method_id
+                              )
+                            }
+                          >
+                            <FontAwesomeIcon icon={faXmarkCircle} /> Deactivate
+                            Payment Method
+                          </p>
+                          <p
+                            onClick={() =>
+                              activatePaymentMethodFunc(
+                                method.payment_method_id
+                              )
+                            }
+                          >
+                            <FontAwesomeIcon icon={faCheckCircle} /> Reactivate
+                            Payment Method
+                          </p>
                         </ActionContainer>
                       )}
                     </TableData>
@@ -167,12 +229,15 @@ const PaymentTable = () => {
                 ))}
           </tbody>
         </Table>
-
+        <PdfExporter tableId="payment-table" fileName="payment-methods.pdf" />
         <Pagination
           totalItems={filteredPayments.length}
           itemsPerPage={itemsPerPage}
           currentPage={currentPage}
-          onPageChange={(newPage) => setCurrentPage(newPage)}
+          onPageChange={setCurrentPage}
+          itemsPerPageOptions={[5, 10, 15, 20]}
+          defaultItemsPerPage={10}
+          setItemsPerPage={setItemsPerPage}
         />
       </StyledPanel>
       {isEditPaymentOpen && (

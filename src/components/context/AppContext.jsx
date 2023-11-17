@@ -15,9 +15,8 @@ export const AppProvider = ({ children }) => {
 			icon: "/home-icon.png",
 			hasSubmenu: true,
 			submenus: [
-				{ title: "POS", link: "/dashboard/pos" },
-				{ title: "Sales Overview", link: "/" },
-				{ title: "Orders", link: "/dashboard/orders" },
+				{ title: "POS", link: "/dashboard/pos", requiresPermission: "read:pos" },
+				{ title: "Sales Overview", link: "/dashboard", requiresPermission: "read:reports" },
 				{ title: "Returns", link: "/dashboard/returns" },
 				{ title: "Refunds", link: "/dashboard/refunds" },
 				{ title: "Promos", link: "/dashboard/promos" },
@@ -29,12 +28,12 @@ export const AppProvider = ({ children }) => {
 			icon: "/inventory-icon.png",
 			hasSubmenu: true,
 			submenus: [
-				{ title: "Products", link: "/dashboard/products" },
-				{ title: "Inventory", link: "/dashboard/inventory" },
-				{ title: "Categories", link: "/dashboard/products/categories" },
-				{ title: "Suppliers", link: "/dashboard/suppliers" },
-				{ title: "Subcategories", link: "/dashboard/products/subcategories" },
-				{ title: "Attributes", link: "/dashboard/attributes" },
+				{ title: "Products", link: "/dashboard/products", requiresPermission: "read:products" },
+				{ title: "Inventory", link: "/dashboard/inventory", requiresPermission: "read:inventory" },
+				{ title: "Categories", link: "/dashboard/products/categories", requiresPermission: "read:categories" },
+				{ title: "Suppliers", link: "/dashboard/suppliers", requiresPermission: "read:suppliers" },
+				{ title: "Subcategories", link: "/dashboard/products/subcategories", requiresPermission: "read:subcategories" },
+				{ title: "Attributes", link: "/dashboard/attributes", requiresPermission: "read:attributes" },
 				{ title: "Orders", link: "/dashboard/orders" },
 
 				{ title: "Shelving", link: "/dashboard/shelving" },
@@ -45,9 +44,9 @@ export const AppProvider = ({ children }) => {
 			icon: "/settings-icon.png",
 			hasSubmenu: true,
 			submenus: [
-				{ title: "Users", link: "/dashboard/user" },
-				{ title: "Warehouse", link: "/dashboard/warehouse" },
-				{ title: "Payment Methods", link: "/dashboard/payment" },
+				{ title: "Users", link: "/dashboard/user", requiresPermission: "read:users" },
+				{ title: "Warehouse", link: "/dashboard/warehouse", requiresPermission: "read:warehouses" },
+				{ title: "Payment Methods", link: "/dashboard/payment", requiresPermission: "read:payment_methods" },
 			],
 		},
 	];
@@ -65,17 +64,14 @@ export const AppProvider = ({ children }) => {
 
 	useEffect(() => {
 		const currentPath = router.pathname;
-		console.log("Current Path:", currentPath);
 
 		// Function to find the index of the menu item and submenu item with a matching link
 		const findMenuAndSubmenuIndex = () => {
 			for (let i = 0; i < sidebarData.length; i++) {
 				const menu = sidebarData[i];
-              
+
 				if (menu.link === currentPath) {
 					// If the current path matches the main menu link
-                    console.log(menu.link)
-                    console.log(currentPath)
 					return { menuIndex: i, submenuIndex: -1 };
 				}
 
@@ -90,7 +86,6 @@ export const AppProvider = ({ children }) => {
 		};
 
 		const { menuIndex, submenuIndex } = findMenuAndSubmenuIndex();
-		console.log("Menu Index:", menuIndex, "Submenu Index:", submenuIndex);
 
 		if (menuIndex !== -1) {
 			setSidebarState((prevState) => ({
@@ -102,8 +97,24 @@ export const AppProvider = ({ children }) => {
 		}
 	}, [router.pathname]); // Dependency on the path and sidebarData
 
+	// Function to check permission
+	const hasPermission = (requiredPermission) => {
+		return !requiredPermission || permissions_list.includes(requiredPermission);
+	};
+
+	// Filter sidebarData based on permissions
+	const filteredSidebarData = sidebarData
+		.map((item) => {
+			const filteredItem = { ...item };
+			if (item.submenus) {
+				filteredItem.submenus = item.submenus.filter((subItem) => hasPermission(subItem.requiresPermission));
+			}
+			return filteredItem;
+		})
+		.filter((item) => hasPermission(item.requiresPermission));
+
 	// Add logic to fetch and set permissions here
-	return <AppContext.Provider value={{ permissions_list, sidebarState, setSidebarState, sidebarData }}>{children}</AppContext.Provider>;
+	return <AppContext.Provider value={{ permissions_list, sidebarState, setSidebarState, sidebarData, filteredSidebarData }}>{children}</AppContext.Provider>;
 };
 
 export const useAppContext = () => useContext(AppContext);

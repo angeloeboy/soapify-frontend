@@ -175,10 +175,9 @@ const SubMenu = styled.div`
 // SIDEBAR DATA
 
 const Sidebar = (props) => {
-
 	const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-	const { sidebarState, setSidebarState, sidebarData } = useAppContext();
+	const { sidebarState, setSidebarState, sidebarData, filteredSidebarData } = useAppContext();
 
 	const { submenuOpen, sidebarVisible, activeMenuIndex, activeSubmenuItemIndex } = sidebarState;
 
@@ -221,7 +220,7 @@ const Sidebar = (props) => {
 				</ToggleButton>
 				<h1>SOAPIFY</h1>
 				<MenuContainer>
-					{sidebarData.map((menuItem, index) =>
+					{filteredSidebarData.map((menuItem, index) =>
 						menuItem.hasSubmenu ? (
 							<Menu key={index}>
 								<div className={`menuTextContainer ${activeMenuIndex === index ? "active" : ""}`} onClick={() => handleSubMenuToggle(index)}>
@@ -285,5 +284,3 @@ const Sidebar = (props) => {
 };
 
 export default Sidebar;
-
-

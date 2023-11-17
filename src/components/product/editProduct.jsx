@@ -179,7 +179,7 @@ const EditProduct = ({ productId, onClose, fetchProducts }) => {
 						{product.product_code} {product.product_name}
 					</HeaderTitle>
 					<FieldContainer>
-						{/* <LabelContainer first>
+						<LabelContainer first>
 							<Label>Category</Label>
 						</LabelContainer>
 						<div>
@@ -224,7 +224,7 @@ const EditProduct = ({ productId, onClose, fetchProducts }) => {
 									</Option>
 								))}
 							</Select>
-						</div> */}
+						</div>
 						<LabelContainer first>
 							<Label>General Information</Label>{" "}
 						</LabelContainer>

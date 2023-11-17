@@ -38,7 +38,7 @@ const AreasComponent = ({ warehouse_id, onClose,setShowAddArea }) => {
   return (
     <PopupOverlay>
       <PopupContent>        
-        <HeaderTitle> Warehouse Area </HeaderTitle>
+        <HeaderTitle> warehouse Area </HeaderTitle>
         <FieldContainer>
          {warehouseArea && warehouseArea.length > 0 ? (
           <Table>

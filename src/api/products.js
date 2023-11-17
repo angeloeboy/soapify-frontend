@@ -187,3 +187,35 @@ export const getSubCategories = async () => {
 		console.log(error);
 	}
 };
+
+export const deleteSubCategory = async (subCategory_id) => {
+	try {
+		const response = await fetch(`/api/subcategory/${subCategory_id}`, {
+			method: "DELETE",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			credentials: "include",
+		});
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const deleteCategory = async (category_id) => {
+	try {
+		const response = await fetch(`/api/product/category/${category_id}`, {
+			method: "DELETE",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			credentials: "include",
+		});
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};

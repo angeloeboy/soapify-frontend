@@ -41,15 +41,18 @@ const Warehouse = () => {
 
   const [isAddPopUpOpen, setAddPopUpOpen] = useState(false);
   const [isEditPopUpOpen, setEditPopUpOpen] = useState(false);
+ 
   const [activeActionContainer, setActiveActionContainer] = useState(-1);
   const [clickedId, setClickedId] = useState(null);
   const [clickedName, setClickedName] = useState(null);
   const [showDeactivate, setShowDeactivate] = useState(false);
   const [showAddArea, setShowAddArea] = useState(false); // Add state for "Add Area"
   const [showAreas, setShowAreas] = useState(false); // Add state to control the display of areas
+  const [showAreasModal, setShowAreasModal] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [warehouseIdForModal, setWarehouseIdForModal] = useState(null);
 
   const [warehouses, setWarehouses] = useState([]);
   const [warehouseDisplay, setWarehouseDisplay] = useState([]); // Initialize suppliersDisplay
@@ -221,28 +224,23 @@ const Warehouse = () => {
                         >
                           Add Area
                         </p>
+
+                        <p
+                          onClick={() => {
+                            setShowAreasModal(true);
+                            setWarehouseIdForModal(warehouse.warehouse_id);
+                          }}
+                        >
+                          Show Areas
+                        </p>
+
+
                         
                       </ActionContainer>
                     )}
                   </TableData>
 
               </TableRows>
-              
-              {showAreas && clickedId === warehouse.warehouse_id && (
-                <TableRows style={{ width: '100%' }}>
-                  <TableData colSpan="4" style={{ width: '100%', height: '500px' }}> {/* Example: Set a specific height */}
-                    <div style={{ width: '100%', height: '100%' }}>
-                      <h2>Areas for Warehouse ID: {clickedId}</h2>
-                      <div style={{ width: '100%', height: '100%' }}>
-                        <AreasComponent warehouse_id={clickedId} />
-                      </div>
-                    </div>
-                  </TableData>
-                </TableRows>
-              )}
-
-
-
             </React.Fragment>
           ))}
         </tbody>
@@ -285,6 +283,14 @@ const Warehouse = () => {
           clickedId={clickedId}
         />
       )}
+       {showAreasModal && (
+        <AreasComponent
+          setShowAddArea={setShowAddArea} // Pass the setShowAddArea function as a prop
+          warehouse_id={warehouseIdForModal}
+          onClose={() => setShowAreasModal(false)}
+        />
+      )}
+
 
       {/* {showAreas && (
         <div>

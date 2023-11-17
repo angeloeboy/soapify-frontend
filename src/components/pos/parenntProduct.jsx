@@ -5,8 +5,9 @@ import { styled } from "styled-components";
 import "react-toastify/dist/ReactToastify.css";
 import { SearchBar } from "@/styled-components/TableControlPanel";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { TransactionContext } from "../context/TransactionContext";
 import { faAdd, faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { TransactionContext } from "../context/TransactionContext";
+import ProductComponent from "./product";
 
 const Product = styled.div`
 	display: flex;
@@ -111,15 +112,6 @@ const Product = styled.div`
 	}
 
 	.remove {
-		/* width: 100%;
-		margin-top: 20px;
-		font-size: 14px;
-		background-color: #f88181;
-		border: 2px solid #eb5151;
-		color: black;
-		border-radius: 4px;
-		padding: 4px 8px;
-		display: block; */
 		font-size: 14px;
 		color: #ff00007d;
 		text-decoration: underline;
@@ -281,100 +273,52 @@ const VariantsModalWrapper = styled.div`
 	}
 `;
 
-const ProductComponent = ({ product, onClick, index }) => {
-	const { cart, setCart, updateCart } = useContext(TransactionContext);
-
-	const [item, setItem] = useState({});
-
-	useEffect(() => {
-		let item = cart.find((item) => item.product_id == product.product_id);
-		// console.log(item)
-		console.log(item);
-		if (item) setItem(item);
-		else setItem({ ...product, quantity: 0 });
-	}, [cart]);
+const ParentProductDisplay = ({ parentProduct, onClick, index, variants, updateCart }) => {
+	const [showVariants, setShowVariants] = useState(false);
 
 	let handleProductClick = () => {
-		product.quantity_in_stock <= 0 ? null : onClick();
-		return;
+		// if (parentProduct.products.length == 0) {
+		// 	product.quantity_in_stock <= 0 ? null : onClick();
+		// 	return;
+		// }
 
-		// if (!showVariants) setShowVariants(true);
+		if (!showVariants) setShowVariants(true);
 	};
 
 	return (
-		<Product key={product.product_id} onClick={() => handleProductClick()} unclickable={product.quantity_in_stock <= 0} active={item.quantity > 0}>
+		<Product key={parentProduct.parent_product_id} onClick={() => handleProductClick()}>
 			<div>
 				<Image src="/sabon.png" width={200} height={400} alt="Product image" />
-				<ProductTitle>{product.product_name}</ProductTitle>
-				<PriceTitle>P{product.product_price / 100}</PriceTitle>
-				<Attributes>
-					{product.attribute.map((attribute, attributeIndex) => {
-						const combinedIndex = index * product.attribute.length + attributeIndex;
+				<ProductTitle>{parentProduct.name}</ProductTitle>
+				{/* <PriceTitle>P{product.product_price / 100}</PriceTitle> */}
+				{/* <Attributes>
+					{variants.length == 0 &&
+						product.attribute.map((attribute, attributeIndex) => {
+							const combinedIndex = index * product.attribute.length + attributeIndex;
 
-						return (
-							<Attribute color={generateColors(combinedIndex)} key={attributeIndex}>
-								{attribute.name}: {attribute.value}
-							</Attribute>
-						);
-					})}
-				</Attributes>
+							return (
+								<Attribute color={generateColors(combinedIndex)} key={attributeIndex}>
+									{attribute.name}: {attribute.value}
+								</Attribute>
+							);
+						})}
+				</Attributes> */}
 			</div>
 
-			<div className="quantity">
-				<span
-					onClick={(e) => {
-						e.stopPropagation();
-
-						if (item.quantity == 0) return;
-						updateCart(item, "subtract");
-					}}
-					className="minus"
-				>
-					<FontAwesomeIcon icon={faMinus} />
-				</span>
-				{/* <p>{item.quantity}</p> */}
-				<input
-					type="text"
-					value={item.quantity ? item.quantity : 0}
-					onChange={(e) => {
-						const valueAsString = e.target.value;
-						const valueAsNumber = Number(valueAsString); // convert to number
-
-						if (valueAsString === "") {
-							let updatedCart = cart.map((product) => (product.product_id === item.product_id ? { ...product, quantity: 0 } : product));
-							setCart(updatedCart);
-							return;
-						}
-
-						if (!isNaN(valueAsNumber) && valueAsNumber >= 0) {
-							let updatedCart = cart.map((product) => (product.product_id === item.product_id ? { ...product, quantity: valueAsNumber } : product));
-							setCart(updatedCart);
-						}
-					}}
-					onKeyDown={(e) => {
-						const valueAsString = e.target.value;
-						const valueAsNumber = Number(valueAsString);
-
-						if (e.key === "ArrowUp") {
-							let updatedCart = cart.map((product) => (product.product_id === item.product_id ? { ...product, quantity: valueAsNumber + 1 } : product));
-							setCart(updatedCart);
-						} else if (e.key === "ArrowDown") {
-							if (valueAsNumber > 0) {
-								let updatedCart = cart.map((product) => (product.product_id === item.product_id ? { ...product, quantity: valueAsNumber - 1 } : product));
-								setCart(updatedCart);
-							}
-						}
-					}}
-				/>
-
-				<span onClick={() => updateCart(item, "add")}>
-					<FontAwesomeIcon icon={faPlus} />
-				</span>
-			</div>
-
-			<StockTitleContainer>
-				<StockTitle>Stock: {product.quantity_in_stock}</StockTitle>
-			</StockTitleContainer>
+			{/* {variants.length == 0 && (
+				<StockTitleContainer>
+					<StockTitle>Stock: {product.quantity_in_stock}</StockTitle>
+				</StockTitleContainer>
+			)} */}
+			{parentProduct.products.length > 0 ? (
+				<HasVariants>
+					{" "}
+					{`Has ${parentProduct.products.filter((product) => product.quantity_in_stock > 0).length} variant${
+						parentProduct.products.filter((product) => product.quantity_in_stock > 0).length > 1 ? "s" : ""
+					}`}
+				</HasVariants>
+			) : null}
+			{showVariants && <VariantsContainer variants={parentProduct.products} updateCart={updateCart} setShowVariants={setShowVariants} />}
 		</Product>
 	);
 };
@@ -420,92 +364,94 @@ const generateColors = (index) => {
 	};
 };
 
-// const VariantsContainer = ({ variants, updateCart, setShowVariants }) => {
-// 	const [variantsV, setVariantsV] = useState(variants);
-// 	const [search, setSearch] = useState("");
-// 	const [variantsDisplay, setVariantsDisplay] = useState(variants);
+const VariantsContainer = ({ variants, updateCart, setShowVariants }) => {
+	const [variantsV, setVariantsV] = useState(variants);
+	const [search, setSearch] = useState("");
+	const [variantsDisplay, setVariantsDisplay] = useState(variants);
 
-// 	useEffect(() => {
-// 		const activeVariants = variantsV.filter((variant) => variant.isActive == 1);
+	const { cart, setCart, activeAction, setActiveAction } = useContext(TransactionContext);
 
-// 		setVariantsDisplay(activeVariants);
-// 		setVariantsV(activeVariants);
-// 	}, [variants]);
+	const [item, setItem] = useState({});
 
-// 	let handleProductClick = (variant) => {
-// 		const remove_variants = { ...variant };
-// 		delete remove_variants.variants;
+	// useEffect(() => {
+	// 	console.log(cart);
 
-// 		console.log(remove_variants);
+	// 	let item = cart.find((item) => item.product_id == product.product_id);
+	// 	// console.log(item)
+	// 	if (item) setItem(item);
+	// }, [cart]);
 
-// 		variant.quantity_in_stock <= 0 ? null : updateCart(remove_variants, "add");
-// 		toast.success("Added to cart");
-// 	};
+	useEffect(() => {
+		const activeVariants = variantsV.filter((variant) => variant.isActive == 1);
 
-// 	let handleSearch = (e) => {
-// 		// setSearch(e.target.value);
-// 		const searchQuery = e.target.value;
-// 		const queryTerms = searchQuery.split(" ");
+		setVariantsDisplay(activeVariants);
+		setVariantsV(activeVariants);
+	}, [variants]);
 
-// 		let filteredVariants;
+	let handleProductClick = (variant) => {
+		// const remove_variants = { ...variant };
+		// delete remove_variants.variants;
 
-// 		filteredVariants = variantsV.filter((product) => {
-// 			return queryTerms.every(
-// 				(term) =>
-// 					product.product_name.toLowerCase().includes(term.toLowerCase()) ||
-// 					(product.attribute && product.attribute.some((attr) => attr.value.toLowerCase().includes(term.toLowerCase())))
-// 			);
-// 		});
+		// console.log(remove_variants);
 
-// 		setVariantsDisplay(filteredVariants);
-// 		console.log("teststst");
-// 	};
+		// variant.quantity_in_stock <= 0 ? null : updateCart(remove_variants, "add");
+		// toast.success("Added to cart");
+		updateCart(variant, "add");
+	};
 
-// 	return (
-// 		<VariantsModalWrapper>
-// 			<div className="group_modal">
-// 				<SearchBar>
-// 					<input type="text" onChange={(e) => handleSearch(e)} />
-// 				</SearchBar>
+	let handleSearch = (e) => {
+		// setSearch(e.target.value);
+		const searchQuery = e.target.value;
+		const queryTerms = searchQuery.split(" ");
 
-// 				<div className="variants-wrapper">
-// 					{variantsDisplay.map((variant, index) => (
-// 						<Product key={variant.product_id} onClick={() => handleProductClick(variant)} unclickable={variant.quantity_in_stock <= 0}>
-// 							<div>
-// 								<Image src="/sabon.png" width={200} height={400} alt="Product image" />
-// 								<ProductTitle>{variant.product_name}</ProductTitle>
-// 								<PriceTitle>P{variant.product_price / 100}</PriceTitle>
-// 								<Attributes>
-// 									{variant.attribute.map((attribute, attributeIndex) => {
-// 										const combinedIndex = index * variant.attribute.length + attributeIndex;
+		let filteredVariants;
 
-// 										return (
-// 											<Attribute color={generateColors(combinedIndex)} key={attributeIndex}>
-// 												{attribute.name}: {attribute.value}
-// 											</Attribute>
-// 										);
-// 									})}
-// 								</Attributes>
-// 							</div>
+		filteredVariants = variantsV.filter((product) => {
+			return queryTerms.every(
+				(term) =>
+					product.product_name.toLowerCase().includes(term.toLowerCase()) ||
+					(product.attribute && product.attribute.some((attr) => attr.value.toLowerCase().includes(term.toLowerCase())))
+			);
+		});
 
-// 							<StockTitleContainer>
-// 								<StockTitle>Stock: {variant.quantity_in_stock}</StockTitle>
-// 							</StockTitleContainer>
-// 						</Product>
-// 					))}
-// 				</div>
+		setVariantsDisplay(filteredVariants);
+		console.log("teststst");
+	};
 
-// 				<p
-// 					onClick={() => {
-// 						console.log("testing");
-// 						setShowVariants(false);
-// 					}}
-// 				>
-// 					close
-// 				</p>
-// 			</div>
-// 		</VariantsModalWrapper>
-// 	);
-// };
+	return (
+		<VariantsModalWrapper>
+			<div className="group_modal">
+				<SearchBar>
+					<input type="text" onChange={(e) => handleSearch(e)} />
+				</SearchBar>
 
-export default ProductComponent;
+				<div className="variants-wrapper">
+					{variantsDisplay.map((product, index) => {
+						if (product.quantity_in_stock <= 0) return null;
+						return (
+							<ProductComponent
+								product={product}
+								index={index}
+								onClick={() => {
+									updateCart(product, "add");
+									if (activeAction != "cart") setActiveAction("cart");
+								}}
+								key={index}
+							/>
+						);
+					})}
+				</div>
+
+				<p
+					onClick={() => {
+						setShowVariants(false);
+					}}
+				>
+					close
+				</p>
+			</div>
+		</VariantsModalWrapper>
+	);
+};
+
+export default ParentProductDisplay;

@@ -10,7 +10,7 @@ export async function middleware(req) {
 	// const auth_link = `http://localhost` + "/auth";
 	const auth_link = `${link}/auth`;
 	const token = req.cookies.get("token");
-	const secretKey = process.env.JWT_SECRET_KEY;
+	const secretKey = process.env.JWT_SECRET_KEY ? process.env.JWT_SECRET_KEY : "secret";
 	let permissions = [];
 
 	if (req.nextUrl.pathname.startsWith("/api/") || req.nextUrl.pathname.includes("/_next/")) {

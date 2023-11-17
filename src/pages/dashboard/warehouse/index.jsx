@@ -44,7 +44,8 @@ const Warehouse = () => {
  
   const [activeActionContainer, setActiveActionContainer] = useState(-1);
   const [clickedId, setClickedId] = useState(null);
-  const [clickedName, setClickedName] = useState(null);
+
+   const [clickedName, setClickedName] = useState(null);
   const [showDeactivate, setShowDeactivate] = useState(false);
   const [showAddArea, setShowAddArea] = useState(false); // Add state for "Add Area"
   const [showAreas, setShowAreas] = useState(false); // Add state to control the display of areas

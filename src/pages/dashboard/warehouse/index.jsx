@@ -33,14 +33,20 @@ import { PaginationControl } from "@/styled-components/ItemActionModal";
 import Pagination from "@/components/misc/pagination";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import AddWarehouseArea from "@/components/warehouseArea/addWarehouseArea";
+import AreasComponent from "@/components/warehouseArea/areasComponent";
+ 
 const Warehouse = () => {
+ 
+
   const [isAddPopUpOpen, setAddPopUpOpen] = useState(false);
   const [isEditPopUpOpen, setEditPopUpOpen] = useState(false);
   const [activeActionContainer, setActiveActionContainer] = useState(-1);
   const [clickedId, setClickedId] = useState(null);
   const [clickedName, setClickedName] = useState(null);
   const [showDeactivate, setShowDeactivate] = useState(false);
+  const [showAddArea, setShowAddArea] = useState(false); // Add state for "Add Area"
+  const [showAreas, setShowAreas] = useState(false); // Add state to control the display of areas
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -61,7 +67,8 @@ const Warehouse = () => {
     res ? setWarehouses(res.warehouses) : setWarehouses([]);
     res ? setWarehouseDisplay(res.warehouses) : setWarehouseDisplay([]);
   };
-
+ 
+  
   const deactivateWarehouseFunc = async (warehouse_id) => {
     const res = await deactivateWarehouse(warehouse_id);
     console.log(res);
@@ -93,6 +100,42 @@ const Warehouse = () => {
     toast.success(res.message);
     fetchWarehouses();
   };
+  
+  const addWarehouseAreaFunc = async () => {
+     
+    console.log("Adding new warehouse area:", warehouseArea);
+ 
+    fetchWarehouseAreas();
+    // Close the add pop-up
+    setAddPopUpOpen(false);
+  };
+
+  const showAreasFunc = (warehouse_id) => {
+    setShowAreas(!showAreas);
+    setClickedId(warehouse_id);
+  };
+
+  const actionContainerRef = useRef(null);
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleClickOutside = (event) => {
+    if (
+      actionContainerRef.current &&
+      !actionContainerRef.current.contains(event.target) &&
+      !event.target.classList.contains('ellipsis')
+    ) {
+      setActiveActionContainer(-1); // Hide the ellipsis menu only
+    }
+  };
+
+
+   
 
   return (
     <DashboardLayout>
@@ -105,80 +148,105 @@ const Warehouse = () => {
           setCurrentPage={setCurrentPage}
         />
 
-        <Table id="warehouse-table">
-          <tbody>
-            <TableRows $heading>
-              <TableHeadings>Warehouse ID</TableHeadings>
-              <TableHeadings>Warehouse Name</TableHeadings>
-              <TableHeadings>Location</TableHeadings>
-              <TableHeadings>Status</TableHeadings>
-              <TableHeadings>Actions</TableHeadings>
-            </TableRows>
+<Table id="warehouse-table">
+        <tbody>
+          <TableRows $heading>
+            <TableHeadings>Warehouse ID</TableHeadings>
+            <TableHeadings>Warehouse Name</TableHeadings>
+            <TableHeadings>Location</TableHeadings>
+            <TableHeadings>Status</TableHeadings>
 
-            {paginatedWarehouses.map((warehouse, index) => (
-              <TableRows key={index}>
+            <TableHeadings>Actions </TableHeadings>
+           </TableRows>
+
+          {warehouses.map((warehouse, index) => (
+            <React.Fragment key={index}>
+              <TableRows onClick={() => showAreasFunc(warehouse.warehouse_id)}>
                 <TableData>{warehouse.warehouse_id}</TableData>
                 <TableData>{warehouse.warehouse_name}</TableData>
                 <TableData>{warehouse.warehouse_location}</TableData>
                 <TableData>
                   {warehouse.isActive ? "Active" : "Not active"}
                 </TableData>
-
                 <TableData>
-                  <FontAwesomeIcon
-                    className="ellipsis"
-                    icon={faEllipsis}
-                    onClick={() =>
-                      activeActionContainer === index
-                        ? setActiveActionContainer(-1)
-                        : setActiveActionContainer(index)
-                    }
-                  />
-                  {activeActionContainer === index && (
-                    <ActionContainer
-                      onClick={() => setActiveActionContainer(-1)}
-                    >
-                      <p
-                        onClick={() => {
-                          setClickedId(warehouse.warehouse_id);
-                          setEditPopUpOpen(true);
-                        }}
-                      >
-                        <FontAwesomeIcon icon={faPen} />
-                        Edit
-                      </p>
-                      <p
-                        onClick={() => {
-                          setShowDeactivate(true);
-                          setClickedName(warehouse.warehouse_name);
-                        }}
-                      >
-                        <FontAwesomeIcon icon={faTrash} /> Delete
-                      </p>
+                    <FontAwesomeIcon
+                      className="ellipsis"
+                      icon={faEllipsis}
+                      onClick={() => setActiveActionContainer(index)}
+                    />
+                    {activeActionContainer === index && (
+                      <ActionContainer ref={actionContainerRef}>
+                        <p
+                          onClick={() => {
+                            setClickedId(warehouse.warehouse_id);
+                            setEditPopUpOpen(true);
+                          }}
+                        >
+                          <FontAwesomeIcon icon={faPen} />
+                          Edit
+                        </p>
+                        <p
+                          onClick={() => {
+                            setShowDeactivate(true);
+                            setClickedName(warehouse.warehouse_name);
+                          }}
+                        >
+                          <FontAwesomeIcon icon={faTrash} /> Delete
+                        </p>
+                        <p
+                          onClick={() =>
+                            deactivateWarehouseFunc(
+                              warehouse.warehouse_id
+                            )
+                          }
+                        >
+                          <FontAwesomeIcon icon={faXmarkCircle} /> Deactivate
+                          Warehouse
+                        </p>
+                        <p
+                          onClick={() =>
+                            reactivateWarehouseFunc(
+                              warehouse.warehouse_id
+                            )
+                          }
+                        >
+                          <FontAwesomeIcon icon={faCheckCircle} /> Reactivate
+                          Warehouse
+                        </p>
+                        <p
+                          onClick={() => {
+                            setShowAddArea(true);
+                            setClickedId(warehouse.warehouse_id);
+                          }}
+                        >
+                          Add Area
+                        </p>
+                        
+                      </ActionContainer>
+                    )}
+                  </TableData>
 
-                      <p
-                        onClick={() =>
-                          deactivateWarehouseFunc(warehouse.warehouse_id)
-                        }
-                      >
-                        <FontAwesomeIcon icon={faXmarkCircle} /> Deactivate
-                        Warehouse
-                      </p>
-                      <p
-                        onClick={() =>
-                          reactivateWarehouseFunc(warehouse.warehouse_id)
-                        }
-                      >
-                        <FontAwesomeIcon icon={faCheckCircle} /> Reactivate
-                        Warehouse
-                      </p>
-                    </ActionContainer>
-                  )}
-                </TableData>
               </TableRows>
-            ))}
-          </tbody>
-        </Table>
+              
+              {showAreas && clickedId === warehouse.warehouse_id && (
+                <TableRows style={{ width: '100%' }}>
+                  <TableData colSpan="4" style={{ width: '100%', height: '500px' }}> {/* Example: Set a specific height */}
+                    <div style={{ width: '100%', height: '100%' }}>
+                      <h2>Areas for Warehouse ID: {clickedId}</h2>
+                      <div style={{ width: '100%', height: '100%' }}>
+                        <AreasComponent warehouse_id={clickedId} />
+                      </div>
+                    </div>
+                  </TableData>
+                </TableRows>
+              )}
+
+
+
+            </React.Fragment>
+          ))}
+        </tbody>
+      </Table>
         <PdfExporter tableId="warehouse-table" filename="warehouse" />
         <Pagination
           totalItems={warehouses.length}
@@ -210,6 +278,26 @@ const Warehouse = () => {
           close={setShowDeactivate}
         />
       )}
+      {showAddArea && (
+        <AddWarehouseArea
+          setAddPopUpOpen={setShowAddArea}
+          fetchWarehouseAreas={fetchWarehouses} 
+          clickedId={clickedId}
+        />
+      )}
+
+      {/* {showAreas && (
+        <div>
+          <h2>Areas for Warehouse ID: {clickedId}</h2>
+          <AreasComponent warehouse_id={clickedId} />
+        </div>
+      )} */}
+     
+     
+   
+      
+
+
     </DashboardLayout>
   );
 };

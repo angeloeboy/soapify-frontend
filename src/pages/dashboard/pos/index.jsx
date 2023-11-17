@@ -14,6 +14,8 @@ import { PaginationControl } from "@/styled-components/ItemActionModal";
 import Pagination from "@/components/misc/pagination";
 import { TransactionContext } from "@/components/context/TransactionContext";
 import { getParentProduct } from "@/api/parent_product";
+import ParentProduct from "../parent-product";
+import ParentProductDisplay from "@/components/pos/parenntProduct";
 // import { TransactionContext } from "../context/TransactionContext";
 
 const ProductsList = styled.div`
@@ -70,9 +72,7 @@ const Pos = () => {
 
 	useEffect(() => {
 		fetchProducts();
-		fetchParentProducts();
 		setWindowWidth(window.innerWidth);
-
 		const handleResize = () => setWindowWidth(window.innerWidth);
 
 		window.addEventListener("resize", handleResize);
@@ -89,28 +89,36 @@ const Pos = () => {
 	}, [cart]);
 
 	useEffect(() => {
-		setProductDisplay(groupProductsByParentProductId(products));
-	}, [products, parentProducts]);
-
-	// useEffect(() => {
-	// 	console.log(productDisplay)
-	// }, [productDisplay]);
+		// setProductDisplay(groupProductsByParentProductId(products));
+		setProductDisplay(products.filter((product) => product.parent_product_id === null));
+		fetchParentProducts();
+	}, [products]);
 
 	const fetchProducts = async () => {
 		const response = await getProducts();
 		const filteredProducts = response.products.filter((product) => product.isActive);
 
 		setProducts(filteredProducts || []);
-		console.log(response.products);
 	};
 
 	const fetchParentProducts = async () => {
 		const response = await getParentProduct();
-		console.log(response);
 
 		if (!response) return;
 
-		setParentProducts(response.parentProducts);
+		// setParentProducts(response.parentProducts);
+
+		let parentProduct = response.parentProducts.map((parentProduct) => {
+			return {
+				...parentProduct,
+				products: products.filter((product) => product.parent_product_id === parentProduct.parent_product_id),
+			};
+		});
+
+		console.log(parentProduct);
+
+		setParentProducts(parentProduct);
+		// groupProductsByParentProductId2(products);
 	};
 
 	const groupProductsByParentProductId = (products) => {
@@ -125,8 +133,6 @@ const Pos = () => {
 			}
 		});
 
-		groupProductsByParentProductId2(products);
-
 		return notVariants;
 	};
 
@@ -139,6 +145,8 @@ const Pos = () => {
 		});
 
 		console.log(parentProduct);
+
+		setParentProducts(parentProduct);
 	};
 
 	const updateCart = (product, operation) => {
@@ -179,6 +187,12 @@ const Pos = () => {
 						<PosSearchBar products={products} setProductDisplay={setProductDisplay} />
 
 						<ProductsList>
+							{parentProducts.length !== 0 &&
+								parentProducts.map((parentProduct, index) => {
+									if (parentProduct.products.length <= 0) return null;
+
+									return <ParentProductDisplay key={index} parentProduct={parentProduct} updateCart={updateCart} />;
+								})}
 							{productDisplay.map((product, index) => {
 								if (product.quantity_in_stock > 0) {
 									return (
@@ -193,6 +207,7 @@ const Pos = () => {
 											key={index}
 											hasVariants={product.variants ? true : false}
 											variants={product.variants ? product.variants : []}
+											cart={cart}
 										/>
 									);
 								}

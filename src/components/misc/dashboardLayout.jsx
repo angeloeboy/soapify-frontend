@@ -1,11 +1,13 @@
+/* eslint-disable react/display-name */
 import Sidebar from "@/components/misc/sidebar";
 import styled from "styled-components";
 import TopBar from "./topbar";
-import { useState } from "react";
+import { memo, useState } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../../styles/globals.css";
 import { WebSocketProvider } from "../context/WebsocketContext";
+import { AppProvider } from "../context/AppContext";
 
 const DashboardRight = styled.div`
 	width: 100%;
@@ -29,32 +31,34 @@ const DashboardRightContainer = styled.div`
 	}
 `;
 
-let DashboardLayout = ({ children }) => {
+let DashboardLayout = memo(({ children }) => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
 	return (
-		<WebSocketProvider>
-			<Sidebar setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} />
-			<ToastContainer
-				position="top-right"
-				autoClose={2000}
-				hideProgressBar={false}
-				newestOnTop={false}
-				closeOnClick
-				rtl={false}
-				pauseOnFocusLoss
-				draggable
-				pauseOnHover
-				theme="light"
-				className="toast-container"
-			/>
+	
+			<WebSocketProvider>
+				<Sidebar setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} />
+				<ToastContainer
+					position="top-right"
+					autoClose={2000}
+					hideProgressBar={false}
+					newestOnTop={false}
+					closeOnClick
+					rtl={false}
+					pauseOnFocusLoss
+					draggable
+					pauseOnHover
+					theme="light"
+					className="toast-container"
+				/>
 
-			<DashboardRight $isSidebarOpen={isSidebarOpen}>
-				<TopBar pageName="Products" />
+				<DashboardRight $isSidebarOpen={isSidebarOpen}>
+					<TopBar pageName="Products" />
 
-				<DashboardRightContainer>{children}</DashboardRightContainer>
-			</DashboardRight>
-		</WebSocketProvider>
+					<DashboardRightContainer>{children}</DashboardRightContainer>
+				</DashboardRight>
+			</WebSocketProvider>
 	);
-};
+});
 
 export default DashboardLayout;

@@ -28,6 +28,7 @@ const EditProduct = ({ productId, onClose, fetchProducts }) => {
 	const [attributes, setAttributes] = useState([]);
 	const [suppliers, setSuppliers] = useState([]);
 	const [subCategories, setSubCategories] = useState([]);
+
 	const [product, setProduct] = useState({
 		product_name: null,
 		product_desc: "dfasdfasdfd",
@@ -47,9 +48,9 @@ const EditProduct = ({ productId, onClose, fetchProducts }) => {
 		fetchProductCategories();
 	}, []);
 
-	// useEffect(() => {
-	// 	console.log(product);
-	// }, [product]);
+	useEffect(() => {
+		console.log(product);
+	}, [product]);
 
 	const fetchProductData = async () => {
 		try {
@@ -77,20 +78,21 @@ const EditProduct = ({ productId, onClose, fetchProducts }) => {
 	// Destructure the needed properties from the product state
 	const { category_id, subcategory_id, supplier_id } = product;
 
-	// Refactor the product update into its own function outside of your effects
-	const updateProductAttributes = (attributes) => {
+	const updateProductAttributes = (initialAttributes) => {
 		let attributeArray = [];
 
-		attributes.forEach((attribute) => {
+		initialAttributes.forEach((attribute) => {
+			// Find the corresponding attribute in the product
+			const productAttribute = product.attribute.find((pa) => pa.attribute_id === attribute.attribute_id);
+
+			// If the product has this attribute, use its value; otherwise, use the first available value from the subcategory
+			const attributeValueId = productAttribute ? productAttribute.value_id : attribute.values[0].attribute_value_id;
+
 			attributeArray.push({
 				attribute_id: attribute.attribute_id,
-				attribute_value_id: product.attribute.find((productAttribute) =>
-					productAttribute.attribute_id === attribute.attribute_id ? productAttribute.value_id : attribute.values[0].attribute_value_id
-				).value_id,
+				attribute_value_id: attributeValueId,
 			});
 		});
-
-		console.log(attributeArray);
 
 		setProduct((prevProduct) => ({
 			...prevProduct,
@@ -98,22 +100,21 @@ const EditProduct = ({ productId, onClose, fetchProducts }) => {
 		}));
 	};
 
-	// Now, your useEffect only runs when the specific properties change, not the entire product object
 	useEffect(() => {
-		if (!product.product_name || product.product_name == "" || categories.length === 0) return;
+		if (!product.product_name || product.product_name === "" || categories.length === 0) return;
 
-		let category = categories.find((category) => category.category_id === category_id);
+		let category = categories.find((c) => c.category_id === category_id);
 		if (!category) return;
 
-		let subcategory = category.subcategories.find((subcategory) => subcategory.subcategory_id === subcategory_id);
+		let subcategory = category.subcategories.find((sc) => sc.subcategory_id === subcategory_id);
 		if (!subcategory) return;
 
 		let initialAttributes = subcategory.attributes;
-
-		updateProductAttributes(initialAttributes); // Call the update function
+		// Call the update function with the initial attributes
+		updateProductAttributes(initialAttributes);
 		setSubCategories(category.subcategories);
 		setAttributes(initialAttributes);
-	}, [category_id, subcategory_id, categories]); // Dependencies are now specific properties
+	}, [category_id, subcategory_id, categories, product.attribute]); // Add product.attribute as a dependency
 
 	let handleCategoryChange = (e) => {
 		let subcategory_id = categories.find((category) => category.category_id == e.target.value).subcategories[0].subcategory_id;
@@ -165,10 +166,14 @@ const EditProduct = ({ productId, onClose, fetchProducts }) => {
 		e.preventDefault();
 		const res = await editProduct(product, productId);
 		console.log(res);
+		if (res.status == "Success") {
+			toast.success("Product updated successfully");
+			fetchProducts();
+			onClose();
+			return;
+		}
 
-		fetchProducts();
-
-		toast.success("Product updated successfully");
+		toast.error("Something went wrong");
 	};
 
 	return (
@@ -179,7 +184,7 @@ const EditProduct = ({ productId, onClose, fetchProducts }) => {
 						{product.product_code} {product.product_name}
 					</HeaderTitle>
 					<FieldContainer>
-						{/* <LabelContainer first>
+						<LabelContainer first>
 							<Label>Category</Label>
 						</LabelContainer>
 						<div>
@@ -224,7 +229,7 @@ const EditProduct = ({ productId, onClose, fetchProducts }) => {
 									</Option>
 								))}
 							</Select>
-						</div> */}
+						</div>
 						<LabelContainer first>
 							<Label>General Information</Label>{" "}
 						</LabelContainer>
@@ -294,10 +299,24 @@ const EditProduct = ({ productId, onClose, fetchProducts }) => {
 											value={product.attributes[index]?.attribute_value_id}
 											onChange={(e) => {
 												let newAttributes = [...product.attributes];
+
+												let value_id = Number(e.target.value);
+												console.log(e.target.value);
+												if (value_id === 0 || value_id === null || value_id == NaN || e.target.value === "Undefined") {
+													newAttributes[index].attribute_value_id = null;
+													setProduct({ ...product, attributes: newAttributes });
+													console.log("here");
+													return;
+												}
+
 												newAttributes[index].attribute_value_id = Number(e.target.value);
+
 												setProduct({ ...product, attributes: newAttributes });
 											}}
 										>
+											<Option value={null} key={0}>
+												Undefined
+											</Option>
 											{attribute.values.map((attributeValue) => (
 												<Option value={attributeValue.attribute_value_id} key={attributeValue.attribute_value_id}>
 													{attributeValue.attribute_value}

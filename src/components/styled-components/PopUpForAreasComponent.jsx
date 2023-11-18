@@ -1,3 +1,30 @@
+export const PopupOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;  
+`;
+
+export const PopupContent = styled.div`
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  overflow-x: hidden; /* Hide horizontal overflow */
+  width: 828.924px;
+  height: 95vh; /* Fixed height */
+  display: block;
+  flex-shrink: 0;
+  position: fixed;
+  right: 24px;
+  z-index: 1100; /* Ensure a higher z-index */
+`;
 import styled from "styled-components";
 
 export const Button = styled.button`
@@ -132,41 +159,10 @@ export const CloseButton = styled.button`
 	font-family: Arial, Helvetica, sans-serif;
 	line-height: normal;
 	cursor: pointer;
-`;
+ `;
 export const ButtonsContainer = styled.div`
 	display: flex;
 	justify-content: flex-end;
-	margin-top: 222px;
+	margin-top: 300px;
 	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-`;
-
-export const PopupOverlay = styled.div`
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100vh;
-	background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	z-index: 1000;  
-
-`;
-
-export const PopupContent = styled.div`
-	background-color: #fff;
-	border-radius: 8px;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-	overflow-y: auto;
-	overflow-x: hidden; /* Hide horizontal overflow */
-	width: 828.924px;
-	max-height: 95vh; /* Set the maximum height to 90% of the viewport height */
-	display: block;
-	flex-shrink: 0;
-	/* margin: 0 auto;
-	padding: 0 auto; */
-	position: fixed;
-	right: 24px;
-	z-index: 1100; /* Ensure a higher z-index */
 `;

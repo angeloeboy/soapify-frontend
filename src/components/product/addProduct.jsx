@@ -297,12 +297,26 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 										onChange={(e) => {
 											let newAttributes = [...product.attributes];
 											console.log(newAttributes);
+
+											let value_id = Number(e.target.value);
+											console.log(e.target.value);
+											if (value_id === 0 || value_id === null || value_id == NaN || e.target.value === "Undefined") {
+												newAttributes[index].attribute_value_id = null;
+												setProduct({ ...product, attributes: newAttributes });
+												console.log("here");
+												return;
+											}
+
 											newAttributes[index].attribute_value_id = Number(e.target.value);
+
 											setProduct({ ...product, attributes: newAttributes });
 										}}
 									>
+										<Option value={null} key={0}>
+											Undefined
+										</Option>
 										{attribute.values.map((attribute) => (
-											<Option value={attribute.attribute_value_id} key={attribute.attribute_value_id}>
+											<Option value={attribute.attribute_value_id} key={attribute.attribute_value_id + 1}>
 												{attribute.attribute_value}
 											</Option>
 										))}

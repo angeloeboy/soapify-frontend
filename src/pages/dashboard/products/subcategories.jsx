@@ -3,34 +3,17 @@ import DashboardLayout from "@/components/misc/dashboardLayout";
 import PdfExporter from "@/components/misc/pdfExporter";
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faPen,
-  faTrash,
-  faEllipsis,
-  faFilter,
-  faPlus,
-} from "@fortawesome/free-solid-svg-icons";
+import { faPen, faTrash, faEllipsis, faFilter, faPlus } from "@fortawesome/free-solid-svg-icons";
 import PageTitle from "@/components/misc/pageTitle";
 import StyledPanel from "@/styled-components/StyledPanel";
 import { useEffect, useState } from "react";
-import {
-  addProduct,
-  getProductTemplates,
-  getProducts,
-  getSubCategories,
-} from "@/api/products";
+import { addProduct, deleteSubCategory, getProductTemplates, getProducts, getSubCategories } from "@/api/products";
 import { useRouter } from "next/router";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
 // import Button from "@/components/misc/button";
-import Table, {
-  ActionContainer,
-  TableData,
-  TableHeadings,
-  TableRows,
-  Status,
-} from "@/styled-components/TableComponent";
+import Table, { ActionContainer, TableData, TableHeadings, TableRows, Status } from "@/styled-components/TableComponent";
 import { Button } from "@/styled-components/ItemActionModal";
 
 import SearchBarComponent from "@/components/product/subcategory/searchBarAndFilter";
@@ -38,200 +21,166 @@ import SearchBarComponent from "@/components/product/subcategory/searchBarAndFil
 import EditSubCategory from "@/components/product/subcategory/editSubCategory";
 import AddSubCategory from "@/components/product/subcategory/addSubcategory";
 import Pagination from "@/components/misc/pagination";
+import { toast } from "react-toastify";
 
 // import SearchBarComponent from "@/components/product/product-template/searchBarAndFilters";
 
 const ProductTemplates = () => {
-  const [isPopupOpen, setPopupOpen] = useState(false);
-  const [isEditSubCatOpen, setEditSubCatOpen] = useState(false);
-  const [activeActionContainer, setActiveActionContainer] = useState(-1);
+	const [isAddSubCatOpen, setisAddSubCatOpen] = useState(false);
+	const [isEditSubCatOpen, setEditSubCatOpen] = useState(false);
+	const [activeActionContainer, setActiveActionContainer] = useState(-1);
 
-  const [subCategories, setSubCategories] = useState([]);
-  const [subCategoriesLoading, setSubCategoriesLoading] = useState(true);
-  const [subcategoryDisplay, setSubcategoryDisplay] = useState([]);
+	const [subCategories, setSubCategories] = useState([]);
+	const [subCategoriesLoading, setSubCategoriesLoading] = useState(true);
+	const [subcategoryDisplay, setSubcategoryDisplay] = useState([]);
 
-  const router = useRouter();
+	const router = useRouter();
 
-  useEffect(() => {
-    fetchProductSubcategories();
-  }, []);
+	useEffect(() => {
+		fetchProductSubcategories();
+	}, []);
 
-  const fetchProductSubcategories = async () => {
-    const res = await getSubCategories();
+	const fetchProductSubcategories = async () => {
+		const res = await getSubCategories();
 
-    if (!res) {
-      setSubcategoryDisplay([]);
-      setSubCategoriesLoading(false);
-      return;
-    }
+		if (!res) {
+			setSubcategoryDisplay([]);
+			setSubCategoriesLoading(false);
+			return;
+		}
 
-    res.subcategories
-      ? setSubcategoryDisplay(res.subcategories)
-      : setSubcategoryDisplay([]);
-    res.subcategories
-      ? setSubCategories(res.subcategories)
-      : setSubCategories([]);
-    setSubCategoriesLoading(false);
-  };
+		res.subcategories ? setSubcategoryDisplay(res.subcategories) : setSubcategoryDisplay([]);
+		res.subcategories ? setSubCategories(res.subcategories) : setSubCategories([]);
+		setSubCategoriesLoading(false);
+	};
 
-  const handleClickOutside = (event) => {
-    if (
-      !event.target.closest(".action-container") &&
-      !event.target.closest(".ellipsis")
-    ) {
-      setActiveActionContainer(null);
-    }
-  };
+	const handleClickOutside = (event) => {
+		if (!event.target.closest(".action-container") && !event.target.closest(".ellipsis")) {
+			setActiveActionContainer(null);
+		}
+	};
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = currentPage * itemsPerPage;
-  const paginatedSubcategories = subcategoryDisplay.slice(startIndex, endIndex);
+	const [currentPage, setCurrentPage] = useState(1);
+	const [itemsPerPage, setItemsPerPage] = useState(10);
+	const startIndex = (currentPage - 1) * itemsPerPage;
+	const endIndex = currentPage * itemsPerPage;
+	const paginatedSubcategories = subcategoryDisplay.slice(startIndex, endIndex);
+	const [selectedTemplateId, setSelectedTempalateId] = useState(null);
+	const [selectedSubCat, setSelectedSubCat] = useState(null);
 
-  const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
-  };
+	useEffect(() => {
+		document.addEventListener("click", handleClickOutside);
+		return () => {
+			document.removeEventListener("click", handleClickOutside);
+		};
+	}, []);
 
-  useEffect(() => {
-    document.addEventListener("click", handleClickOutside);
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, []);
+	const deleteSubCategoryFunc = async (subcategory_id) => {
+		const response = await deleteSubCategory(subcategory_id);
 
-  const handleClosePopup = () => {
-    setPopupOpen(false);
-  };
+		if (!response) return;
 
-  const closeEditSubCat = () => {
-    setEditSubCatOpen(false);
-  };
+		toast.success(response.message);
+		fetchProductSubcategories();
+	};
 
-  const openEditSubCat = (product_id) => {
-    setEditSubCatOpen(true);
-  };
+	return (
+		<DashboardLayout>
+			<PageTitle title="Subcategories" />
 
-  const onButtonClick = () => {
-    fileInput.current.click();
-  };
+			<StyledPanel>
+				<SearchBarComponent setisAddSubCatOpen={setisAddSubCatOpen} subCategories={subCategories} setSubcategoryDisplay={setSubcategoryDisplay} />
+				<Table id="subcategories-table">
+					<tbody>
+						<TableRows $heading>
+							<TableHeadings>ID</TableHeadings>
+							<TableHeadings>Name</TableHeadings>
+							<TableHeadings>Attributes</TableHeadings>
+							<TableHeadings>Actions</TableHeadings>
+						</TableRows>
 
-  const [selectedTemplateId, setSelectedTempalateId] = useState(null);
-  const [selectedSubCat, setSelectedSubCat] = useState(null);
-  return (
-    <DashboardLayout>
-      <PageTitle title="Subcategories" />
+						{subCategories.length === 0 ? (
+							subCategoriesLoading ? (
+								Array.from({ length: 8 }, (_, index) => (
+									<TableRows key={index}>
+										<TableData className="imgContainer">
+											<Skeleton circle={true} height={40} width={40} />
+											{/* <Skeleton width={100} height={20} /> */}
+										</TableData>
+										<TableData>
+											<Skeleton width={50} height={20} />
+										</TableData>
+										<TableData>
+											<Skeleton width={50} height={20} />
+										</TableData>
+										<TableData>
+											<Skeleton width={50} height={20} />
+										</TableData>
+									</TableRows>
+								))
+							) : (
+								<p>No Subcategories found</p>
+							)
+						) : (
+							paginatedSubcategories.map((subcategory, index) => (
+								<TableRows key={subcategory.subcategory_id}>
+									<TableData>{subcategory.subcategory_id}</TableData>
+									<TableData>{subcategory.subcategory_name}</TableData>
+									<TableData>{subcategory.attributes.length}</TableData>
+									<TableData>
+										<FontAwesomeIcon
+											className="ellipsis"
+											icon={faEllipsis}
+											onClick={() => (activeActionContainer === index ? setActiveActionContainer(-1) : setActiveActionContainer(index))}
+										/>
 
-      <StyledPanel>
-        <SearchBarComponent
-          setPopupOpen={setPopupOpen}
-          subCategories={subCategories}
-          setSubcategoryDisplay={setSubcategoryDisplay}
-        />
-        <Table id="subcategories-table">
-          <tbody>
-            <TableRows $heading>
-              <TableHeadings>ID</TableHeadings>
-              <TableHeadings>Name</TableHeadings>
-              <TableHeadings>Attributes</TableHeadings>
-              <TableHeadings>Actions</TableHeadings>
-            </TableRows>
-
-            {subCategories.length === 0 ? (
-              subCategoriesLoading ? (
-                Array.from({ length: 8 }, (_, index) => (
-                  <TableRows key={index}>
-                    <TableData className="imgContainer">
-                      <Skeleton circle={true} height={40} width={40} />
-                      {/* <Skeleton width={100} height={20} /> */}
-                    </TableData>
-                    <TableData>
-                      <Skeleton width={50} height={20} />
-                    </TableData>
-                    <TableData>
-                      <Skeleton width={50} height={20} />
-                    </TableData>
-                    <TableData>
-                      <Skeleton width={50} height={20} />
-                    </TableData>
-                  </TableRows>
-                ))
-              ) : (
-                <p>No Subcategories found</p>
-              )
-            ) : (
-              paginatedSubcategories.map((subcategory, index) => (
-                <TableRows key={subcategory.subcategory_id}>
-                  <TableData>{subcategory.subcategory_id}</TableData>
-                  <TableData>{subcategory.subcategory_name}</TableData>
-                  <TableData>{subcategory.attributes.length}</TableData>
-                  <TableData>
-                    <FontAwesomeIcon
-                      className="ellipsis"
-                      icon={faEllipsis}
-                      onClick={() =>
-                        activeActionContainer === index
-                          ? setActiveActionContainer(-1)
-                          : setActiveActionContainer(index)
-                      }
-                    />
-
-                    {activeActionContainer === index && (
-                      <ActionContainer
-                        onClick={() => setActiveActionContainer(-1)}
-                      >
-                        <p
-                          onClick={() => {
-                            setSelectedSubCat();
-                            openEditSubCat(selectedSubCat);
-                          }}
-                        >
-                          <FontAwesomeIcon icon={faPen} />
-                          Edit
-                        </p>
-                        <p>
-                          <FontAwesomeIcon icon={faTrash} /> Delete
-                        </p>
-                      </ActionContainer>
-                    )}
-                  </TableData>
-                </TableRows>
-              ))
-            )}
-          </tbody>
-        </Table>
-        <PdfExporter
-          tableId="subcategories-table"
-          fileName="subcategories.pdf"
-        />
-        <Pagination
-          totalItems={subcategoryDisplay.length} // Total number of items
-          itemsPerPage={itemsPerPage}
-          currentPage={currentPage}
-          onPageChange={setCurrentPage}
-          itemsPerPageOptions={[5, 10, 15, 20]}
-          defaultItemsPerPage={10}
-          setItemsPerPage={setItemsPerPage}
-        />
-      </StyledPanel>
-      {/* {isPopupOpen && (
+										{activeActionContainer === index && (
+											<ActionContainer onClick={() => setActiveActionContainer(-1)}>
+												<p
+													onClick={() => {
+														setSelectedSubCat(subcategory);
+														setEditSubCatOpen(true);
+													}}
+												>
+													<FontAwesomeIcon icon={faPen} />
+													Edit
+												</p>
+												<p onClick={() => deleteSubCategoryFunc(subcategory.subcategory_id)}>
+													<FontAwesomeIcon icon={faTrash} /> Delete
+												</p>
+											</ActionContainer>
+										)}
+									</TableData>
+								</TableRows>
+							))
+						)}
+					</tbody>
+				</Table>
+				<PdfExporter tableId="subcategories-table" fileName="subcategories.pdf" />
+				<Pagination
+					totalItems={subcategoryDisplay.length} // Total number of items
+					itemsPerPage={itemsPerPage}
+					currentPage={currentPage}
+					onPageChange={setCurrentPage}
+					itemsPerPageOptions={[5, 10, 15, 20]}
+					defaultItemsPerPage={10}
+					setItemsPerPage={setItemsPerPage}
+				/>
+			</StyledPanel>
+			{/* {isPopupOpen && (
         <AddSubCategory
           onClose={handleClosePopup}
-          onButtonClick={onButtonClick}
+          
           fetchProductSubcategories={fetchProductSubcategories}
         />
       )} */}
-      {isPopupOpen && (
-        <AddSubCategory
-          onClose={handleClosePopup}
-          onButtonClick={onButtonClick}
-          fetchProductSubcategories={fetchProductSubcategories}
-        />
-      )}
+			{isAddSubCatOpen && <AddSubCategory setisAddSubCatOpen={setisAddSubCatOpen} fetchProductSubcategories={fetchProductSubcategories} />}
 
-      {isEditSubCatOpen && <EditSubCategory onClose={closeEditSubCat} />}
-    </DashboardLayout>
-  );
+			{isEditSubCatOpen && (
+				<EditSubCategory setEditSubCatOpen={setEditSubCatOpen} selectedSubCat={selectedSubCat} fetchSubCategories={fetchProductSubcategories} />
+			)}
+		</DashboardLayout>
+	);
 };
 
 export default ProductTemplates;

@@ -100,8 +100,8 @@ const Dashboard = () => {
         )}
         <ProductSalesGraph />
       </div> */}
-      <ProductPerformance />
-      {/* <DataVisualization /> */}
+      {/* <ProductPerformance /> */}
+      <DataVisualization />
     </DashboardLayout>
   );
 };

@@ -31,12 +31,13 @@ export const getProductStats = async (id, year, month, day) => {
 
 export const getAllProductTransactions = async () => {
   try {
-    const response = await fetch(`/api/product/transactions`, {
+    const response = await fetch(`/api/transactions`, {
       method: "GET",
       credentials: "include",
     });
 
     const data = await response.json();
+
     return data;
   } catch (error) {
     console.log(error);

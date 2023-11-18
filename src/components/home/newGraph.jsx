@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Bar, Line } from "react-chartjs-2";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import { getProductStats } from "@/api/home"; // Adjust the import path
+import { Bar } from "react-chartjs-2";
+import { DateRangePicker } from "react-date-range";
+import "react-date-range/dist/styles.css"; // import the styles
+import "react-date-range/dist/theme/default.css"; // import the theme
 import { getProducts } from "@/api/products";
+import { getAllProductTransactions } from "@/api/home";
 import styled from "styled-components";
 
 const DataVisualizationContainer = styled.div`
@@ -42,269 +43,259 @@ const DataVisualizationContainer = styled.div`
   }
 `;
 
-const DataVisualization = () => {
-  const [chartData, setChartData] = useState({
-    labels: [],
-    datasets: [],
-  });
-  const [selectedProduct, setSelectedProduct] = useState("");
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [selectableYears, setSelectableYears] = useState([selectedYear]);
-
-  const [startDate, setStartDate] = useState(new Date()); // Date picker start date
-  const [endDate, setEndDate] = useState(new Date()); // Date picker end date
-
-  const [productsList, setProductsList] = useState([]);
-  const [productStats, setProductStats] = useState([]);
-  const [unitsSoldData, setUnitsSoldData] = useState([]); // New state for units sold data
-  const [totalUnitsSold, setTotalUnitsSold] = useState(0);
-  const [selectedDataType, setSelectedDataType] = useState("sales"); // Default to "sales"
-
-  useEffect(() => {
-    fetchProducts();
-  }, [selectedProduct, selectedYear, startDate, endDate]);
-
-  useEffect(() => {
-    calculateTotalUnitsSold();
-  }, [productsList, selectedYear, startDate, endDate]);
-
-  useEffect(() => {
-    calculateChartData();
-  }, [productStats, selectedYear, selectedDataType, startDate, endDate]);
-  useEffect(() => {
-    if (selectedDataType === "sales") {
-      fetchSalesData(); // Fetch sales data when the data type changes
-    }
-  }, [selectedDataType, selectedProduct, selectedYear, startDate, endDate]);
-
-  const fetchProducts = () => {
-    getProducts()
-      .then((res) => {
-        if (Array.isArray(res.products)) {
-          setProductsList(res.products);
-        } else {
-          setProductsList([]);
-        }
-        console.log("products", res.products); // Corrected console.log statement
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const calculateTotalUnitsSold = async () => {
-    let totalSold = 0;
-    for (const product of productsList) {
-      const productStats = await getProductStats(
-        product.product_id,
-        selectedYear,
-        startDate,
-        endDate
-      );
-      if (productStats.transactions) {
-        totalSold += Object.values(productStats.transactions).reduce(
-          (acc, value) => acc + value,
-          0
-        );
-      }
-    }
-    setTotalUnitsSold(totalSold);
-  };
-  const calculateChartData = async () => {
-    let data = [];
-
-    if (selectedDataType === "sales") {
-      // Fetch sales data
-      try {
-        await fetchSalesData();
-        data = salesDataResponse.data; // Modify this line based on your API response structure
-      } catch (error) {
-        console.error("Error fetching sales data", error);
-      }
-    } else if (selectedDataType === "unitsSold") {
-      // Fetch units sold data
-      try {
-        const unitsSoldData = await getProductStats(
-          selectedProduct,
-          selectedYear,
-          startDate,
-          endDate
-        );
-        // Modify this line based on your API response structure
-        data = Object.values(unitsSoldData.transactions || {});
-      } catch (error) {
-        console.error("Error fetching units sold data", error);
-      }
-    }
-
-    // Update the chart data
-    setChartData({
-      datasets: [
-        {
-          label: selectedDataType === "sales" ? "Sales" : "Units Sold",
-          data,
-          backgroundColor:
-            selectedDataType === "sales"
-              ? "rgba(255, 99, 132, 0.2)"
-              : "rgb(26, 255, 255)",
-          borderColor:
-            selectedDataType === "sales"
-              ? "rgba(255, 99, 132, 1)"
-              : "rgba(26, 255, 255)",
-          borderWidth: 1,
-        },
-      ],
-    });
-  };
-  useEffect(() => {
-    fetchUnitsSoldData();
-  }, [selectedProduct, selectedYear]);
-
-  const fetchSalesData = async () => {
-    // Implement logic to fetch sales data
-    // Example: const response = await yourSalesDataApiCall();
-    // return response.data;
-    return { data: [] };
-  };
-
-  const fetchUnitsSoldData = async () => {
-    const unitsSoldData = await getProductStats(
-      selectedProduct,
-      selectedYear,
-      startDate,
-      endDate
-    );
-    setUnitsSoldData(unitsSoldData.transactions);
-    console.log("units Sold Data", unitsSoldData.transactions);
-    if (
-      !unitsSoldData.transactions ||
-      Object.keys(unitsSoldData.transactions).length === 0
-    ) {
-      return; // Return to prevent further chart updates
-    }
-
-    if (unitsSoldData.transactions) {
-      const labels = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-      ];
-      const initialData = Array(labels.length).fill(0);
-
-      const data = unitsSoldData.transactions
-        ? Object.values(unitsSoldData.transactions)
-        : initialData;
-      setChartData({
-        labels,
-        datasets: [
+const mockData = [
+  {
+    status: "Success",
+    transactions: [
+      {
+        createdAt: "2023-11-17T15:02:51.000Z",
+        items: [
           {
-            label: "Units Sold",
-            data,
-            borderColor: "rgb(75, 192, 192)",
-            backgroundColor: "rgb(75, 192, 192)",
-            fill: false,
+            batch_info: '[{"batch_no":"mxglw82445PC-111723-b1","quantity":5}]',
+            price: 10000,
+            product: {
+              product_id: 18,
+              product_name: "Max Glow - Pc",
+              product_price: 10000,
+            },
+            product_id: 18,
+            quantity: 5,
+            transaction_item_id: 10,
           },
         ],
-      });
-    } else {
-      // Handle the case where productStats.transactions is undefined
-      console.log("No data available");
+        payment_method: {
+          payment_method_id: 2,
+          name: "BDO",
+        },
+        status: "PENDING",
+        total_amount: 50000,
+        transaction_id: 7,
+        transaction_number: "asedf3",
+        transaction_unique_id: "T231117230251574GHMUXB",
+        transaction_user_name: {
+          id: 2,
+          first_name: "admin",
+          last_name: "admin",
+          email: "admin@admin.com",
+        },
+      },
+      {
+        createdAt: "2023-11-17T14:51:08.000Z",
+        items: [
+          {
+            batch_info: '[{"batch_no":"mxglw82445PC-111723-b1","quantity":1}]',
+            price: 10000,
+            product: {
+              product_id: 18,
+              product_name: "Max Glow - Pc",
+              product_price: 10000,
+            },
+            product_id: 18,
+            quantity: 1,
+            transaction_item_id: 9,
+          },
+        ],
+        payment_method: {
+          payment_method_id: 2,
+          name: "BDO",
+        },
+        status: "PENDING",
+        total_amount: 10000,
+        transaction_id: 6,
+        transaction_number: "dfdfdfdf",
+        transaction_unique_id: "T231117225108826K2PUYG",
+        transaction_user_name: {
+          id: 2,
+          first_name: "admin",
+          last_name: "admin",
+          email: "admin@admin.com",
+        },
+      },
+    ],
+  },
+];
+
+const DataVisualization = () => {
+  const [chartData, setChartData] = useState({
+    labels: [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ],
+    datasets: [
+      {
+        label: "Units Sold",
+        backgroundColor: "rgba(75,192,192,0.2)",
+        borderColor: "rgba(75,192,192,1)",
+        borderWidth: 1,
+        hoverBackgroundColor: "rgba(75,192,192,0.4)",
+        hoverBorderColor: "rgba(75,192,192,1)",
+        data: [],
+      },
+    ],
+  });
+  const [products, setProducts] = useState([]);
+  const [transactions, setTransactions] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [selectionRange, setSelectionRange] = useState({
+    startDate: new Date(),
+    endDate: new Date(),
+    key: "selection",
+  });
+  const [aggregationType, setAggregationType] = useState("daily");
+  useEffect(() => {
+    fetchAllTransactions();
+    fetchProducts();
+  }, []);
+
+  useEffect(() => {
+    setShowDatePicker(aggregationType === "daily");
+  }, [aggregationType]);
+
+  const fetchAllTransactions = async () => {
+    try {
+      const res = await getAllProductTransactions();
+      if (Array.isArray(res)) {
+        setTransactions(res.transactions);
+        console.log("Fetch All Transactions", res.transactions);
+      } else {
+        setTransactions([]);
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
+  const fetchProducts = async () => {
+    try {
+      const res = await getProducts();
+      if (Array.isArray(res.products)) {
+        setProducts(res.products);
+        console.log("products", products);
+      } else {
+        setProducts([]);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleDateRangeChange = (start, end) => {
+    // Update the selection range and close the date picker
+    setSelectionRange({ startDate: start, endDate: end });
+    setShowDatePicker(false);
 
-  const handleDataTypeChange = (e) => {
-    setSelectedDataType(e.target.value);
+    // Additional logic based on the selected date range if needed
   };
-  const chartOptions = {
-    maintainAspectRatio: true,
-    responsive: true,
-    scales: {
-      x: {
-        title: {
-          display: true,
-          font: {
-            size: 16,
-            weight: "bold",
-          },
-        },
+  // Logic to filter and aggregate data based on selected options
+  const filteredTransactions = selectedProduct
+    ? transactions.filter(
+        (transaction) => transaction.product.product_id === selectedProduct
+      )
+    : transactions;
+
+  const aggregatedData = {};
+
+  filteredTransactions.forEach((transaction) => {
+    const date = new Date(transaction.createdAt);
+    let key;
+
+    // Determine the key based on the aggregation type
+    if (aggregationType === "daily") {
+      key = date.toISOString().split("T")[0];
+    } else if (aggregationType === "monthly") {
+      key = `${date.getFullYear()}-${(date.getMonth() + 1)
+        .toString()
+        .padStart(2, "0")}`;
+    }
+
+    // Initialize the key if it doesn't exist
+    if (!aggregatedData[key]) {
+      aggregatedData[key] = 0;
+    }
+
+    // Increment the value based on the aggregation type (units sold or total amount)
+    if (aggregationType === "unitsSold") {
+      transaction.transactions.forEach((item) => {
+        item.items.forEach((product) => {
+          aggregatedData[key] += product.quantity;
+        });
+      });
+    } else if (aggregationType === "sales") {
+      transaction.transactions.forEach((item) => {
+        item.items.forEach((product) => {
+          aggregatedData[key] += product.total_amount;
+        });
+      });
+    }
+  });
+
+  // Chart Data
+  const chartDataOptions = {
+    labels: Object.keys(aggregatedData),
+    datasets: [
+      {
+        label: aggregationType === "unitsSold" ? "Units Sold" : "Sales",
+        backgroundColor: "rgba(75,192,192,0.2)",
+        borderColor: "rgba(75,192,192,1)",
+        borderWidth: 1,
+        hoverBackgroundColor: "rgba(75,192,192,0.4)",
+        hoverBorderColor: "rgba(75,192,192,1)",
+        data: Object.values(aggregatedData),
       },
-      y: {
-        grid: {
-          display: true,
-        },
-        title: {
-          display: true,
-          font: {
-            size: 16,
-            weight: "bold",
-          },
-        },
-        beginAtZero: true,
-        max: totalUnitsSold,
-      },
-    },
-    height: 500,
+    ],
   };
+
   return (
-    <DataVisualizationContainer>
-      <div>
-        <label htmlFor="dataType">Select Data Type: </label>
-        <select
-          id="dataType"
-          value={selectedDataType}
-          onChange={handleDataTypeChange}
-        >
-          <option value="sales">Sales</option>
-          <option value="unitsSold">Units Sold</option>
-        </select>
-        <label htmlFor="product">Select Product: </label>
-        <select
-          id="product"
-          value={selectedProduct}
-          onChange={(e) => setSelectedProduct(e.target.value)}
-        >
-          {productsList === null ? (
-            <option value="" disabled>
-              Loading products...
-            </option>
-          ) : (
-            productsList.map((product) => (
-              <option value={product.product_id} key={product.product_id}>
-                {product.product_name}
-              </option>
-            ))
-          )}
-        </select>
-        <label htmlFor="startDate" className="selection">
-          Start Date:
-        </label>
-        <DatePicker
-          selected={startDate}
-          onChange={(date) => setStartDate(date)}
-        />
-        <label htmlFor="endDate" className="selection">
-          End Date:
-        </label>
-        <DatePicker selected={endDate} onChange={(date) => setEndDate(date)} />
-      </div>
+    // <DataVisualizationContainer>
+    <div>
+      <select
+        value={selectedProduct}
+        onChange={(e) => setSelectedProduct(e.target.value)}
+      >
+        <option value="">Select a Product</option>
+        {products.map((product) => (
+          <option key={product.product_id} value={product.product_id}>
+            {product.product_name}
+          </option>
+        ))}
+      </select>
+      <select
+        value={aggregationType}
+        onChange={(e) => setFilterType(e.target.value)}
+      >
+        <option value="unitsSold">Units Sold</option>
+        <option value="sales">Sales</option>
+      </select>
+      <select
+        value={aggregationType}
+        onChange={(e) => {
+          setAggregationType(e.target.value);
+          // Toggle date range picker based on the selected aggregation type
+          setShowDatePicker(e.target.value === "daily");
+        }}
+      >
+        <option value="daily">Daily</option>
+        <option value="monthly">Monthly</option>
+      </select>
 
-      {selectedDataType === "sales" ? (
-        <Bar data={chartData} options={chartOptions} />
-      ) : (
-        <Line data={chartData} options={chartOptions} />
+      {showDatePicker && (
+        <DateRangePicker
+          ranges={[selectionRange]}
+          onChange={(ranges) => console.log(ranges)}
+        />
       )}
-      {/* Add additional components or information based on selectedDataType */}
-      <p>Total Units Sold: {totalUnitsSold}</p>
-    </DataVisualizationContainer>
+      <Bar data={chartDataOptions} />
+    </div>
+    // </DataVisualizationContainer>
   );
 };
 

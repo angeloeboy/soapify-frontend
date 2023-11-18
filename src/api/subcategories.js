@@ -32,3 +32,20 @@ export const addSubCategory = async (subCategory) => {
 		console.log(error);
 	}
 };
+
+export const editSubCategory = async (subcategory_id, subCategory) => {
+	try {
+		const response = await fetch(`/api/subcategory/${subcategory_id}`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(subCategory),
+			credentials: "include",
+		});
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};

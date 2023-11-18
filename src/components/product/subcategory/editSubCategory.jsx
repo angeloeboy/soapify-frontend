@@ -1,145 +1,192 @@
+import { getAttributes } from "@/api/attributes";
+import { getProductCategories } from "@/api/products";
+import { editSubCategory } from "@/api/subcategories";
 import {
-  Button,
-  LabelContainer,
-  Label,
-  FieldContainer,
-  CloseButton,
-  ButtonsContainer,
-  PopupOverlay,
-  PopupContent,
-  HeaderTitle,
-  FieldTitleLabel,
-  InputHolder,
-  Select,
-  Option,
+	Button,
+	LabelContainer,
+	Label,
+	FieldContainer,
+	CloseButton,
+	ButtonsContainer,
+	PopupOverlay,
+	PopupContent,
+	HeaderTitle,
+	FieldTitleLabel,
+	InputHolder,
+	Select,
+	Option,
 } from "@/styled-components/ItemActionModal";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
-const EditSubCategory = ({ onClose, category_id, fetchSubCategories }) => {
-  const [subCategory, setSubCategory] = useState({
-    name: "",
-    category_id: undefined,
-    attributes: [],
-  });
-  const [chosenAttribute, setChosenAttribute] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [attributes, setAttributes] = useState([]);
-  return (
-    <PopupOverlay>
-      <PopupContent>
-        <form>
-          <FieldContainer>
-            <HeaderTitle>Edit Subcategory</HeaderTitle>
+const EditSubCategory = ({ setEditSubCatOpen, fetchSubCategories, selectedSubCat }) => {
+	const [subCategory, setSubCategory] = useState({
+		name: "",
+		category_id: null,
+		attributes: [],
+	});
 
-            <LabelContainer first>
-              <Label>General Information</Label>
-            </LabelContainer>
-            <div>
-              <FieldTitleLabel> Subcategory Name </FieldTitleLabel>
-              <InputHolder
-                type="text"
-                onChange={(e) => {
-                  setSubCategory({ ...subCategory, name: e.target.value });
-                }}
-                // required
-                // value={subCategory.name}
-              />
-            </div>
+	const [chosenAttribute, setChosenAttribute] = useState([]);
+	const [categories, setCategories] = useState([]);
+	const [attributes, setAttributes] = useState([]);
 
-            <div>
-              <FieldTitleLabel> Category </FieldTitleLabel>
+	useEffect(() => {
+		// setSubCategory(selectedSubCat);
 
-              <Select
-                value={subCategory.category_id}
-                onChange={(e) => {
-                  console.log(e.target.value);
-                  setSubCategory({
-                    ...subCategory,
-                    category_id: e.target.value,
-                  });
-                }}
-              >
-                {categories.map((subCategory) => (
-                  <Option
-                    value={subCategory.category_id}
-                    key={subCategory.category_id}
-                  >
-                    {subCategory.name}
-                  </Option>
-                ))}
-              </Select>
-            </div>
+		//map the attributes to the subcategory
+		let attrArr = [];
+		selectedSubCat.attributes.map((attr) => {
+			let attrObj = {
+				attribute_id: attr.attribute_id,
+				attribute_name: attr.attribute_name,
+			};
 
-            <LabelContainer>
-              <Label>Attributes</Label>
-            </LabelContainer>
+			attrArr.push(attrObj);
+		});
 
-            <div>
-              <FieldTitleLabel> Attribute Name </FieldTitleLabel>
+		setSubCategory({
+			...subCategory,
+			name: selectedSubCat.subcategory_name,
+			attributes: attrArr,
+			category_id: selectedSubCat.category_id,
+		});
 
-              {attributes.length > 0 && (
-                <Select
-                  value={chosenAttribute.attribute_id}
-                  placeholder="Select an option"
-                  onChange={(e) => {
-                    if (e.target.value == "none") return;
+		console.log(selectedSubCat.attributes);
+		fetchProductCategories(categories);
+		fetchAttributes();
+		console.log(selectedSubCat);
+	}, [selectedSubCat]);
 
-                    let attr = attributes.find(
-                      (value) => value.attribute_id == Number(e.target.value)
-                    );
-                    setChosenAttribute(attr);
-                    let attrArr = subCategory.attributes;
-                    if (
-                      attrArr.find(
-                        (value) => value.attribute_id == attr.attribute_id
-                      )
-                    ) {
-                      return;
-                    }
-                    let attrObj = {
-                      attribute_id: attr.attribute_id,
-                      attribute_name: attr.attribute_name,
-                    };
+	const editSubCategoryFunc = async (e) => {
+		e.preventDefault();
+		const res = await editSubCategory(selectedSubCat.subcategory_id, subCategory);
 
-                    attrArr.push(attrObj);
-                    setSubCategory({ ...subCategory, attributes: attrArr });
-                  }}
-                >
-                  <Option value="none">Select an option</Option>
-                  {attributes.map((value) => (
-                    <Option value={value.attribute_id} key={value.attribute_id}>
-                      {value.attribute_name}
-                    </Option>
-                  ))}
-                </Select>
-              )}
-            </div>
+		if (!res) {
+			toast.error("Failed to edit subcategory");
+			return;
+		}
 
-            <div>
-              <FieldTitleLabel> Attribute List </FieldTitleLabel>
+		toast.success("Successfully edited subcategory");
+		setEditSubCatOpen(false);
+		fetchSubCategories();
+	};
 
-              {subCategory.attributes.map((attribute, index) => (
-                <>
-                  <InputHolder
-                    type="text"
-                    key={index}
-                    readOnly
-                    value={attribute.attribute_name}
-                  />
-                  <p> Delete </p>
-                </>
-              ))}
-            </div>
-          </FieldContainer>
+	let fetchProductCategories = async () => {
+		const res = await getProductCategories();
+		res.categories ? setCategories(res.categories) : setCategories([]);
+		console.log(res.categories);
+	};
 
-          <ButtonsContainer>
-            <CloseButton onClick={onClose}>Close</CloseButton>
-            <Button type="submit">Save</Button>
-          </ButtonsContainer>
-        </form>
-      </PopupContent>
-    </PopupOverlay>
-  );
+	let fetchAttributes = async () => {
+		const res = await getAttributes();
+		res.attributes ? setAttributes(res.attributes) : setAttributes([]);
+		console.log(res.attributes);
+	};
+
+	return (
+		<PopupOverlay>
+			<PopupContent>
+				<form onSubmit={(e) => editSubCategoryFunc(e)}>
+					<FieldContainer>
+						<HeaderTitle>Edit Subcategory</HeaderTitle>
+
+						<LabelContainer first>
+							<Label>General Information</Label>
+						</LabelContainer>
+						<div>
+							<FieldTitleLabel> Subcategory Name </FieldTitleLabel>
+							<InputHolder
+								type="text"
+								onChange={(e) => {
+									setSubCategory({ ...subCategory, name: e.target.value });
+								}}
+								required
+								value={subCategory.name}
+							/>
+						</div>
+
+						<div>
+							<FieldTitleLabel> Category </FieldTitleLabel>
+
+							<Select
+								value={subCategory.category_id}
+								onChange={(e) => {
+									console.log(e.target.value);
+									setSubCategory({
+										...subCategory,
+										category_id: e.target.value,
+									});
+								}}
+							>
+								{categories.map((subCategory) => (
+									<Option value={subCategory.category_id} key={subCategory.category_id}>
+										{subCategory.name}
+									</Option>
+								))}
+							</Select>
+						</div>
+
+						<LabelContainer>
+							<Label>Attributes</Label>
+						</LabelContainer>
+
+						<div>
+							<FieldTitleLabel> Attribute Name </FieldTitleLabel>
+
+							{attributes.length > 0 && (
+								<Select
+									value={chosenAttribute.attribute_id}
+									placeholder="Select an option"
+									onChange={(e) => {
+										if (e.target.value == "none") return;
+
+										let attr = attributes.find((value) => value.attribute_id == Number(e.target.value));
+										setChosenAttribute(attr);
+										let attrArr = subCategory.attributes;
+										if (attrArr.find((value) => value.attribute_id == attr.attribute_id)) {
+											return;
+										}
+										let attrObj = {
+											attribute_id: attr.attribute_id,
+											attribute_name: attr.attribute_name,
+										};
+
+										attrArr.push(attrObj);
+										setSubCategory({ ...subCategory, attributes: attrArr });
+									}}
+								>
+									<Option value="none">Select an option</Option>
+									{attributes.map((value) => (
+										<Option value={value.attribute_id} key={value.attribute_id}>
+											{value.attribute_name}
+										</Option>
+									))}
+								</Select>
+							)}
+						</div>
+
+						<div>
+							<FieldTitleLabel> Attribute List </FieldTitleLabel>
+
+							{subCategory.attributes.map((attribute, index) => (
+								<>
+									<InputHolder type="text" key={index} readOnly value={attribute.attribute_name} />
+									<p> Delete </p>
+								</>
+							))}
+						</div>
+					</FieldContainer>
+
+					<ButtonsContainer>
+						<CloseButton onClick={() => setEditSubCatOpen(false)}>Close</CloseButton>
+						<Button type="submit" onClick={(e) => editSubCategoryFunc(e)}>
+							Save
+						</Button>
+					</ButtonsContainer>
+				</form>
+			</PopupContent>
+		</PopupOverlay>
+	);
 };
 
 export default EditSubCategory;

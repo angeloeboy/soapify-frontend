@@ -26,7 +26,7 @@ import { toast } from "react-toastify";
 // import SearchBarComponent from "@/components/product/product-template/searchBarAndFilters";
 
 const ProductTemplates = () => {
-	const [isPopupOpen, setPopupOpen] = useState(false);
+	const [isAddSubCatOpen, setisAddSubCatOpen] = useState(false);
 	const [isEditSubCatOpen, setEditSubCatOpen] = useState(false);
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
 
@@ -67,9 +67,6 @@ const ProductTemplates = () => {
 	const paginatedSubcategories = subcategoryDisplay.slice(startIndex, endIndex);
 	const [selectedTemplateId, setSelectedTempalateId] = useState(null);
 	const [selectedSubCat, setSelectedSubCat] = useState(null);
-	const handlePageChange = (newPage) => {
-		setCurrentPage(newPage);
-	};
 
 	useEffect(() => {
 		document.addEventListener("click", handleClickOutside);
@@ -77,22 +74,6 @@ const ProductTemplates = () => {
 			document.removeEventListener("click", handleClickOutside);
 		};
 	}, []);
-
-	const handleClosePopup = () => {
-		setPopupOpen(false);
-	};
-
-	const closeEditSubCat = () => {
-		setEditSubCatOpen(false);
-	};
-
-	const openEditSubCat = (product_id) => {
-		setEditSubCatOpen(true);
-	};
-
-	const onButtonClick = () => {
-		fileInput.current.click();
-	};
 
 	const deleteSubCategoryFunc = async (subcategory_id) => {
 		const response = await deleteSubCategory(subcategory_id);
@@ -108,7 +89,7 @@ const ProductTemplates = () => {
 			<PageTitle title="Subcategories" />
 
 			<StyledPanel>
-				<SearchBarComponent setPopupOpen={setPopupOpen} subCategories={subCategories} setSubcategoryDisplay={setSubcategoryDisplay} />
+				<SearchBarComponent setisAddSubCatOpen={setisAddSubCatOpen} subCategories={subCategories} setSubcategoryDisplay={setSubcategoryDisplay} />
 				<Table id="subcategories-table">
 					<tbody>
 						<TableRows $heading>
@@ -157,8 +138,8 @@ const ProductTemplates = () => {
 											<ActionContainer onClick={() => setActiveActionContainer(-1)}>
 												<p
 													onClick={() => {
-														setSelectedSubCat();
-														openEditSubCat(selectedSubCat);
+														setSelectedSubCat(subcategory);
+														setEditSubCatOpen(true);
 													}}
 												>
 													<FontAwesomeIcon icon={faPen} />
@@ -189,13 +170,15 @@ const ProductTemplates = () => {
 			{/* {isPopupOpen && (
         <AddSubCategory
           onClose={handleClosePopup}
-          onButtonClick={onButtonClick}
+          
           fetchProductSubcategories={fetchProductSubcategories}
         />
       )} */}
-			{isPopupOpen && <AddSubCategory onClose={handleClosePopup} onButtonClick={onButtonClick} fetchProductSubcategories={fetchProductSubcategories} />}
+			{isAddSubCatOpen && <AddSubCategory setisAddSubCatOpen={setisAddSubCatOpen} fetchProductSubcategories={fetchProductSubcategories} />}
 
-			{isEditSubCatOpen && <EditSubCategory onClose={closeEditSubCat} />}
+			{isEditSubCatOpen && (
+				<EditSubCategory setEditSubCatOpen={setEditSubCatOpen} selectedSubCat={selectedSubCat} fetchSubCategories={fetchProductSubcategories} />
+			)}
 		</DashboardLayout>
 	);
 };

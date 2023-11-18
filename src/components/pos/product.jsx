@@ -289,7 +289,6 @@ const ProductComponent = ({ product, onClick, index }) => {
 	useEffect(() => {
 		let item = cart.find((item) => item.product_id == product.product_id);
 		// console.log(item)
-		console.log(item);
 		if (item) setItem(item);
 		else setItem({ ...product, quantity: 0 });
 	}, [cart]);

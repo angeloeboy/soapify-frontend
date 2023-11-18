@@ -68,6 +68,8 @@ const Products = () => {
 			} else {
 				setProducts([]);
 			}
+
+			console.log(res.products);
 			setProductsLoading(false);
 		});
 	};
@@ -212,7 +214,7 @@ const Products = () => {
 												<p
 													onClick={() => {
 														setSelectedProductId(product.product_id);
-														openEditPopUp(selectedProductId);
+														openEditPopUp(true);
 													}}
 												>
 													<FontAwesomeIcon icon={faPen} />

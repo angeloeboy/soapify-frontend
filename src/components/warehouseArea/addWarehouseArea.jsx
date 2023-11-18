@@ -21,21 +21,24 @@ import ItemActionModal, {
   InputHolder,
 } from "@/styled-components/ItemActionModal";
 import StyledPanel from "@/styled-components/StyledPanel";
-import { addWarehouseArea } from "@/api/warehouse"; // Import the API function for adding warehouse areas
+import { addArea, addWarehouseArea } from "@/api/warehouse"; // Import the API function for adding warehouse areas
+import Warehouse from "@/pages/dashboard/warehouse";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const AddWarehouseArea = ({ setAddPopUpOpen, fetchWarehouseAreas }) => {
+const AddWarehouseArea = ({ setAddPopUpOpen, fetchWarehouseAreas, clickedId }) => {
   const [warehouseArea, setWarehouseArea] = useState({
    
   });
 
   const addWarehouseAreaFunc = async () => {
-     
-    console.log("Adding new warehouse area:", warehouseArea);
- 
+    const response = await addArea(clickedId,warehouseArea);
+    console.log(clickedId);
+    console.log(response);
     fetchWarehouseAreas();
-    // Close the add pop-up
+    toast.success("warehouse area added successfully");
     setAddPopUpOpen(false);
-  };
+   };
 
   return (
     <PopupOverlay>
@@ -50,8 +53,8 @@ const AddWarehouseArea = ({ setAddPopUpOpen, fetchWarehouseAreas }) => {
             <FieldTitleLabel notFirst>Area Name</FieldTitleLabel>
             <InputHolder
               type="text"
-              value={warehouseArea.name}
-              onChange={(e) => setWarehouseArea({ ...warehouseArea, name: e.target.value })}
+              value={warehouseArea.area_name}
+              onChange={(e) => setWarehouseArea({ ...warehouseArea, area_name: e.target.value })}
             />
           </div>
           <div>
@@ -63,30 +66,13 @@ const AddWarehouseArea = ({ setAddPopUpOpen, fetchWarehouseAreas }) => {
             />
           </div>
           <div>
-            <FieldTitleLabel notFirst>Area Type</FieldTitleLabel>
-            <InputHolder
-              type="text"
-              value={warehouseArea.areaType}
-              onChange={(e) => setWarehouseArea({ ...warehouseArea, areaType: e.target.value })}
-            />
-          </div>
-          <div>
             <FieldTitleLabel notFirst>Capacity</FieldTitleLabel>
             <InputHolder
               type="text"
-              value={warehouseArea.capacity}
-              onChange={(e) => setWarehouseArea({ ...warehouseArea, capacity: e.target.value })}
+              value={warehouseArea.max_capacity}
+              onChange={(e) => setWarehouseArea({ ...warehouseArea, max_capacity: e.target.value })}
             />
           </div>
-          <div>
-            <FieldTitleLabel notFirst>Location</FieldTitleLabel>
-            <InputHolder
-              type="text"
-              value={warehouseArea.location}
-              onChange={(e) => setWarehouseArea({ ...warehouseArea, location: e.target.value })}
-            />
-          </div>
-          {/* Add more input fields for other properties of the warehouse area */}
         </FieldContainer>
 
         <ButtonsContainer>

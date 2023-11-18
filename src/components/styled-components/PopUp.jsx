@@ -150,6 +150,8 @@ export const PopupOverlay = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	z-index: 1000;  
+
 `;
 
 export const PopupContent = styled.div`
@@ -166,4 +168,5 @@ export const PopupContent = styled.div`
 	padding: 0 auto; */
 	position: fixed;
 	right: 24px;
+	z-index: 1100; /* Ensure a higher z-index */
 `;

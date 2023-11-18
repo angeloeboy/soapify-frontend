@@ -66,6 +66,7 @@ const PaymentMethods = (props) => {
 	const { setTransaction, transaction } = useContext(TransactionContext);
 	const [transactionSuccess, setTransactionSuccess] = useState(false);
 
+	const [selectedPaymentName, setSelectedPaymentName] = useState("");
 	useEffect(() => {
 		fetchPaymentMethods();
 	}, []);
@@ -113,6 +114,7 @@ const PaymentMethods = (props) => {
 							selected={paymentMethod == payment.payment_method_id}
 							onClick={() => {
 								setPaymentMethod(payment.payment_method_id);
+								setSelectedPaymentName(payment.name);
 								setTransaction((prev) => ({ ...prev, payment_method_id: payment.payment_method_id }));
 							}}
 						>
@@ -122,10 +124,13 @@ const PaymentMethods = (props) => {
 					);
 				})}
 			</PaymentMethodsContainer>
-			<TransactionNo>
-				<ComponentTitle>Transaction Number</ComponentTitle>
-				<input type="text" value={transactionNo} onChange={(e) => setTransactionNo(e.target.value)} />
-			</TransactionNo>
+
+			{selectedPaymentName !== "Cash" && selectedPaymentName !== "CASH" && (
+				<TransactionNo>
+					<ComponentTitle>Transaction Number</ComponentTitle>
+					<input type="text" value={transactionNo} onChange={(e) => setTransactionNo(e.target.value)} />
+				</TransactionNo>
+			)}
 
 			<Button
 				width={"100%"}

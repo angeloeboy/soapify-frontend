@@ -21,6 +21,7 @@ export const addTransaction = async (transaction) => {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
+				"x-source-page": "/dashboard/pos",
 			},
 			body: JSON.stringify(transaction),
 			credentials: "include",

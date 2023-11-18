@@ -310,6 +310,7 @@ const ProductComponent = ({ product, onClick, index }) => {
 					{product.attribute.map((attribute, attributeIndex) => {
 						const combinedIndex = index * product.attribute.length + attributeIndex;
 
+						if (attribute.value == "None" || !attribute.value) return null;
 						return (
 							<Attribute color={generateColors(combinedIndex)} key={attributeIndex}>
 								{attribute.name}: {attribute.value}

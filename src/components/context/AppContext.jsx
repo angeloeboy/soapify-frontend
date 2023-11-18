@@ -16,7 +16,7 @@ export const AppProvider = ({ children }) => {
 			hasSubmenu: true,
 			submenus: [
 				{ title: "POS", link: "/dashboard/pos" },
-				{ title: "Sales Overview", link: "/" },
+				{ title: "Sales Overview", link: "/dashboard" },
 				{ title: "Orders", link: "/dashboard/orders" },
 				{ title: "Returns", link: "/dashboard/returns" },
 				{ title: "Refunds", link: "/dashboard/refunds" },
@@ -65,17 +65,16 @@ export const AppProvider = ({ children }) => {
 
 	useEffect(() => {
 		const currentPath = router.pathname;
-		console.log("Current Path:", currentPath);
 
 		// Function to find the index of the menu item and submenu item with a matching link
 		const findMenuAndSubmenuIndex = () => {
 			for (let i = 0; i < sidebarData.length; i++) {
 				const menu = sidebarData[i];
-              
+				console.log(menu.link);
+				console.log(currentPath);
 				if (menu.link === currentPath) {
 					// If the current path matches the main menu link
-                    console.log(menu.link)
-                    console.log(currentPath)
+
 					return { menuIndex: i, submenuIndex: -1 };
 				}
 

@@ -92,7 +92,8 @@ const Product = styled.div`
 	}
 
 	.minus {
-		opacity: ${(props) => (props.active ? "1" : "0.5")};
+		/* opacity: ${(props) => (props.active ? "1" : "0.5")}; */
+		opacity: 1;
 	}
 
 	.delete {
@@ -188,99 +189,6 @@ const Attribute = styled.p`
 	margin: 0px 4px 4px 0px;
 `;
 
-const HasVariants = styled.div`
-	position: absolute;
-	top: 25px;
-	right: -20%;
-	color: white;
-	background-color: #1a69f0;
-	padding: 5px 50px;
-	transform: rotate(45deg);
-	font-size: 12px;
-	/* width: 100px; */
-`;
-
-const VariantsModalWrapper = styled.div`
-	background-color: rgba(22, 28, 39, 0.425);
-	width: 100vw;
-	height: 100vh;
-	position: fixed;
-
-	top: 0px;
-	left: 0px;
-	backdrop-filter: blur(3.5px);
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	z-index: 9999;
-
-	.group_modal {
-		height: 90vh;
-		padding: 20px 18px;
-		max-width: 800.57px;
-		width: 90%;
-		background: rgb(255, 255, 255);
-		border-radius: 15px;
-		overflow: auto;
-		z-index: 100;
-		padding-top: 60px;
-		/* position: relative; */
-
-		.variants-wrapper {
-			display: flex;
-			flex-wrap: wrap;
-			align-items: center;
-		}
-		.group_item {
-			margin-bottom: 20px;
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-
-			.group_item_info {
-				display: flex;
-				align-items: center;
-
-				.group_item_img {
-					margin-right: 20px;
-					width: 95px;
-					height: 54px;
-					border-radius: 13px;
-					img {
-						width: 100%;
-						height: 100%;
-						-o-object-fit: cover;
-						object-fit: cover;
-						overflow: hidden;
-					}
-				}
-				.group_item_price {
-					display: block;
-				}
-			}
-
-			button {
-				width: 100px;
-				height: 36.876px;
-				border-radius: 4px;
-				background: #054dd1;
-				border: none;
-				cursor: pointer;
-				&:hover {
-					background: #0844a6;
-				}
-			}
-			@media (max-width: 768px) {
-				flex-direction: column;
-				align-items: flex-start;
-				.group_item_info {
-					margin-bottom: 10px;
-				}
-			}
-		}
-	}
-`;
-
 const ProductComponent = ({ product, onClick, index }) => {
 	const { cart, setCart, updateCart } = useContext(TransactionContext);
 
@@ -310,6 +218,7 @@ const ProductComponent = ({ product, onClick, index }) => {
 					{product.attribute.map((attribute, attributeIndex) => {
 						const combinedIndex = index * product.attribute.length + attributeIndex;
 
+						if (attribute.value == "None" || !attribute.value) return null;
 						return (
 							<Attribute color={generateColors(combinedIndex)} key={attributeIndex}>
 								{attribute.name}: {attribute.value}
@@ -323,7 +232,6 @@ const ProductComponent = ({ product, onClick, index }) => {
 				<span
 					onClick={(e) => {
 						e.stopPropagation();
-
 						if (item.quantity == 0) return;
 						updateCart(item, "subtract");
 					}}
@@ -331,7 +239,6 @@ const ProductComponent = ({ product, onClick, index }) => {
 				>
 					<FontAwesomeIcon icon={faMinus} />
 				</span>
-				{/* <p>{item.quantity}</p> */}
 				<input
 					type="text"
 					value={item.quantity ? item.quantity : 0}

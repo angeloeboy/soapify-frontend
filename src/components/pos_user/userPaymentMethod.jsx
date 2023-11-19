@@ -9,7 +9,7 @@ import { TransactionContext } from "../context/TransactionContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
-import { addTransaction } from "@/api/transaction";
+import { addTransaction, addTransactionByUser } from "@/api/transaction";
 import { toast } from "react-toastify";
 import Receipt from "./receipt";
 
@@ -59,7 +59,25 @@ const TransactionNo = styled.div`
 	}
 `;
 
-const PaymentMethods = (props) => {
+const ImageContainer = styled.div`
+	width: 100%;
+`;
+
+const Centered = styled.div`
+	margin-top: 10px;
+	display: flex;
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 10px;
+	background-color: #f9f9f9;
+	text-align: center;
+	justify-content: center;
+	align-items: center;
+	height: 200px;
+	margin-bottom: 30px;
+`;
+
+const UserPaymentMethods = (props) => {
 	const [paymentMethods, setPaymentMethods] = useState([]);
 	const [paymentMethod, setPaymentMethod] = useState(1);
 	const [transactionNo, setTransactionNo] = useState("");
@@ -73,7 +91,7 @@ const PaymentMethods = (props) => {
 	}, []);
 
 	const initiateTransaction = async () => {
-		const response = await addTransaction(transaction);
+		const response = await addTransactionByUser(transaction);
 		console.log(response);
 		if (response.status == "Success") {
 			toast.success("Transaction Successful");
@@ -91,7 +109,7 @@ const PaymentMethods = (props) => {
 
 			if (res.paymentMethods.length <= 0 || !res) return;
 
-			let activePaymentMethod = res.paymentMethods.filter((payment) => payment.isActive);
+			let activePaymentMethod = res.paymentMethods.filter((payment) => payment.isActive && payment.name !== "CASH");
 			res ? setPaymentMethods(activePaymentMethod) : setPaymentMethods([]);
 
 			setTransaction((prev) => ({ ...prev, payment_method_id: res.paymentMethods[0].payment_method_id }));
@@ -105,7 +123,7 @@ const PaymentMethods = (props) => {
 	return (
 		<>
 			<ComponentTitle>
-				<span onClick={() => props.setActiveAction("cart")}>{"<"}</span> Payment Methods
+				<span onClick={() => props.setActiveAction("pickup")}>{"<"}</span> Payment Methods
 			</ComponentTitle>
 			<PaymentMethodsContainer>
 				{paymentMethods.length <= 0 && <p>No payment Methods </p>}
@@ -134,6 +152,14 @@ const PaymentMethods = (props) => {
 				</TransactionNo>
 			)}
 
+			<ComponentTitle>Transaction Number screenshot (optional)</ComponentTitle>
+
+			<ImageContainer>
+				<Centered>
+					<input type="file" name="product_image" required />
+				</Centered>
+			</ImageContainer>
+
 			<Button
 				width={"100%"}
 				onClick={() => {
@@ -143,9 +169,9 @@ const PaymentMethods = (props) => {
 			>
 				{loading ? <Image src="/loading.svg" alt="loading" width="20" height="20" /> : "Finish"}
 			</Button>
-			<Receipt />
+			{/* <Receipt /> */}
 		</>
 	);
 };
 
-export default PaymentMethods;
+export default UserPaymentMethods;

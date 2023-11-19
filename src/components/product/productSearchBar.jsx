@@ -42,13 +42,12 @@ const ProductSearchBar = ({ setIsAddPopUpOpen, products, setProductDisplay, setC
 
 		if (category === "All") {
 			filteredProducts = products.filter((product) => {
-
 				return (
 					queryTerms.every(
 						(term) =>
 							product.product_name.toLowerCase().includes(term.toLowerCase()) ||
 							(product.product_code && product.product_code.toLowerCase().includes(term.toLowerCase())) ||
-							(product.attribute && product.attribute.some((attr) => attr.value.toLowerCase().includes(term.toLowerCase())))
+							(product.attribute && product.attribute.some((attr) => attr.value?.toLowerCase().includes(term.toLowerCase())))
 					) &&
 					(selectedStatus == "All" || product.isActive === selectedStatus) &&
 					(selectedProductStatus == "All" || product.status === selectedProductStatus)
@@ -195,7 +194,7 @@ const StockStatusDropdown = ({ selectedProductStatus, setSelectedProductStatus }
 	useOutsideClick(dropdownRef, () => {
 		if (isOpen) setIsOpen(false);
 	});
-	
+
 	return (
 		<DropdownWrapper ref={dropdownRef} onClick={() => setIsOpen(!isOpen)}>
 			<DropdownHeader>

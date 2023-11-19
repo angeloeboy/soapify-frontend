@@ -38,10 +38,7 @@ export const addTransactionByUser = async (transaction) => {
 	try {
 		const response = await fetch("/api/transactions", {
 			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(transaction),
+			body: transaction,
 			credentials: "include",
 		});
 

@@ -211,7 +211,7 @@ const ProductComponent = ({ product, onClick, index }) => {
 	return (
 		<Product key={product.product_id} onClick={() => handleProductClick()} unclickable={product.quantity_in_stock <= 0} active={item.quantity > 0}>
 			<div>
-				<Image src="/sabon.png" width={200} height={400} alt="Product image" />
+				<Image src={product.image_link == "testing" ? "/sabon.png" : product.image_link.replace(/\\/g, "/")} width={200} height={400} alt="Product image" />
 				<ProductTitle>{product.product_name}</ProductTitle>
 				<PriceTitle>P{product.product_price / 100}</PriceTitle>
 				<Attributes>

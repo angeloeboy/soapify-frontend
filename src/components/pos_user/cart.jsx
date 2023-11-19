@@ -105,15 +105,6 @@ const Product = styled.div`
 	}
 
 	.remove {
-		/* width: 100%;
-		margin-top: 20px;
-		font-size: 14px;
-		background-color: #f88181;
-		border: 2px solid #eb5151;
-		color: black;
-		border-radius: 4px;
-		padding: 4px 8px;
-		display: block; */
 		font-size: 14px;
 		color: #ff00007d;
 		text-decoration: underline;
@@ -367,7 +358,7 @@ const UserCart = ({ setActiveAction }) => {
 				width={"100%"}
 				onClick={() => {
 					if (cart.length <= 0) return;
-					setActiveAction("payment");
+					setActiveAction("pickup");
 				}}
 			>
 				Confirm

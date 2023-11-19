@@ -9,7 +9,7 @@ import { TransactionContext } from "../context/TransactionContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
-import { addTransaction } from "@/api/transaction";
+import { addTransaction, addTransactionByUser } from "@/api/transaction";
 import { toast } from "react-toastify";
 import Receipt from "./receipt";
 
@@ -73,7 +73,7 @@ const UserPaymentMethods = (props) => {
 	}, []);
 
 	const initiateTransaction = async () => {
-		const response = await addTransaction(transaction);
+		const response = await addTransactionByUser(transaction);
 		console.log(response);
 		if (response.status == "Success") {
 			toast.success("Transaction Successful");
@@ -105,7 +105,7 @@ const UserPaymentMethods = (props) => {
 	return (
 		<>
 			<ComponentTitle>
-				<span onClick={() => props.setActiveAction("cart")}>{"<"}</span> Payment Methods
+				<span onClick={() => props.setActiveAction("pickup")}>{"<"}</span> Payment Methods
 			</ComponentTitle>
 			<PaymentMethodsContainer>
 				{paymentMethods.length <= 0 && <p>No payment Methods </p>}
@@ -143,7 +143,7 @@ const UserPaymentMethods = (props) => {
 			>
 				{loading ? <Image src="/loading.svg" alt="loading" width="20" height="20" /> : "Finish"}
 			</Button>
-			<Receipt />
+			{/* <Receipt /> */}
 		</>
 	);
 };

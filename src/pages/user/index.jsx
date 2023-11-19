@@ -41,12 +41,6 @@ const StickyContainer = styled.div`
 	width: 100%;
 	max-width: 300px;
 	margin-top: 48px;
-
-	/* @media (max-width: 1200px) {
-		position: fixed;
-		right: 5%;
-		top: 17%;
-	} */
 `;
 
 const UserDashboard = () => {
@@ -54,12 +48,14 @@ const UserDashboard = () => {
 	const [cart, setCart] = useState([]);
 	const [productDisplay, setProductDisplay] = useState([]);
 	const [activeAction, setActiveAction] = useState("cart");
+	const [pickupDate, setPickupDate] = useState(new Date());
 
 	const [transaction, setTransaction] = useState({
 		payment_method_id: undefined,
 		transaction_number: "",
 		total_amount: 0,
 		items: [],
+		pickup_date: new Date(),
 	});
 
 	const [parentProducts, setParentProducts] = useState([]);
@@ -67,6 +63,7 @@ const UserDashboard = () => {
 	const [windowWidth, setWindowWidth] = useState(1200);
 
 	const [orderFromBackend, setOrderFromBackend] = useState();
+
 	useEffect(() => {
 		fetchProducts();
 		setWindowWidth(window.innerWidth);
@@ -86,7 +83,6 @@ const UserDashboard = () => {
 	}, [cart]);
 
 	useEffect(() => {
-		// setProductDisplay(groupProductsByParentProductId(products));
 		setProductDisplay(products.filter((product) => product.parent_product_id === null));
 		fetchParentProducts();
 	}, [products]);
@@ -116,34 +112,6 @@ const UserDashboard = () => {
 
 		setParentProducts(parentProduct);
 		// groupProductsByParentProductId2(products);
-	};
-
-	const groupProductsByParentProductId = (products) => {
-		const variants = products.filter((product) => product.parent_product_id !== null);
-		const notVariants = products.filter((product) => product.parent_product_id === null);
-
-		notVariants.forEach((product) => {
-			product.variants = variants.filter((variant) => variant.parent_product_id === product.product_id);
-
-			if (product.variants.length > 0) {
-				product.variants.push(product);
-			}
-		});
-
-		return notVariants;
-	};
-
-	const groupProductsByParentProductId2 = (products) => {
-		let parentProduct = parentProducts.map((parentProduct) => {
-			return {
-				...parentProduct,
-				products: products.filter((product) => product.parent_product_id === parentProduct.parent_product_id),
-			};
-		});
-
-		console.log(parentProduct);
-
-		setParentProducts(parentProduct);
 	};
 
 	const updateCart = (product, operation) => {
@@ -177,6 +145,8 @@ const UserDashboard = () => {
 				setActiveAction,
 				orderFromBackend,
 				setOrderFromBackend,
+				pickupDate,
+				setPickupDate,
 			}}
 		>
 			<DashboardLayout>

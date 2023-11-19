@@ -4,6 +4,8 @@ import { useContext, useState } from "react";
 import Receipt from "./receipt";
 import { TransactionContext } from "../context/TransactionContext";
 import UserPaymentMethods from "./userPaymentMethod";
+import PickupDate from "./pickup_date";
+import UserCart from "./cart";
 // import { TransactionContext } from "@/pages/dashboard/pos";
 
 const POSactionsWrapper = styled.div`
@@ -39,7 +41,8 @@ const UserPOSactions = (props) => {
 
 	return (
 		<POSactionsWrapper>
-			{activeAction == "cart" && <Cart setActiveAction={setActiveAction} />}
+			{activeAction == "cart" && <UserCart setActiveAction={setActiveAction} />}
+			{activeAction == "pickup" && <PickupDate setActiveAction={setActiveAction} />}
 			{activeAction == "payment" && <UserPaymentMethods setActiveAction={setActiveAction} />}
 			{activeAction == "receipt" && <Receipt />}
 		</POSactionsWrapper>

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { styled } from "styled-components";
 import "react-toastify/dist/ReactToastify.css";
@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAdd, faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { TransactionContext } from "../context/TransactionContext";
 import ProductComponent from "./product";
+import useOutsideClick from "@/hooks/useOutsideclick";
 
 const Product = styled.div`
 	display: flex;
@@ -134,51 +135,6 @@ const ProductTitle = styled.p`
 	left: 127px;
 	color: rgba(0, 0, 0, 1);
 `;
-const StockTitle = styled.p`
-	font-family: DM Sans;
-	font-size: 14px;
-	font-weight: 400;
-	line-height: 27px;
-	letter-spacing: 0em;
-	text-align: center;
-	color: white;
-	margin: 0;
-`;
-const StockTitleContainer = styled.div`
-	border-radius: 8px;
-	width: 87.55px;
-	height: 27.29px;
-	background-color: #1a69f0;
-	margin-top: 30px;
-	justify-content: center;
-	align-items: center;
-`;
-
-const PriceTitle = styled.p`
-	color: #005eff;
-	font-family: DM Sans;
-	font-size: 18px;
-	font-weight: 500;
-	line-height: 23px;
-	letter-spacing: 0em;
-	text-align: left;
-	margin-top: 8px;
-`;
-
-const Attributes = styled.div`
-	margin-top: 16px;
-`;
-
-const Attribute = styled.p`
-	background-color: ${(props) => props.color.backgroundColor};
-	color: ${(props) => props.color.fontColor};
-	font-size: 12px;
-	font-weight: bold;
-	display: inline-block;
-	padding: 4px;
-	border-radius: 4px;
-	margin: 0px 4px 4px 0px;
-`;
 
 const HasVariants = styled.div`
 	position: absolute;
@@ -197,7 +153,6 @@ const VariantsModalWrapper = styled.div`
 	width: 100vw;
 	height: 100vh;
 	position: fixed;
-
 	top: 0px;
 	left: 0px;
 	backdrop-filter: blur(3.5px);
@@ -273,156 +228,228 @@ const VariantsModalWrapper = styled.div`
 	}
 `;
 
-const ParentProductDisplay = ({ parentProduct, onClick, index, variants, updateCart }) => {
+// const ParentProductDisplay = ({ parentProduct, onClick, index, variants, updateCart }) => {
+// 	const [showVariants, setShowVariants] = useState(false);
+// 	const variantsRef = useRef(null); // Ref for the VariantsContainer
+
+// 	useEffect(() => {
+// 		// Function to check if the click is outside the VariantsContainer
+// 		const handleClickOutside = (event) => {
+// 			if (variantsRef.current && !variantsRef.current.contains(event.target)) {
+// 				setShowVariants(false);
+// 			}
+// 		};
+
+// 		// Add click event listener
+// 		document.addEventListener("mousedown", handleClickOutside);
+
+// 		// Clean up
+// 		return () => {
+// 			document.removeEventListener("mousedown", handleClickOutside);
+// 		};
+// 	}, [variantsRef]);
+
+// 	let handleProductClick = () => {
+// 		if (!showVariants) setShowVariants(true);
+// 	};
+
+// 	return (
+// 		<Product key={parentProduct.parent_product_id} onClick={() => handleProductClick()}>
+// 			<div>
+// 				<Image src="/sabon.png" width={200} height={400} alt="Product image" />
+// 				<ProductTitle>{parentProduct.name}</ProductTitle>
+// 			</div>
+
+// 			{parentProduct.products.length > 0 ? (
+// 				<HasVariants>
+// 					{`Has ${parentProduct.products.filter((product) => product.quantity_in_stock > 0).length} variant${
+// 						parentProduct.products.filter((product) => product.quantity_in_stock > 0).length > 1 ? "s" : ""
+// 					}`}
+// 				</HasVariants>
+// 			) : null}
+// 			{showVariants && (
+// 				<div ref={variantsRef}>
+// 					<VariantsContainer variants={parentProduct.products} updateCart={updateCart} setShowVariants={setShowVariants} />
+// 				</div>
+// 			)}
+// 		</Product>
+// 	);
+// };
+
+// const VariantsContainer = ({ variants, updateCart, setShowVariants }) => {
+// 	const [variantsV, setVariantsV] = useState(variants);
+// 	const [search, setSearch] = useState("");
+// 	const [variantsDisplay, setVariantsDisplay] = useState(variants);
+
+// 	const { activeAction, setActiveAction } = useContext(TransactionContext);
+
+// 	useEffect(() => {
+// 		const activeVariants = variantsV.filter((variant) => variant.isActive == 1);
+
+// 		setVariantsDisplay(activeVariants);
+// 		setVariantsV(activeVariants);
+// 	}, [variants]);
+
+// 	let handleSearch = (e) => {
+// 		const searchQuery = e.target.value;
+// 		const queryTerms = searchQuery.split(" ");
+
+// 		let filteredVariants;
+
+// 		filteredVariants = variantsV.filter((product) => {
+// 			return queryTerms.every(
+// 				(term) =>
+// 					product.product_name.toLowerCase().includes(term.toLowerCase()) ||
+// 					(product.attribute && product.attribute.some((attr) => attr.value.toLowerCase().includes(term.toLowerCase())))
+// 			);
+// 		});
+
+// 		setVariantsDisplay(filteredVariants);
+// 		console.log("teststst");
+// 	};
+
+// 	return (
+// 		<VariantsModalWrapper>
+// 			<div className="group_modal">
+// 				<SearchBar>
+// 					<input type="text" onChange={(e) => handleSearch(e)} />
+// 				</SearchBar>
+
+// 				<div className="variants-wrapper">
+// 					{variantsDisplay.map((product, index) => {
+// 						if (product.quantity_in_stock <= 0) return null;
+// 						return (
+// 							<ProductComponent
+// 								product={product}
+// 								index={index}
+// 								onClick={() => {
+// 									updateCart(product, "add");
+// 									if (activeAction != "cart") setActiveAction("cart");
+// 								}}
+// 								key={index}
+// 							/>
+// 						);
+// 					})}
+// 				</div>
+
+// 				<p
+// 					onClick={() => {
+// 						setShowVariants(false);
+// 					}}
+// 				>
+// 					close
+// 				</p>
+// 			</div>
+// 		</VariantsModalWrapper>
+// 	);
+// };
+
+// export default ParentProductDisplay;
+
+const ParentProductDisplay = ({ parentProduct, updateCart }) => {
 	const [showVariants, setShowVariants] = useState(false);
+	const variantsRef = useRef(null);
+	const { activeAction, setActiveAction } = useContext(TransactionContext);
 
-	let handleProductClick = () => {
-		// if (parentProduct.products.length == 0) {
-		// 	product.quantity_in_stock <= 0 ? null : onClick();
-		// 	return;
-		// }
+	useEffect(() => {
+		const handleClickOutside = (event) => {
+			if (variantsRef.current && !variantsRef.current.contains(event.target)) {
+				setShowVariants(false);
+			}
+		};
 
-		if (!showVariants) setShowVariants(true);
-	};
+		const handleKeyDown = (event) => {
+			if (event.key === "Escape") {
+				setShowVariants(false);
+			}
+		};
+
+		document.addEventListener("mousedown", handleClickOutside);
+		document.addEventListener("keydown", handleKeyDown);
+
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+			document.removeEventListener("keydown", handleKeyDown);
+		};
+	}, []);
+
+	// useEffect(() => {
+	// 	const handleClickOutside = (event) => {
+	// 		if (variantsRef.current && !variantsRef.current.contains(event.target)) {
+	// 			setShowVariants(false);
+	// 		}
+	// 	};
+
+	// 	// Add click event listener to the document
+	// 	document.addEventListener("mousedown", handleClickOutside);
+
+	// 	return () => {
+	// 		// Remove event listener on cleanup
+	// 		document.removeEventListener("mousedown", handleClickOutside);
+	// 	};
+	// }, [variantsRef, setShowVariants]); // Add setShowVariants as a dependency
+
+	const handleProductClick = () => setShowVariants(!showVariants);
+
+	const variantCount = parentProduct.products.filter((p) => p.quantity_in_stock > 0).length;
 
 	return (
-		<Product key={parentProduct.parent_product_id} onClick={() => handleProductClick()}>
+		<Product key={parentProduct.parent_product_id} onClick={handleProductClick}>
 			<div>
 				<Image src="/sabon.png" width={200} height={400} alt="Product image" />
 				<ProductTitle>{parentProduct.name}</ProductTitle>
-				{/* <PriceTitle>P{product.product_price / 100}</PriceTitle> */}
-				{/* <Attributes>
-					{variants.length == 0 &&
-						product.attribute.map((attribute, attributeIndex) => {
-							const combinedIndex = index * product.attribute.length + attributeIndex;
-
-							return (
-								<Attribute color={generateColors(combinedIndex)} key={attributeIndex}>
-									{attribute.name}: {attribute.value}
-								</Attribute>
-							);
-						})}
-				</Attributes> */}
 			</div>
 
-			{/* {variants.length == 0 && (
-				<StockTitleContainer>
-					<StockTitle>Stock: {product.quantity_in_stock}</StockTitle>
-				</StockTitleContainer>
-			)} */}
 			{parentProduct.products.length > 0 ? (
 				<HasVariants>
-					{" "}
 					{`Has ${parentProduct.products.filter((product) => product.quantity_in_stock > 0).length} variant${
 						parentProduct.products.filter((product) => product.quantity_in_stock > 0).length > 1 ? "s" : ""
 					}`}
 				</HasVariants>
 			) : null}
-			{showVariants && <VariantsContainer variants={parentProduct.products} updateCart={updateCart} setShowVariants={setShowVariants} />}
+			{variantCount > 0 && <HasVariants>{`Has ${variantCount} variant${variantCount > 1 ? "s" : ""}`}</HasVariants>}
+
+			{showVariants && (
+				<div ref={variantsRef}>
+					<VariantsContainer variants={parentProduct.products} updateCart={updateCart} setShowVariants={setShowVariants} />
+				</div>
+			)}
 		</Product>
 	);
 };
 
-const generateColors = (index) => {
-	// Helper: Calculate luminance
-	const getLuminance = (r, g, b) => {
-		const getComponent = (c) => {
-			c /= 255;
-			return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
-		};
-		return 0.2126 * getComponent(r) + 0.7152 * getComponent(g) + 0.0722 * getComponent(b);
-	};
-
-	const hue = ((index * 360) / 6) % 360; // Assuming you have at most 10 products. Adjust accordingly.
-
-	// Convert HSL to RGB (for luminance calculation)
-	let chroma = (1 - Math.abs(2 * 0.5 - 1)) * 1;
-	let x = chroma * (1 - Math.abs(((hue / 60) % 2) - 1));
-	let [r, g, b] =
-		hue < 60
-			? [chroma, x, 0]
-			: hue < 120
-			? [x, chroma, 0]
-			: hue < 180
-			? [0, chroma, x]
-			: hue < 240
-			? [0, x, chroma]
-			: hue < 300
-			? [x, 0, chroma]
-			: [chroma, 0, x];
-
-	r = Math.round((r + (0.5 - chroma)) * 255);
-	g = Math.round((g + (0.5 - chroma)) * 255);
-	b = Math.round((b + (0.5 - chroma)) * 255);
-
-	const bgColor = `rgb(${r}, ${g}, ${b})`;
-	const fontColor = getLuminance(r, g, b) > 0.5 ? "black" : "white";
-
-	return {
-		backgroundColor: bgColor,
-		fontColor: fontColor,
-	};
-};
-
 const VariantsContainer = ({ variants, updateCart, setShowVariants }) => {
-	const [variantsV, setVariantsV] = useState(variants);
 	const [search, setSearch] = useState("");
 	const [variantsDisplay, setVariantsDisplay] = useState(variants);
-
-	const { cart, setCart, activeAction, setActiveAction } = useContext(TransactionContext);
-
-	const [item, setItem] = useState({});
-
-	// useEffect(() => {
-	// 	console.log(cart);
-
-	// 	let item = cart.find((item) => item.product_id == product.product_id);
-	// 	// console.log(item)
-	// 	if (item) setItem(item);
-	// }, [cart]);
+	const { activeAction, setActiveAction } = useContext(TransactionContext);
 
 	useEffect(() => {
-		const activeVariants = variantsV.filter((variant) => variant.isActive == 1);
-
-		setVariantsDisplay(activeVariants);
-		setVariantsV(activeVariants);
+		setVariantsDisplay(variants.filter((v) => v.isActive == 1));
 	}, [variants]);
 
-	let handleProductClick = (variant) => {
-		// const remove_variants = { ...variant };
-		// delete remove_variants.variants;
+	const handleSearch = (e) => {
+		const searchQuery = e.target.value.toLowerCase();
+		setSearch(searchQuery);
 
-		// console.log(remove_variants);
-
-		// variant.quantity_in_stock <= 0 ? null : updateCart(remove_variants, "add");
-		// toast.success("Added to cart");
-		updateCart(variant, "add");
+		setVariantsDisplay(
+			variants.filter((product) => {
+				return (
+					product.product_name.toLowerCase().includes(searchQuery) ||
+					(product.attribute && product.attribute.some((attr) => attr.value.toLowerCase().includes(searchQuery)))
+				);
+			})
+		);
 	};
 
-	let handleSearch = (e) => {
-		// setSearch(e.target.value);
-		const searchQuery = e.target.value;
-		const queryTerms = searchQuery.split(" ");
-
-		let filteredVariants;
-
-		filteredVariants = variantsV.filter((product) => {
-			return queryTerms.every(
-				(term) =>
-					product.product_name.toLowerCase().includes(term.toLowerCase()) ||
-					(product.attribute && product.attribute.some((attr) => attr.value.toLowerCase().includes(term.toLowerCase())))
-			);
-		});
-
-		setVariantsDisplay(filteredVariants);
-		console.log("teststst");
+	const handleContainerClick = (event) => {
+		event.stopPropagation(); // Prevents click inside the container from propagating
 	};
 
 	return (
 		<VariantsModalWrapper>
-			<div className="group_modal">
+			<div className="group_modal" onClick={handleContainerClick}>
 				<SearchBar>
-					<input type="text" onChange={(e) => handleSearch(e)} />
+					<input type="text" value={search} onChange={handleSearch} />
 				</SearchBar>
 
 				<div className="variants-wrapper">
@@ -442,13 +469,7 @@ const VariantsContainer = ({ variants, updateCart, setShowVariants }) => {
 					})}
 				</div>
 
-				<p
-					onClick={() => {
-						setShowVariants(false);
-					}}
-				>
-					close
-				</p>
+				<p onClick={() => setShowVariants(false)}>close</p>
 			</div>
 		</VariantsModalWrapper>
 	);

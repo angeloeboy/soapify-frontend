@@ -324,7 +324,6 @@ const ProductComponent = ({ product, onClick, index }) => {
 				<span
 					onClick={(e) => {
 						e.stopPropagation();
-
 						if (item.quantity == 0) return;
 						updateCart(item, "subtract");
 					}}
@@ -332,7 +331,6 @@ const ProductComponent = ({ product, onClick, index }) => {
 				>
 					<FontAwesomeIcon icon={faMinus} />
 				</span>
-				{/* <p>{item.quantity}</p> */}
 				<input
 					type="text"
 					value={item.quantity ? item.quantity : 0}

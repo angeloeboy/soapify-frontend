@@ -20,14 +20,18 @@ import { useEffect, useState } from "react";
 import { addProduct, getProductCategories, getProducts, getSubCategories } from "@/api/products";
 import { getSuppliers } from "@/api/supplier";
 import { toast } from "react-toastify";
+import { getParentProduct } from "@/api/parent_product";
+import Image from "next/image";
 
 const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 	const [categories, setCategories] = useState([]);
 	const [suppliers, setSuppliers] = useState([]);
 	const [attributes, setAttributes] = useState([]);
 
-	const [subCategories, setSubCategories] = useState([]);
+	const [loading, setLoading] = useState(false);
 
+	const [subCategories, setSubCategories] = useState([]);
+	const [parentProducts, setParentProducts] = useState([]);
 	const [product, setProduct] = useState({
 		// product_name: "",
 		// product_desc: "test description",
@@ -46,7 +50,7 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 		category_id: 1,
 		supplier_id: 0,
 		subcategory_id: 0,
-		parent_product_id: 1,
+		parent_product_id: 0,
 		attributes: [],
 		addAsBox: false,
 		addAsPc: true,
@@ -66,6 +70,7 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 	useEffect(() => {
 		fetchProductCategories();
 		fetchSuppliers();
+		fetchParentProducts();
 	}, []);
 
 	useEffect(() => {
@@ -93,15 +98,6 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 				}
 			}
 		}
-
-		// addProduct(formData)
-		// 	.then((res) => {
-		// 		console.log(res);
-		// 		GetProducts();
-		// 	})
-		// 	.catch((error) => {
-		// 		console.error("Error adding product:", error);
-		// 	});
 
 		const res = await addProduct(formData);
 		console.log(res);
@@ -133,6 +129,14 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 		const activeSuppliers = res.suppliers.filter((supplier) => supplier.isActive == 1);
 
 		res ? setSuppliers(activeSuppliers) : setSuppliers([]);
+	};
+
+	const fetchParentProducts = async () => {
+		const res = await getParentProduct();
+
+		if (!res) return;
+
+		setParentProducts(res.parentProducts);
 	};
 
 	useEffect(() => {
@@ -548,6 +552,28 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 						)}
 
 						<LabelContainer>
+							<Label>Parent Product</Label>
+						</LabelContainer>
+						<div>
+							<FieldTitleLabel notFirst>Parent Product </FieldTitleLabel>
+							<Select
+								value={product.parent_product_id}
+								onChange={(e) => {
+									setProduct({
+										...product,
+										parent_product_id: Number(e.target.value),
+									});
+								}}
+							>
+								{parentProducts.map((parentProduct) => (
+									<Option value={parentProduct.parent_product_id} key={parentProduct.parent_product_id}>
+										{parentProduct.name}
+									</Option>
+								))}
+							</Select>
+						</div>
+
+						<LabelContainer>
 							<Label>Supplier</Label>
 						</LabelContainer>
 						<div>
@@ -572,7 +598,7 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 
 					<ButtonsContainer>
 						<CloseButton onClick={() => setIsAddPopUpOpen(false)}>Close</CloseButton>
-						<Button type="submit">Save</Button>
+						<Button type="submit">{loading ? <Image src="/loading.svg" alt="loading" width="20" height="20" /> : "Save"}</Button>
 					</ButtonsContainer>
 				</form>
 			</PopupContent>

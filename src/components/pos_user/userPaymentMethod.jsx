@@ -90,14 +90,51 @@ const UserPaymentMethods = (props) => {
 		fetchPaymentMethods();
 	}, []);
 
-	const initiateTransaction = async () => {
-		const response = await addTransactionByUser(transaction);
+	// const initiateTransaction = async () => {
+	// 	const response = await addTransactionByUser(transaction);
+	// 	console.log(response);
+	// 	if (response.status == "Success") {
+	// 		toast.success("Transaction Successful");
+	// 		setOrderFromBackend(response.transaction);
+	// 	} else {
+	// 		toast.error(response.errors[0].message);
+	// 	}
+	// 	setLoading(false);
+	// 	console.log(response.transaction);
+	// };
+
+	const initiateTransaction = async (e) => {
+		// Create a new FormData object
+
+		e.preventDefault();
+		// setLoading(true);
+		let formData = new FormData();
+
+		//add the image to the form data
+		formData.append("payment_image", e.target.payment_image.files[0]);
+		// Append each property in the transaction object to formData
+		for (let key in transaction) {
+			if (transaction.hasOwnProperty(key)) {
+				// Convert the property value to a string if it's an object (excluding Blob/File)
+				if (typeof transaction[key] === "object" && !(transaction[key] instanceof Blob)) {
+					formData.append(key, JSON.stringify(transaction[key]));
+				} else {
+					// Append other properties as they are
+					formData.append(key, transaction[key]);
+				}
+			}
+		}
+
+		// Make the API call with formData
+		const response = await addTransactionByUser(formData);
 		console.log(response);
+
+		// Handle the response
 		if (response.status == "Success") {
 			toast.success("Transaction Successful");
 			setOrderFromBackend(response.transaction);
 		} else {
-			toast.error(response.errors[0].message);
+			toast.error("Transaction Failed");
 		}
 		setLoading(false);
 		console.log(response.transaction);
@@ -121,7 +158,7 @@ const UserPaymentMethods = (props) => {
 	}, [transactionNo]);
 
 	return (
-		<>
+		<form onSubmit={(e) => initiateTransaction(e)}>
 			<ComponentTitle>
 				<span onClick={() => props.setActiveAction("pickup")}>{"<"}</span> Payment Methods
 			</ComponentTitle>
@@ -156,21 +193,21 @@ const UserPaymentMethods = (props) => {
 
 			<ImageContainer>
 				<Centered>
-					<input type="file" name="product_image" required />
+					<input type="file" name="payment_image" required />
 				</Centered>
 			</ImageContainer>
 
 			<Button
 				width={"100%"}
-				onClick={() => {
-					console.log(transaction);
-					initiateTransaction();
-				}}
+				type="submit"
+				// onClick={(e) => {
+				// 	initiateTransaction(e);
+				// }}
 			>
 				{loading ? <Image src="/loading.svg" alt="loading" width="20" height="20" /> : "Finish"}
 			</Button>
 			{/* <Receipt /> */}
-		</>
+		</form>
 	);
 };
 

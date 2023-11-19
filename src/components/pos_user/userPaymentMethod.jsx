@@ -59,7 +59,7 @@ const TransactionNo = styled.div`
 	}
 `;
 
-const PaymentMethods = (props) => {
+const UserPaymentMethods = (props) => {
 	const [paymentMethods, setPaymentMethods] = useState([]);
 	const [paymentMethod, setPaymentMethod] = useState(1);
 	const [transactionNo, setTransactionNo] = useState("");
@@ -91,7 +91,7 @@ const PaymentMethods = (props) => {
 
 			if (res.paymentMethods.length <= 0 || !res) return;
 
-			let activePaymentMethod = res.paymentMethods.filter((payment) => payment.isActive);
+			let activePaymentMethod = res.paymentMethods.filter((payment) => payment.isActive && payment.name !== "CASH");
 			res ? setPaymentMethods(activePaymentMethod) : setPaymentMethods([]);
 
 			setTransaction((prev) => ({ ...prev, payment_method_id: res.paymentMethods[0].payment_method_id }));
@@ -148,4 +148,4 @@ const PaymentMethods = (props) => {
 	);
 };
 
-export default PaymentMethods;
+export default UserPaymentMethods;

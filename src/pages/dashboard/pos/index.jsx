@@ -70,6 +70,7 @@ const Pos = () => {
 
 	const [windowWidth, setWindowWidth] = useState(1200);
 
+	const [orderFromBackend, setOrderFromBackend] = useState();
 	useEffect(() => {
 		fetchProducts();
 		setWindowWidth(window.innerWidth);
@@ -178,6 +179,8 @@ const Pos = () => {
 				setCart,
 				activeAction,
 				setActiveAction,
+				orderFromBackend,
+				setOrderFromBackend,
 			}}
 		>
 			<DashboardLayout>

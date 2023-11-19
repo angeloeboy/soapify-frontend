@@ -15,6 +15,82 @@ import { CloseButton } from "../styled-components/PopUp";
 import { setTransactionStatus } from "@/api/transaction";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import styled from "styled-components";
+import Image from "next/image";
+
+const Product = styled.div`
+	display: flex;
+	margin-bottom: 38px;
+	/* flex-direction: column; */
+	flex-wrap: wrap;
+	img {
+		background-color: white;
+	}
+
+	.productInformation {
+		/* margin-left: 16px; */
+		margin-top: 16px;
+		.productName {
+			color: #536686;
+			font-size: 14px;
+			font-weight: 700;
+		}
+
+		.productPrice {
+			color: #005eff;
+			font-size: 14px;
+			font-weight: 700;
+			margin-top: 16px;
+		}
+
+		.wrapper {
+			display: flex;
+			p {
+				margin-left: 12px;
+			}
+		}
+	}
+
+	.quantity {
+		display: inline-flex;
+		/* margin-left: auto; */
+		align-items: center;
+		align-self: flex-end;
+		font-size: 16px;
+		margin-top: 16px;
+		margin-right: auto;
+		p {
+			padding: 0px 16px;
+		}
+
+		input {
+			border: none;
+			background-color: transparent;
+			width: 70px;
+			text-align: center;
+			outline: none;
+		}
+		span {
+			border-radius: 4px;
+			background: #1a69f0;
+			width: 21px;
+			height: 21px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 8px;
+			font-size: 10px;
+			cursor: pointer;
+			svg {
+				color: #ffffff;
+
+				path {
+					color: #ffffff;
+				}
+			}
+		}
+	}
+`;
 
 const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransactions }) => {
 	useEffect(() => {
@@ -66,32 +142,40 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 			<PopupContent>
 				<HeaderTitle>Edit Order {selectedTransaction.transaction_id} </HeaderTitle>
 				<FieldContainer>
-					{selectedTransaction.createdAt}
-					{selectedTransaction.items.map((item) => (
-						<div key={item.id}>
-							<p>Name: {item.product.product_name}</p>
-							<p>Price: {item.product.product_price}</p>
-							<p>Quantity: {item.quantity}</p>
-							
-							<div>
-								{batchInfo(item.batch_info).map((info, index) => {
-									return (
-										<div key={index}>
-											<p>Batch Number: {info.batch_no}</p>
-											<p>Quantity: {info.quantity}</p>
-										</div>
-									);
-								})}
-							</div>
-						</div>
-					))}
+					<div>
+						{selectedTransaction.createdAt}
+						{selectedTransaction.items.map((item) => (
+							<Product key={item.id} active={item.quantity > 1}>
+								<div className="productInformation">
+									<div className="wrapper">
+										<Image src="/sabon.png" width={60} height={60} alt="Product image" />
 
-					<p>Status: {selectedTransaction.status}</p>
-					<button onClick={() => markAsPending()}>Mark as pending</button>
-					<button onClick={() => markAsPaid()}>Mark as paid</button>
-					<button onClick={() => markAsCancelled()}>Mark as cancelled</button>
-					<button onClick={() => markAsRefunded()}>Mark as refunded</button>
-					<button onClick={() => markAsDone()}>Mark as done</button>
+										<p className="productName">
+											{item.product.product_code} | {item.product.product_name}
+										</p>
+									</div>
+
+									<p className="productPrice">P{item.product.product_price / 100}</p>
+
+									{batchInfo(item.batch_info).map((info, index) => {
+										return (
+											<div key={index}>
+												<p className="productName">Batch Number: {info.batch_no}</p>
+												<p className="productName">Quantity: {info.quantity}</p>
+											</div>
+										);
+									})}
+								</div>
+							</Product>
+						))}
+
+						<p>Status: {selectedTransaction.status}</p>
+						<button onClick={() => markAsPending()}>Mark as pending</button>
+						<button onClick={() => markAsPaid()}>Mark as paid</button>
+						<button onClick={() => markAsCancelled()}>Mark as cancelled</button>
+						<button onClick={() => markAsRefunded()}>Mark as refunded</button>
+						<button onClick={() => markAsDone()}>Mark as done</button>
+					</div>
 				</FieldContainer>
 
 				<ButtonsContainer>

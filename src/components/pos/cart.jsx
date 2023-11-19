@@ -344,20 +344,6 @@ const Cart = ({ setActiveAction }) => {
 				{cart.map((item) => (
 					<CSSTransition key={item.product_id} timeout={500} classNames="item">
 						<Product key={item.product_id} active={item.quantity > 1}>
-							{/* <FontAwesomeIcon icon={faTrash} onClick={() => updateCart(item, "delete")} className="delete" /> */}
-
-							{/* <div className="productInformation">
-								<p className="productName">
-									{item.product_name} |
-									{item.attribute.map((attribute) => {
-										return <> {attribute.value} | </>;
-									})}
-								</p>
-
-								<p className="productPrice">P{item.product_price / 100}</p>
-
-							</div> */}
-
 							<div className="productInformation">
 								<div className="wrapper">
 									<Image src="/sabon.png" width={60} height={60} alt="Product image" />

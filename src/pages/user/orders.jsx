@@ -71,6 +71,7 @@ const Orders = () => {
 		if (response.success) {
 			setTransactions(response.transactions);
 		}
+		console.log(response.transactions);
 		setFilteredTransactions(response.transactions);
 		console.log(response.transactions);
 	};

@@ -4,6 +4,22 @@ import { ComponentTitle } from "@/styled-components/pos";
 import Button from "../misc/button";
 import Image from "next/image";
 import { toast } from "react-toastify";
+import styled from "styled-components";
+
+const PickupdateHolder = styled.input`
+	border-radius: 11px;
+	border: 1px solid #eee;
+	padding: 8px 16px;
+	max-width: 780.824px;
+	width: calc(100%);
+	height: 41px;
+	flex-shrink: 0;
+	margin-bottom: 30px;
+
+	&:focus {
+		outline: 1px solid #0070f3;
+	}
+`;
 
 const PickupDate = (props) => {
 	const { setActiveAction, transaction, setTransaction } = useContext(TransactionContext);
@@ -33,7 +49,8 @@ const PickupDate = (props) => {
 				<span onClick={() => props.setActiveAction("cart")}>{"<"}</span> Payment Methods
 			</ComponentTitle>
 			<h3>Pickup Date</h3>
-			<input type="date" value={formatDate(transaction.pickup_date)} onChange={handleDateChange} />
+
+			<PickupdateHolder type="date" value={formatDate(transaction.pickup_date)} onChange={handleDateChange} />
 
 			<Button
 				width={"100%"}

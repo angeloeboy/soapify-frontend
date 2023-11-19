@@ -59,6 +59,24 @@ const TransactionNo = styled.div`
 	}
 `;
 
+const ImageContainer = styled.div`
+	width: 100%;
+`;
+
+const Centered = styled.div`
+	margin-top: 10px;
+	display: flex;
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 10px;
+	background-color: #f9f9f9;
+	text-align: center;
+	justify-content: center;
+	align-items: center;
+	height: 200px;
+	margin-bottom: 30px;
+`;
+
 const UserPaymentMethods = (props) => {
 	const [paymentMethods, setPaymentMethods] = useState([]);
 	const [paymentMethod, setPaymentMethod] = useState(1);
@@ -133,6 +151,14 @@ const UserPaymentMethods = (props) => {
 					<input type="text" value={transactionNo} onChange={(e) => setTransactionNo(e.target.value)} />
 				</TransactionNo>
 			)}
+
+			<ComponentTitle>Transaction Number screenshot (optional)</ComponentTitle>
+
+			<ImageContainer>
+				<Centered>
+					<input type="file" name="product_image" required />
+				</Centered>
+			</ImageContainer>
 
 			<Button
 				width={"100%"}

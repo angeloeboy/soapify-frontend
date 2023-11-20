@@ -13,6 +13,7 @@ import { TransactionContext } from "@/components/context/TransactionContext";
 import { getParentProduct } from "@/api/parent_product";
 import ParentProductDisplay from "@/components/pos/parenntProduct";
 import UserPOSactions from "@/components/pos_user/posActions";
+import UserDashboardLayout from "@/components/misc/userDashboardLayout";
 
 const ProductsList = styled.div`
 	display: flex;
@@ -149,7 +150,7 @@ const UserDashboard = () => {
 				setPickupDate,
 			}}
 		>
-			<DashboardLayout>
+			<UserDashboardLayout>
 				<PageTitle title="POS" />
 				<POSWrapper>
 					<StyledPanel pos={true}>
@@ -190,7 +191,7 @@ const UserDashboard = () => {
 						</Sticky>
 					</StickyContainer>
 				</POSWrapper>
-			</DashboardLayout>
+			</UserDashboardLayout>
 		</TransactionContext.Provider>
 	);
 };

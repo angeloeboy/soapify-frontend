@@ -22,10 +22,12 @@ import { useEffect, useState } from "react";
 import { addProduct, getProducts } from "@/api/products";
 import { addInventory } from "@/api/inventory";
 import { toast } from "react-toastify";
+import Image from "next/image";
 
 const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId }) => {
 	const currentDate = new Date().toISOString();
 
+	const [loading, setLoading] = useState(false);
 	const [inventory, setInventory] = useState({
 		product_id: productId ? parseInt(productId) : 0,
 		quantity: 1,
@@ -51,6 +53,7 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId }) => {
 
 	const addInventoryFunc = async (e) => {
 		e.preventDefault();
+		setLoading(true);
 		// await addInventory(inventory).then((res) => {
 		// 	console.log(res);
 		// });
@@ -66,6 +69,8 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId }) => {
 		} else {
 			toast.error(res.errors[0].message);
 		}
+
+		setLoading(false);
 	};
 
 	useEffect(() => {
@@ -118,7 +123,7 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId }) => {
 
 					<ButtonsContainer>
 						<CloseButton onClick={() => setIsAddPopUpOpen(false)}>Close</CloseButton>
-						<Button type="submit">Save</Button>
+						<Button type="submit">{loading ? <Image src="/loading.svg" alt="loading" width="20" height="20" /> : "Save"} </Button>
 					</ButtonsContainer>
 				</form>
 			</PopupContent>

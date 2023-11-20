@@ -111,7 +111,11 @@ const UserPaymentMethods = (props) => {
 		let formData = new FormData();
 
 		//add the image to the form data
-		formData.append("payment_image", e.target.payment_image.files[0]);
+		//image is not required
+		if (e.target.payment_image.files[0]) {
+			formData.append("payment_image", e.target.payment_image.files[0]);
+		}
+
 		// Append each property in the transaction object to formData
 		for (let key in transaction) {
 			if (transaction.hasOwnProperty(key)) {
@@ -193,7 +197,7 @@ const UserPaymentMethods = (props) => {
 
 			<ImageContainer>
 				<Centered>
-					<input type="file" name="payment_image" required />
+					<input type="file" name="payment_image" />
 				</Centered>
 			</ImageContainer>
 

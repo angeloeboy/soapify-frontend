@@ -50,7 +50,7 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 		category_id: 1,
 		supplier_id: 0,
 		subcategory_id: 0,
-		parent_product_id: 0,
+		parent_product_id: null,
 		attributes: [],
 		addAsBox: false,
 		addAsPc: true,
@@ -79,7 +79,7 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 
 	let AddProduct = async (e) => {
 		e.preventDefault();
-
+		setLoading(true);
 		let formData = new FormData();
 
 		// Append the image to formData
@@ -106,7 +106,7 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 
 		toast.success("Product added successfully");
 		GetProducts();
-
+		setLoading(false);
 		setIsAddPopUpOpen(false);
 	};
 
@@ -565,6 +565,9 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 									});
 								}}
 							>
+								<Option value={null} key={0}>
+									Undefined
+								</Option>
 								{parentProducts.map((parentProduct) => (
 									<Option value={parentProduct.parent_product_id} key={parentProduct.parent_product_id}>
 										{parentProduct.name}
@@ -598,7 +601,7 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 
 					<ButtonsContainer>
 						<CloseButton onClick={() => setIsAddPopUpOpen(false)}>Close</CloseButton>
-						<Button type="submit">{loading ? <Image src="/loading.svg" alt="loading" width="20" height="20" /> : "Save"}</Button>
+						<Button type="submit">{loading ? <Image src="/loading.svg" alt="loading" width="20" height="20" /> : "Save"} </Button>
 					</ButtonsContainer>
 				</form>
 			</PopupContent>

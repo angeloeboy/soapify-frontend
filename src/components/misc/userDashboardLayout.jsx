@@ -8,6 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "../../styles/globals.css";
 import { WebSocketProvider } from "../context/WebsocketContext";
 import { AppProvider } from "../context/AppContext";
+import UserSidebar from "./userSidebar";
 
 const DashboardRight = styled.div`
 	width: 100%;
@@ -31,12 +32,12 @@ const DashboardRightContainer = styled.div`
 	}
 `;
 
-let DashboardLayout = memo(({ children }) => {
+let UserDashboardLayout = memo(({ children }) => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
 	return (
 		<>
-			<Sidebar setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} />
+			<UserSidebar setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} />
 			<ToastContainer
 				position="top-right"
 				autoClose={2000}
@@ -60,4 +61,4 @@ let DashboardLayout = memo(({ children }) => {
 	);
 });
 
-export default DashboardLayout;
+export default UserDashboardLayout;

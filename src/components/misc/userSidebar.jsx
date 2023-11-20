@@ -7,6 +7,7 @@ import { usePermissions } from "../context/PermissionsContext";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useAppContext } from "../context/AppContext";
+import { useUserAppContext } from "../context/UserAppContext";
 
 const SidebarContainer = styled.div`
 	position: fixed;
@@ -177,7 +178,7 @@ const SubMenu = styled.div`
 const UserSidebar = (props) => {
 	const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-	const { sidebarState, setSidebarState, sidebarData } = useAppContext();
+	const { sidebarState, setSidebarState, sidebarData } = useUserAppContext();
 
 	const { submenuOpen, sidebarVisible, activeMenuIndex, activeSubmenuItemIndex } = sidebarState;
 

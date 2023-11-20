@@ -9,6 +9,7 @@ import AddReturnComponent from "@/components/return/addReturn";
 import ReturnSearchBar from "@/components/return/returnSearchBar";
 import { getCustomerTransaction } from "@/api/transaction";
 import styled from "styled-components";
+import UserDashboardLayout from "@/components/misc/userDashboardLayout";
 
 const Circle = styled.span`
 	width: 10px;
@@ -77,7 +78,7 @@ const Orders = () => {
 	};
 
 	return (
-		<DashboardLayout>
+		<UserDashboardLayout>
 			<PageTitle title="Orders" />
 
 			<StyledPanel>
@@ -135,7 +136,7 @@ const Orders = () => {
 			</StyledPanel>
 
 			{isAddPopUpOpen && <AddReturnComponent setIsAddPopUpOpen={setIsAddPopUpOpen} />}
-		</DashboardLayout>
+		</UserDashboardLayout>
 	);
 };
 

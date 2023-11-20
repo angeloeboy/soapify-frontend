@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import React, { useEffect, useState } from "react";
 import {
 	Button,
@@ -92,6 +93,14 @@ const Product = styled.div`
 	}
 `;
 
+const ImageScreenshot = styled.div`
+	width: 70%;
+
+	img {
+		width: 100%;
+	}
+`;
+
 const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransactions }) => {
 	useEffect(() => {
 		console.log(selectedTransaction.items);
@@ -168,8 +177,22 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 								</div>
 							</Product>
 						))}
+						<p>Pickup date: {selectedTransaction.pickup_date}</p>
+
+						<p>Total: P{selectedTransaction.total_amount / 100}</p>
 
 						<p>Status: {selectedTransaction.status}</p>
+
+						<h3>Payment Details</h3>
+						<p>{selectedTransaction.transaction_number}</p>
+						{selectedTransaction.transaction_screenshot && (
+							<>
+								<p>Screenshot of payment</p>
+								<ImageScreenshot>
+									<img src={selectedTransaction.transaction_screenshot} alt="Payment image" />
+								</ImageScreenshot>
+							</>
+						)}
 						<button onClick={() => markAsPending()}>Mark as pending</button>
 						<button onClick={() => markAsPaid()}>Mark as paid</button>
 						<button onClick={() => markAsCancelled()}>Mark as cancelled</button>

@@ -17,7 +17,7 @@ import LoadingSkeleton from "@/components/misc/loadingSkeleton";
 import Pagination from "@/components/misc/pagination";
 import { activatePaymentMethod, deactivatePaymentMethod } from "@/api/payment_method";
 import { toast } from "react-toastify";
-import { getParentProduct } from "@/api/parent_product";
+import { deleteParentProduct, getParentProduct } from "@/api/parent_product";
 import ParentProductSearchBar from "@/components/parent-product/parentProductSearchBar";
 import AddParentProduct from "@/components/parent-product/addParentProduct";
 
@@ -37,7 +37,7 @@ const ParentProduct = () => {
 
 	const [currentPage, setCurrentPage] = useState(1);
 	const [itemsPerPage, setItemsPerPage] = useState(10);
-    
+
 	const startIndex = (currentPage - 1) * itemsPerPage;
 	const endIndex = currentPage * itemsPerPage;
 	const paginatedOParentProduct = parentProductDisplay.slice(startIndex, endIndex);
@@ -64,6 +64,19 @@ const ParentProduct = () => {
 	const handleClickOutside = (event) => {
 		if (!event.target.closest(".action-container") && !event.target.closest(".ellipsis")) {
 			setActiveActionContainer(null);
+		}
+	};
+
+	const deleteParentProductFunc = async (id) => {
+		const res = await deleteParentProduct(id);
+
+		if (res.status === "Success") {
+			toast.success("Parent Product Deleted Successfully");
+			fetchParentProducts();
+		}
+
+		if (res.status === "Error") {
+			toast.error(res.message);
 		}
 	};
 
@@ -115,13 +128,13 @@ const ParentProduct = () => {
 												<ActionContainer onClick={() => setActiveActionContainer(-1)}>
 													<p
 														onClick={() => {
-															setClickedId(method.payment_method_id);
-															openEditPayment();
+															// setClickedId(method.payment_method_id);
+															// openEditPayment();
 														}}
 													>
 														<FontAwesomeIcon icon={faPen} /> Edit
 													</p>
-													<p>
+													<p onClick={() => deleteParentProductFunc(parentProduct.parent_product_id)}>
 														<FontAwesomeIcon icon={faTrash} /> Delete
 													</p>
 												</ActionContainer>

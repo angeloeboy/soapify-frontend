@@ -21,6 +21,7 @@ export const AppProvider = ({ children }) => {
 				{ title: "Returns", link: "/dashboard/returns" },
 				{ title: "Refunds", link: "/dashboard/refunds" },
 				{ title: "Promos", link: "/dashboard/promos" },
+				{ title: "Parent Products", link: "/dashboard/parent-product" },
 			],
 		},
 

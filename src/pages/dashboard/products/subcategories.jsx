@@ -12,8 +12,6 @@ import { useRouter } from "next/router";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
-import DeactivateModal from "@/components/misc/deactivate";
-
 // import Button from "@/components/misc/button";
 import Table, { ActionContainer, TableData, TableHeadings, TableRows, Status } from "@/styled-components/TableComponent";
 import { Button } from "@/styled-components/ItemActionModal";
@@ -24,6 +22,7 @@ import EditSubCategory from "@/components/product/subcategory/editSubCategory";
 import AddSubCategory from "@/components/product/subcategory/addSubcategory";
 import Pagination from "@/components/misc/pagination";
 import { toast } from "react-toastify";
+import DeleteModal from "@/components/misc/delete";
 
 // import SearchBarComponent from "@/components/product/product-template/searchBarAndFilters";
 
@@ -199,7 +198,7 @@ const ProductTemplates = () => {
 			)}
 
 				{showDeactivate && (
-						<DeactivateModal
+						<DeleteModal
 						type="subcategories"
 						text={clickedName}
 						close={setShowDeactivate}

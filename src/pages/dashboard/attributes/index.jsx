@@ -11,7 +11,7 @@ import Table, {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import pdfExporter from "@/components/misc/pdfExporter";
 import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
-import DeactivateModal from "@/components/misc/deactivate";
+import DeleteModal from "@/components/misc/delete";
 import { deleteAttribute, getAttributes } from "@/api/attributes";
 import AttributeSearchBar from "@/components/attributes/attributeSearchbar";
 import AddAttribute from "@/components/attributes/addAttributes";
@@ -196,7 +196,7 @@ const PaymentTable = () => {
       {isEditAttributeOpen && <EditAttribute onClose={closeEditAttribute} />}
  
       {showDeactivate && (
-        <DeactivateModal
+        <DeleteModal
           type="attributes"
           text={clickedName}
           close={setShowDeactivate}

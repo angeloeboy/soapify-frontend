@@ -20,8 +20,7 @@ import CategoriesSearchBar from "@/components/product/categories/categoriesSearc
 import AddCategories from "./../../../components/product/categories/addCategories";
 import EditCategory from "@/components/product/categories/editCategory";
 import Pagination from "@/components/misc/pagination";
-import DeactivateModal from "@/components/misc/deactivate";
-
+import DeleteModal from "@/components/misc/delete"; 
 import { toast } from "react-toastify";
 
 
@@ -180,7 +179,7 @@ const Categories = () => {
 			{isEditCategoryOpen && <EditCategory onClose={closeEditPopUp} setEditCategoryOpen={setEditCategoryOpen} />}
 
 		{showDeactivate && (
-        <DeactivateModal
+        <DeleteModal
           type="Category"
           text={clickedName}
           close={setShowDeactivate}

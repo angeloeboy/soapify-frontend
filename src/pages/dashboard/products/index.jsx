@@ -22,6 +22,7 @@ import DeactivateModal from "@/components/misc/deactivate";
 
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
+import DeleteModal from "@/components/misc/delete";
 
 const Products = () => {
 	const [products, setProducts] = useState([]);
@@ -265,7 +266,7 @@ const Products = () => {
 			{isEditPopupOpen && <EditProduct onClose={handleCloseEditPopUp} productId={selectedProductId} fetchProducts={fetchProducts} />}
 			{showDeactivate && (
         
-		<DeactivateModal
+		<DeleteModal
           type="Products"
           text={clickedName}
           close={setShowDeactivate}

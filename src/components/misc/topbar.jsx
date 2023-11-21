@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { styled } from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
@@ -33,6 +34,8 @@ let TopBarContainer = styled.div`
 	}
 `;
 const TopBar = () => {
+	const [notificationsList, setNotificationsList] = useState([]);
+
 	// Use useContext to access the WebSocketContext
 	const context = useContext(WebSocketContext);
 	if (!context) {
@@ -41,6 +44,11 @@ const TopBar = () => {
 	}
 
 	const { notifications } = context;
+
+	useEffect(() => {
+		if (!notifications) return;
+		setNotificationsList(notifications);
+	}, [notifications]);
 
 	const getDate = () => {
 		let date = new Date();
@@ -63,7 +71,7 @@ const TopBar = () => {
 			<h3>{getDate()}</h3>
 			<div className="alert-container">
 				<FontAwesomeIcon icon={faBell} />
-				{notifications.length}
+				{notificationsList.length}
 				<div className="profile"></div>
 			</div>
 		</TopBarContainer>

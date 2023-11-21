@@ -13,7 +13,7 @@ import {
 	ButtonsContainer,
 } from "@/styled-components/ItemActionModal";
 import { CloseButton } from "../styled-components/PopUp";
-import { acceptTransaction, setTransactionStatus } from "@/api/transaction";
+import { setTransactionStatus } from "@/api/transaction";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import styled from "styled-components";
@@ -101,69 +101,15 @@ const ImageScreenshot = styled.div`
 	}
 `;
 
-const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransactions }) => {
+const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions }) => {
 	useEffect(() => {
 		console.log(selectedTransaction.items);
 	}, []);
 
-	const updateStatus = async (status) => {
-		const res = await setTransactionStatus(selectedTransaction.transaction_id, status);
-		console.log(res);
-
-		if (res.status === "Success") {
-			toast.success("Transaction status updated");
-			setIsOrdersInfoOpen(false);
-			console.log("Success");
-			fetchTransactions();
-			return;
-		}
-
-		toast.error(res.message);
-	};
-
-	const markAsPending = async () => {
-		await updateStatus("PENDING");
-	};
-
-	const markAsPaid = async () => {
-		await updateStatus("PAID");
-	};
-
-	const markAsCancelled = async () => {
-		await updateStatus("CANCELLED");
-	};
-
-	const markAsRefunded = async () => {
-		await updateStatus("REFUNDED");
-	};
-
-	const markAsDone = async () => {
-		await updateStatus("DONE");
-	};
-
-	const batchInfo = (batch_info) => {
-		let jsonBatchInfo = JSON.parse(batch_info);
-		return jsonBatchInfo;
-	};
-
-	const acceptTransactionFunc = async () => {
-		const res = await acceptTransaction(selectedTransaction.transaction_id);
-		console.log(res.message);
-
-		if (res.status === "Success") {
-			toast.success("Transaction accepted");
-			setIsOrdersInfoOpen(false);
-			fetchTransactions();
-			return;
-		}
-
-		// toast.error(res.message);
-	};
-
 	return (
 		<PopupOverlay>
 			<PopupContent>
-				<HeaderTitle>Edit Order {selectedTransaction.transaction_id} </HeaderTitle>
+				<HeaderTitle>Order {selectedTransaction.transaction_unique_id} </HeaderTitle>
 				<FieldContainer>
 					<div>
 						{selectedTransaction.createdAt}
@@ -183,16 +129,6 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 									</div>
 
 									<p className="productPrice">P{item.product.product_price / 100}</p>
-
-									{item.batch_info &&
-										batchInfo(item.batch_info).map((info, index) => {
-											return (
-												<div key={index}>
-													<p className="productName">Batch Number: {info.batch_no}</p>
-													<p className="productName">Quantity: {info.quantity}</p>
-												</div>
-											);
-										})}
 								</div>
 							</Product>
 						))}
@@ -212,17 +148,14 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 								</ImageScreenshot>
 							</>
 						)}
-						<button onClick={() => markAsPending()}>Mark as pending</button>
-						<button onClick={() => markAsPaid()}>Mark as paid</button>
-						<button onClick={() => markAsCancelled()}>Mark as cancelled</button>
-						<button onClick={() => markAsRefunded()}>Mark as refunded</button>
-						<button onClick={() => markAsDone()}>Mark as done</button>
-						<button onClick={() => acceptTransactionFunc()}>Accept Transaction</button>
 					</div>
+
+					<Button>Cancel Order</Button>
+					<Button>Refund/Return</Button>
 				</FieldContainer>
 
 				<ButtonsContainer>
-					<CloseButton onClick={() => setIsOrdersInfoOpen(false)}>Close </CloseButton>
+					<CloseButton onClick={() => setShowOrderInfo(false)}>Close </CloseButton>
 					<Button onClick={() => addPaymentMethodFunc()}>Save</Button>
 				</ButtonsContainer>
 			</PopupContent>
@@ -230,4 +163,4 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 	);
 };
 
-export default OrdersInfo;
+export default UserOrdersInfo;

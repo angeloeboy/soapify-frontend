@@ -25,7 +25,9 @@ export const WebSocketProvider = ({ children }) => {
 				console.log("Received message:", message.data); // Log the raw message
 
 				if (message.type === "newTransaction") {
-					toast.success("New order received");
+					// toast.success("New order received");
+					getNotificationsFunc();
+
 					// Handle new order
 				} else if (message.type === "notification") {
 					// toast.info("You have a new notification");

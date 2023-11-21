@@ -559,8 +559,18 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 							<Select
 								value={product.parent_product_id}
 								onChange={(e) => {
+									if (e.target.value === "Undefined") {
+										setProduct({
+											...product,
+											parent_product_id: null,
+										});
+
+										return;
+									}
+
 									setProduct({
 										...product,
+
 										parent_product_id: Number(e.target.value),
 									});
 								}}

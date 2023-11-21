@@ -30,6 +30,8 @@ import {
   activatePaymentMethod,
   deactivatePaymentMethod,
 } from "@/api/payment_method";
+
+import DeactivateModal from "@/components/misc/deactivate";
 import { toast } from "react-toastify";
 
 const PaymentTable = () => {
@@ -40,8 +42,11 @@ const PaymentTable = () => {
   const [activeActionContainer, setActiveActionContainer] = useState(-1);
   const [isEditPaymentOpen, setEditPaymentOpen] = useState(false);
   const [isAddPaymentOpen, setAddPaymentOpen] = useState(false);
-
+ 
   const [clickedId, setClickedId] = useState(null);
+  const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState(null);
+  const [clickedName, setClickedName] = useState(null);
+  const [showDeactivate, setShowDeactivate] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -203,11 +208,13 @@ const PaymentTable = () => {
                             <FontAwesomeIcon icon={faTrash} /> Delete
                           </p>
                           <p
-                            onClick={() =>
-                              deactivatePaymentMethodFunc(
-                                method.payment_method_id
-                              )
-                            }
+                            onClick={() =>{
+                              //GAWIN MO TO 
+                              setShowDeactivate(true);
+                              setClickedName(method.name);
+                              setSelectedPaymentMethodId(method.payment_method_id); 
+  
+                            }}
                           >
                             <FontAwesomeIcon icon={faXmarkCircle} /> Deactivate
                             Payment Method
@@ -253,6 +260,18 @@ const PaymentTable = () => {
           fetchPaymentMethods={fetchPaymentMethods}
         />
       )}
+
+      {showDeactivate && (
+        <DeactivateModal
+          type="warehouse"
+          text={clickedName}
+          close={setShowDeactivate}
+          confirm={() => deactivatePaymentMethodFunc(selectedPaymentMethodId)}
+
+        />
+      )}
+
+
     </DashboardLayout>
   );
 };

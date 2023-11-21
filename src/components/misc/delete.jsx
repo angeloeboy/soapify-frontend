@@ -1,7 +1,7 @@
 import Button from "@/components/misc/button";
 import styled from "styled-components";
 
-const DeactivateModalContainer = styled.div`
+const DeleteModalContainer = styled.div`
 	backdrop-filter: blur(2px);
 	position: fixed;
 	top: 0;
@@ -93,7 +93,7 @@ const DeactivateModalContainer = styled.div`
 	}
 `;
 
-const DeactivateModal = ({ type, text, close, confirm }) => {
+const DeleteModal = ({ type, text, close, confirm }) => {
 
 	const handleConfirmation = () => {
 		// Perform delete or other actions based on the specific logic
@@ -104,7 +104,7 @@ const DeactivateModal = ({ type, text, close, confirm }) => {
 
 	  
 	return (
-		<DeactivateModalContainer>
+		<DeleteModalContainer>
 			<div className="inner">
 				<div class="modal-icon error">
 					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -118,8 +118,8 @@ const DeactivateModal = ({ type, text, close, confirm }) => {
 						></path>
 					</svg>
 				</div>
-				<p className="modal-header">You want to deactivate a {type}</p>
-				<p className="modal-description">You are going to deactivate the following {type}:</p>
+				<p className="modal-header">You want to remove a {type}</p>
+				<p className="modal-description">You are going to remove the following {type}:</p>
 				<p className="modal-item-text">{text}</p>
 				<div className="buttons-container">
 					<Button className="cancel" width="49%" onClick={() => close(false)}>
@@ -130,8 +130,8 @@ const DeactivateModal = ({ type, text, close, confirm }) => {
 					</Button>
 				</div>
 			</div>
-		</DeactivateModalContainer>
+		</DeleteModalContainer>
 	);
 };
 
-export default DeactivateModal;
+export default DeleteModal;

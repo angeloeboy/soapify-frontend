@@ -22,6 +22,7 @@ import EditSubCategory from "@/components/product/subcategory/editSubCategory";
 import AddSubCategory from "@/components/product/subcategory/addSubcategory";
 import Pagination from "@/components/misc/pagination";
 import { toast } from "react-toastify";
+import DeleteModal from "@/components/misc/delete";
 
 // import SearchBarComponent from "@/components/product/product-template/searchBarAndFilters";
 
@@ -33,6 +34,13 @@ const ProductTemplates = () => {
 	const [subCategories, setSubCategories] = useState([]);
 	const [subCategoriesLoading, setSubCategoriesLoading] = useState(true);
 	const [subcategoryDisplay, setSubcategoryDisplay] = useState([]);
+
+	const [clickedName, setClickedName] = useState(null);
+	const [showDeactivate, setShowDeactivate] = useState(false);
+	const [selectedSubCategoryId, setSelectedSubCategoryId] = useState(null);
+  
+  
+
 
 	const router = useRouter();
 
@@ -145,7 +153,16 @@ const ProductTemplates = () => {
 													<FontAwesomeIcon icon={faPen} />
 													Edit
 												</p>
-												<p onClick={() => deleteSubCategoryFunc(subcategory.subcategory_id)}>
+												<p  
+												onClick={() =>{
+													//GAWIN MO TO 
+												setShowDeactivate(true);
+												setClickedName(subcategory.subcategory_name);
+												setSelectedSubCategoryId(subcategory.subcategory_id); 
+												
+												  }}
+												
+												>
 													<FontAwesomeIcon icon={faTrash} /> Delete
 												</p>
 											</ActionContainer>
@@ -179,6 +196,16 @@ const ProductTemplates = () => {
 			{isEditSubCatOpen && (
 				<EditSubCategory setEditSubCatOpen={setEditSubCatOpen} selectedSubCat={selectedSubCat} fetchSubCategories={fetchProductSubcategories} />
 			)}
+
+				{showDeactivate && (
+						<DeleteModal
+						type="subcategories"
+						text={clickedName}
+						close={setShowDeactivate}
+						confirm={() => deleteSubCategoryFunc(selectedSubCategoryId)}
+
+						/>
+					)}
 		</DashboardLayout>
 	);
 };

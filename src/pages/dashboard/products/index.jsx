@@ -18,9 +18,11 @@ import ProductSearchBar from "@/components/product/productSearchBar";
 import LoadingSkeleton from "@/components/misc/loadingSkeleton";
 import Pagination from "@/components/misc/pagination";
 import "react-toastify/dist/ReactToastify.css";
+import DeactivateModal from "@/components/misc/deactivate";
 
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
+import DeleteModal from "@/components/misc/delete";
 
 const Products = () => {
 	const [products, setProducts] = useState([]);
@@ -35,6 +37,9 @@ const Products = () => {
 	const [itemsPerPage, setItemsPerPage] = useState(10);
 
 	const [selectedProductId, setSelectedProductId] = useState(null);
+	const [clickedName, setClickedName] = useState(null);
+	const [showDeactivate, setShowDeactivate] = useState(false);
+   
 
 	const startIndex = (currentPage - 1) * itemsPerPage;
 	const endIndex = currentPage * itemsPerPage;
@@ -220,7 +225,16 @@ const Products = () => {
 													<FontAwesomeIcon icon={faPen} />
 													Edit
 												</p>
-												<p onClick={() => deleteProductFunc(product.product_id)}>
+												<p  
+													onClick={() =>{
+														//GAWIN MO TO 
+														setShowDeactivate(true);
+														setClickedName(product.product_name);
+														setSelectedProductId(product.product_id); 
+
+													}}
+																																					
+												>
 													<FontAwesomeIcon icon={faTrash} /> Delete
 												</p>
 												{product.isActive && <p onClick={() => goToInventoryPageAndAddInventory(product.product_id)}>Add Inventory</p>}
@@ -250,6 +264,17 @@ const Products = () => {
 
 			{isAddPopUpOpen && <AddProduct setIsAddPopUpOpen={setIsAddPopUpOpen} GetProducts={fetchProducts} />}
 			{isEditPopupOpen && <EditProduct onClose={handleCloseEditPopUp} productId={selectedProductId} fetchProducts={fetchProducts} />}
+			{showDeactivate && (
+        
+		<DeleteModal
+          type="Products"
+          text={clickedName}
+          close={setShowDeactivate}
+          confirm={() => deleteProductFunc(selectedProductId)}
+
+        />
+      )}
+		
 		</DashboardLayout>
 	);
 };

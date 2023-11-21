@@ -20,7 +20,7 @@ import CategoriesSearchBar from "@/components/product/categories/categoriesSearc
 import AddCategories from "./../../../components/product/categories/addCategories";
 import EditCategory from "@/components/product/categories/editCategory";
 import Pagination from "@/components/misc/pagination";
-
+import DeleteModal from "@/components/misc/delete"; 
 import { toast } from "react-toastify";
 
 
@@ -33,6 +33,10 @@ const Categories = () => {
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [itemsPerPage, setItemsPerPage] = useState(10);
+
+	const [clickedName, setClickedName] = useState(null);
+  	const [showDeactivate, setShowDeactivate] = useState(false);
+  	const [selectedCategoriesId, setSelectedCategoriesId] = useState(null);
 
 	const startIndex = (currentPage - 1) * itemsPerPage;
 	const endIndex = currentPage * itemsPerPage;
@@ -140,7 +144,16 @@ const Categories = () => {
 													<FontAwesomeIcon icon={faPen} />
 													Edit
 												</p>
-												<p onClick={() => deleteCategoryFunc(category.category_id)}>
+												<p  
+												
+												onClick={() =>{
+ 													setShowDeactivate(true);
+													setClickedName(category.name);
+													setSelectedCategoriesId(category.category_id); 
+					  
+												  }}
+												
+												>
 													<FontAwesomeIcon icon={faTrash} /> Delete
 												</p>
 											</ActionContainer>
@@ -164,6 +177,18 @@ const Categories = () => {
 			</StyledPanel>
 			{isAddPopUpOpen && <AddCategories setIsAddPopUpOpen={setIsAddPopUpOpen} fetchCategories={fetchCategories} />}
 			{isEditCategoryOpen && <EditCategory onClose={closeEditPopUp} setEditCategoryOpen={setEditCategoryOpen} />}
+
+		{showDeactivate && (
+        <DeleteModal
+          type="Category"
+          text={clickedName}
+          close={setShowDeactivate}
+          confirm={() => deleteCategoryFunc(selectedCategoriesId)}
+
+        />
+      )}											
+
+
 		</DashboardLayout>
 	);
 };

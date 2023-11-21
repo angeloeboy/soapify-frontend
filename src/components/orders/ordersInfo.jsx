@@ -13,7 +13,7 @@ import {
 	ButtonsContainer,
 } from "@/styled-components/ItemActionModal";
 import { CloseButton } from "../styled-components/PopUp";
-import { setTransactionStatus } from "@/api/transaction";
+import { acceptTransaction, setTransactionStatus } from "@/api/transaction";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import styled from "styled-components";
@@ -146,6 +146,20 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 		return jsonBatchInfo;
 	};
 
+	const acceptTransactionFunc = async () => {
+		const res = await acceptTransaction(selectedTransaction.transaction_id);
+		console.log(res.message);
+
+		if (res.status === "Success") {
+			toast.success("Transaction accepted");
+			setIsOrdersInfoOpen(false);
+			fetchTransactions();
+			return;
+		}
+
+		// toast.error(res.message);
+	};
+
 	return (
 		<PopupOverlay>
 			<PopupContent>
@@ -170,14 +184,15 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 
 									<p className="productPrice">P{item.product.product_price / 100}</p>
 
-									{batchInfo(item.batch_info).map((info, index) => {
-										return (
-											<div key={index}>
-												<p className="productName">Batch Number: {info.batch_no}</p>
-												<p className="productName">Quantity: {info.quantity}</p>
-											</div>
-										);
-									})}
+									{item.batch_info &&
+										batchInfo(item.batch_info).map((info, index) => {
+											return (
+												<div key={index}>
+													<p className="productName">Batch Number: {info.batch_no}</p>
+													<p className="productName">Quantity: {info.quantity}</p>
+												</div>
+											);
+										})}
 								</div>
 							</Product>
 						))}
@@ -202,6 +217,7 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 						<button onClick={() => markAsCancelled()}>Mark as cancelled</button>
 						<button onClick={() => markAsRefunded()}>Mark as refunded</button>
 						<button onClick={() => markAsDone()}>Mark as done</button>
+						<button onClick={() => acceptTransactionFunc()}>Accept Transaction</button>
 					</div>
 				</FieldContainer>
 

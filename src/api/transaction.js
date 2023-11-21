@@ -36,7 +36,7 @@ export const addTransaction = async (transaction) => {
 
 export const addTransactionByUser = async (transaction) => {
 	try {
-		const response = await fetch("/api/transactions", {
+		const response = await fetch("/api/transactions/online", {
 			method: "POST",
 			body: transaction,
 			credentials: "include",
@@ -95,6 +95,23 @@ export const setTransactionStatus = async (id, status) => {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({ status: status }),
+			credentials: "include",
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const acceptTransaction = async (id) => {
+	try {
+		const response = await fetch(`/api/transactions/accept/${id}`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
 			credentials: "include",
 		});
 

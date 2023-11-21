@@ -106,46 +106,6 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 		console.log(selectedTransaction.items);
 	}, []);
 
-	// const updateStatus = async (status) => {
-	// 	const res = await setTransactionStatus(selectedTransaction.transaction_id, status);
-	// 	console.log(res);
-
-	// 	if (res.status === "Success") {
-	// 		toast.success("Transaction status updated");
-	// 		setIsOrdersInfoOpen(false);
-	// 		console.log("Success");
-	// 		fetchTransactions();
-	// 		return;
-	// 	}
-
-	// 	toast.error(res.message);
-	// };
-
-	const markAsPending = async () => {
-		await updateStatus("PENDING");
-	};
-
-	const markAsPaid = async () => {
-		await updateStatus("PAID");
-	};
-
-	const markAsCancelled = async () => {
-		await updateStatus("CANCELLED");
-	};
-
-	const markAsRefunded = async () => {
-		await updateStatus("REFUNDED");
-	};
-
-	const markAsDone = async () => {
-		await updateStatus("DONE");
-	};
-
-	const batchInfo = (batch_info) => {
-		let jsonBatchInfo = JSON.parse(batch_info);
-		return jsonBatchInfo;
-	};
-
 	return (
 		<PopupOverlay>
 			<PopupContent>
@@ -189,6 +149,9 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 							</>
 						)}
 					</div>
+
+					<Button>Cancel Order</Button>
+					<Button>Refund/Return</Button>
 				</FieldContainer>
 
 				<ButtonsContainer>

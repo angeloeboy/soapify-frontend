@@ -11,7 +11,7 @@ import Table, {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import pdfExporter from "@/components/misc/pdfExporter";
 import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
-
+import DeactivateModal from "@/components/misc/deactivate";
 import { deleteAttribute, getAttributes } from "@/api/attributes";
 import AttributeSearchBar from "@/components/attributes/attributeSearchbar";
 import AddAttribute from "@/components/attributes/addAttributes";
@@ -19,7 +19,10 @@ import EditAttribute from "@/components/attributes/editAttribute";
 import Pagination from "@/components/misc/pagination";
 import LoadingSkeleton from "@/components/misc/loadingSkeleton";
 import PdfExporter from "@/components/misc/pdfExporter";
+// // eto din
+// import DeactivateModal from "@/components/misc/deactivate";
 
+ 
 const PaymentTable = () => {
   const [activeActionContainer, setActiveActionContainer] = useState(-1);
 
@@ -28,10 +31,15 @@ const PaymentTable = () => {
   const [isEditAttributeOpen, setEditAttributeOpen] = useState(false); // Define isEditOpen state variable
   const [isPopUpOpen, setPopUpOpen] = useState(false);
 
+  //IMPORT MO TO
+  const [clickedName, setClickedName] = useState(null);
+  const [showDeactivate, setShowDeactivate] = useState(false);
+ 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [attributesDisplay, setAttributesDisplay] = useState([]); // Define attributesDisplay state variable
   const [paginatedAttributes, setPaginatedAttributes] = useState([]); // Define paginatedAttributes state variable
+  const [selectedAttributeId, setSelectedAttributeId] = useState(null);
 
   const fetchAttributes = async () => {
     const res = await getAttributes();
@@ -150,9 +158,13 @@ const PaymentTable = () => {
                             <FontAwesomeIcon icon={faPen} /> Edit
                           </p>
                           <p
-                            onClick={() =>
-                              deleteAttributeFunc(attribute.attribute_id)
-                            }
+                            onClick={() =>{
+                              //GAWIN MO TO 
+                              setShowDeactivate(true);
+                              setClickedName(attribute.attribute_name);
+                              setSelectedAttributeId(attribute.attribute_id); 
+
+                            }}
                           >
                             <FontAwesomeIcon icon={faTrash} /> Delete
                           </p>
@@ -162,6 +174,7 @@ const PaymentTable = () => {
                   </TableRows>
                 ))}
           </tbody>
+      
         </Table>
         <PdfExporter tableId="attributes-table" fileName="attributes.pdf" />
         <Pagination
@@ -181,7 +194,22 @@ const PaymentTable = () => {
         />
       )}
       {isEditAttributeOpen && <EditAttribute onClose={closeEditAttribute} />}
+ 
+      {showDeactivate && (
+        <DeactivateModal
+          type="attributes"
+          text={clickedName}
+          close={setShowDeactivate}
+          confirm={() => deleteAttributeFunc(selectedAttributeId)}
+
+        />
+      )}
+
+     
     </DashboardLayout>
+
+ 
+
   );
 };
 

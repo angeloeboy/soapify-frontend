@@ -94,6 +94,15 @@ const DeactivateModalContainer = styled.div`
 `;
 
 const DeactivateModal = ({ type, text, close, confirm }) => {
+
+	const handleConfirmation = () => {
+		// Perform delete or other actions based on the specific logic
+		confirm();
+		// Close the modal or perform any other action after confirmation
+		close(false);
+	  };
+
+	  
 	return (
 		<DeactivateModalContainer>
 			<div className="inner">
@@ -116,7 +125,7 @@ const DeactivateModal = ({ type, text, close, confirm }) => {
 					<Button className="cancel" width="49%" onClick={() => close(false)}>
 						Cancel
 					</Button>
-					<Button width="49%" onClick={() => confirm()}>
+					<Button width="49%" onClick={handleConfirmation}>
 						Confirm
 					</Button>
 				</div>

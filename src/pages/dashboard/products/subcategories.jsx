@@ -12,6 +12,8 @@ import { useRouter } from "next/router";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
+import DeactivateModal from "@/components/misc/deactivate";
+
 // import Button from "@/components/misc/button";
 import Table, { ActionContainer, TableData, TableHeadings, TableRows, Status } from "@/styled-components/TableComponent";
 import { Button } from "@/styled-components/ItemActionModal";
@@ -33,6 +35,13 @@ const ProductTemplates = () => {
 	const [subCategories, setSubCategories] = useState([]);
 	const [subCategoriesLoading, setSubCategoriesLoading] = useState(true);
 	const [subcategoryDisplay, setSubcategoryDisplay] = useState([]);
+
+	const [clickedName, setClickedName] = useState(null);
+	const [showDeactivate, setShowDeactivate] = useState(false);
+	const [selectedSubCategoryId, setSelectedSubCategoryId] = useState(null);
+  
+  
+
 
 	const router = useRouter();
 
@@ -145,7 +154,16 @@ const ProductTemplates = () => {
 													<FontAwesomeIcon icon={faPen} />
 													Edit
 												</p>
-												<p onClick={() => deleteSubCategoryFunc(subcategory.subcategory_id)}>
+												<p  
+												onClick={() =>{
+													//GAWIN MO TO 
+												setShowDeactivate(true);
+												setClickedName(subcategory.subcategory_name);
+												setSelectedSubCategoryId(subcategory.subcategory_id); 
+												
+												  }}
+												
+												>
 													<FontAwesomeIcon icon={faTrash} /> Delete
 												</p>
 											</ActionContainer>
@@ -179,6 +197,16 @@ const ProductTemplates = () => {
 			{isEditSubCatOpen && (
 				<EditSubCategory setEditSubCatOpen={setEditSubCatOpen} selectedSubCat={selectedSubCat} fetchSubCategories={fetchProductSubcategories} />
 			)}
+
+				{showDeactivate && (
+						<DeactivateModal
+						type="subcategories"
+						text={clickedName}
+						close={setShowDeactivate}
+						confirm={() => deleteSubCategoryFunc(selectedSubCategoryId)}
+
+						/>
+					)}
 		</DashboardLayout>
 	);
 };

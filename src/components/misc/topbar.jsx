@@ -1,7 +1,8 @@
 import { styled } from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { WebSocketContext, useWebSocket } from "../context/WebsocketContext";
 
 let TopBarContainer = styled.div`
 	padding: 16px 48px;
@@ -32,6 +33,15 @@ let TopBarContainer = styled.div`
 	}
 `;
 const TopBar = () => {
+	// Use useContext to access the WebSocketContext
+	const context = useContext(WebSocketContext);
+	if (!context) {
+		// handle the case where context is not available
+		return null;
+	}
+
+	const { notifications } = context;
+
 	const getDate = () => {
 		let date = new Date();
 		let month = date.getMonth();
@@ -53,6 +63,7 @@ const TopBar = () => {
 			<h3>{getDate()}</h3>
 			<div className="alert-container">
 				<FontAwesomeIcon icon={faBell} />
+				{notifications.length}
 				<div className="profile"></div>
 			</div>
 		</TopBarContainer>

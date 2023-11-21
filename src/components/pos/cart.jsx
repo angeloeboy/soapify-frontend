@@ -346,7 +346,7 @@ const Cart = ({ setActiveAction }) => {
 						<Product key={item.product_id} active={item.quantity > 1}>
 							<div className="productInformation">
 								<div className="wrapper">
-									<Image src="/sabon.png" width={60} height={60} alt="Product image" />
+									<Image src={item.image_link == "testing" ? "/sabon.png" : item.image_link.replace(/\\/g, "/")} width={40} height={40} alt="Product image" />
 
 									<p className="productName">
 										{item.product_name} |

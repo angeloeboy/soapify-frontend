@@ -157,8 +157,12 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 							<Product key={item.id} active={item.quantity > 1}>
 								<div className="productInformation">
 									<div className="wrapper">
-										<Image src="/sabon.png" width={60} height={60} alt="Product image" />
-
+										<Image
+											src={item.product.image_link == "testing" ? "/sabon.png" : item.product.image_link.replace(/\\/g, "/")}
+											width={60}
+											height={60}
+											alt="Product image"
+										/>
 										<p className="productName">
 											{item.product.product_code} | {item.product.product_name}
 										</p>

@@ -157,7 +157,7 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 			return;
 		}
 
-		// toast.error(res.message);
+		toast.error(res.errors[0].message);
 	};
 
 	return (
@@ -183,7 +183,7 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 									</div>
 
 									<p className="productPrice">P{item.product.product_price / 100}</p>
-
+									<p>Total quantity: {item.quantity}</p>
 									{item.batch_info &&
 										batchInfo(item.batch_info).map((info, index) => {
 											return (

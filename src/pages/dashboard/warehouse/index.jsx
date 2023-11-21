@@ -20,6 +20,7 @@ import {
   faXmarkCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import AddWarehouse from "@/components/warehouse/addWarehouse";
+import DeactivateModal from "@/components/misc/deactivate";
 import WarehouseSearchBar from "@/components/warehouse/warehouseSearchBar";
 import {
   deactivateWarehouse,
@@ -28,8 +29,7 @@ import {
   reactivateWarehouse,
 } from "@/api/warehouse";
 import EditWarehouse from "@/components/warehouse/editWarehouse";
-import DeactivateModal from "@/components/misc/deactivate";
-import { PaginationControl } from "@/styled-components/ItemActionModal";
+ import { PaginationControl } from "@/styled-components/ItemActionModal";
 import Pagination from "@/components/misc/pagination";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -47,6 +47,7 @@ const Warehouse = () => {
 
   const [clickedName, setClickedName] = useState(null);
   const [showDeactivate, setShowDeactivate] = useState(false);
+  const [selectedWarehouseId, setSelectedWarehouseId] = useState(null);
   const [showAddArea, setShowAddArea] = useState(false); // Add state for "Add Area"
   const [showAreas, setShowAreas] = useState(false); // Add state to control the display of areas
   const [showAreasModal, setShowAreasModal] = useState(false);
@@ -198,21 +199,20 @@ const Warehouse = () => {
                           <FontAwesomeIcon icon={faTrash} /> Delete
                         </p>
                         <p
-                          onClick={() =>
-                            deactivateWarehouseFunc(
-                              warehouse.warehouse_id
-                            )
-                          }
+                          onClick={() =>{
+                            //GAWIN MO TO 
+                            setShowDeactivate(true);
+                            setClickedName(warehouse.warehouse_name);
+                            setSelectedWarehouseId(warehouse.warehouse_id); 
+
+                          }}
                         >
                           <FontAwesomeIcon icon={faXmarkCircle} /> Deactivate
                           Warehouse
                         </p>
                         <p
-                          onClick={() =>
-                            reactivateWarehouseFunc(
-                              warehouse.warehouse_id
-                            )
-                          }
+                          onClick={() => reactivateWarehouseFunc(warehouse.warehouse_id)}
+                            
                         >
                           <FontAwesomeIcon icon={faCheckCircle} /> Reactivate
                           Warehouse
@@ -275,6 +275,8 @@ const Warehouse = () => {
           type="warehouse"
           text={clickedName}
           close={setShowDeactivate}
+          confirm={() => deactivateWarehouseFunc(selectedWarehouseId)}
+
         />
       )}
       {showAddArea && (

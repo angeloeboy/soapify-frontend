@@ -118,8 +118,8 @@ const DeactivateModal = ({ type, text, close, confirm }) => {
 						></path>
 					</svg>
 				</div>
-				<p className="modal-header">You want to remove a {type}</p>
-				<p className="modal-description">You are going to remove the following {type}:</p>
+				<p className="modal-header">You want to deactivate a {type}</p>
+				<p className="modal-description">You are going to deactivate the following {type}:</p>
 				<p className="modal-item-text">{text}</p>
 				<div className="buttons-container">
 					<Button className="cancel" width="49%" onClick={() => close(false)}>

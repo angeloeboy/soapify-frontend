@@ -10,6 +10,7 @@ import ReturnSearchBar from "@/components/return/returnSearchBar";
 import { getCustomerTransaction } from "@/api/transaction";
 import styled from "styled-components";
 import UserDashboardLayout from "@/components/misc/userDashboardLayout";
+import UserOrdersInfo from "@/components/user_components/orderInfo";
 
 const Circle = styled.span`
 	width: 10px;
@@ -51,6 +52,9 @@ const Orders = () => {
 
 	const [transactions, setTransactions] = useState([]);
 	const [filteredTransactions, setFilteredTransactions] = useState([]); // Initialize with an empty array
+
+	const [showOrderInfo, setShowOrderInfo] = useState(false);
+	const [selectedTransaction, setSelectedTransaction] = useState(null);
 
 	const handleSearch = (searchTerm) => {
 		const filtered = returns.filter((returnItem) => {
@@ -98,7 +102,13 @@ const Orders = () => {
 						</TableRows>
 
 						{filteredTransactions.map((transaction, index) => (
-							<TableRows key={transaction.id}>
+							<TableRows
+								key={transaction.id}
+								onClick={() => {
+									setSelectedTransaction(transaction);
+									setShowOrderInfo(true);
+								}}
+							>
 								<TableData>{transaction.transaction_unique_id}</TableData>
 								<TableData>{transaction.transaction_number}</TableData>
 								<TableData>{transaction.items.length}</TableData>
@@ -119,7 +129,12 @@ const Orders = () => {
 
 									{activeActionContainer === index && (
 										<ActionContainer onClick={() => setActiveActionContainer(-1)}>
-											<p>
+											<p
+												onClick={() => {
+													setSelectedTransaction(transaction);
+													setShowOrderInfo(true);
+												}}
+											>
 												<FontAwesomeIcon icon={faPen} />
 												Edit
 											</p>
@@ -136,6 +151,7 @@ const Orders = () => {
 			</StyledPanel>
 
 			{isAddPopUpOpen && <AddReturnComponent setIsAddPopUpOpen={setIsAddPopUpOpen} />}
+			{showOrderInfo && <UserOrdersInfo setShowOrderInfo={setShowOrderInfo} getTransactions={getTransactions} selectedTransaction={selectedTransaction} />}
 		</UserDashboardLayout>
 	);
 };

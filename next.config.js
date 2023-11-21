@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 
-const link = process.env.NEXT_PUBLIC_API_LINK ? process.env.NEXT_PUBLIC_API_LINK : "https://iamangelo.tech/api";
+const link = process.env.NEXT_PUBLIC_API_LINK ? process.env.NEXT_PUBLIC_API_LINK : "https://smsabon.com/api";
 
 const nextConfig = {
 	output: "standalone",

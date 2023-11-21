@@ -71,8 +71,7 @@ export const AppProvider = ({ children }) => {
 		const findMenuAndSubmenuIndex = () => {
 			for (let i = 0; i < sidebarData.length; i++) {
 				const menu = sidebarData[i];
-				console.log(menu.link);
-				console.log(currentPath);
+
 				if (menu.link === currentPath) {
 					// If the current path matches the main menu link
 
@@ -90,7 +89,6 @@ export const AppProvider = ({ children }) => {
 		};
 
 		const { menuIndex, submenuIndex } = findMenuAndSubmenuIndex();
-		console.log("Menu Index:", menuIndex, "Submenu Index:", submenuIndex);
 
 		if (menuIndex !== -1) {
 			setSidebarState((prevState) => ({

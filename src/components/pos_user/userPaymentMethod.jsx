@@ -109,7 +109,7 @@ const UserPaymentMethods = (props) => {
 		e.preventDefault();
 		// setLoading(true);
 		let formData = new FormData();
-
+		setLoading(true);
 		//add the image to the form data
 		//image is not required
 		if (e.target.payment_image.files[0]) {

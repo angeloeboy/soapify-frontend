@@ -10,7 +10,7 @@ import ReturnSearchBar from "@/components/return/returnSearchBar";
 import { getCustomerTransaction } from "@/api/transaction";
 import styled from "styled-components";
 import UserDashboardLayout from "@/components/misc/userDashboardLayout";
-import UserOrdersInfo from "@/components/user_components/orderInfo";
+import UserOrdersInfo from "@/components/user_components/UserorderInfo";
 
 const Circle = styled.span`
 	width: 10px;

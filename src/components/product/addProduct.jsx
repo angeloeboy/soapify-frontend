@@ -101,12 +101,13 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 
 		const res = await addProduct(formData);
 		console.log(res);
+		setLoading(false);
+
 		if (!res) return;
 		if (res.status !== "Success") return toast.error(res.errors[0].message);
 
 		toast.success("Product added successfully");
 		GetProducts();
-		setLoading(false);
 		setIsAddPopUpOpen(false);
 	};
 

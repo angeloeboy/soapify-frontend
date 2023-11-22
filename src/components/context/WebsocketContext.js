@@ -12,6 +12,8 @@ export const WebSocketProvider = ({ children }) => {
 
 	const getNotificationsFunc = async () => {
 		const res = await getNotifications();
+
+		if (!res) return;
 		setnotifications(res.notifications);
 		console.log("Notifications", res.notifications);
 	};

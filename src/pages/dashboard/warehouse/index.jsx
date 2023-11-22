@@ -35,6 +35,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AddWarehouseArea from "@/components/warehouseArea/addWarehouseArea";
 import AreasComponent from "@/components/warehouseArea/areasComponent";
+import ReactivateModal from "@/components/misc/reactivate";
  
 const Warehouse = () => {
  
@@ -47,6 +48,8 @@ const Warehouse = () => {
 
   const [clickedName, setClickedName] = useState(null);
   const [showDeactivate, setShowDeactivate] = useState(false);
+  const [showReactivateModal, setShowReactivateModal] = useState(false);
+
   const [selectedWarehouseId, setSelectedWarehouseId] = useState(null);
   const [showAddArea, setShowAddArea] = useState(false); // Add state for "Add Area"
   const [showAreas, setShowAreas] = useState(false); // Add state to control the display of areas
@@ -72,6 +75,13 @@ const Warehouse = () => {
     res ? setWarehouses(res.warehouses) : setWarehouses([]);
     res ? setWarehouseDisplay(res.warehouses) : setWarehouseDisplay([]);
   };
+
+  const handleReactivateModal = (warehouse_id, warehouse_name) => {
+    setSelectedWarehouseId(warehouse_id);
+    setClickedName(warehouse_name);
+    setShowReactivateModal(true);
+  };
+  
  
   
   const deactivateWarehouseFunc = async (warehouse_id) => {
@@ -210,10 +220,8 @@ const Warehouse = () => {
                           <FontAwesomeIcon icon={faXmarkCircle} /> Deactivate
                           Warehouse
                         </p>
-                        <p
-                          onClick={() => reactivateWarehouseFunc(warehouse.warehouse_id)}
-                            
-                        >
+                        <p onClick={() => handleReactivateModal(warehouse.warehouse_id, warehouse.warehouse_name)}>
+
                           <FontAwesomeIcon icon={faCheckCircle} /> Reactivate
                           Warehouse
                         </p>
@@ -279,6 +287,19 @@ const Warehouse = () => {
 
         />
       )}
+
+{showReactivateModal && (
+  <ReactivateModal
+    type="Warehouse"
+    text={clickedName}
+    close={() => setShowReactivateModal(false)}
+    confirm={() => {
+      reactivateWarehouseFunc(selectedWarehouseId);
+      setShowReactivateModal(false);
+    }}
+  />
+)}
+
       {showAddArea && (
         <AddWarehouseArea
           setAddPopUpOpen={setShowAddArea}

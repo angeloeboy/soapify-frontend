@@ -30,7 +30,7 @@ import {
   activatePaymentMethod,
   deactivatePaymentMethod,
 } from "@/api/payment_method";
-
+import ReactivateModal from "@/components/misc/reactivate";
 import DeactivateModal from "@/components/misc/deactivate";
 import { toast } from "react-toastify";
 
@@ -47,11 +47,14 @@ const PaymentTable = () => {
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState(null);
   const [clickedName, setClickedName] = useState(null);
   const [showDeactivate, setShowDeactivate] = useState(false);
+  const [showReactivateModal, setShowReactivateModal] = useState(false);
+
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
   const [filteredPayments, setFilteredPayments] = useState([]);
+  
 
   useEffect(() => {
     fetchPaymentMethods();
@@ -76,6 +79,12 @@ const PaymentTable = () => {
 
       setFilteredPayments(res.paymentMethods || []);
     });
+  };
+
+  const handleReactivateModal = (payment_method_id, name) => {
+    setSelectedPaymentMethodId(payment_method_id);
+    setClickedName(name);
+    setShowReactivateModal(true);
   };
 
   const formatDateToMonthDayYear = (isoDate) => {
@@ -219,13 +228,8 @@ const PaymentTable = () => {
                             <FontAwesomeIcon icon={faXmarkCircle} /> Deactivate
                             Payment Method
                           </p>
-                          <p
-                            onClick={() =>
-                              activatePaymentMethodFunc(
-                                method.payment_method_id
-                              )
-                            }
-                          >
+                          <p onClick={() => handleReactivateModal(method.payment_method_id, method.name)}>
+
                             <FontAwesomeIcon icon={faCheckCircle} /> Reactivate
                             Payment Method
                           </p>
@@ -263,7 +267,7 @@ const PaymentTable = () => {
 
       {showDeactivate && (
         <DeactivateModal
-          type="warehouse"
+          type="Payment Method"
           text={clickedName}
           close={setShowDeactivate}
           confirm={() => deactivatePaymentMethodFunc(selectedPaymentMethodId)}
@@ -271,6 +275,17 @@ const PaymentTable = () => {
         />
       )}
 
+{showReactivateModal && (
+  <ReactivateModal
+    type="Payment Method"
+    text={clickedName}
+    close={() => setShowReactivateModal(false)}
+    confirm={() => {
+      activatePaymentMethodFunc(selectedPaymentMethodId);
+      setShowReactivateModal(false);
+    }}
+  />
+)}
 
     </DashboardLayout>
   );

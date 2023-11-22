@@ -93,7 +93,7 @@ const DeactivateModalContainer = styled.div`
 	}
 `;
 
-const DeactivateModal = ({ type, text, close, confirm }) => {
+const ReactivateModal = ({ type, text, close, confirm }) => {
 
 	const handleConfirmation = () => {
 		// Perform delete or other actions based on the specific logic
@@ -118,8 +118,8 @@ const DeactivateModal = ({ type, text, close, confirm }) => {
 						></path>
 					</svg>
 				</div>
-				<p className="modal-header">You want to Deactivate a {type}</p>
-				<p className="modal-description">You are going to Deactivate the following {type}:</p>
+				<p className="modal-header">You want to Reactivate a {type}</p>
+				<p className="modal-description">You are going to Reactivate the following {type}:</p>
 				<p className="modal-item-text">{text}</p>
 				<div className="buttons-container">
 					<Button className="cancel" width="49%" onClick={() => close(false)}>
@@ -134,4 +134,4 @@ const DeactivateModal = ({ type, text, close, confirm }) => {
 	);
 };
 
-export default DeactivateModal;
+export default ReactivateModal;

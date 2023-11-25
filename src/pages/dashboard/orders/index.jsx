@@ -184,17 +184,6 @@ const Orders = () => {
 					<OrdersInfo setIsOrdersInfoOpen={setIsOrdersInfoOpen} selectedTransaction={selectedTransactionId} fetchTransactions={getAllTransactions} />
 				)}
 
-				{/* <EditOrder setIsEditPopUpOpen={setIsEditPopUpOpen} /> */}
-				{/* <Pagination
-					totalItems={transactionsDisplay.length}
-					itemsPerPage={itemsPerPage}
-					currentPage={currentPage}
-					onPageChange={setCurrentPage}
-					itemsPerPageOptions={[5, 10, 15, 20]}
-					defaultItemsPerPage={10}
-					setItemsPerPage={setItemsPerPage}
-				/> */}
-
 				<Pagination
 					setItemsPerPage={setItemsPerPage}
 					totalItems={transactionsDisplay.length}
@@ -208,3 +197,27 @@ const Orders = () => {
 };
 
 export default Orders;
+
+import cookie from "cookie";
+
+export async function getServerSideProps(context) {
+	const { req } = context;
+	const parsedCookies = cookie.parse(req.headers.cookie || "").permissions;
+
+	console.log(parsedCookies);
+
+	if (!parsedCookies.includes("View Orders:orders")) {
+		return {
+			redirect: {
+				destination: "/",
+				permanent: false,
+			},
+		};
+	}
+
+	return {
+		props: {
+			permissions: parsedCookies ? JSON.parse(parsedCookies) : [],
+		}, // will be passed to the page component as props
+	};
+}

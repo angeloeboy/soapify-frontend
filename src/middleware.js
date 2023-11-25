@@ -55,6 +55,7 @@ export async function middleware(req) {
 					httpOnly: false,
 					path: "/",
 				});
+
 				return next_response;
 			}
 		}
@@ -68,9 +69,9 @@ export async function middleware(req) {
 			});
 
 			let data = await response.json();
-			console.log("test");
+			console.log(data);
 
-			if (data.user.role_id !== 1) {
+			if (data.user.role_id == 2) {
 				const url = req.nextUrl.clone();
 				url.pathname = "/user";
 				return NextResponse.redirect(url);
@@ -88,7 +89,6 @@ export async function middleware(req) {
 			return next_response;
 		}
 
-		// Set cookies for all other routes
 		const next_response = NextResponse.next();
 		next_response.cookies.set("permissions", JSON.stringify(permissions), {
 			httpOnly: false,

@@ -15,7 +15,7 @@ import {
 	CheckboxWrapper,
 } from "@/styled-components/ItemActionModal";
 import { addRoles, editRoles, getPermissions } from "@/api/roles";
-import {  toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 const EditRoles = ({ setIsEditPopUpOpen, fetchRoles, clickedRole }) => {
 	const [role, setRole] = useState({
@@ -42,7 +42,7 @@ const EditRoles = ({ setIsEditPopUpOpen, fetchRoles, clickedRole }) => {
 		fetchRoles();
 
 		toast.success("Role successfully edited");
-		setIsEditPopUpOpen(false)
+		setIsEditPopUpOpen(false);
 	};
 
 	useEffect(() => {
@@ -58,21 +58,33 @@ const EditRoles = ({ setIsEditPopUpOpen, fetchRoles, clickedRole }) => {
 		setRole({ role_id: role_id, role_name: role_name, permissions: permissionIds });
 	}, []);
 
-	// useEffect(() => {
-	// 	console.log(role);
-	// }, [role]);
-
 	useEffect;
+
+	// const handleCheckboxChange = (event) => {
+	// 	const { value, checked } = event.target;
+	// 	console.log(checked);
+	// 	setRole((prevRole) => {
+	// 		const permissions = new Set(prevRole.permissions);
+
+	// 		if (checked) {
+	// 			permissions.add(parseInt(value));
+	// 		} else {
+	// 			permissions.delete(value);
+	// 		}
+
+	// 		return { ...prevRole, permissions: Array.from(permissions) };
+	// 	});
+	// };
 
 	const handleCheckboxChange = (event) => {
 		const { value, checked } = event.target;
 		setRole((prevRole) => {
-			const permissions = new Set(prevRole.permissions);
+			const permissions = new Set(prevRole.permissions.map(Number)); // Ensure all elements are numbers
 
 			if (checked) {
-				permissions.add(parseInt(value));
+				permissions.add(parseInt(value, 10)); // Add as a number
 			} else {
-				permissions.delete(value);
+				permissions.delete(parseInt(value, 10)); // Delete as a number
 			}
 
 			return { ...prevRole, permissions: Array.from(permissions) };
@@ -108,7 +120,7 @@ const EditRoles = ({ setIsEditPopUpOpen, fetchRoles, clickedRole }) => {
 													id={permission.permission_id}
 													name={permission.permission_name}
 													value={permission.permission_id}
-													onChange={handleCheckboxChange}
+													onChange={(e) => handleCheckboxChange(e)}
 													checked={role.permissions.includes(permission.permission_id)}
 												/>
 												<label htmlFor={permission.permission_id}>{permission.permission_name}</label>

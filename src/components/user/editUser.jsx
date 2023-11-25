@@ -1,203 +1,157 @@
+import { getRoles } from "@/api/roles";
+import { editUser } from "@/api/users";
 import {
-  Button,
-  Select,
-  LabelContainer,
-  Label,
-  Option,
-  FieldContainer,
-  ProfilePictureContainer,
-  FileInput,
-  Centered,
-  SecondaryButton,
-  CloseButton,
-  ButtonsContainer,
-  PopupOverlay,
-  PopupContent,
-  HeaderTitle,
-  FieldTitleLabel,
-  InputHolder,
+	Button,
+	Select,
+	LabelContainer,
+	Label,
+	Option,
+	FieldContainer,
+	ProfilePictureContainer,
+	FileInput,
+	Centered,
+	SecondaryButton,
+	CloseButton,
+	ButtonsContainer,
+	PopupOverlay,
+	PopupContent,
+	HeaderTitle,
+	FieldTitleLabel,
+	InputHolder,
 } from "@/styled-components/ItemActionModal";
 
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 // import { getUser, editUser, getUserCategories } from "@/api/users";
 
-const EditUser = ({ userId, onClose, GetUsers }) => {
-  const [user, setUser] = useState({
-    first_name: "",
-    last_name: "",
-    username: "",
-    // Add other user information fields here
-    password: "",
-    confirmPassword: "",
-    account_type: "",
-    date_created: "",
-  });
-  const [categories, setCategories] = useState([]);
+const EditUser = ({ selectedUser, onClose, fetchUsers }) => {
+	const [user, setUser] = useState({
+		first_name: "",
+		last_name: "",
+		role_id: "",
+	});
 
-  //   useEffect(() => {
-  //     fetchUserData();
-  //     fetchUserCategories();
-  //   }, []);
+	const [roles, setRoles] = useState([]);
 
-  //   const fetchUserData = async () => {
-  //     try {
-  //       const userData = await getUser(userId);
-  //       setUser(userData.user); // Update the property name accordingly
-  //       console.log(user);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
+	const editUserFunc = async (e) => {
+		e.preventDefault();
 
-  //   const fetchUserCategories = async () => {
-  //     try {
-  //       const categoryData = await getUserCategories();
-  //       setCategories(categoryData.categories);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
+		const res = await editUser(user, selectedUser.id);
 
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
+		if (res.status === "Success") {
+			toast.success("User edited");
+			fetchUsers();
+			onClose();
+			return;
+		}
 
-    const formData = new FormData();
-    // Append fields to formData for editing
+		toast.error(res.message);
+	};
 
-    // editUser(formData, userId) // Update this function to edit user data
-    //   .then((res) => {
-    //     console.log(res);
-    //   })
-    //   .then(() => {
-    //     GetUsers();
-    //     onClose(); // Close the modal after editing
-    //   });
-  };
+	const fetchRoles = async () => {
+		const res = await getRoles();
 
-  return (
-    <PopupOverlay>
-      <PopupContent>
-        <form onSubmit={(e) => editUser(e)} enctype="multipart/form-data">
-          <HeaderTitle>
-            Edit User: {user.first_name} {user.last_name}
-          </HeaderTitle>
-          <FieldContainer>
-            <LabelContainer first>
-              <Label>General Information</Label>{" "}
-            </LabelContainer>
-            <div>
-              <FieldTitleLabel> First Name </FieldTitleLabel>
-              <InputHolder
-                type="text"
-                placeholder="Edit First Name"
-                onChange={(e) => {
-                  setUser({ ...user, first_name: e.target.value });
-                }}
-                required
-                value={user.first_name}
-              />
-            </div>
-            <div>
-              <FieldTitleLabel>Last Name</FieldTitleLabel>
-              <InputHolder
-                type="text"
-                placeholder="Edit Last Name"
-                onChange={(e) => {
-                  setUser({ ...user, last_name: e.target.value });
-                }}
-                required
-                value={user.last_name}
-              />
-            </div>
-            <div>
-              <FieldTitleLabel>Username</FieldTitleLabel>
-              <InputHolder
-                type="text"
-                placeholder="Edit Username"
-                onChange={(e) => {
-                  setUser({ ...user, username: e.target.value });
-                }}
-                required
-                value={user.username}
-              />
-            </div>
-            <div>
-              <FieldTitleLabel notFirst>Image (optional)</FieldTitleLabel>
-              <ProfilePictureContainer>
-                <Centered>
-                  <input type="file" name="product_image" required />
-                </Centered>
-              </ProfilePictureContainer>
-            </div>
-            <div>
-              <LabelContainer notfirst>
-                <Label>Password</Label>{" "}
-              </LabelContainer>
-              <FieldTitleLabel>Change Password</FieldTitleLabel>
-              <InputHolder
-                type="password"
-                placeholder="Set new Password"
-                onChange={(e) => {
-                  setUser({ ...user, password: e.target.value });
-                }}
-                required
-                value={user.password}
-              />
-            </div>
-            <div>
-              <FieldTitleLabel>Confirm Password</FieldTitleLabel>
-              <InputHolder
-                type="password"
-                placeholder="Confirm Password"
-                onChange={(e) => {
-                  setUser({ ...user, confirmPassword: e.target.value });
-                }}
-                required
-                value={user.confirmPassword}
-              />
-            </div>
-            <div>
-              <LabelContainer notfirst>
-                <Label>Account Type</Label>{" "}
-              </LabelContainer>
-              <FieldTitleLabel>Type</FieldTitleLabel>
-              <Select
-                value={user.account_type}
-                onChange={(e) => {
-                  setUser({ ...user, account_type: e.target.value });
-                }}
-              >
-                {categories.map((category) => (
-                  <Option value={category.id} key={category.id}>
-                    {category.name}
-                  </Option>
-                ))}
-              </Select>
-            </div>
-            <div>
-              <LabelContainer notfirst>
-                <Label>Miscellaneous</Label>{" "}
-              </LabelContainer>
-              <FieldTitleLabel>Date Created</FieldTitleLabel>
-              <InputHolder
-                type="date"
-                onChange={(e) => {
-                  setUser({ ...user, date_created: e.target.value });
-                }}
-                value={user.date_created}
-              />
-            </div>
-          </FieldContainer>
+		if (res) {
+			setRoles(res.roles);
+		}
 
-          <ButtonsContainer>
-            <CloseButton onClick={onClose}>Close</CloseButton>
-            <Button type="submit">Save</Button>
-          </ButtonsContainer>
-        </form>
-      </PopupContent>
-    </PopupOverlay>
-  );
+		console.log(res.roles);
+	};
+
+	useEffect(() => {
+		fetchRoles();
+		setUser({ ...selectedUser, role_id: selectedUser.role.role_id });
+	}, []);
+
+	return (
+		<PopupOverlay>
+			<PopupContent>
+				<form onSubmit={(e) => editUserFunc(e)}>
+					<HeaderTitle>
+						Edit User: {user.first_name} {user.last_name}
+					</HeaderTitle>
+					<FieldContainer>
+						<LabelContainer first>
+							<Label>General Information</Label>{" "}
+						</LabelContainer>
+						<div>
+							<FieldTitleLabel> First Name </FieldTitleLabel>
+							<InputHolder
+								type="text"
+								onChange={(e) => {
+									setUser({ ...user, first_name: e.target.value });
+								}}
+								required
+								value={user.first_name}
+							/>
+						</div>
+						<div>
+							<FieldTitleLabel>Last Name</FieldTitleLabel>
+							<InputHolder
+								type="text"
+								onChange={(e) => {
+									setUser({ ...user, last_name: e.target.value });
+								}}
+								required
+								value={user.last_name}
+							/>
+						</div>
+
+						{/* <div>
+							<LabelContainer notfirst>
+								<Label>Password</Label>{" "}
+							</LabelContainer>
+							<FieldTitleLabel>Change Password</FieldTitleLabel>
+							<InputHolder
+								type="password"
+								onChange={(e) => {
+									setUser({ ...user, password: e.target.value });
+								}}
+								required
+								value={user.password}
+							/>
+						</div>
+						<div>
+							<FieldTitleLabel>Confirm Password</FieldTitleLabel>
+							<InputHolder
+								type="password"
+								placeholder="Confirm Password"
+								onChange={(e) => {
+									setUser({ ...user, confirmPassword: e.target.value });
+								}}
+								required
+								value={user.confirmPassword}
+							/>
+						</div> */}
+						<div>
+							<LabelContainer notfirst>
+								<Label>Role</Label>{" "}
+							</LabelContainer>
+							<FieldTitleLabel>Role</FieldTitleLabel>
+							<Select
+								value={user.role_id}
+								onChange={(e) => {
+									setUser({ ...user, role_id: e.target.value });
+								}}
+							>
+								{roles.map((role) => (
+									<Option value={role.role_id} key={role.role_id}>
+										{role.role_name}
+									</Option>
+								))}
+							</Select>
+						</div>
+					</FieldContainer>
+
+					<ButtonsContainer>
+						<CloseButton onClick={onClose}>Close</CloseButton>
+						<Button type="submit">Save</Button>
+					</ButtonsContainer>
+				</form>
+			</PopupContent>
+		</PopupOverlay>
+	);
 };
 
 export default EditUser;

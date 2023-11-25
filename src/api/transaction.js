@@ -121,3 +121,38 @@ export const acceptTransaction = async (id) => {
 		console.log(error);
 	}
 };
+
+export const requestForCancelTransaction = async (id, notes) => {
+	try {
+		const response = await fetch(`/api/transactions/request/cancel/${id}`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ reason: notes }),
+			credentials: "include",
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const acceptCancelTransaction = async (id) => {
+	try {
+		const response = await fetch(`/api/transactions/accept/cancel/${id}`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			credentials: "include",
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};

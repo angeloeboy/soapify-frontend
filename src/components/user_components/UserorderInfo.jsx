@@ -11,16 +11,16 @@ import {
 	PopupOverlay,
 	HeaderTitle,
 	ButtonsContainer,
+	OrdersWrapper,
 } from "@/styled-components/ItemActionModal";
 import { CloseButton } from "../styled-components/PopUp";
-import { setTransactionStatus } from "@/api/transaction";
+import { requestForCancelTransaction, setTransactionStatus } from "@/api/transaction";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import styled from "styled-components";
 import Image from "next/image";
 
 const Product = styled.div`
-	display: flex;
+	/* display: flex; */
 	margin-bottom: 38px;
 	/* flex-direction: column; */
 	flex-wrap: wrap;
@@ -29,8 +29,8 @@ const Product = styled.div`
 	}
 
 	.productInformation {
-		/* margin-left: 16px; */
 		margin-top: 16px;
+
 		.productName {
 			color: #536686;
 			font-size: 14px;
@@ -91,6 +91,15 @@ const Product = styled.div`
 			}
 		}
 	}
+
+	.total {
+		margin-left: auto;
+		margin-top: 16px;
+		p {
+			font-size: 14px;
+			font-weight: 700;
+		}
+	}
 `;
 
 const ImageScreenshot = styled.div`
@@ -102,44 +111,80 @@ const ImageScreenshot = styled.div`
 `;
 
 const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions }) => {
+	const [notes, setNotes] = useState("");
+
 	useEffect(() => {
 		console.log(selectedTransaction.items);
 	}, []);
 
+	const convertToDateFormat = (date) => {
+		let newDate = new Date(date);
+		let formattedDate = newDate.toLocaleDateString("en-US", {
+			year: "numeric",
+			month: "long",
+			day: "numeric",
+		});
+		return formattedDate;
+	};
+
+	const requestForCancellationFunc = async () => {
+		const res = await requestForCancelTransaction(selectedTransaction.transaction_id, notes);
+
+		if (res.status === "Success") {
+			toast.success("Request for cancellation sent");
+			setShowOrderInfo(false);
+			getTransactions();
+			return;
+		}
+
+		toast.error(res.errors[0].message);
+	};
+
 	return (
 		<PopupOverlay>
 			<PopupContent>
-				<HeaderTitle>Order {selectedTransaction.transaction_unique_id} </HeaderTitle>
+				<HeaderTitle>Order {selectedTransaction.transaction_id} </HeaderTitle>
 				<FieldContainer>
-					<div>
-						{selectedTransaction.createdAt}
+					<LabelContainer first>
+						<Label>Items</Label>
+					</LabelContainer>
+					<OrdersWrapper>
 						{selectedTransaction.items.map((item) => (
 							<Product key={item.id} active={item.quantity > 1}>
 								<div className="productInformation">
 									<div className="wrapper">
 										<Image
 											src={item.product.image_link == "testing" ? "/sabon.png" : item.product.image_link.replace(/\\/g, "/")}
-											width={60}
-											height={60}
+											width={80}
+											height={80}
 											alt="Product image"
 										/>
-										<p className="productName">
-											{item.product.product_code} | {item.product.product_name}
-										</p>
-									</div>
 
-									<p className="productPrice">P{item.product.product_price / 100}</p>
+										<div className="productName">
+											<p>
+												{item.product.product_code} | {item.product.product_name}
+											</p>
+											<p>PHP {item.price / 100}</p>
+											<p>Quantity: {item.quantity}</p>
+										</div>
+
+										<div className="total">
+											<p>PHP {(item.price * item.quantity) / 100}</p>
+										</div>
+									</div>
 								</div>
 							</Product>
 						))}
-						<p>Pickup date: {selectedTransaction.pickup_date}</p>
 
-						<p>Total: P{selectedTransaction.total_amount / 100}</p>
+						<p className="total">Total: P{selectedTransaction.total_amount / 100}</p>
+					</OrdersWrapper>
 
-						<p>Status: {selectedTransaction.status}</p>
-
-						<h3>Payment Details</h3>
-						<p>{selectedTransaction.transaction_number}</p>
+					<LabelContainer>
+						<Label>Payment Information</Label>
+					</LabelContainer>
+					<OrdersWrapper>
+						<h5>Payment Details</h5>
+						<p>Transaction number: {selectedTransaction.transaction_number}</p>
 						{selectedTransaction.transaction_screenshot && (
 							<>
 								<p>Screenshot of payment</p>
@@ -148,15 +193,28 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 								</ImageScreenshot>
 							</>
 						)}
-					</div>
+					</OrdersWrapper>
 
-					<Button>Cancel Order</Button>
-					<Button>Refund/Return</Button>
+					<LabelContainer>
+						<Label>Order Status</Label>
+					</LabelContainer>
+					<OrdersWrapper>
+						<h5>Status: {selectedTransaction.status}</h5>
+						<p>Pickup date: {convertToDateFormat(selectedTransaction.pickup_date)}</p>
+						{selectedTransaction.status !== "CANCELLED" && selectedTransaction.status !== "DONE" && selectedTransaction.status !== "AWAITING PAYMENT" && (
+							<>
+								<button onClick={() => requestForCancellationFunc()}>Request Cancellation</button>
+								<textarea type="text" value={notes} onChange={(e) => setNotes(e.target.value)} />
+							</>
+						)}
+						{/* <button onClick={() => requestForCancellationFunc()}>Request Cancellation</button> */}
+					</OrdersWrapper>
 				</FieldContainer>
 
 				<ButtonsContainer>
 					<CloseButton onClick={() => setShowOrderInfo(false)}>Close </CloseButton>
-					<Button onClick={() => addPaymentMethodFunc()}>Save</Button>
+
+					{/* <Button onClick={() => addPaymentMethodFunc()}>Save</Button> */}
 				</ButtonsContainer>
 			</PopupContent>
 		</PopupOverlay>

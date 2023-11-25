@@ -369,3 +369,27 @@ export const CheckboxWrapper = styled.div`
 	margin-top: 10px;
 	margin-bottom: 10px;
 `;
+
+export const OrdersWrapper = styled.div`
+	/* display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	width: 100%; */
+	margin-left: 23.92px;
+	margin-right: 23.92px;
+	padding: 20px 0px;
+	max-width: 780.824px;
+
+	.total {
+		text-align: right;
+		font-weight: bold;
+	}
+`;
+
+export const PaymentInformation = styled.div`
+	margin-left: 23.92px;
+	margin-right: 23.92px;
+
+	max-width: 780.824px;
+`;

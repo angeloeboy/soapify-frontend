@@ -177,8 +177,6 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 						))}
 
 						<p className="total">Total: P{selectedTransaction.total_amount / 100}</p>
-
-						{selectedTransaction.status === "AWAITING PAYMENT" && <button onClick={() => acceptTransactionFunc()}>Verify Payment</button>}
 					</OrdersWrapper>
 
 					<LabelContainer>

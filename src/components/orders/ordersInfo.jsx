@@ -221,8 +221,6 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 						))}
 
 						<p className="total">Total: P{selectedTransaction.total_amount / 100}</p>
-
-						{selectedTransaction.status === "AWAITING PAYMENT" && <button onClick={() => acceptTransactionFunc()}>Verify Payment</button>}
 					</OrdersWrapper>
 
 					<LabelContainer>
@@ -239,6 +237,8 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 								</ImageScreenshot>
 							</>
 						)}
+
+						{selectedTransaction.status === "AWAITING PAYMENT" && <button onClick={() => acceptTransactionFunc()}>Verify Payment</button>}
 					</OrdersWrapper>
 
 					<LabelContainer>
@@ -247,9 +247,9 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 					<OrdersWrapper>
 						<h5>Status: {selectedTransaction.status}</h5>
 						<p>Pickup date: {convertToDateFormat(selectedTransaction.pickup_date)}</p>
-
-						{selectedTransaction.status === "CANCELLATION REQUESTED" && <button onClick={() => acceptCancellationFunc()}>Accept Cancellation</button>}
-						{selectedTransaction.status === "CANCELLATION REQUESTED" && <p>Reason: {selectedTransaction.status_notes}</p>}
+						{/* 
+							{selectedTransaction.status === "CANCELLATION REQUESTED" && <button onClick={() => acceptCancellationFunc()}>Accept Cancellation</button>}
+							{selectedTransaction.status === "CANCELLATION REQUESTED" && <p>Reason: {selectedTransaction.status_notes}</p>} */}
 
 						{selectedTransaction.status === "REFUND/RETURN REQUESTED" && <button onClick={() => acceptCancellationFunc()}>Accept Cancellation</button>}
 						{selectedTransaction.status === "REFUND/RETURN REQUESTED" && <p>Reason: {selectedTransaction.status_notes}</p>}

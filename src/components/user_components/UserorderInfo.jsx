@@ -14,7 +14,7 @@ import {
 	OrdersWrapper,
 } from "@/styled-components/ItemActionModal";
 import { CloseButton } from "../styled-components/PopUp";
-import { requestForCancelTransaction, setTransactionStatus } from "@/api/transaction";
+import { requestForCancelTransaction, requestOrderReturnRefund, setTransactionStatus } from "@/api/transaction";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 import Image from "next/image";
@@ -140,6 +140,19 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 		toast.error(res.errors[0].message);
 	};
 
+	const requestForReturnRefundFunc = async () => {
+		const res = await requestOrderReturnRefund(selectedTransaction.transaction_id, notes);
+
+		if (res.status === "Success") {
+			toast.success("Request for return/refund sent");
+			setShowOrderInfo(false);
+			getTransactions();
+			return;
+		}
+
+		toast.error(res.errors[0].message);
+	};
+
 	return (
 		<PopupOverlay>
 			<PopupContent>
@@ -201,13 +214,19 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 					<OrdersWrapper>
 						<h5>Status: {selectedTransaction.status}</h5>
 						<p>Pickup date: {convertToDateFormat(selectedTransaction.pickup_date)}</p>
-						{selectedTransaction.status !== "CANCELLED" && selectedTransaction.status !== "DONE" && selectedTransaction.status !== "AWAITING PAYMENT" && (
+						{selectedTransaction.status !== "CANCELLED" && selectedTransaction.status !== "RELEASED" && selectedTransaction.status !== "AWAITING PAYMENT" && (
 							<>
 								<button onClick={() => requestForCancellationFunc()}>Request Cancellation</button>
 								<textarea type="text" value={notes} onChange={(e) => setNotes(e.target.value)} />
 							</>
 						)}
-						{/* <button onClick={() => requestForCancellationFunc()}>Request Cancellation</button> */}
+
+						{selectedTransaction.status !== "CANCELLED" && selectedTransaction.status !== "AWAITING PAYMENT" && (
+							<>
+								<button onClick={() => requestForReturnRefundFunc()}>Request refund/return</button>
+								<textarea type="text" value={notes} onChange={(e) => setNotes(e.target.value)} />
+							</>
+						)}
 					</OrdersWrapper>
 				</FieldContainer>
 

@@ -19,6 +19,7 @@ import LoadingSkeleton from "@/components/misc/loadingSkeleton";
 import Pagination from "@/components/misc/pagination";
 import "react-toastify/dist/ReactToastify.css";
 import DeactivateModal from "@/components/misc/deactivate";
+import ReactivateModal from "@/components/misc/reactivate";
 
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
@@ -39,6 +40,10 @@ const Products = () => {
 	const [selectedProductId, setSelectedProductId] = useState(null);
 	const [clickedName, setClickedName] = useState(null);
 	const [showDeactivate, setShowDeactivate] = useState(false);
+
+	const [showDeactivateModal, setShowDeactivateModal] = useState(false);
+    const [showReactivateModal, setShowReactivateModal] = useState(false);
+
    
 
 	const startIndex = (currentPage - 1) * itemsPerPage;
@@ -147,6 +152,18 @@ const Products = () => {
 		setEditPopUpOpen(true);
 	};
 
+	const handleDeactivate = (product_id, product_name) => {
+         setClickedName(product_name);
+        setSelectedProductId(product_id);
+        setShowDeactivateModal(true);
+    };
+
+    const handleReactivate = (product_id, product_name) => {
+        setClickedName(product_name);
+        setSelectedProductId(product_id);
+        setShowReactivateModal(true);
+    };
+
 	return (
 		<DashboardLayout>
 			<PageTitle title="Products List" />
@@ -239,8 +256,11 @@ const Products = () => {
 												</p>
 												{product.isActive && <p onClick={() => goToInventoryPageAndAddInventory(product.product_id)}>Add Inventory</p>}
 
-												<p onClick={() => activateProductFunc(product.product_id)}>Reactivate</p>
-												<p onClick={() => deactivateProductFunc(product.product_id)}>Deactivate</p>
+												<p  onClick={() => handleReactivate(product.product_id, product.product_name)}>Reactivate</p>
+												<p onClick={() => handleDeactivate(product.product_id, product.product_name)}>
+													
+													
+													Deactivate</p>
 												{/* <p onClick={() => handleAddInventoryClick(product.product_id)}>Add Inventory</p> */}
 											</ActionContainer>
 										)}
@@ -274,6 +294,25 @@ const Products = () => {
 
         />
       )}
+
+		{showDeactivateModal && (
+                <DeactivateModal
+                    type="Product"
+                    text={clickedName}
+                    close={setShowDeactivateModal}
+                    confirm={() => deactivateProductFunc(selectedProductId)}
+                />
+            )}
+
+            {showReactivateModal && (
+                <ReactivateModal
+                    type="Product"
+                    text={clickedName}
+                    close={setShowReactivateModal}
+                    confirm={() => activateProductFunc(selectedProductId)}
+                />
+            )}
+
 		
 		</DashboardLayout>
 	);

@@ -122,16 +122,7 @@ const User = () => {
 				<PdfExporter tableId="user-table" filename="user-list" />
 			</StyledPanel>
 			{isAddUserOpen && <AddUser setisAddUserOpen={setisAddUserOpen} fetchUsers={fetchUsers} />}
-			{isEditUserPopup && (
-				<EditUser
-					onClose={handleCloseEditUserPopUp}
-					selectedUser={selectedUser}
-					fetchUsers={fetchUsers}
-					// productId={selectedProductId}
-					//   onButtonClick={onButtonClick}
-					//   GetProducts={fetchProducts}
-				/>
-			)}
+			{isEditUserPopup && <EditUser onClose={handleCloseEditUserPopUp} selectedUser={selectedUser} fetchUsers={fetchUsers} />}
 
 			<Pagination itemsPerPage={pagePerItem} totalItems={filteredUsers.length} currentPage={currentPage} onPageChange={(page) => setCurrentPage(page)} />
 		</DashboardLayout>

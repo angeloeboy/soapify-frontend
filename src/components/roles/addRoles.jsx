@@ -15,6 +15,7 @@ import {
 	CheckboxWrapper,
 } from "@/styled-components/ItemActionModal";
 import { addRoles, getPermissions } from "@/api/roles";
+import { toast } from "react-toastify";
 
 const AddRoles = ({ setIsAddPopUpOpen, fetchRoles }) => {
 	const [role, setRole] = useState({
@@ -35,8 +36,17 @@ const AddRoles = ({ setIsAddPopUpOpen, fetchRoles }) => {
 
 	const addRolesFunc = async (e) => {
 		e.preventDefault();
-
+		if (role.role_name === "") {
+			toast.error("Role name is required");
+			return;
+		}
 		const res = await addRoles(role);
+		if (res.status === "Success") {
+			toast.success("Role added");
+			fetchRoles();
+			setIsAddPopUpOpen(false);
+			return;
+		}
 
 		console.log(res.message);
 		fetchRoles();

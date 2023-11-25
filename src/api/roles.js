@@ -68,3 +68,21 @@ export const editRoles = async (role) => {
 		console.log(error);
 	}
 };
+
+export const deleteRole = async (role_id) => {
+	try {
+		const res = await fetch(`/api/role/${role_id}`, {
+			method: "DELETE",
+			headers: {
+				"Content-Type": "application/json",
+			},
+
+			credentials: "include",
+		});
+
+		const data = await res.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};

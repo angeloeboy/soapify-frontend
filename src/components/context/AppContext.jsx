@@ -49,6 +49,7 @@ export const AppProvider = ({ children }) => {
 				{ title: "Users", link: "/dashboard/user" },
 				{ title: "Warehouse", link: "/dashboard/warehouse" },
 				{ title: "Payment Methods", link: "/dashboard/payment" },
+				{ title: "Roles", link: "/dashboard/roles" },
 			],
 		},
 	];

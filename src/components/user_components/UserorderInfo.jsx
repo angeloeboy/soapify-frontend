@@ -128,6 +128,10 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 	};
 
 	const requestForCancellationFunc = async () => {
+		if (notes == "") {
+			toast.error("Please enter a reason for cancellation");
+			return;
+		}
 		const res = await requestForCancelTransaction(selectedTransaction.transaction_id, notes);
 
 		if (res.status === "Success") {
@@ -141,6 +145,10 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 	};
 
 	const requestForReturnRefundFunc = async () => {
+		if (notes == "") {
+			toast.error("Please enter a reason for cancellation");
+			return;
+		}
 		const res = await requestOrderReturnRefund(selectedTransaction.transaction_id, notes);
 
 		if (res.status === "Success") {
@@ -214,14 +222,16 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 					<OrdersWrapper>
 						<h5>Status: {selectedTransaction.status}</h5>
 						<p>Pickup date: {convertToDateFormat(selectedTransaction.pickup_date)}</p>
-						{selectedTransaction.status !== "CANCELLED" && selectedTransaction.status !== "RELEASED" && selectedTransaction.status !== "AWAITING PAYMENT" && (
-							<>
-								<button onClick={() => requestForCancellationFunc()}>Request Cancellation</button>
-								<textarea type="text" value={notes} onChange={(e) => setNotes(e.target.value)} />
-							</>
-						)}
+						{selectedTransaction.status !== "CANCELLED" &&
+							selectedTransaction.status !== "RELEASED" &&
+							selectedTransaction.status !== "CANCELLATION REQUESTED" && (
+								<>
+									<button onClick={() => requestForCancellationFunc()}>Request Cancellation</button>
+									<textarea type="text" value={notes} onChange={(e) => setNotes(e.target.value)} />
+								</>
+							)}
 
-						{selectedTransaction.status !== "CANCELLED" && selectedTransaction.status !== "AWAITING PAYMENT" && (
+						{selectedTransaction.status !== "CANCELLED" && selectedTransaction.status !== "AWAITING PAYMENT" && selectedTransaction.status == "RELEASED" && (
 							<>
 								<button onClick={() => requestForReturnRefundFunc()}>Request refund/return</button>
 								<textarea type="text" value={notes} onChange={(e) => setNotes(e.target.value)} />
@@ -232,8 +242,6 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 
 				<ButtonsContainer>
 					<CloseButton onClick={() => setShowOrderInfo(false)}>Close </CloseButton>
-
-					{/* <Button onClick={() => addPaymentMethodFunc()}>Save</Button> */}
 				</ButtonsContainer>
 			</PopupContent>
 		</PopupOverlay>

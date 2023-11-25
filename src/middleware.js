@@ -23,7 +23,6 @@ export async function middleware(req) {
 				const decoded = jwt.decode(token.value, secretKey);
 				permissions = decoded.permissions || [];
 			} catch (verifyError) {
-				console.error("JWT verification error:", verifyError);
 				const url = req.nextUrl.clone();
 				url.pathname = "/login";
 				return NextResponse.redirect(url);
@@ -69,7 +68,6 @@ export async function middleware(req) {
 			});
 
 			let data = await response.json();
-			console.log(data);
 
 			if (data.user.role_id == 2) {
 				const url = req.nextUrl.clone();
@@ -79,9 +77,10 @@ export async function middleware(req) {
 
 			const url = req.nextUrl.clone();
 			url.pathname = "/";
-			// Set cookies here as well
+
+			// console.log(permissions);
 			const next_response = response.ok ? NextResponse.next() : NextResponse.redirect(url);
-			next_response.cookies.set("permissions", JSON.stringify(permissions), {
+			next_response.cookies.set("permissions", JSON.stringify(data.permissions), {
 				httpOnly: false,
 				path: "/",
 			});

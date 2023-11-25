@@ -8,51 +8,63 @@ export const AppProvider = ({ children }) => {
 	const { permissions } = usePermissions();
 	const [permissions_list, setPermissions] = useState([]); // Permissions state
 	const router = useRouter();
+	const [loadingPermissions, setLoadingPermissions] = useState(true); // New state to track loading of permissions
 
-	const sidebarData = [
-		{
-			title: "Dashboard",
-			icon: "/home-icon.png",
-			hasSubmenu: true,
-			submenus: [
-				{ title: "POS", link: "/dashboard/pos" },
-				{ title: "Sales Overview", link: "/dashboard" },
-				{ title: "Orders", link: "/dashboard/orders" },
-				{ title: "Returns", link: "/dashboard/returns" },
-				{ title: "Refunds", link: "/dashboard/refunds" },
-				{ title: "Promos", link: "/dashboard/promos" },
-				{ title: "Parent Products", link: "/dashboard/parent-product" },
-			],
-		},
+	const hasPermission = (permission) => permissions.includes(permission);
 
-		{
-			title: "Inventory",
-			icon: "/inventory-icon.png",
-			hasSubmenu: true,
-			submenus: [
-				{ title: "Products", link: "/dashboard/products" },
-				{ title: "Inventory", link: "/dashboard/inventory" },
-				{ title: "Categories", link: "/dashboard/products/categories" },
-				{ title: "Suppliers", link: "/dashboard/suppliers" },
-				{ title: "Subcategories", link: "/dashboard/products/subcategories" },
-				{ title: "Attributes", link: "/dashboard/attributes" },
-				{ title: "Orders", link: "/dashboard/orders" },
+	const generateSidebarData = () => {
+		const sidebarData = [
+			{
+				title: "Dashboard",
+				icon: "/home-icon.png",
+				hasSubmenu: true,
+				submenus: [
+					{ title: "POS", link: "/dashboard/pos" },
+					{ title: "Sales Overview", link: "/dashboard" },
+					{ title: "Orders", link: "/dashboard/orders", permission: "View Orders:orders" },
+					{ title: "Returns", link: "/dashboard/returns" },
+					{ title: "Refunds", link: "/dashboard/refunds" },
+					{ title: "Promos", link: "/dashboard/promos" },
+					{ title: "Parent Products", link: "/dashboard/parent-product" },
+				],
+			},
 
-				{ title: "Shelving", link: "/dashboard/shelving" },
-			],
-		},
-		{
-			title: "Settings",
-			icon: "/settings-icon.png",
-			hasSubmenu: true,
-			submenus: [
-				{ title: "Users", link: "/dashboard/user" },
-				{ title: "Warehouse", link: "/dashboard/warehouse" },
-				{ title: "Payment Methods", link: "/dashboard/payment" },
-				{ title: "Roles", link: "/dashboard/roles" },
-			],
-		},
-	];
+			{
+				title: "Inventory",
+				icon: "/inventory-icon.png",
+				hasSubmenu: true,
+				submenus: [
+					{ title: "Products", link: "/dashboard/products" },
+					{ title: "Inventory", link: "/dashboard/inventory" },
+					{ title: "Categories", link: "/dashboard/products/categories" },
+					{ title: "Suppliers", link: "/dashboard/suppliers" },
+					{ title: "Subcategories", link: "/dashboard/products/subcategories" },
+					{ title: "Attributes", link: "/dashboard/attributes" },
+					{ title: "Shelving", link: "/dashboard/shelving" },
+				],
+			},
+			{
+				title: "Settings",
+				icon: "/settings-icon.png",
+				hasSubmenu: true,
+				submenus: [
+					{ title: "Users", link: "/dashboard/user" },
+					{ title: "Warehouse", link: "/dashboard/warehouse" },
+					{ title: "Payment Methods", link: "/dashboard/payment" },
+					{ title: "Roles", link: "/dashboard/roles" },
+				],
+			},
+		];
+
+		return sidebarData.map((section) => ({
+			...section,
+			submenus: section.submenus.filter((item) => !item.permission || hasPermission(item.permission)),
+		}));
+
+		return sidebarData;
+	};
+
+	const [sidebarData, setSidebarData] = useState(generateSidebarData());
 
 	const [sidebarState, setSidebarState] = useState({
 		submenuOpen: Array(sidebarData.length).fill(false),
@@ -61,8 +73,21 @@ export const AppProvider = ({ children }) => {
 		activeSubmenuItemIndex: -1,
 	});
 
+	// useEffect(() => {
+	// 	if (permissions === undefined || permissions.length <= 0) return;
+	// 	setPermissions(permissions);
+	// 	console.log("permissions", permissions);
+	// 	setLoadingPermissions(false);
+	// 	setSidebarData(generateSidebarData()); // Update sidebar data when permissions change
+	// }, [permissions]);
+
 	useEffect(() => {
+		if (permissions === undefined || permissions.length <= 0) return;
 		setPermissions(permissions);
+		console.log("permissions", permissions);
+		setLoadingPermissions(false);
+		setSidebarData(generateSidebarData()); // Update sidebar data when permissions change
+		console.log("sidebarData", generateSidebarData());
 	}, [permissions]);
 
 	useEffect(() => {
@@ -99,7 +124,7 @@ export const AppProvider = ({ children }) => {
 				activeSubmenuItemIndex: submenuIndex,
 			}));
 		}
-	}, [router.pathname]); // Dependency on the path and sidebarData
+	}, [router.pathname, sidebarData, permissions]); // Dependency on the path and sidebarData
 
 	// Add logic to fetch and set permissions here
 	return <AppContext.Provider value={{ permissions_list, sidebarState, setSidebarState, sidebarData }}>{children}</AppContext.Provider>;

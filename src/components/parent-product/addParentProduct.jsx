@@ -19,7 +19,7 @@ import { addPaymentMethod } from "@/api/payment_method";
 import { toast } from "react-toastify";
 import { addParentProduct } from "@/api/parent_product";
 
-const AddParentProduct = ({ setAddParentProductOpen, fetchParentProducts}) => {
+const AddParentProduct = ({ setAddParentProductOpen, fetchParentProducts }) => {
 	const [parentProduct, setParentProduc] = useState({
 		name: "",
 	});
@@ -33,6 +33,7 @@ const AddParentProduct = ({ setAddParentProductOpen, fetchParentProducts}) => {
 		if (response.status == "Success") {
 			fetchParentProducts();
 			toast.success(response.message);
+			setAddParentProductOpen(false);
 		} else {
 			toast.warning(response.message);
 		}

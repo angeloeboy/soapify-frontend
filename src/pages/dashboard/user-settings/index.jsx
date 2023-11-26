@@ -30,22 +30,13 @@ const ProfileSettings = () => {
 		console.log(res.user);
 		if (res.error) return;
 		if (!res.user) return;
-		setUser({
-			firstName: res.user.first_name,
-			lastName: res.user.last_name,
-			email: res.user.email,
-		});
+		setUser(res.user);
 	};
 
 	const changePassword = async () => {
 		const res = await forgotPassword(user.email);
 
 		console.log(res);
-		// setUser({
-		// 	firstName: res.user.first_name,
-		// 	lastName: res.user.last_name,
-		// 	email: res.user.email,
-		// });
 	};
 
 	useEffect(() => {
@@ -56,9 +47,8 @@ const ProfileSettings = () => {
 		<DashboardLayout>
 			<StyledPanel>
 				<h2>User Settings</h2>
-				<Field label="First Name" type="text" value={user.firstName} onChange={(e) => setUser({ ...user, firstName: e.target.value })} />
-				<Field label="Last Name" type="text" value={user.lastName} onChange={(e) => setUser({ ...user, firstName: e.target.value })} />
-				<Field label="Email" type="email" value={user.email} onChange={(e) => setUser({ ...user, email: e.target.value })} />
+				<Field label="First Name" type="text" value={user.first_name} onChange={(e) => setUser({ ...user, first_name: e.target.value })} />
+				<Field label="Last Name" type="text" value={user.last_name} onChange={(e) => setUser({ ...user, last_name: e.target.value })} />
 				<button type="button" style={styles.saveButton}>
 					Save
 				</button>

@@ -12,7 +12,9 @@ Warehouse
 
 Areas
 
-Change Password
+Change Password - DONE
+
+forgot password - DONE
 
 Reports
 

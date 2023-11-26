@@ -25,22 +25,21 @@ const User = () => {
 	const [isAddUserOpen, setisAddUserOpen] = useState(false);
 	const [isEditUserPopup, setEditUserPopup] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
-	const [currentPage, setCurrentPage] = useState(1);
-	const [pagePerItem, setPagePerItem] = useState(5);
+
 	const [selectedUser, setSelectedUser] = useState(null);
+
+	const [currentPage, setCurrentPage] = useState(1);
+	const [itemsPerPage, setItemsPerPage] = useState(10);
+
+	const startIndex = (currentPage - 1) * itemsPerPage;
+	const endIndex = currentPage * itemsPerPage;
+	const paginatedUser = userDisplay.slice(startIndex, endIndex);
 
 	const handleClickOutside = (event) => {
 		if (!event.target.closest(".action-container") && !event.target.closest(".ellipsis")) {
 			setActiveActionContainer(null);
 		}
 	};
-
-	useEffect(() => {
-		const startIndex = (currentPage - 1) * pagePerItem;
-		const endIndex = currentPage * pagePerItem;
-		const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
-		setUserDisplay(paginatedUsers);
-	}, [currentPage, filteredUsers]);
 
 	useEffect(() => {
 		document.addEventListener("click", handleClickOutside);
@@ -72,7 +71,13 @@ const User = () => {
 		<DashboardLayout>
 			<PageTitle title="Accounts Lists" />
 			<StyledPanel>
-				<UserSearchBarComponent users={users} setFilteredUsers={setFilteredUsers} setCurrentPage={setCurrentPage} setIsLoading={setIsLoading} />
+				<UserSearchBarComponent
+					users={users}
+					setFilteredUsers={setFilteredUsers}
+					setCurrentPage={setCurrentPage}
+					setIsLoading={setIsLoading}
+					setUserDisplay={setUserDisplay}
+				/>
 
 				<Table id="user-table">
 					<tbody>
@@ -83,7 +88,7 @@ const User = () => {
 							<TableHeadings>Actions</TableHeadings>
 						</TableRows>
 
-						{userDisplay.map((user, index) => (
+						{paginatedUser.map((user, index) => (
 							<TableRows key={index}>
 								<TableData $bold $withImage>
 									<Image src="/product_img2.png" width={40} height={40} alt={"Product image"} />
@@ -120,11 +125,16 @@ const User = () => {
 					</tbody>
 				</Table>
 				<PdfExporter tableId="user-table" filename="user-list" />
+				<Pagination
+					totalItems={userDisplay.length}
+					itemsPerPage={itemsPerPage} //   this is correct
+					currentPage={currentPage}
+					onPageChange={setCurrentPage}
+					setItemsPerPage={setItemsPerPage}
+				/>
 			</StyledPanel>
 			{isAddUserOpen && <AddUser setisAddUserOpen={setisAddUserOpen} fetchUsers={fetchUsers} />}
 			{isEditUserPopup && <EditUser onClose={handleCloseEditUserPopUp} selectedUser={selectedUser} fetchUsers={fetchUsers} />}
-
-			<Pagination itemsPerPage={pagePerItem} totalItems={filteredUsers.length} currentPage={currentPage} onPageChange={(page) => setCurrentPage(page)} />
 		</DashboardLayout>
 	);
 };

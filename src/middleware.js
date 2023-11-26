@@ -50,6 +50,7 @@ export async function middleware(req) {
 
 				// Set cookies before redirecting
 				const next_response = NextResponse.redirect(url);
+
 				next_response.cookies.set("permissions", JSON.stringify(permissions), {
 					httpOnly: false,
 					path: "/",
@@ -77,8 +78,7 @@ export async function middleware(req) {
 
 			const url = req.nextUrl.clone();
 			url.pathname = "/";
-
-			console.log(data.permissions);
+			permissions = data.permissions;
 			const next_response = response.ok ? NextResponse.next() : NextResponse.redirect(url);
 
 			next_response.cookies.set("permissions", JSON.stringify(data.permissions), {
@@ -86,14 +86,16 @@ export async function middleware(req) {
 				path: "/",
 			});
 
+			console.log("im herer");
+
 			return next_response;
 		}
 
 		const next_response = NextResponse.next();
-		next_response.cookies.set("permissions", JSON.stringify(permissions), {
-			httpOnly: false,
-			path: "/",
-		});
+		// next_response.cookies.set("permissions", JSON.stringify(permissions), {
+		// 	httpOnly: false,
+		// 	path: "/",
+		// });
 
 		return next_response;
 	} catch (error) {

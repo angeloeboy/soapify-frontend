@@ -155,6 +155,11 @@ const Pos = () => {
 
 		let updatedCart;
 		if (operation === "add") {
+			//if the quantity of the product is greater than the quantity in stock
+			if (existingProduct && existingProduct.quantity >= existingProduct.quantity_in_stock) {
+				return;
+			}
+
 			updatedCart = existingProduct
 				? cart.map((item) => (item.product_id === product.product_id ? { ...item, quantity: item.quantity + 1 } : item))
 				: [...cart, { ...product, quantity: 1 }];

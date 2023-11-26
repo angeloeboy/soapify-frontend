@@ -119,7 +119,11 @@ const UserDashboard = () => {
 		const existingProduct = cart.find((item) => item.product_id === product.product_id);
 
 		let updatedCart;
+
 		if (operation === "add") {
+			if (existingProduct && existingProduct.quantity >= existingProduct.quantity_in_stock) {
+				return;
+			}
 			updatedCart = existingProduct
 				? cart.map((item) => (item.product_id === product.product_id ? { ...item, quantity: item.quantity + 1 } : item))
 				: [...cart, { ...product, quantity: 1 }];

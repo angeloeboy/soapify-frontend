@@ -86,8 +86,6 @@ export async function middleware(req) {
 				path: "/",
 			});
 
-			console.log("im herer");
-
 			return next_response;
 		}
 

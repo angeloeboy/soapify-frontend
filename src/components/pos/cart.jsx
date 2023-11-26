@@ -371,6 +371,15 @@ const Cart = ({ setActiveAction }) => {
 										const valueAsString = e.target.value;
 										const valueAsNumber = Number(valueAsString); // convert to number
 
+										//if the quantity_in_stock is smaller than the valueAsNumber, set the valueAsNumber to the quantity_in_stock
+										if (valueAsNumber > item.quantity_in_stock) {
+											let updatedCart = cart.map((product) =>
+												product.product_id === item.product_id ? { ...product, quantity: item.quantity_in_stock } : product
+											);
+											setCart(updatedCart);
+											return;
+										}
+
 										if (valueAsString === "") {
 											let updatedCart = cart.map((product) => (product.product_id === item.product_id ? { ...product, quantity: 0 } : product));
 											setCart(updatedCart);

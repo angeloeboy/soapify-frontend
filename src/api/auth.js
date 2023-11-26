@@ -90,3 +90,37 @@ export const resendVerificationEmail = async (email) => {
 		return data;
 	} catch (error) {}
 };
+
+export const forgotPassword = async (email) => {
+	try {
+		const response = await fetch("/api/auth/change-password", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ email }),
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const resetPassword = async (password, token) => {
+	try {
+		const response = await fetch(`/api/auth/reset-password`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ token, password }),
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};

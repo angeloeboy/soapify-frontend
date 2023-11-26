@@ -10,12 +10,12 @@ export const PermissionsProvider = ({ children }) => {
 	const [permissions, setPermissions] = useState([]);
 
 	const fetchPermissions = () => {
-		console.log("running fetch permissions");
+		// console.log("running fetch permissions");
 		const permissionsFromCookie = Cookies.get("permissions");
 		if (permissionsFromCookie) {
 			try {
 				const parsedPermissions = JSON.parse(permissionsFromCookie);
-				console.log("Permissions from cookie:", parsedPermissions);
+				// console.log("Permissions from cookie:", parsedPermissions);
 				setPermissions(parsedPermissions);
 			} catch (error) {
 				console.error("Error parsing permissions:", error);

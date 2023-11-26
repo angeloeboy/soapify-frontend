@@ -36,7 +36,7 @@ export const connectToWebSocket = (onMessageReceived) => {
 		webSocket = new WebSocket(wsURL);
 
 		webSocket.onopen = () => {
-			console.log("WebSocket connection established");
+			// console.log("WebSocket connection established");
 		};
 
 		webSocket.onmessage = (event) => {

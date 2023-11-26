@@ -84,10 +84,8 @@ export const AppProvider = ({ children }) => {
 	useEffect(() => {
 		if (permissions === undefined || permissions.length <= 0) return;
 		setPermissions(permissions);
-		console.log("permissions", permissions);
 		setLoadingPermissions(false);
 		setSidebarData(generateSidebarData()); // Update sidebar data when permissions change
-		console.log("sidebarData", generateSidebarData());
 	}, [permissions]);
 
 	useEffect(() => {

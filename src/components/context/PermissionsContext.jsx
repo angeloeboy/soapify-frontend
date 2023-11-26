@@ -16,6 +16,7 @@ export const PermissionsProvider = ({ children }) => {
 				const parsedPermissions = JSON.parse(permissionsFromCookie);
 
 				setPermissions(parsedPermissions);
+				console.log("Permissions from cookie:", parsedPermissions);
 			} catch (error) {
 				console.error("Error parsing permissions:", error);
 				// Handle parsing error

@@ -78,8 +78,9 @@ export async function middleware(req) {
 			const url = req.nextUrl.clone();
 			url.pathname = "/";
 
-			// console.log(permissions);
+			console.log(data.permissions);
 			const next_response = response.ok ? NextResponse.next() : NextResponse.redirect(url);
+
 			next_response.cookies.set("permissions", JSON.stringify(data.permissions), {
 				httpOnly: false,
 				path: "/",

@@ -107,6 +107,8 @@ const PaymentMethods = (props) => {
 			<ComponentTitle>
 				<span onClick={() => props.setActiveAction("cart")}>{"<"}</span> Payment Methods
 			</ComponentTitle>
+			<p>prmos</p>
+			<input type="text" />
 			<PaymentMethodsContainer>
 				{paymentMethods.length <= 0 && <p>No payment Methods </p>}
 				{paymentMethods.map((payment) => {

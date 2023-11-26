@@ -14,7 +14,7 @@ import {
 	OrdersWrapper,
 } from "@/styled-components/ItemActionModal";
 import { CloseButton } from "../styled-components/PopUp";
-import { acceptCancelTransaction, acceptTransaction, setTransactionStatus } from "@/api/transaction";
+import { acceptCancelTransaction, acceptOrderReturnRefund, acceptTransaction, setTransactionStatus } from "@/api/transaction";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import styled from "styled-components";
@@ -174,6 +174,20 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 		toast.error(res.errors[0].message);
 	};
 
+	const acceptReturnRefundFunc = async () => {
+		const res = await acceptOrderReturnRefund(selectedTransaction.transaction_id);
+		console.log(res.message);
+
+		if (res.status === "Success") {
+			toast.success("Transaction accepted");
+			setIsOrdersInfoOpen(false);
+			fetchTransactions();
+			return;
+		}
+
+		toast.error(res.errors[0].message);
+	};
+
 	return (
 		<PopupOverlay>
 			<PopupContent>
@@ -251,8 +265,10 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 						{selectedTransaction.status === "CANCELLATION REQUESTED" && <button onClick={() => acceptCancellationFunc()}>Accept Cancellation</button>}
 						{selectedTransaction.status === "CANCELLATION REQUESTED" && <p>Reason: {selectedTransaction.status_notes}</p>}
 
-						{selectedTransaction.status === "REFUND/RETURN REQUESTED" && <button onClick={() => acceptCancellationFunc()}>Accept Cancellation</button>}
-						{selectedTransaction.status === "REFUND/RETURN REQUESTED" && <p>Reason: {selectedTransaction.status_notes}</p>}
+						{selectedTransaction.status === "RETURN/REFUND REQUESTED" && <button onClick={() => acceptReturnRefundFunc()}>Accept return/refund</button>}
+						{selectedTransaction.status === "RETURN/REFUND REQUESTED" && <p>Reason: {selectedTransaction.status_notes}</p>}
+
+						{selectedTransaction.status === "PAID" && <button onClick={() => updateStatus("RELEASED")}>Mark as released</button>}
 					</OrdersWrapper>
 				</FieldContainer>
 

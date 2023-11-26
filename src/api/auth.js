@@ -61,3 +61,32 @@ export const test = async () => {
 		return data;
 	} catch (error) {}
 };
+
+export const verifyEmail = async (token) => {
+	try {
+		const response = await fetch(`/api/auth/verify/${token}`, {
+			method: "GET",
+			credentials: "include",
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const resendVerificationEmail = async (email) => {
+	try {
+		const response = await fetch("/api/auth/verify/resend", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ email }),
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {}
+};

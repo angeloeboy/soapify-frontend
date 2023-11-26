@@ -14,7 +14,7 @@ import {
 	OrdersWrapper,
 } from "@/styled-components/ItemActionModal";
 import { CloseButton } from "../styled-components/PopUp";
-import { requestForCancelTransaction, setTransactionStatus } from "@/api/transaction";
+import { requestForCancelTransaction, requestOrderReturnRefund, setTransactionStatus } from "@/api/transaction";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 import Image from "next/image";
@@ -128,10 +128,31 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 	};
 
 	const requestForCancellationFunc = async () => {
+		if (notes == "") {
+			toast.error("Please enter a reason for cancellation");
+			return;
+		}
 		const res = await requestForCancelTransaction(selectedTransaction.transaction_id, notes);
 
 		if (res.status === "Success") {
 			toast.success("Request for cancellation sent");
+			setShowOrderInfo(false);
+			getTransactions();
+			return;
+		}
+
+		toast.error(res.errors[0].message);
+	};
+
+	const requestForReturnRefundFunc = async () => {
+		if (notes == "") {
+			toast.error("Please enter a reason for cancellation");
+			return;
+		}
+		const res = await requestOrderReturnRefund(selectedTransaction.transaction_id, notes);
+
+		if (res.status === "Success") {
+			toast.success("Request for return/refund sent");
 			setShowOrderInfo(false);
 			getTransactions();
 			return;
@@ -201,20 +222,26 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 					<OrdersWrapper>
 						<h5>Status: {selectedTransaction.status}</h5>
 						<p>Pickup date: {convertToDateFormat(selectedTransaction.pickup_date)}</p>
-						{selectedTransaction.status !== "CANCELLED" && selectedTransaction.status !== "DONE" && selectedTransaction.status !== "AWAITING PAYMENT" && (
+						{selectedTransaction.status !== "CANCELLED" &&
+							selectedTransaction.status !== "RELEASED" &&
+							selectedTransaction.status !== "CANCELLATION REQUESTED" && (
+								<>
+									<button onClick={() => requestForCancellationFunc()}>Request Cancellation</button>
+									<textarea type="text" value={notes} onChange={(e) => setNotes(e.target.value)} />
+								</>
+							)}
+
+						{selectedTransaction.status !== "CANCELLED" && selectedTransaction.status !== "AWAITING PAYMENT" && selectedTransaction.status == "RELEASED" && (
 							<>
-								<button onClick={() => requestForCancellationFunc()}>Request Cancellation</button>
+								<button onClick={() => requestForReturnRefundFunc()}>Request refund/return</button>
 								<textarea type="text" value={notes} onChange={(e) => setNotes(e.target.value)} />
 							</>
 						)}
-						{/* <button onClick={() => requestForCancellationFunc()}>Request Cancellation</button> */}
 					</OrdersWrapper>
 				</FieldContainer>
 
 				<ButtonsContainer>
 					<CloseButton onClick={() => setShowOrderInfo(false)}>Close </CloseButton>
-
-					{/* <Button onClick={() => addPaymentMethodFunc()}>Save</Button> */}
 				</ButtonsContainer>
 			</PopupContent>
 		</PopupOverlay>

@@ -199,12 +199,9 @@ const Orders = () => {
 export default Orders;
 
 import cookie from "cookie";
-
 export async function getServerSideProps(context) {
 	const { req } = context;
 	const parsedCookies = cookie.parse(req.headers.cookie || "").permissions;
-
-	console.log(parsedCookies);
 
 	if (!parsedCookies.includes("View Orders:orders")) {
 		return {

@@ -15,7 +15,6 @@ export const WebSocketProvider = ({ children }) => {
 
 		if (!res) return;
 		setnotifications(res.notifications);
-		console.log("Notifications", res.notifications);
 	};
 
 	useEffect(() => {
@@ -40,10 +39,10 @@ export const WebSocketProvider = ({ children }) => {
 				}
 			});
 
-			ws.onclose = () => {
-				console.log("WebSocket disconnected. Attempting to reconnect...");
-				setTimeout(connect, reconnectInterval); // Attempt to reconnect
-			};
+			// ws.onclose = () => {
+			// 	console.log("WebSocket disconnected. Attempting to reconnect...");
+			// 	setTimeout(connect, reconnectInterval); // Attempt to reconnect
+			// };
 
 			setWebSocket(ws);
 

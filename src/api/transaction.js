@@ -156,3 +156,38 @@ export const acceptCancelTransaction = async (id) => {
 		console.log(error);
 	}
 };
+
+export const requestOrderReturnRefund = async (id, notes) => {
+	try {
+		const response = await fetch(`/api/transactions/request/returnRefund/${id}`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ reason: notes }),
+			credentials: "include",
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const acceptOrderReturnRefund = async (id) => {
+	try {
+		const response = await fetch(`/api/transactions/accept/returnRefund/${id}`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			credentials: "include",
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};

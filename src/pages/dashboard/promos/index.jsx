@@ -2,12 +2,7 @@ import React, { useState, useEffect } from "react";
 import DashboardLayout from "@/components/misc/dashboardLayout";
 import PageTitle from "@/components/misc/pageTitle";
 import PdfExporter from "@/components/misc/pdfExporter";
-import Table, {
-  ActionContainer,
-  TableData,
-  TableHeadings,
-  TableRows,
-} from "@/styled-components/TableComponent";
+import Table, { ActionContainer, TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
 import StyledPanel from "@/styled-components/StyledPanel";
 import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -15,137 +10,127 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import PromoSearchBar from "@/components/promo/promoSearchBar";
 import AddPromo from "@/components/promo/addPromo";
+import { getPromos } from "@/api/promos";
+import { getProducts } from "@/api/products";
+import Pagination from "@/components/misc/pagination";
 
 const PromoPage = () => {
-  const [promotions, setPromotions] = useState([]);
-  const [activeActionContainer, setActiveActionContainer] = useState(-1);
-  const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false); // State to control the popup
+	const [promotions, setPromotions] = useState([]);
+	const [promotionsDisplay, setPromotionsDisplay] = useState([]);
+	const [activeActionContainer, setActiveActionContainer] = useState(-1);
+	const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false); // State to control the popup
+	const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    // Fetch promo data when the component mounts (can be replaced with API calls)
-    const staticPromoData = [
-      {
-        promotionID: "P001",
-        productName: "Product X",
-        promotionName: "50% Off Sale",
-        promotionType: "Discount",
-        startDate: "2023-01-15",
-        endDate: "2023-01-30",
-        discountPercentage: 50,
-        discountAmount: null,
-        originalPrice: 100.0,
-        promoPrice: 50.0,
-        status: "Active",
-        description: "Limited-time discount promotion.",
-      },
-      {
-        promotionID: "P002",
-        productName: "Product Y",
-        promotionName: "Buy One Get One Free",
-        promotionType: "BOGO",
-        startDate: "2023-02-20",
-        endDate: "2023-02-28",
-        discountPercentage: null,
-        discountAmount: null,
-        originalPrice: 20.0,
-        promoPrice: 20.0,
-        status: "Active",
-        description: "Special offer: Buy one, get one free!",
-      },
-      // Add more promo objects here as needed
-    ];
+	const [currentPage, setCurrentPage] = useState(1);
+	const [itemsPerPage, setItemsPerPage] = useState(10);
 
-    setPromotions(staticPromoData);
-  }, []);
+	const startIndex = (currentPage - 1) * itemsPerPage;
+	const endIndex = currentPage * itemsPerPage;
+	const paginatedPromotions = promotionsDisplay.slice(startIndex, endIndex);
 
-  const getPromotionsFunc = () => {
-    // Implement this function to fetch the latest promo data (e.g., from an API)
-    // Update the 'promotions' state with the fetched data
-  };
+	useEffect(() => {
+		getPromotionsFunc();
+	}, []);
 
-  return (
-    <DashboardLayout>
-      <PageTitle title="Promotions" />
+	const getPromotionsFunc = async () => {
+		setIsLoading(true);
+		const res = await getPromos();
 
-      <StyledPanel>
-        {/* Button to open the Add Promo popup */}
-        <PromoSearchBar
-          setIsAddPopUpOpen={setIsAddPopUpOpen}
-          setPromotionsDisplay={setPromotions}
-        />
+		if (!res) {
+			setIsLoading(false);
+			return;
+		}
 
-        <Table id="promos-table">
-          <tbody>
-            <TableRows $heading>
-              <TableHeadings>Promotion ID</TableHeadings>
-              <TableHeadings>Product Name</TableHeadings>
-              <TableHeadings>Promotion Name</TableHeadings>
-              <TableHeadings>Promotion Type</TableHeadings>
-              <TableHeadings>Start Date</TableHeadings>
-              <TableHeadings>End Date</TableHeadings>
-              <TableHeadings>Discount Percentage</TableHeadings>
-              <TableHeadings>Discount Amount</TableHeadings>
-              <TableHeadings>Original Price</TableHeadings>
-              <TableHeadings>Promotion Price</TableHeadings>
-              <TableHeadings>Status</TableHeadings>
-              <TableHeadings>Description</TableHeadings>
-              <TableHeadings>Actions</TableHeadings>
-            </TableRows>
+		if (res.status === "Success") {
+			setPromotions(res.promos);
+			setPromotionsDisplay(res.promos);
+			console.log(res.promos);
+		}
 
-            {promotions.map((promo, index) => (
-              <TableRows key={promo.promotionID}>
-                <TableData>{promo.promotionID}</TableData>
-                <TableData>{promo.productName}</TableData>
-                <TableData>{promo.promotionName}</TableData>
-                <TableData>{promo.promotionType}</TableData>
-                <TableData>{promo.startDate}</TableData>
-                <TableData>{promo.endDate}</TableData>
-                <TableData>{promo.discountPercentage}</TableData>
-                <TableData>{promo.discountAmount}</TableData>
-                <TableData>{promo.originalPrice}</TableData>
-                <TableData>{promo.promoPrice}</TableData>
-                <TableData>{promo.status}</TableData>
-                <TableData>{promo.description}</TableData>
-                <TableData>
-                  <FontAwesomeIcon
-                    className="ellipsis"
-                    icon={faEllipsis}
-                    onClick={() =>
-                      activeActionContainer === index
-                        ? setActiveActionContainer(-1)
-                        : setActiveActionContainer(index)
-                    }
-                  />
+		setIsLoading(false);
+	};
 
-                  {activeActionContainer === index && (
-                    <ActionContainer
-                      onClick={() => setActiveActionContainer(-1)}
-                    >
-                      <p>
-                        <FontAwesomeIcon icon={faPen} />
-                        Edit
-                      </p>
-                      <p>
-                        <FontAwesomeIcon icon={faTrash} /> Delete
-                      </p>
-                    </ActionContainer>
-                  )}
-                </TableData>
-              </TableRows>
-            ))}
-          </tbody>
-        </Table>
-        <PdfExporter tableId="promos-table" fileName="promos.pdf" />
-      </StyledPanel>
+	const convertToDateFormat = (date) => {
+		let newDate = new Date(date);
+		let formattedDate = newDate.toLocaleDateString("en-US", {
+			year: "numeric",
+			month: "long",
+			day: "numeric",
+		});
+		return formattedDate;
+	};
 
-      {isAddPopUpOpen && (
-        <AddPromo
-          setIsAddPopUpOpen={setIsAddPopUpOpen}
-          getPromotionsFunc={getPromotionsFunc}
-        />
-      )}
-    </DashboardLayout>
-  );
+	return (
+		<DashboardLayout>
+			<PageTitle title="Promotions" />
+
+			<StyledPanel>
+				{/* Button to open the Add Promo popup */}
+				<PromoSearchBar
+					setIsAddPopUpOpen={setIsAddPopUpOpen}
+					setPromotionsDisplay={setPromotionsDisplay}
+					promotions={promotions}
+					setCurrentPage={setCurrentPage}
+				/>
+
+				<Table id="promos-table">
+					<tbody>
+						<TableRows $heading>
+							<TableHeadings>Promotion Code</TableHeadings>
+							<TableHeadings>Type</TableHeadings>
+							<TableHeadings>Value</TableHeadings>
+							<TableHeadings>Max use</TableHeadings>
+							<TableHeadings>Current usage</TableHeadings>
+							<TableHeadings>Expiry</TableHeadings>
+							<TableHeadings>Actions</TableHeadings>
+						</TableRows>
+						{paginatedPromotions.map((promo, index) => (
+							<TableRows key={promo.promotionID}>
+								<TableData>{promo.promo_code}</TableData>
+								<TableData>{promo.promo_code_type}</TableData>
+								<TableData>
+									{promo.promo_code_value} {promo.promo_code_type == "PERCENTAGE" ? "%" : "PHP"}
+								</TableData>
+								<TableData>{promo.promo_code_max_use}</TableData>
+								<TableData>{promo.promo_code_current_use}</TableData>
+
+								<TableData>{convertToDateFormat(promo.promo_code_expiry)}</TableData>
+								<TableData>
+									<FontAwesomeIcon
+										className="ellipsis"
+										icon={faEllipsis}
+										onClick={() => (activeActionContainer === index ? setActiveActionContainer(-1) : setActiveActionContainer(index))}
+									/>
+
+									{activeActionContainer === index && (
+										<ActionContainer onClick={() => setActiveActionContainer(-1)}>
+											<p>
+												<FontAwesomeIcon icon={faPen} />
+												Edit
+											</p>
+											<p>
+												<FontAwesomeIcon icon={faTrash} /> Delete
+											</p>
+										</ActionContainer>
+									)}
+								</TableData>
+							</TableRows>
+						))}
+					</tbody>
+				</Table>
+				<PdfExporter tableId="promos-table" fileName="promos.pdf" />
+				<Pagination
+					setItemsPerPage={setItemsPerPage}
+					totalItems={promotionsDisplay.length}
+					itemsPerPage={itemsPerPage} //   this is correct
+					currentPage={currentPage}
+					onPageChange={setCurrentPage}
+				/>
+			</StyledPanel>
+
+			{isAddPopUpOpen && <AddPromo setIsAddPopUpOpen={setIsAddPopUpOpen} getPromotionsFunc={getPromotionsFunc} />}
+		</DashboardLayout>
+	);
 };
 
 export default PromoPage;

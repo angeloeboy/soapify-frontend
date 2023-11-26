@@ -23,7 +23,6 @@ export async function middleware(req) {
 				const decoded = jwt.decode(token.value, secretKey);
 				permissions = decoded.permissions || [];
 			} catch (verifyError) {
-				console.error("JWT verification error:", verifyError);
 				const url = req.nextUrl.clone();
 				url.pathname = "/login";
 				return NextResponse.redirect(url);
@@ -51,6 +50,7 @@ export async function middleware(req) {
 
 				// Set cookies before redirecting
 				const next_response = NextResponse.redirect(url);
+
 				next_response.cookies.set("permissions", JSON.stringify(permissions), {
 					httpOnly: false,
 					path: "/",
@@ -69,7 +69,6 @@ export async function middleware(req) {
 			});
 
 			let data = await response.json();
-			console.log(data);
 
 			if (data.user.role_id == 2) {
 				const url = req.nextUrl.clone();
@@ -79,21 +78,24 @@ export async function middleware(req) {
 
 			const url = req.nextUrl.clone();
 			url.pathname = "/";
-			// Set cookies here as well
+			permissions = data.permissions;
 			const next_response = response.ok ? NextResponse.next() : NextResponse.redirect(url);
-			next_response.cookies.set("permissions", JSON.stringify(permissions), {
+
+			next_response.cookies.set("permissions", JSON.stringify(data.permissions), {
 				httpOnly: false,
 				path: "/",
 			});
+
+			console.log("im herer");
 
 			return next_response;
 		}
 
 		const next_response = NextResponse.next();
-		next_response.cookies.set("permissions", JSON.stringify(permissions), {
-			httpOnly: false,
-			path: "/",
-		});
+		// next_response.cookies.set("permissions", JSON.stringify(permissions), {
+		// 	httpOnly: false,
+		// 	path: "/",
+		// });
 
 		return next_response;
 	} catch (error) {

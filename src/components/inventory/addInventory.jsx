@@ -5,10 +5,6 @@ import {
 	Label,
 	Option,
 	FieldContainer,
-	ProfilePictureContainer,
-	FileInput,
-	Centered,
-	SecondaryButton,
 	CloseButton,
 	ButtonsContainer,
 	PopupOverlay,
@@ -33,6 +29,7 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId }) => {
 		quantity: 1,
 		date_added: currentDate,
 		date_updated: currentDate,
+		expiry_date: currentDate,
 	});
 
 	const [products, setProducts] = useState([]);
@@ -46,6 +43,8 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId }) => {
 			// if (res.products.length > 0) {
 			// 	setInventory({ ...inventory, product_id: res.products[0].product_id });
 			// }
+
+			setInventory({ ...inventory, product_id: activeProducts[0].product_id });
 		});
 
 		console.log(inventory);
@@ -54,11 +53,6 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId }) => {
 	const addInventoryFunc = async (e) => {
 		e.preventDefault();
 		setLoading(true);
-		// await addInventory(inventory).then((res) => {
-		// 	console.log(res);
-		// });
-		// toast.success("Successfully added inventory");
-		// await getInventoryFunc();
 
 		const res = await addInventory(inventory);
 
@@ -67,7 +61,8 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId }) => {
 			await getInventoryFunc();
 			setIsAddPopUpOpen(false);
 		} else {
-			toast.error(res.errors[0].message);
+			// toast.error(res.errors[0].message);
+			console.log(res);
 		}
 
 		setLoading(false);
@@ -118,6 +113,11 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId }) => {
 								placeholder="Enter your Quantity Remaining"
 								onChange={(e) => setInventory({ ...inventory, date_added: e.target.value })}
 							/>
+						</div>
+
+						<div>
+							<FieldTitleLabel notFirst>Expiration date</FieldTitleLabel>
+							<InputHolder type="date" placeholder="" onChange={(e) => setInventory({ ...inventory, expiry_date: e.target.value })} />
 						</div>
 					</FieldContainer>
 

@@ -4,7 +4,7 @@ import { getPaymentMethods } from "@/api/pos";
 import { getProducts } from "@/api/products";
 import { getSuppliers } from "@/api/supplier";
 import { getAllWarehouse } from "@/api/warehouse";
-import { getTransactions } from "@/api/transaction"; 
+import { getTransactions } from "@/api/transaction";
 import { getUsers } from "@/api/users";
 import { getProductCategories } from "@/api/products";
 import DashboardLayout from "@/components/misc/dashboardLayout";
@@ -15,65 +15,66 @@ import ProductPerformance from "@/components/home/productPerformance";
 import AnnualSalesGraph from "@/components/home/annualSalesGraph";
 import ProductSalesGraph from "@/components/home/productSalesGraph";
 import { toast } from "react-toastify";
-import styled from 'styled-components';
+import styled from "styled-components";
+import { usePermissions } from "@/components/context/PermissionsContext";
 
 const DashboardGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-  margin: 20px;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+	gap: 20px;
+	margin: 20px;
 `;
 
 const DashboardCard = styled.div`
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  transition: transform 0.3s ease-in-out;
+	background-color: #fff;
+	border-radius: 10px;
+	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+	padding: 20px;
+	transition: transform 0.3s ease-in-out;
 
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.15);
-  }
+	&:hover {
+		transform: translateY(-5px);
+		box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.15);
+	}
 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
 `;
 
 const Title = styled.h3`
-  color: #333;
-  font-size: 1.2em;
-  margin-bottom: 10px;
+	color: #333;
+	font-size: 1.2em;
+	margin-bottom: 10px;
 `;
 
 const Count = styled.span`
-  color: #555;
-  font-size: 1.5em;
-  font-weight: bold;
+	color: #555;
+	font-size: 1.5em;
+	font-weight: bold;
 `;
 
 const Button = styled.button`
-  padding: 8px 16px;
-  border: none;
-  border-radius: 5px;
-  background-color: #3498db;
-  color: #fff;
-  font-size: 1em;
-  cursor: pointer;
-  transition: background-color 0.3s ease-in-out;
+	padding: 8px 16px;
+	border: none;
+	border-radius: 5px;
+	background-color: #3498db;
+	color: #fff;
+	font-size: 1em;
+	cursor: pointer;
+	transition: background-color 0.3s ease-in-out;
 
-  &:hover {
-    background-color: #2980b9;
-  }
+	&:hover {
+		background-color: #2980b9;
+	}
 `;
 
 const Dashboard = () => {
 	const [data, setData] = useState({});
 	const [salesData, setSalesData] = useState([]);
 	const [ordersData, setOrdersData] = useState([]);
-	const [supplierCount,setSupplierCount]= useState(0);
+	const [supplierCount, setSupplierCount] = useState(0);
 	const [productCount, setProductCount] = useState(0);
 	const [warehouseCount, setWarehouseCount] = useState(0);
 	const [userCount, setUserCount] = useState(0);
@@ -82,12 +83,10 @@ const Dashboard = () => {
 	const [paymentCount, setPaymentMethodCount] = useState(0);
 	const [subcategoriesCount, setsubcategoriesCount] = useState(0);
 
-
-
-
-
+	const { fetchPermissions } = usePermissions();
 
 	useEffect(() => {
+		fetchPermissions();
 		fetchHomeData();
 
 		fetchProductCount();
@@ -98,12 +97,6 @@ const Dashboard = () => {
 		fetchTransactionCount();
 		fetchPaymentMethodCount();
 		fetchSubcategoriesCount();
-
-
-
-
-
-
 	}, []);
 
 	useEffect(() => {
@@ -119,147 +112,125 @@ const Dashboard = () => {
 
 	const fetchProductCount = async () => {
 		try {
-		  const productsData = await getProducts();
-		  if (productsData && Array.isArray(productsData.products)) {
-			setProductCount(productsData.products.length);
- 		  }
- 
+			const productsData = await getProducts();
+			if (productsData && Array.isArray(productsData.products)) {
+				setProductCount(productsData.products.length);
+			}
 		} catch (error) {
-		  console.error("Error fetching product count: ", error);
+			console.error("Error fetching product count: ", error);
 		}
-		
-	  };
+	};
 
-	  const fetchSupplierCount = async () => {
+	const fetchSupplierCount = async () => {
 		try {
-		  const supplierData = await getSuppliers();
-		  if (supplierData && Array.isArray(supplierData.suppliers)) {
-			setSupplierCount(supplierData.suppliers.length);
- 		  }
-		  console.log(supplierData)
- 
+			const supplierData = await getSuppliers();
+			if (supplierData && Array.isArray(supplierData.suppliers)) {
+				setSupplierCount(supplierData.suppliers.length);
+			}
+			console.log(supplierData);
 		} catch (error) {
-		  console.error("Error fetching product count: ", error);
+			console.error("Error fetching product count: ", error);
 		}
-		
-	  };
+	};
 
-
-
-
-	  const fetchWarehouseCount = async () => {
+	const fetchWarehouseCount = async () => {
 		try {
-		  const warehouseData = await getAllWarehouse();
-		  if (warehouseData && Array.isArray(warehouseData.warehouses)) {
-			setWarehouseCount(warehouseData.warehouses.length);
- 		  }
-		  console.log(warehouseData)
- 
+			const warehouseData = await getAllWarehouse();
+			if (warehouseData && Array.isArray(warehouseData.warehouses)) {
+				setWarehouseCount(warehouseData.warehouses.length);
+			}
+			console.log(warehouseData);
 		} catch (error) {
-		  console.error("Error fetching product count: ", error);
+			console.error("Error fetching product count: ", error);
 		}
-		
-	  };
+	};
 
-	  const fetchUserCount = async () => {
+	const fetchUserCount = async () => {
 		try {
-		  const userData = await getUsers();
-		  if (userData && Array.isArray(userData.users)) {
-			setUserCount(userData.users.length);
- 		  }
-		  console.log(userData)
- 
+			const userData = await getUsers();
+			if (userData && Array.isArray(userData.users)) {
+				setUserCount(userData.users.length);
+			}
+			console.log(userData);
 		} catch (error) {
-		  console.error("Error fetching product count: ", error);
+			console.error("Error fetching product count: ", error);
 		}
-		
-	  };
+	};
 
-
-
-	  const fetchProductCategoriesCount = async () => {
+	const fetchProductCategoriesCount = async () => {
 		try {
-		  const categoriesData = await getProductCategories();
-		  if (categoriesData && Array.isArray(categoriesData.categories)) {
-			setCategoriesCount(categoriesData.categories.length);
- 		  }
-		  console.log(categoriesData)
- 
+			const categoriesData = await getProductCategories();
+			if (categoriesData && Array.isArray(categoriesData.categories)) {
+				setCategoriesCount(categoriesData.categories.length);
+			}
+			console.log(categoriesData);
 		} catch (error) {
-		  console.error("Error fetching product count: ", error);
+			console.error("Error fetching product count: ", error);
 		}
-		
-	  };
+	};
 
-	  const fetchTransactionCount = async () => {
+	const fetchTransactionCount = async () => {
 		try {
-		  const transactionData = await getTransactions();
-		  if (transactionData && Array.isArray(transactionData.transactions)) {
-			setTransactionCount(transactionData.transactions.length);
- 		  }
-		  console.log(transactionData)
- 
+			const transactionData = await getTransactions();
+			if (transactionData && Array.isArray(transactionData.transactions)) {
+				setTransactionCount(transactionData.transactions.length);
+			}
+			console.log(transactionData);
 		} catch (error) {
-		  console.error("Error fetching product count: ", error);
+			console.error("Error fetching product count: ", error);
 		}
-		
-	  };
-	  const fetchPaymentMethodCount = async () => {
+	};
+	const fetchPaymentMethodCount = async () => {
 		try {
-		  const paymentData = await getPaymentMethods();
-		  if (paymentData && Array.isArray(paymentData.paymentMethods)) {
-			setPaymentMethodCount(paymentData.paymentMethods.length);
- 		  }
-		  console.log(paymentData)
- 
+			const paymentData = await getPaymentMethods();
+			if (paymentData && Array.isArray(paymentData.paymentMethods)) {
+				setPaymentMethodCount(paymentData.paymentMethods.length);
+			}
+			console.log(paymentData);
 		} catch (error) {
-		  console.error("Error fetching product count: ", error);
+			console.error("Error fetching product count: ", error);
 		}
-		
-	  };
+	};
 
-	  const fetchSubcategoriesCount = async () => {
+	const fetchSubcategoriesCount = async () => {
 		try {
-		  const subcategoriesData = await getSubCategories();
-		  if (subcategoriesData && Array.isArray(subcategoriesData.subcategories)) {
-			setsubcategoriesCount(subcategoriesData.subcategories.length);
- 		  }
-		  console.log(subcategoriesData)
- 
+			const subcategoriesData = await getSubCategories();
+			if (subcategoriesData && Array.isArray(subcategoriesData.subcategories)) {
+				setsubcategoriesCount(subcategoriesData.subcategories.length);
+			}
+			console.log(subcategoriesData);
 		} catch (error) {
-		  console.error("Error fetching product count: ", error);
+			console.error("Error fetching product count: ", error);
 		}
-		
-	  };
+	};
 
-	  const router = useRouter();
-	
-	  const handleViewProducts = () => {
-		router.push('/dashboard/products'); 
-	  };
-	  const handleViewSuppliers = () => {
-		router.push('/dashboard/suppliers');  
-	  };
-	  const handleViewWarehouses = () => {
-		router.push('/dashboard/warehouse');  
-	  };
-	  const handleViewUser = () => {
-		router.push('/dashboard/user');  
-	  };
-	  const handleViewCategories = () => {
-		router.push('/dashboard/products/categories');  
-	  };
-	  const handleViewOrders = () => {
-		router.push('/dashboard/orders');  
-	  };
+	const router = useRouter();
 
-	  const handleViewPaymentMethod = () => {
-		router.push('/dashboard/payment');  
-	  };
-	  const handleViewSubcategories = () => {
-		router.push('/dashboard/products/subcategories');  
-	  };
+	const handleViewProducts = () => {
+		router.push("/dashboard/products");
+	};
+	const handleViewSuppliers = () => {
+		router.push("/dashboard/suppliers");
+	};
+	const handleViewWarehouses = () => {
+		router.push("/dashboard/warehouse");
+	};
+	const handleViewUser = () => {
+		router.push("/dashboard/user");
+	};
+	const handleViewCategories = () => {
+		router.push("/dashboard/products/categories");
+	};
+	const handleViewOrders = () => {
+		router.push("/dashboard/orders");
+	};
 
+	const handleViewPaymentMethod = () => {
+		router.push("/dashboard/payment");
+	};
+	const handleViewSubcategories = () => {
+		router.push("/dashboard/products/subcategories");
+	};
 
 	const getSalesData = () => {
 		let salesData = [];
@@ -279,8 +250,6 @@ const Dashboard = () => {
 
 		return salesData;
 	};
-
-
 
 	const getOrdersData = () => {
 		let ordersData = [];
@@ -333,48 +302,46 @@ const Dashboard = () => {
 			</div>
 			<ProductPerformance />
 			<DashboardGrid>
-        <DashboardCard>
-          <Title>Total Products </Title>  
-		  <Count>
-		  {productCount}
-			 </Count>   
-          <Button onClick={handleViewProducts}>View Products</Button>
-        </DashboardCard>
-        <DashboardCard>
-          <Title>Total Supplier:</Title> 
-		  <Count>{supplierCount}</Count>    
-		  <Button onClick={handleViewSuppliers}>View Suppliers</Button>
-        </DashboardCard>
-        <DashboardCard>
-          <Title>Total no of warehouse: </Title> 
-		  <Count>{warehouseCount} </Count>  
-          <Button onClick={handleViewWarehouses}>View Warehouses</Button>
-        </DashboardCard>
-        <DashboardCard>
-          <Title>Total no of user:</Title>  
-		  <Count>{userCount}</Count> 
-          <Button onClick={handleViewUser}>View User</Button>
-        </DashboardCard>
-        <DashboardCard>
-          <Title>Total no of product categories: </Title> 
-		  <Count>{categoriesCount} </Count>   
-          <Button onClick={handleViewCategories}>View Categories</Button>
-        </DashboardCard>
-        <DashboardCard>
-          <Title>Total no of orders:</Title> <Count> {TransactionCount}</Count>
-          <Button onClick={handleViewOrders}>View Orders</Button>
-        </DashboardCard>
-        <DashboardCard>
-          <Title> Total no of payment methods: </Title> <Count>{paymentCount} </Count>  
-          <Button onClick={handleViewPaymentMethod}>View Payment Method</Button>
-        </DashboardCard>
-        <DashboardCard>
-          <Title>Total no of product subcategories:</Title>
+				<DashboardCard>
+					<Title>Total Products </Title>
+					<Count>{productCount}</Count>
+					<Button onClick={handleViewProducts}>View Products</Button>
+				</DashboardCard>
+				<DashboardCard>
+					<Title>Total Supplier:</Title>
+					<Count>{supplierCount}</Count>
+					<Button onClick={handleViewSuppliers}>View Suppliers</Button>
+				</DashboardCard>
+				<DashboardCard>
+					<Title>Total no of warehouse: </Title>
+					<Count>{warehouseCount} </Count>
+					<Button onClick={handleViewWarehouses}>View Warehouses</Button>
+				</DashboardCard>
+				<DashboardCard>
+					<Title>Total no of user:</Title>
+					<Count>{userCount}</Count>
+					<Button onClick={handleViewUser}>View User</Button>
+				</DashboardCard>
+				<DashboardCard>
+					<Title>Total no of product categories: </Title>
+					<Count>{categoriesCount} </Count>
+					<Button onClick={handleViewCategories}>View Categories</Button>
+				</DashboardCard>
+				<DashboardCard>
+					<Title>Total no of orders:</Title> <Count> {TransactionCount}</Count>
+					<Button onClick={handleViewOrders}>View Orders</Button>
+				</DashboardCard>
+				<DashboardCard>
+					<Title> Total no of payment methods: </Title> <Count>{paymentCount} </Count>
+					<Button onClick={handleViewPaymentMethod}>View Payment Method</Button>
+				</DashboardCard>
+				<DashboardCard>
+					<Title>Total no of product subcategories:</Title>
 
- 		  <Count>{subcategoriesCount}</Count>
-		  <Button onClick={handleViewSubcategories}>View Subcategories</Button>
-         </DashboardCard>
-      </DashboardGrid>
+					<Count>{subcategoriesCount}</Count>
+					<Button onClick={handleViewSubcategories}>View Subcategories</Button>
+				</DashboardCard>
+			</DashboardGrid>
 		</DashboardLayout>
 	);
 };

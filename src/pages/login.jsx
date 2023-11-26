@@ -1,5 +1,5 @@
 import Button from "@/components/misc/button";
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import { useState } from "react";
 import { login, logout, test } from "@/api/auth";
@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { usePermissions } from "@/components/context/PermissionsContext";
 
 const LoginContainer = styled.div`
 	height: 100vh;
@@ -115,7 +116,7 @@ let Login = () => {
 
 				if (res.status == "Success") {
 					//do actions here
-					console.log("success");
+
 					router.push("/dashboard");
 					return;
 				}

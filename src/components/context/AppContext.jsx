@@ -73,14 +73,6 @@ export const AppProvider = ({ children }) => {
 		activeSubmenuItemIndex: -1,
 	});
 
-	// useEffect(() => {
-	// 	if (permissions === undefined || permissions.length <= 0) return;
-	// 	setPermissions(permissions);
-	// 	console.log("permissions", permissions);
-	// 	setLoadingPermissions(false);
-	// 	setSidebarData(generateSidebarData()); // Update sidebar data when permissions change
-	// }, [permissions]);
-
 	useEffect(() => {
 		if (permissions === undefined || permissions.length <= 0) return;
 		setPermissions(permissions);

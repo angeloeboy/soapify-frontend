@@ -74,7 +74,7 @@ export async function middleware(req) {
 
 			let data = await response.json();
 
-			if (data.user.role_id == 2) {
+			if (data?.user?.role_id == 2) {
 				const url = req.nextUrl.clone();
 				url.pathname = "/user";
 				return NextResponse.redirect(url);

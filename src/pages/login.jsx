@@ -112,8 +112,6 @@ let Login = () => {
 		setIsLoggingIn(true);
 		login(credentials)
 			.then((res) => {
-				setIsLoggingIn(false);
-
 				if (res.status == "Success") {
 					//do actions here
 
@@ -135,6 +133,8 @@ let Login = () => {
 					password: passwordErrorMessage || "",
 					email: emailErrorMessage || "",
 				});
+
+				setIsLoggingIn(false);
 			})
 			.catch((err) => {
 				console.log(err);

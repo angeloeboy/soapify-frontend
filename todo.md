@@ -16,6 +16,10 @@ add promo - DONE
 
 field for promo - DONE
 
+promo codes - DONE
+
+use promo - DONE
+
 send receipt to email
 
 Warehouse
@@ -31,7 +35,3 @@ notifications
 box to pcs
 
 pcs to box
-
-promo codes
-
-use promo

@@ -52,6 +52,7 @@ export const AppProvider = ({ children }) => {
 					{ title: "Warehouse", link: "/dashboard/warehouse" },
 					{ title: "Payment Methods", link: "/dashboard/payment" },
 					{ title: "Roles", link: "/dashboard/roles" },
+					{ title: "User Settings", link: "/dashboard/user-settings" },
 				],
 			},
 		];
@@ -72,14 +73,6 @@ export const AppProvider = ({ children }) => {
 		activeMenuIndex: -1,
 		activeSubmenuItemIndex: -1,
 	});
-
-	// useEffect(() => {
-	// 	if (permissions === undefined || permissions.length <= 0) return;
-	// 	setPermissions(permissions);
-	// 	console.log("permissions", permissions);
-	// 	setLoadingPermissions(false);
-	// 	setSidebarData(generateSidebarData()); // Update sidebar data when permissions change
-	// }, [permissions]);
 
 	useEffect(() => {
 		if (permissions === undefined || permissions.length <= 0) return;

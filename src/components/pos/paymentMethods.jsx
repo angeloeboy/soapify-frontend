@@ -12,6 +12,7 @@ import Image from "next/image";
 import { addTransaction } from "@/api/transaction";
 import { toast } from "react-toastify";
 import Receipt from "./receipt";
+import PromoCode from "./promo_code";
 
 const PaymentMethod = styled.div`
 	margin-bottom: 16px;
@@ -107,8 +108,6 @@ const PaymentMethods = (props) => {
 			<ComponentTitle>
 				<span onClick={() => props.setActiveAction("cart")}>{"<"}</span> Payment Methods
 			</ComponentTitle>
-			<p>prmos</p>
-			<input type="text" />
 			<PaymentMethodsContainer>
 				{paymentMethods.length <= 0 && <p>No payment Methods </p>}
 				{paymentMethods.map((payment) => {

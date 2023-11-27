@@ -28,3 +28,20 @@ export const editUser = async (user, user_id) => {
 		return data;
 	} catch (error) {}
 };
+
+export const getUser = async () => {
+	try {
+		const res = await fetch(`/api/users/user`, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			credentials: "include",
+		});
+
+		const data = await res.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};

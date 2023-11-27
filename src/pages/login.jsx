@@ -1,5 +1,5 @@
 import Button from "@/components/misc/button";
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import { useState } from "react";
 import { login, logout, test } from "@/api/auth";
@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { usePermissions } from "@/components/context/PermissionsContext";
 
 const LoginContainer = styled.div`
 	height: 100vh;
@@ -111,11 +112,9 @@ let Login = () => {
 		setIsLoggingIn(true);
 		login(credentials)
 			.then((res) => {
-				setIsLoggingIn(false);
-
 				if (res.status == "Success") {
 					//do actions here
-					console.log("success");
+
 					router.push("/dashboard");
 					return;
 				}
@@ -134,6 +133,8 @@ let Login = () => {
 					password: passwordErrorMessage || "",
 					email: emailErrorMessage || "",
 				});
+
+				setIsLoggingIn(false);
 			})
 			.catch((err) => {
 				console.log(err);
@@ -200,7 +201,7 @@ let Login = () => {
 						/>
 						{errorMessages.password && <Error>{errorMessages.password}</Error>}
 
-						<Link href="/">Forgot Password</Link>
+						<Link href="/forgot-password">Forgot Password</Link>
 
 						<Button className="loginBtn" width="100%" onClick={(e) => handleLogin(e)}>
 							{loggingIn ? <FontAwesomeIcon icon={faSpinner} spin /> : "Log In"}

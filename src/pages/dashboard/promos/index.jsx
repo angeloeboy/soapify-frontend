@@ -42,9 +42,9 @@ const PromoPage = () => {
 		}
 
 		if (res.status === "Success") {
-			setPromotions(res.promos);
-			setPromotionsDisplay(res.promos);
-			console.log(res.promos);
+			console.log(res.data);
+			setPromotions(res.data);
+			setPromotionsDisplay(res.data);
 		}
 
 		setIsLoading(false);

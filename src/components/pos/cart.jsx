@@ -11,6 +11,7 @@ import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { PDFDocument, rgb } from "pdf-lib";
 import { getTransaction } from "@/api/transaction";
 import { TransactionContext } from "../context/TransactionContext";
+import PromoCode from "./promo_code";
 
 const CartTable = styled.table`
 	width: 100%;
@@ -102,6 +103,12 @@ const Product = styled.div`
 			font-size: 14px;
 			font-weight: 700;
 			margin-top: 16px;
+
+			.dashed {
+				text-decoration: line-through;
+				color: red;
+				opacity: 0.7;
+			}
 		}
 
 		.wrapper {
@@ -356,7 +363,12 @@ const Cart = ({ setActiveAction }) => {
 									</p>
 								</div>
 
-								<p className="productPrice">P{item.product_price / 100}</p>
+								<p className="productPrice">
+									<span className={item.isDiscounted ? "origPrice dashed" : "origPrice"}>
+										P{item.isDiscounted ? item.orig_price / 100 : item.product_price / 100}{" "}
+									</span>
+									{item.isDiscounted && <span>P{item.product_price / 100}</span>}
+								</p>
 							</div>
 
 							<div className="quantity">
@@ -370,6 +382,15 @@ const Cart = ({ setActiveAction }) => {
 									onChange={(e) => {
 										const valueAsString = e.target.value;
 										const valueAsNumber = Number(valueAsString); // convert to number
+
+										//if the quantity_in_stock is smaller than the valueAsNumber, set the valueAsNumber to the quantity_in_stock
+										if (valueAsNumber > item.quantity_in_stock) {
+											let updatedCart = cart.map((product) =>
+												product.product_id === item.product_id ? { ...product, quantity: item.quantity_in_stock } : product
+											);
+											setCart(updatedCart);
+											return;
+										}
 
 										if (valueAsString === "") {
 											let updatedCart = cart.map((product) => (product.product_id === item.product_id ? { ...product, quantity: 0 } : product));
@@ -416,6 +437,9 @@ const Cart = ({ setActiveAction }) => {
 				<p>Total</p>
 				<p>{total}</p>
 			</Total>
+
+			<PromoCode />
+
 			<Button
 				width={"100%"}
 				onClick={() => {

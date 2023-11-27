@@ -92,8 +92,8 @@ const Product = styled.div`
 	}
 
 	.minus {
-		/* opacity: ${(props) => (props.active ? "1" : "0.5")}; */
-		opacity: 1;
+		opacity: ${(props) => (props.active ? "1" : "0.5")};
+		/* opacity: 1; */
 	}
 
 	.delete {
@@ -235,7 +235,7 @@ const ProductComponent = ({ product, onClick, index }) => {
 						if (item.quantity == 0) return;
 						updateCart(item, "subtract");
 					}}
-					className="minus"
+					className={item.quantity > 0 ? "minus" : "minus disabled"}
 				>
 					<FontAwesomeIcon icon={faMinus} />
 				</span>
@@ -245,6 +245,13 @@ const ProductComponent = ({ product, onClick, index }) => {
 					onChange={(e) => {
 						const valueAsString = e.target.value;
 						const valueAsNumber = Number(valueAsString); // convert to number
+
+						//if the quantity_in_stock is smaller than the valueAsNumber, set the valueAsNumber to the quantity_in_stock
+						if (valueAsNumber > item.quantity_in_stock) {
+							let updatedCart = cart.map((product) => (product.product_id === item.product_id ? { ...product, quantity: item.quantity_in_stock } : product));
+							setCart(updatedCart);
+							return;
+						}
 
 						if (valueAsString === "") {
 							let updatedCart = cart.map((product) => (product.product_id === item.product_id ? { ...product, quantity: 0 } : product));

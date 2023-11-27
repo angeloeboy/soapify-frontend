@@ -44,6 +44,8 @@ export async function middleware(req) {
 				},
 			});
 
+			let data = await response.json();
+
 			if (response.ok) {
 				const url = req.nextUrl.clone();
 				url.pathname = "/dashboard";
@@ -51,10 +53,12 @@ export async function middleware(req) {
 				// Set cookies before redirecting
 				const next_response = NextResponse.redirect(url);
 
-				next_response.cookies.set("permissions", JSON.stringify(permissions), {
-					httpOnly: false,
-					path: "/",
-				});
+				permissions = data.permissions;
+
+				// next_response.cookies.set("permissions", JSON.stringify(data.permissions), {
+				// 	httpOnly: false,
+				// 	path: "/",
+				// });
 
 				return next_response;
 			}
@@ -70,7 +74,7 @@ export async function middleware(req) {
 
 			let data = await response.json();
 
-			if (data.user.role_id == 2) {
+			if (data?.user?.role_id == 2) {
 				const url = req.nextUrl.clone();
 				url.pathname = "/user";
 				return NextResponse.redirect(url);
@@ -85,8 +89,6 @@ export async function middleware(req) {
 				httpOnly: false,
 				path: "/",
 			});
-
-			console.log("im herer");
 
 			return next_response;
 		}

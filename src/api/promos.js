@@ -46,3 +46,20 @@ export const addPromo = async (promo, product_ids) => {
 		console.log(error);
 	}
 };
+
+export const validatePromo = async (promoCode, items) => {
+	try {
+		const res = await fetch(`/api/promos/validate`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ promoCode, items }),
+		});
+
+		const data = await res.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};

@@ -73,6 +73,7 @@ const Pos = () => {
 	});
 
 	const [parentProducts, setParentProducts] = useState([]);
+	const [parentProductsDisplay, setParentProductsDisplay] = useState([]);
 
 	const [windowWidth, setWindowWidth] = useState(1200);
 
@@ -149,6 +150,7 @@ const Pos = () => {
 		});
 
 		setParentProducts(parentProduct);
+		setParentProductsDisplay(parentProduct);
 		// groupProductsByParentProductId2(products);
 	};
 
@@ -196,11 +198,16 @@ const Pos = () => {
 				<PageTitle title="POS" />
 				<POSWrapper>
 					<StyledPanel pos={true}>
-						<PosSearchBar products={products} setProductDisplay={setProductDisplay} />
+						<PosSearchBar
+							products={products}
+							setProductDisplay={setProductDisplay}
+							parentProducts={parentProducts}
+							setParentProductsDisplay={setParentProductsDisplay}
+						/>
 
 						<ProductsList>
 							{parentProducts.length !== 0 &&
-								parentProducts.map((parentProduct, index) => {
+								parentProductsDisplay.map((parentProduct, index) => {
 									if (parentProduct.products.length <= 0) return null;
 
 									return <ParentProductDisplay key={index} parentProduct={parentProduct} updateCart={updateCart} />;

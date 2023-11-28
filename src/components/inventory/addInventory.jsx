@@ -19,6 +19,7 @@ import { addProduct, getProducts } from "@/api/products";
 import { addInventory } from "@/api/inventory";
 import { toast } from "react-toastify";
 import Image from "next/image";
+import { getAllWarehouse } from "@/api/warehouse";
 
 const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId }) => {
 	const currentDate = new Date().toISOString();
@@ -30,10 +31,13 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId }) => {
 		date_added: currentDate,
 		date_updated: currentDate,
 		expiry_date: currentDate,
+		warehouse_id: 0,
+		area_id: 0,
 	});
 
 	const [products, setProducts] = useState([]);
-
+	const [warehouses, setWarehouses] = useState([]);
+	const [areas, setAreas] = useState([]);
 	const fetchProducts = () => {
 		getProducts().then((res) => {
 			console.log(res);
@@ -48,6 +52,20 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId }) => {
 		});
 
 		console.log(inventory);
+	};
+
+	const fetchWarehouses = async () => {
+		const res = await getAllWarehouse();
+		console.log(res);
+
+		if (!res) return;
+
+		if (res.warehouses.length > 0) {
+			setInventory({ ...inventory, warehouse_id: res.warehouses[0].warehouse_id, area_id: res.warehouses[0].areas[0]?.area_id });
+			setAreas(res.warehouses[0]?.areas);
+		}
+
+		res ? setWarehouses(res.warehouses) : setWarehouses([]);
 	};
 
 	const addInventoryFunc = async (e) => {
@@ -69,7 +87,16 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId }) => {
 	};
 
 	useEffect(() => {
+		setInventory({ ...inventory, area_id: 0 });
+		warehouses.map((warehouse) => {
+			if (warehouse.warehouse_id != inventory.warehouse_id) return;
+			setAreas(warehouse.areas);
+		});
+	}, [inventory.warehouse_id]);
+
+	useEffect(() => {
 		fetchProducts();
+		fetchWarehouses();
 	}, []);
 
 	return (
@@ -119,6 +146,33 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId }) => {
 							<FieldTitleLabel notFirst>Expiration date</FieldTitleLabel>
 							<InputHolder type="date" placeholder="" onChange={(e) => setInventory({ ...inventory, expiry_date: e.target.value })} />
 						</div>
+
+						<div>
+							<FieldTitleLabel notFirst>Warehouse</FieldTitleLabel>
+							<Select value={inventory.warehouse_id} onChange={(e) => setInventory({ ...inventory, warehouse_id: e.target.value })}>
+								{warehouses.map((warehouse) => {
+									return (
+										<Option value={warehouse.warehouse_id} key={warehouse.warehouse_id}>
+											{warehouse.warehouse_name}
+										</Option>
+									);
+								})}
+							</Select>
+						</div>
+						{areas.length > 0 && (
+							<div>
+								<FieldTitleLabel notFirst>Area</FieldTitleLabel>
+								<Select value={inventory.area_id} onChange={(e) => setInventory({ ...inventory, area_id: e.target.value })}>
+									{areas.map((area) => {
+										return (
+											<Option value={area.area_id} key={area.area_id}>
+												{area.area_name}
+											</Option>
+										);
+									})}
+								</Select>
+							</div>
+						)}
 					</FieldContainer>
 
 					<ButtonsContainer>

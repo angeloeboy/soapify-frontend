@@ -22,7 +22,7 @@ import Image from "next/image";
 import { getAllWarehouse } from "@/api/warehouse";
 
 const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId }) => {
-	const currentDate = new Date().toISOString();
+	const currentDate = new Date().toISOString().split("T")[0];
 
 	const [loading, setLoading] = useState(false);
 	const [inventory, setInventory] = useState({
@@ -38,39 +38,38 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId }) => {
 	const [products, setProducts] = useState([]);
 	const [warehouses, setWarehouses] = useState([]);
 	const [areas, setAreas] = useState([]);
-	const fetchProducts = () => {
+
+	const fetchProducts = async () => {
 		getProducts().then((res) => {
-			console.log(res);
 			const activeProducts = res.products.filter((product) => product.isActive);
 
 			res ? setProducts(activeProducts) : setProducts([]);
-			// if (res.products.length > 0) {
-			// 	setInventory({ ...inventory, product_id: res.products[0].product_id });
-			// }
 
 			setInventory({ ...inventory, product_id: activeProducts[0].product_id });
 		});
-
-		console.log(inventory);
 	};
 
 	const fetchWarehouses = async () => {
 		const res = await getAllWarehouse();
-		console.log(res);
 
 		if (!res) return;
 
-		if (res.warehouses.length > 0) {
-			setInventory({ ...inventory, warehouse_id: res.warehouses[0].warehouse_id, area_id: res.warehouses[0].areas[0]?.area_id });
-			setAreas(res.warehouses[0]?.areas);
+		if (res && res.warehouses.length > 0) {
+			setWarehouses(res.warehouses);
+			setAreas(res.warehouses[0].areas);
 		}
-
-		res ? setWarehouses(res.warehouses) : setWarehouses([]);
 	};
 
 	const addInventoryFunc = async (e) => {
 		e.preventDefault();
 		setLoading(true);
+
+		//make sure expiry date is not before date added
+		if (inventory.expiry_date && inventory.date_added > inventory.expiry_date) {
+			toast.error("Expiry date cannot be before date added");
+			setLoading(false);
+			return;
+		}
 
 		const res = await addInventory(inventory);
 
@@ -80,24 +79,45 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId }) => {
 			setIsAddPopUpOpen(false);
 		} else {
 			// toast.error(res.errors[0].message);
-			console.log(res);
 		}
 
 		setLoading(false);
 	};
 
 	useEffect(() => {
-		setInventory({ ...inventory, area_id: 0 });
-		warehouses.map((warehouse) => {
-			if (warehouse.warehouse_id != inventory.warehouse_id) return;
-			setAreas(warehouse.areas);
-		});
-	}, [inventory.warehouse_id]);
+		const selectedWarehouse = warehouses.find((warehouse) => warehouse.warehouse_id === inventory.warehouse_id);
+		if (selectedWarehouse) {
+			setAreas(selectedWarehouse.areas);
+			if (selectedWarehouse.areas.length > 0) {
+				setInventory((inv) => ({ ...inv, area_id: selectedWarehouse.areas[0].area_id }));
+			} else {
+				setInventory((inv) => ({ ...inv, area_id: 0 }));
+			}
+		}
+	}, [inventory.warehouse_id, warehouses]);
 
 	useEffect(() => {
-		fetchProducts();
-		fetchWarehouses();
+		if (warehouses.length > 0) {
+			setInventory((inv) => ({ ...inv, warehouse_id: warehouses[0].warehouse_id }));
+		}
+
+		if (products.length > 0) {
+			setInventory((inv) => ({ ...inv, product_id: products[0].product_id }));
+		}
+	}, [warehouses, products]);
+
+	useEffect(() => {
+		setup();
 	}, []);
+
+	const setup = async () => {
+		await fetchWarehouses();
+		await fetchProducts();
+	};
+
+	useEffect(() => {
+		console.log(inventory);
+	}, [inventory]);
 
 	return (
 		<PopupOverlay>
@@ -139,17 +159,23 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId }) => {
 								type="date"
 								placeholder="Enter your Quantity Remaining"
 								onChange={(e) => setInventory({ ...inventory, date_added: e.target.value })}
+								value={inventory.date_added}
 							/>
 						</div>
 
 						<div>
 							<FieldTitleLabel notFirst>Expiration date</FieldTitleLabel>
-							<InputHolder type="date" placeholder="" onChange={(e) => setInventory({ ...inventory, expiry_date: e.target.value })} />
+							<InputHolder
+								type="date"
+								placeholder=""
+								onChange={(e) => setInventory({ ...inventory, expiry_date: e.target.value })}
+								value={inventory.expiry_date}
+							/>
 						</div>
 
 						<div>
 							<FieldTitleLabel notFirst>Warehouse</FieldTitleLabel>
-							<Select value={inventory.warehouse_id} onChange={(e) => setInventory({ ...inventory, warehouse_id: e.target.value })}>
+							<Select value={inventory.warehouse_id} onChange={(e) => setInventory({ ...inventory, warehouse_id: Number(e.target.value) })}>
 								{warehouses.map((warehouse) => {
 									return (
 										<Option value={warehouse.warehouse_id} key={warehouse.warehouse_id}>
@@ -162,7 +188,7 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId }) => {
 						{areas.length > 0 && (
 							<div>
 								<FieldTitleLabel notFirst>Area</FieldTitleLabel>
-								<Select value={inventory.area_id} onChange={(e) => setInventory({ ...inventory, area_id: e.target.value })}>
+								<Select value={inventory.area_id} onChange={(e) => setInventory({ ...inventory, area_id: Number(e.target.value) })}>
 									{areas.map((area) => {
 										return (
 											<Option value={area.area_id} key={area.area_id}>

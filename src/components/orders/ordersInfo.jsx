@@ -220,7 +220,7 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 											<p>PHP {(item.price * item.quantity) / 100}</p>
 										</div>
 									</div>
-									{/* 
+
 									{item.batch_info &&
 										batchInfo(item.batch_info).map((info, index) => {
 											return (
@@ -229,7 +229,7 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 													<p className="productName">Quantity: {info.quantity}</p>
 												</div>
 											);
-										})} */}
+										})}
 								</div>
 							</Product>
 						))}

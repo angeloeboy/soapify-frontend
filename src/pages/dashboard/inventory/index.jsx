@@ -18,8 +18,10 @@ import { PaginationControl } from "@/styled-components/ItemActionModal";
 import Pagination from "@/components/misc/pagination";
 import LoadingSkeleton from "@/components/misc/loadingSkeleton";
 import { useRouter } from "next/router";
+import MoveInventory from "@/components/inventory/moveInventory";
+import InventoryLogs from "@/components/inventory/inventoryLogs";
 
-const InventoryPage = () => {
+const InventoryPage = ({ hasAddinventory }) => {
 	// const {productId, openModal} =
 	const router = useRouter();
 
@@ -29,7 +31,7 @@ const InventoryPage = () => {
 	const [inventoryDisplay, setinventoryDisplay] = useState([]);
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
 	const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false);
-
+	const [isMovePopUpOpen, setIsMovePopUpOpen] = useState(false);
 	const [isEditPopUpOpen, setIsEditPopUpOpen] = useState(false);
 	const [inventoryLoading, setInventoryLoading] = useState(true);
 	const [currentPage, setCurrentPage] = useState(1);
@@ -98,6 +100,7 @@ const InventoryPage = () => {
 					setinventoryDisplay={setinventoryDisplay}
 					inventory={inventory}
 					setCurrentPage={setCurrentPage}
+					hasAddinventory={hasAddinventory}
 				/>
 				<Table id="inventory-table">
 					<tbody>
@@ -125,7 +128,7 @@ const InventoryPage = () => {
 									<TableData>{inventory.Product.product_code}</TableData>
 									<TableData> {inventory.Product.product_name}</TableData>
 
-									<TableData> Test</TableData>
+									<TableData> {inventory.warehouse && `W: ${inventory.warehouse?.warehouse_name} A: ${inventory.area?.area_name}`}</TableData>
 
 									<TableData>{inventory.quantity}</TableData>
 									<TableData>{inventory.current_quantity}</TableData>
@@ -151,6 +154,14 @@ const InventoryPage = () => {
 												<p>
 													<FontAwesomeIcon icon={faTrash} /> Delete
 												</p>
+												<p
+													onClick={(e) => {
+														setIsMovePopUpOpen(true);
+														setSelectedInventory(inventory);
+													}}
+												>
+													<FontAwesomeIcon icon={faTrash} /> Move Inventory
+												</p>
 											</ActionContainer>
 										)}
 									</TableData>
@@ -170,10 +181,34 @@ const InventoryPage = () => {
 					defaultItemsPerPage={10}
 				/>
 			</StyledPanel>
-			{isAddPopUpOpen && <AddInventory setIsAddPopUpOpen={setIsAddPopUpOpen} getInventoryFunc={fetchInventory} productId={productId} />}
+
+			<InventoryLogs inventory={inventory} />
+			{isAddPopUpOpen && <AddInventory setIsAddPopUpOpen={setIsAddPopUpOpen} getInventoryFunc={fetchInventory} productId={productId} openModal={openModal} />}
 			{isEditPopUpOpen && <EditInventoryComponent setIsEditPopUpOpen={setIsEditPopUpOpen} getInventoryFunc={fetchInventory} />}
+			{isMovePopUpOpen && <MoveInventory setIsMovePopUpOpen={setIsMovePopUpOpen} getInventoryFunc={fetchInventory} selectedInventory={selectedInventory} />}
 		</DashboardLayout>
 	);
 };
 
 export default InventoryPage;
+
+import cookie, { parse } from "cookie";
+export async function getServerSideProps(context) {
+	const { req } = context;
+	const parsedCookies = cookie.parse(req.headers.cookie || "").permissions;
+
+	if (!parsedCookies.includes("View Inventory:inventory")) {
+		return {
+			redirect: {
+				destination: "/",
+				permanent: false,
+			},
+		};
+	}
+
+	return {
+		props: {
+			hasAddinventory: parsedCookies.includes("Add Inventory:inventory"),
+		}, // will be passed to the page component as props
+	};
+}

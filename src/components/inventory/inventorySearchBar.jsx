@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { DropdownHeader, DropdownItem, DropdownMenu, DropdownWrapper, SearchBar, TableControlPanel, Button } from "@/styled-components/TableControlPanel";
 import { getProducts } from "@/api/products";
 
-const InventorySearchBar = ({ setIsAddPopUpOpen, inventory, setinventoryDisplay, setCurrentPage }) => {
+const InventorySearchBar = ({ setIsAddPopUpOpen, inventory, setinventoryDisplay, setCurrentPage, hasAddinventory }) => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [selectedProduct, setSelectedProduct] = useState("All");
 	const [productCategories, setProductCategories] = useState([]);
@@ -60,11 +60,12 @@ const InventorySearchBar = ({ setIsAddPopUpOpen, inventory, setinventoryDisplay,
 				<p>Product</p>
 				<Dropdown products={products} handleProductChange={handleProductChange} />
 			</div> */}
-
-			<div>
-				<p> Add </p>
-				<Button onClick={() => setIsAddPopUpOpen(true)}>+ Add Inventory</Button>
-			</div>
+			{hasAddinventory && (
+				<div>
+					<p> Add </p>
+					<Button onClick={() => setIsAddPopUpOpen(true)}>+ Add Inventory</Button>
+				</div>
+			)}
 		</TableControlPanel>
 	);
 };

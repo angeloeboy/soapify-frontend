@@ -39,12 +39,11 @@ const PickupDate = (props) => {
 
 	// Handle date change
 	const handleDateChange = (e) => {
-		// Convert the string back to a Date object
-
-		//cant pick a date before today
-		if (new Date(e.target.value) < new Date()) {
-			return toast.error("Please select a date after today");
+		//cant pick a date before today but can pick today
+		if (new Date(e.target.value) < new Date().setHours(0, 0, 0, 0)) {
+			return toast.error("Pickup date cannot be before today");
 		}
+
 		setTransaction({ ...transaction, pickup_date: new Date(e.target.value) });
 	};
 

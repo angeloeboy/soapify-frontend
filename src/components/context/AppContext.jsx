@@ -34,8 +34,8 @@ export const AppProvider = ({ children }) => {
 				icon: "/inventory-icon.png",
 				hasSubmenu: true,
 				submenus: [
-					{ title: "Products", link: "/dashboard/products" },
-					{ title: "Inventory", link: "/dashboard/inventory" },
+					{ title: "Products", link: "/dashboard/products", permission: "View Products:products" },
+					{ title: "Inventory", link: "/dashboard/inventory", permission: "View Inventory:inventory" },
 					{ title: "Categories", link: "/dashboard/products/categories" },
 					{ title: "Suppliers", link: "/dashboard/suppliers" },
 					{ title: "Subcategories", link: "/dashboard/products/subcategories" },

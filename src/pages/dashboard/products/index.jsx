@@ -25,7 +25,7 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import DeleteModal from "@/components/misc/delete";
 
-const Products = () => {
+const Products = ({ hasAddProduct, hasDeactivateProduct, hasDeleteProduct, hasEditProduct, hasReactivateProduct }) => {
 	const [products, setProducts] = useState([]);
 	const [productDisplay, setProductDisplay] = useState([]);
 	const [productsLoading, setProductsLoading] = useState(true);
@@ -42,9 +42,7 @@ const Products = () => {
 	const [showDeactivate, setShowDeactivate] = useState(false);
 
 	const [showDeactivateModal, setShowDeactivateModal] = useState(false);
-    const [showReactivateModal, setShowReactivateModal] = useState(false);
-
-   
+	const [showReactivateModal, setShowReactivateModal] = useState(false);
 
 	const startIndex = (currentPage - 1) * itemsPerPage;
 	const endIndex = currentPage * itemsPerPage;
@@ -153,23 +151,29 @@ const Products = () => {
 	};
 
 	const handleDeactivate = (product_id, product_name) => {
-         setClickedName(product_name);
-        setSelectedProductId(product_id);
-        setShowDeactivateModal(true);
-    };
+		setClickedName(product_name);
+		setSelectedProductId(product_id);
+		setShowDeactivateModal(true);
+	};
 
-    const handleReactivate = (product_id, product_name) => {
-        setClickedName(product_name);
-        setSelectedProductId(product_id);
-        setShowReactivateModal(true);
-    };
+	const handleReactivate = (product_id, product_name) => {
+		setClickedName(product_name);
+		setSelectedProductId(product_id);
+		setShowReactivateModal(true);
+	};
 
 	return (
 		<DashboardLayout>
 			<PageTitle title="Products List" />
 
 			<StyledPanel>
-				<ProductSearchBar setIsAddPopUpOpen={setIsAddPopUpOpen} setProductDisplay={setProductDisplay} products={products} setCurrentPage={setCurrentPage} />
+				<ProductSearchBar
+					setIsAddPopUpOpen={setIsAddPopUpOpen}
+					setProductDisplay={setProductDisplay}
+					products={products}
+					setCurrentPage={setCurrentPage}
+					hasAddProduct={hasAddProduct}
+				/>
 				<Table id="products-table">
 					<tbody>
 						<TableRows $heading>
@@ -233,34 +237,40 @@ const Products = () => {
 
 										{activeActionContainer === index && (
 											<ActionContainer onClick={() => setActiveActionContainer(-1)}>
-												<p
-													onClick={() => {
-														setSelectedProductId(product.product_id);
-														openEditPopUp(true);
-													}}
-												>
-													<FontAwesomeIcon icon={faPen} />
-													Edit
-												</p>
-												<p  
-													onClick={() =>{
-														//GAWIN MO TO 
-														setShowDeactivate(true);
-														setClickedName(product.product_name);
-														setSelectedProductId(product.product_id); 
+												{hasEditProduct && (
+													<p
+														onClick={() => {
+															setSelectedProductId(product.product_id);
+															openEditPopUp(true);
+														}}
+													>
+														<FontAwesomeIcon icon={faPen} />
+														Edit
+													</p>
+												)}
 
-													}}
-																																					
-												>
-													<FontAwesomeIcon icon={faTrash} /> Delete
-												</p>
+												{hasDeleteProduct && (
+													<p
+														onClick={() => {
+															//GAWIN MO TO
+															setShowDeactivate(true);
+															setClickedName(product.product_name);
+															setSelectedProductId(product.product_id);
+														}}
+													>
+														<FontAwesomeIcon icon={faTrash} /> Delete
+													</p>
+												)}
+
 												{product.isActive && <p onClick={() => goToInventoryPageAndAddInventory(product.product_id)}>Add Inventory</p>}
 
-												<p  onClick={() => handleReactivate(product.product_id, product.product_name)}>Reactivate</p>
-												<p onClick={() => handleDeactivate(product.product_id, product.product_name)}>
-													
-													
-													Deactivate</p>
+												{hasReactivateProduct && !product.isActive && (
+													<p onClick={() => handleReactivate(product.product_id, product.product_name)}>Reactivate</p>
+												)}
+
+												{hasDeactivateProduct && product.isActive && (
+													<p onClick={() => handleDeactivate(product.product_id, product.product_name)}>Deactivate</p>
+												)}
 												{/* <p onClick={() => handleAddInventoryClick(product.product_id)}>Add Inventory</p> */}
 											</ActionContainer>
 										)}
@@ -284,38 +294,41 @@ const Products = () => {
 
 			{isAddPopUpOpen && <AddProduct setIsAddPopUpOpen={setIsAddPopUpOpen} GetProducts={fetchProducts} />}
 			{isEditPopupOpen && <EditProduct onClose={handleCloseEditPopUp} productId={selectedProductId} fetchProducts={fetchProducts} />}
-			{showDeactivate && (
-        
-		<DeleteModal
-          type="Products"
-          text={clickedName}
-          close={setShowDeactivate}
-          confirm={() => deleteProductFunc(selectedProductId)}
+			{showDeactivate && <DeleteModal type="Products" text={clickedName} close={setShowDeactivate} confirm={() => deleteProductFunc(selectedProductId)} />}
 
-        />
-      )}
+			{showDeactivateModal && (
+				<DeactivateModal type="Product" text={clickedName} close={setShowDeactivateModal} confirm={() => deactivateProductFunc(selectedProductId)} />
+			)}
 
-		{showDeactivateModal && (
-                <DeactivateModal
-                    type="Product"
-                    text={clickedName}
-                    close={setShowDeactivateModal}
-                    confirm={() => deactivateProductFunc(selectedProductId)}
-                />
-            )}
-
-            {showReactivateModal && (
-                <ReactivateModal
-                    type="Product"
-                    text={clickedName}
-                    close={setShowReactivateModal}
-                    confirm={() => activateProductFunc(selectedProductId)}
-                />
-            )}
-
-		
+			{showReactivateModal && (
+				<ReactivateModal type="Product" text={clickedName} close={setShowReactivateModal} confirm={() => activateProductFunc(selectedProductId)} />
+			)}
 		</DashboardLayout>
 	);
 };
 
 export default Products;
+import cookie, { parse } from "cookie";
+export async function getServerSideProps(context) {
+	const { req } = context;
+	const parsedCookies = cookie.parse(req.headers.cookie || "").permissions;
+
+	if (!parsedCookies.includes("View Products:products")) {
+		return {
+			redirect: {
+				destination: "/",
+				permanent: false,
+			},
+		};
+	}
+
+	return {
+		props: {
+			hasAddProduct: parsedCookies.includes("Add Product:products"),
+			hasEditProduct: parsedCookies.includes("Edit Product:products"),
+			hasDeleteProduct: parsedCookies.includes("Delete Product:products"),
+			hasDeactivateProduct: parsedCookies.includes("Deactivate Product:products"),
+			hasReactivateProduct: parsedCookies.includes("Reactivate Product:products"),
+		}, // will be passed to the page component as props
+	};
+}

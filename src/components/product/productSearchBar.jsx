@@ -6,7 +6,7 @@ import { DropdownHeader, DropdownItem, DropdownMenu, DropdownWrapper, SearchBar,
 import { getProductCategories } from "@/api/products";
 import useOutsideClick from "@/hooks/useOutsideclick";
 
-const ProductSearchBar = ({ setIsAddPopUpOpen, products, setProductDisplay, setCurrentPage }) => {
+const ProductSearchBar = ({ setIsAddPopUpOpen, products, setProductDisplay, setCurrentPage, hasAddProduct }) => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [selectedCategory, setSelectedCategory] = useState("All");
 	const [selectedStatus, setSelectedStatus] = useState("All");
@@ -90,10 +90,13 @@ const ProductSearchBar = ({ setIsAddPopUpOpen, products, setProductDisplay, setC
 				<p>Stock Status</p>
 				<StockStatusDropdown setSelectedProductStatus={setSelectedProductStatus} />
 			</div>
-			<div>
-				<p> Add </p>
-				<Button onClick={() => setIsAddPopUpOpen(true)}>+ Add Product</Button>
-			</div>
+
+			{hasAddProduct && (
+				<div>
+					<p> Add </p>
+					<Button onClick={() => setIsAddPopUpOpen(true)}>+ Add Product</Button>
+				</div>
+			)}
 		</TableControlPanel>
 	);
 };

@@ -49,17 +49,23 @@ const UserDashboard = () => {
 	const [cart, setCart] = useState([]);
 	const [productDisplay, setProductDisplay] = useState([]);
 	const [activeAction, setActiveAction] = useState("cart");
-	const [pickupDate, setPickupDate] = useState(new Date());
+	const [promoCodeResponse, setPromoCodeResponse] = useState({
+		isValid: false,
+		totalDiscountAmount: 0,
+		discountType: null,
+		discountedItems: [],
+	});
 
 	const [transaction, setTransaction] = useState({
 		payment_method_id: undefined,
 		transaction_number: "",
 		total_amount: 0,
 		items: [],
-		pickup_date: new Date(),
+		pickup_date: new Date().toISOString().split("T")[0],
 	});
 
 	const [parentProducts, setParentProducts] = useState([]);
+	const [parentProductsDisplay, setParentProductsDisplay] = useState([]);
 
 	const [windowWidth, setWindowWidth] = useState(1200);
 
@@ -76,6 +82,31 @@ const UserDashboard = () => {
 	}, []);
 
 	useEffect(() => {
+		const applyDiscountsToCart = () => {
+			if (!promoCodeResponse.isValid) return;
+
+			const updatedCart = cart.map((cartItem) => {
+				if (cartItem.isDiscounted) return cartItem;
+				const discountInfo = promoCodeResponse.discountedItems.find((di) => di.product_id === cartItem.product_id);
+				if (discountInfo) {
+					return {
+						...cartItem,
+						product_price: discountInfo.discounted_price / cartItem.quantity, // Assuming you want to update the unit price
+						isDiscounted: true,
+						orig_price: cartItem.product_price,
+					};
+				}
+				return cartItem;
+			});
+
+			setCart(updatedCart); // This will trigger the other useEffect
+		};
+
+		applyDiscountsToCart();
+	}, [promoCodeResponse]); // Dependency array includes only promoCodeResponse
+
+	useEffect(() => {
+		console.log("orig cart: ", cart);
 		setTransaction((prev) => ({
 			...prev,
 			total_amount: cart.reduce((acc, item) => acc + item.product_price * item.quantity, 0),
@@ -84,6 +115,7 @@ const UserDashboard = () => {
 	}, [cart]);
 
 	useEffect(() => {
+		// setProductDisplay(groupProductsByParentProductId(products));
 		setProductDisplay(products.filter((product) => product.parent_product_id === null));
 		fetchParentProducts();
 	}, [products]);
@@ -109,9 +141,8 @@ const UserDashboard = () => {
 			};
 		});
 
-		console.log(parentProduct);
-
 		setParentProducts(parentProduct);
+		setParentProductsDisplay(parentProduct);
 		// groupProductsByParentProductId2(products);
 	};
 
@@ -119,11 +150,12 @@ const UserDashboard = () => {
 		const existingProduct = cart.find((item) => item.product_id === product.product_id);
 
 		let updatedCart;
-
 		if (operation === "add") {
+			//if the quantity of the product is greater than the quantity in stock
 			if (existingProduct && existingProduct.quantity >= existingProduct.quantity_in_stock) {
 				return;
 			}
+
 			updatedCart = existingProduct
 				? cart.map((item) => (item.product_id === product.product_id ? { ...item, quantity: item.quantity + 1 } : item))
 				: [...cart, { ...product, quantity: 1 }];
@@ -150,19 +182,24 @@ const UserDashboard = () => {
 				setActiveAction,
 				orderFromBackend,
 				setOrderFromBackend,
-				pickupDate,
-				setPickupDate,
+				promoCodeResponse,
+				setPromoCodeResponse,
 			}}
 		>
 			<UserDashboardLayout>
 				<PageTitle title="POS" />
 				<POSWrapper>
 					<StyledPanel pos={true}>
-						<PosSearchBar products={products} setProductDisplay={setProductDisplay} />
+						<PosSearchBar
+							products={products}
+							setProductDisplay={setProductDisplay}
+							parentProducts={parentProducts}
+							setParentProductsDisplay={setParentProductsDisplay}
+						/>
 
 						<ProductsList>
 							{parentProducts.length !== 0 &&
-								parentProducts.map((parentProduct, index) => {
+								parentProductsDisplay.map((parentProduct, index) => {
 									if (parentProduct.products.length <= 0) return null;
 
 									return <ParentProductDisplay key={index} parentProduct={parentProduct} updateCart={updateCart} />;

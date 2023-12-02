@@ -32,3 +32,22 @@ export const addInventory = async (inventory) => {
 		// Handle error
 	}
 };
+
+export const moveInventory = async (inventory) => {
+	try {
+		const response = await fetch("/api/inventory/move", {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(inventory),
+			credentials: "include",
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		// Handle error
+		console.log(error);
+	}
+};

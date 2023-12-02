@@ -53,8 +53,14 @@ const Warehouse = () => {
 
 	const fetchWarehouses = async () => {
 		const res = await getAllWarehouse();
+
+		if (!res) {
+			return;
+		}
+
 		res ? setWarehouses(res.warehouses) : setWarehouses([]);
 		res ? setWarehouseDisplay(res.warehouses) : setWarehouseDisplay([]);
+		console.log(res.warehouses);
 	};
 
 	const handleReactivateModal = (warehouse_id, warehouse_name) => {

@@ -90,6 +90,11 @@ export async function middleware(req) {
 				path: "/",
 			});
 
+			next_response.cookies.set("role", JSON.stringify(data?.user?.role_id), {
+				httpOnly: false,
+				path: "/",
+			});
+
 			return next_response;
 		}
 

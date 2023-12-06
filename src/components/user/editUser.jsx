@@ -7,10 +7,6 @@ import {
 	Label,
 	Option,
 	FieldContainer,
-	ProfilePictureContainer,
-	FileInput,
-	Centered,
-	SecondaryButton,
 	CloseButton,
 	ButtonsContainer,
 	PopupOverlay,
@@ -30,6 +26,7 @@ const EditUser = ({ selectedUser, onClose, fetchUsers }) => {
 		first_name: "",
 		last_name: "",
 		role_id: "",
+		password: "",
 	});
 
 	const [roles, setRoles] = useState([]);
@@ -61,8 +58,19 @@ const EditUser = ({ selectedUser, onClose, fetchUsers }) => {
 
 	useEffect(() => {
 		fetchRoles();
-		setUser({ ...selectedUser, role_id: selectedUser.role.role_id });
+		setUser({ ...selectedUser, role_id: selectedUser.role.role_id, password: "" });
 	}, []);
+
+	const generateStrongPassword = (length) => {
+		let password = "";
+		const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+{}:"<>?[];,./`~';
+		const charactersLength = characters.length;
+		for (let i = 0; i < length; i++) {
+			password += characters.charAt(Math.floor(Math.random() * charactersLength));
+		}
+
+		setUser({ ...user, password: password });
+	};
 
 	return (
 		<PopupOverlay>
@@ -98,32 +106,6 @@ const EditUser = ({ selectedUser, onClose, fetchUsers }) => {
 							/>
 						</div>
 
-						{/* <div>
-							<LabelContainer notfirst>
-								<Label>Password</Label>{" "}
-							</LabelContainer>
-							<FieldTitleLabel>Change Password</FieldTitleLabel>
-							<InputHolder
-								type="password"
-								onChange={(e) => {
-									setUser({ ...user, password: e.target.value });
-								}}
-								required
-								value={user.password}
-							/>
-						</div>
-						<div>
-							<FieldTitleLabel>Confirm Password</FieldTitleLabel>
-							<InputHolder
-								type="password"
-								placeholder="Confirm Password"
-								onChange={(e) => {
-									setUser({ ...user, confirmPassword: e.target.value });
-								}}
-								required
-								value={user.confirmPassword}
-							/>
-						</div> */}
 						<div>
 							<LabelContainer notfirst>
 								<Label>Role</Label>{" "}
@@ -142,6 +124,27 @@ const EditUser = ({ selectedUser, onClose, fetchUsers }) => {
 								))}
 							</Select>
 						</div>
+						{user.role_id !== 1 && user.role_id !== 2 && (
+							<>
+								<div>
+									<LabelContainer notfirst>
+										<Label>Password</Label>
+									</LabelContainer>
+									<FieldTitleLabel>Change Password</FieldTitleLabel>
+									<InputHolder
+										type="text"
+										onChange={(e) => {
+											setUser({ ...user, password: e.target.value });
+										}}
+										value={user.password}
+									/>
+								</div>
+
+								<Button type="button" onClick={() => generateStrongPassword(10)} width="100%">
+									Generate password
+								</Button>
+							</>
+						)}
 					</FieldContainer>
 
 					<ButtonsContainer>

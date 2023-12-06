@@ -51,3 +51,22 @@ export const moveInventory = async (inventory) => {
 		console.log(error);
 	}
 };
+
+export const convertBoxToPcs = async (inventory, pcs) => {
+	try {
+		const response = await fetch("/api/inventory/convert/box", {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(inventory),
+			credentials: "include",
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		// Handle error
+		console.log(error);
+	}
+};

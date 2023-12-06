@@ -415,39 +415,6 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 								</div>
 
 								<div>
-									<FieldTitleLabel>Pieces per Box</FieldTitleLabel>
-									<InputHolder
-										type="number"
-										min="0"
-										onChange={(e) => {
-											// Regular expression to allow only positive whole numbers
-											const validPositiveWholeNumberRegex = /^[0-9]+$/;
-
-											if (e.target.value === "") {
-												setProduct({
-													...product,
-													boxDetails: {
-														...product.boxDetails,
-														pcsPerBox: "",
-													},
-												});
-											} else if (validPositiveWholeNumberRegex.test(e.target.value)) {
-												setProduct({
-													...product,
-													boxDetails: {
-														...product.boxDetails,
-														pcsPerBox: Number(e.target.value),
-													},
-												});
-											}
-										}}
-										pattern="^[0-9]+$"
-										title="Please enter a valid positive whole number."
-										required
-										value={product.boxDetails.pcsPerBox}
-									/>
-								</div>
-								<div>
 									<FieldTitleLabel notFirst>Box Reorder Threshold</FieldTitleLabel>
 									<InputHolder
 										type="number"
@@ -482,6 +449,40 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 								</div>
 							</>
 						)}
+
+						<div>
+							<FieldTitleLabel>Pieces per Box</FieldTitleLabel>
+							<InputHolder
+								type="number"
+								min="0"
+								onChange={(e) => {
+									// Regular expression to allow only positive whole numbers
+									const validPositiveWholeNumberRegex = /^[0-9]+$/;
+
+									if (e.target.value === "") {
+										setProduct({
+											...product,
+											boxDetails: {
+												...product.boxDetails,
+												pcsPerBox: "",
+											},
+										});
+									} else if (validPositiveWholeNumberRegex.test(e.target.value)) {
+										setProduct({
+											...product,
+											boxDetails: {
+												...product.boxDetails,
+												pcsPerBox: Number(e.target.value),
+											},
+										});
+									}
+								}}
+								pattern="^[0-9]+$"
+								title="Please enter a valid positive whole number."
+								required
+								value={product.boxDetails.pcsPerBox}
+							/>
+						</div>
 
 						{product.addAsPc && (
 							<>

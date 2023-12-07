@@ -4,10 +4,14 @@ const Table = styled.table`
 	width: 100%;
 	border: none;
 	border-collapse: collapse;
-	table-layout: fixed;
-	min-width: 1000px;
-	width: 100%;
+	min-width: 1300px; // adjust as needed
+	max-width: 100%; // ensures table doesn't exceed the container width
 	margin-top: 32px;
+
+	// Optional: for larger screens
+	@media (min-width: 1024px) {
+		table-layout: auto; // allows flexible column widths
+	}
 `;
 
 export const TableHeadings = styled.th`

@@ -272,7 +272,6 @@ import { PaginationControl } from "@/styled-components/ItemActionModal";
 import Pagination from "@/components/misc/pagination";
 import { TransactionContext } from "@/components/context/TransactionContext";
 import { getParentProduct } from "@/api/parent_product";
-import ParentProduct from "../parent-product";
 import ParentProductDisplay from "@/components/pos/parenntProduct";
 // import { TransactionContext } from "../context/TransactionContext";
 

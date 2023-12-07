@@ -1,19 +1,20 @@
+import DashboardLayout from "@/components/misc/dashboardLayout";
+import PageTitle from "@/components/misc/pageTitle";
 import StyledPanel from "@/styled-components/StyledPanel";
-import PageTitle from "../misc/pageTitle";
+
 import Table, { TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
 
-const { getInventoryLogs } = require("@/api/logs");
+const { getInventoryLogs, getLogs } = require("@/api/logs");
 const { useEffect, useState } = require("react");
 
 const Logs = ({ inventory }) => {
-	const [inventoryLogs, setInventoryLogs] = useState([]);
+	const [logs, setlogs] = useState([]);
 
-	const getLogs = async () => {
-		const res = await getInventoryLogs();
-
+	const getLogsfunc = async () => {
+		const res = await getLogs();
 		console.log(res);
 		if (res.status === "Success") {
-			setInventoryLogs(res.inventory_logs);
+			setlogs(res.logs);
 		}
 	};
 
@@ -28,35 +29,39 @@ const Logs = ({ inventory }) => {
 	};
 
 	useEffect(() => {
-		getLogs();
+		getLogsfunc();
 	}, [inventory]);
 
 	return (
-		<div>
-			<PageTitle>Inventory Logs</PageTitle>
+		<DashboardLayout>
+			<PageTitle title="Logs" />
 
 			<StyledPanel>
 				<Table>
 					<tbody>
 						<TableRows $heading>
 							<TableHeadings>Action</TableHeadings>
+							<TableHeadings>Log Type</TableHeadings>
+
 							<TableHeadings>User</TableHeadings>
 							<TableHeadings>Date</TableHeadings>
 						</TableRows>
 
-						{inventoryLogs &&
-							inventoryLogs.map((log) => (
+						{logs &&
+							logs.map((log) => (
 								<TableRows key={log.log_id}>
-									<TableData $bold>{log.action}</TableData>
-									<TableData>{`${log.user_name.first_name} ${log.user_name.last_name}`} </TableData>
+									<TableData $bold>{log.log_description}</TableData>
+									<TableData $bold>{log.log_type}</TableData>
 
-									<TableData>{convertToDateFormat(log.created_at)}</TableData>
+									<TableData>{`${log.user.first_name} ${log.user.last_name}`} </TableData>
+
+									<TableData>{convertToDateFormat(log.createdAt)}</TableData>
 								</TableRows>
 							))}
 					</tbody>
 				</Table>
 			</StyledPanel>
-		</div>
+		</DashboardLayout>
 	);
 };
 

@@ -22,13 +22,14 @@ import { getProduct, editProduct, getProductCategories, getSubCategories } from 
 import { getSuppliers } from "@/api/supplier";
 import { toast } from "react-toastify";
 import "react-loading-skeleton/dist/skeleton.css";
+import Image from "next/image";
 
 const EditProduct = ({ productId, onClose, fetchProducts }) => {
 	const [categories, setCategories] = useState([]);
 	const [attributes, setAttributes] = useState([]);
 	const [suppliers, setSuppliers] = useState([]);
 	const [subCategories, setSubCategories] = useState([]);
-
+	const [loading, setLoading] = useState(false);
 	const [product, setProduct] = useState({
 		product_name: null,
 		product_desc: "dfasdfasdfd",
@@ -164,14 +165,46 @@ const EditProduct = ({ productId, onClose, fetchProducts }) => {
 
 	let saveProduct = async (e) => {
 		e.preventDefault();
-		const res = await editProduct(product, productId);
+		// setLoading(true);
+		// const res = await editProduct(product, productId);
+		// console.log(res);
+		// if (res.status == "Success") {
+		// 	toast.success("Product updated successfully");
+		// 	fetchProducts();
+		// 	onClose();
+		// 	setLoading(false);
+
+		// 	return;
+		// }
+
+		let formData = new FormData();
+
+		// Append the image to formData
+		formData.append("product_image", e.target.elements.product_image.files[0]);
+
+		// Append each property in the product object to formData
+		for (let key in product) {
+			if (product.hasOwnProperty(key)) {
+				if (key === "attributes" || key === "boxDetails" || key === "pcDetails") {
+					formData.append(key, JSON.stringify(product[key]));
+				} else {
+					formData.append(key, product[key]);
+				}
+			}
+		}
+
+		const res = await editProduct(formData, productId);
 		console.log(res);
 		if (res.status == "Success") {
 			toast.success("Product updated successfully");
 			fetchProducts();
 			onClose();
+			setLoading(false);
+
 			return;
 		}
+
+		setLoading(false);
 
 		toast.error("Something went wrong");
 	};
@@ -276,10 +309,10 @@ const EditProduct = ({ productId, onClose, fetchProducts }) => {
 							/>
 						</div>
 						<div>
-							<FieldTitleLabel notFirst>Image (optional)</FieldTitleLabel>
+							<FieldTitleLabel notFirst>Image </FieldTitleLabel>
 							<ProfilePictureContainer>
-								<Centered>
-									<input type="file" name="product_image" required />
+								<Centered image={product.image_link}>
+									<input type="file" name="product_image" />
 								</Centered>
 							</ProfilePictureContainer>
 						</div>
@@ -352,9 +385,7 @@ const EditProduct = ({ productId, onClose, fetchProducts }) => {
 
 					<ButtonsContainer>
 						<CloseButton onClick={onClose}>Close</CloseButton>
-						<Button type="submit" onClick={(e) => saveProduct(e)}>
-							Save
-						</Button>
+						<Button type="submit">{loading ? <Image src="/loading.svg" alt="loading" width="20" height="20" /> : "Save"}</Button>
 					</ButtonsContainer>
 				</form>
 			</PopupContent>

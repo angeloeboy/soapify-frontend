@@ -21,6 +21,36 @@ import { useRouter } from "next/router";
 import MoveInventory from "@/components/inventory/moveInventory";
 import InventoryLogs from "@/components/inventory/inventoryLogs";
 
+const Expired = styled.p`
+	color: red;
+	font-weight: bold;
+	background-color: #ff000058;
+	padding: 0.5rem;
+	font-size: 12px;
+	border-radius: 0.5rem;
+	display: inline-block;
+`;
+
+const AboutToExpire = styled.p`
+	color: #6f00ff;
+	font-weight: bold;
+	background-color: #6f00ff58;
+	padding: 0.5rem;
+	font-size: 12px;
+	border-radius: 0.5rem;
+	display: inline-block;
+`;
+
+const Good = styled.p`
+	color: #00ff40;
+	font-weight: bold;
+	background-color: #00ff4058;
+	padding: 0.5rem;
+	font-size: 12px;
+	border-radius: 0.5rem;
+	display: inline-block;
+`;
+
 const InventoryPage = ({ hasAddinventory }) => {
 	// const {productId, openModal} =
 	const router = useRouter();
@@ -70,6 +100,8 @@ const InventoryPage = ({ hasAddinventory }) => {
 		setInventoryLoading(true);
 		getInventory().then((res) => {
 			console.log(res);
+
+			res.inventory = res.inventory.filter((inventory) => inventory.current_quantity > 0);
 			res.inventory ? setInventory(res.inventory) : setInventory([]);
 			res.inventory ? setinventoryDisplay(res.inventory) : setinventoryDisplay([]);
 			setInventoryLoading(false);
@@ -86,6 +118,26 @@ const InventoryPage = ({ hasAddinventory }) => {
 			day: "numeric",
 		});
 		return formattedDate;
+	};
+
+	const checkIfAboutToExpire = (date) => {
+		let newDate = new Date(date);
+		let today = new Date();
+		let diff = newDate.getTime() - today.getTime();
+		let days = diff / (1000 * 3600 * 24);
+
+		//return expired if days is less than 0
+		if (days < 0) {
+			return <Expired>Expired</Expired>;
+		}
+
+		//return about to expire if days is less than 30
+		if (days < 30) {
+			return <AboutToExpire>About to Expire</AboutToExpire>;
+		}
+
+		//return empty string if not about to expire
+		return <Good>Good</Good>;
 	};
 
 	const [selectedInventory, setSelectedInventory] = useState(null);
@@ -115,6 +167,7 @@ const InventoryPage = ({ hasAddinventory }) => {
 							<TableHeadings>Quantity</TableHeadings>
 							<TableHeadings>Quantity Remaining</TableHeadings>
 							<TableHeadings>Date Received</TableHeadings>
+							<TableHeadings>Expiration</TableHeadings>
 							<TableHeadings>Actions</TableHeadings>
 						</TableRows>
 						{inventory.length === 0 ? (
@@ -133,6 +186,8 @@ const InventoryPage = ({ hasAddinventory }) => {
 									<TableData>{inventory.quantity}</TableData>
 									<TableData>{inventory.current_quantity}</TableData>
 									<TableData>{convertToDateFormat(inventory.date_added)}</TableData>
+									<TableData>{checkIfAboutToExpire(inventory.expiry_date)}</TableData>
+
 									<TableData>
 										<FontAwesomeIcon
 											className="ellipsis"
@@ -182,7 +237,6 @@ const InventoryPage = ({ hasAddinventory }) => {
 				/>
 			</StyledPanel>
 
-			<InventoryLogs inventory={inventory} />
 			{isAddPopUpOpen && <AddInventory setIsAddPopUpOpen={setIsAddPopUpOpen} getInventoryFunc={fetchInventory} productId={productId} openModal={openModal} />}
 			{isEditPopUpOpen && <EditInventoryComponent setIsEditPopUpOpen={setIsEditPopUpOpen} getInventoryFunc={fetchInventory} />}
 			{isMovePopUpOpen && <MoveInventory setIsMovePopUpOpen={setIsMovePopUpOpen} getInventoryFunc={fetchInventory} selectedInventory={selectedInventory} />}
@@ -193,6 +247,7 @@ const InventoryPage = ({ hasAddinventory }) => {
 export default InventoryPage;
 
 import cookie, { parse } from "cookie";
+import styled from "styled-components";
 export async function getServerSideProps(context) {
 	const { req } = context;
 	const parsedCookies = cookie.parse(req.headers.cookie || "").permissions;

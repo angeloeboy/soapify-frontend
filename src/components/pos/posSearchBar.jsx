@@ -84,13 +84,8 @@ const PosSearchBar = ({ products, setProductDisplay, parentProducts, setParentPr
 			});
 		} else {
 			filteredParentProducts = parentProducts.filter((parent_product) => {
-				//loop throught the products of the parent product
-				//if the product name or attribute value matches the search query
-				//return true
-
 				return parent_product.products.some((product) => {
 					return (
-						//dont show if they are a variant
 						product.parent_product_id === null &&
 						queryTerms.every(
 							(term) =>

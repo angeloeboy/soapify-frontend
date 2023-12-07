@@ -22,8 +22,6 @@ export const AppProvider = ({ children }) => {
 					{ title: "POS", link: "/dashboard/pos" },
 					{ title: "Sales Overview", link: "/dashboard" },
 					{ title: "Orders", link: "/dashboard/orders", permission: "View Orders:orders" },
-					{ title: "Returns", link: "/dashboard/returns" },
-					{ title: "Refunds", link: "/dashboard/refunds" },
 					{ title: "Promos", link: "/dashboard/promos" },
 					{ title: "Parent Products", link: "/dashboard/parent-product" },
 				],
@@ -52,6 +50,8 @@ export const AppProvider = ({ children }) => {
 					{ title: "Warehouse", link: "/dashboard/warehouse" },
 					{ title: "Payment Methods", link: "/dashboard/payment" },
 					{ title: "Roles", link: "/dashboard/roles" },
+					{ title: "Logs", link: "/dashboard/logs" },
+
 					// { title: "User Settings", link: "/dashboard/user-settings" },
 				],
 			},

@@ -252,7 +252,6 @@ const Products = ({ hasAddProduct, hasDeactivateProduct, hasDeleteProduct, hasEd
 												{hasDeleteProduct && (
 													<p
 														onClick={() => {
-															//GAWIN MO TO
 															setShowDeactivate(true);
 															setClickedName(product.product_name);
 															setSelectedProductId(product.product_id);

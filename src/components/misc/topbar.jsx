@@ -72,7 +72,6 @@ const TopBar = () => {
 			<div className="alert-container">
 				<FontAwesomeIcon icon={faBell} />
 				{notificationsList.length}
-				<div className="profile"></div>
 			</div>
 		</TopBarContainer>
 	);

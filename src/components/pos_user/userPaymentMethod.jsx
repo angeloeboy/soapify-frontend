@@ -142,6 +142,10 @@ const UserPaymentMethods = (props) => {
 		}
 		setLoading(false);
 		console.log(response.transaction);
+
+		setTimeout(() => {
+			window.location.href = "/user/orders";
+		}, 1000);
 	};
 
 	const fetchPaymentMethods = () => {

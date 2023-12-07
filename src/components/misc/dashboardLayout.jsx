@@ -26,8 +26,8 @@ const DashboardRight = styled.div`
 const DashboardRightContainer = styled.div`
 	padding: 48px;
 
-	@media (max-width: 800px) {
-		padding: 48px 5%;
+	@media (max-width: 1200px) {
+		padding: 48px 5% 48px 0%;
 	}
 `;
 

@@ -122,14 +122,14 @@ export const acceptTransaction = async (id) => {
 	}
 };
 
-export const requestForCancelTransaction = async (id, notes) => {
+export const requestForCancelTransaction = async (id, notes, contact) => {
 	try {
 		const response = await fetch(`/api/transactions/request/cancel/${id}`, {
 			method: "PUT",
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify({ reason: notes }),
+			body: JSON.stringify({ reason: notes, contact_number: contact }),
 			credentials: "include",
 		});
 
@@ -157,14 +157,14 @@ export const acceptCancelTransaction = async (id) => {
 	}
 };
 
-export const requestOrderReturnRefund = async (id, notes) => {
+export const requestOrderReturnRefund = async (id, notes, contact) => {
 	try {
 		const response = await fetch(`/api/transactions/request/returnRefund/${id}`, {
 			method: "PUT",
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify({ reason: notes }),
+			body: JSON.stringify({ reason: notes, contact_number: contact }),
 			credentials: "include",
 		});
 

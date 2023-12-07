@@ -110,8 +110,38 @@ const ImageScreenshot = styled.div`
 	}
 `;
 
+const TextArea = styled.textarea`
+	width: 100%;
+	height: 100px;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	padding: 10px;
+	margin-top: 10px;
+`;
+
+const ButtonReport = styled.button`
+	background-color: #dd0b39;
+	color: #fff;
+	padding: 10px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 16px;
+	margin-top: 10px;
+`;
+
+const ContactNumber = styled.input`
+	width: 100%;
+	height: 40px;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	padding: 10px;
+	margin-top: 10px;
+`;
+
 const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions }) => {
 	const [notes, setNotes] = useState("");
+	const [contact, setContact] = useState(undefined);
 
 	useEffect(() => {
 		console.log(selectedTransaction.items);
@@ -127,15 +157,21 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 		return formattedDate;
 	};
 
-	const requestForCancellationFunc = async () => {
+	const requestForCancellationFunc = async (e) => {
+		e.preventDefault();
 		if (notes == "") {
 			toast.error("Please enter a reason for cancellation");
 			return;
 		}
-		const res = await requestForCancelTransaction(selectedTransaction.transaction_id, notes);
+
+		if (contact == undefined || contact == "" || contact.length < 11) {
+			toast.error("Please enter a valid contact number");
+			return;
+		}
+		const res = await requestForCancelTransaction(selectedTransaction.transaction_id, notes, contact);
 
 		if (res.status === "Success") {
-			toast.success("Request for cancellation sent");
+			toast.success("Report sent. A representative will contact you shortly via the contact number you provided.");
 			setShowOrderInfo(false);
 			getTransactions();
 			return;
@@ -149,7 +185,7 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 			toast.error("Please enter a reason for cancellation");
 			return;
 		}
-		const res = await requestOrderReturnRefund(selectedTransaction.transaction_id, notes);
+		const res = await requestOrderReturnRefund(selectedTransaction.transaction_id, notes, contact);
 
 		if (res.status === "Success") {
 			toast.success("Request for return/refund sent");
@@ -222,19 +258,27 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 					<OrdersWrapper>
 						<h5>Status: {selectedTransaction.status}</h5>
 						<p>Pickup date: {convertToDateFormat(selectedTransaction.pickup_date)}</p>
-						{selectedTransaction.status !== "CANCELLED" &&
-							selectedTransaction.status !== "RELEASED" &&
-							selectedTransaction.status !== "CANCELLATION REQUESTED" && (
-								<>
-									<button onClick={() => requestForCancellationFunc()}>Request Cancellation</button>
-									<textarea type="text" value={notes} onChange={(e) => setNotes(e.target.value)} />
-								</>
-							)}
 
-						{selectedTransaction.status !== "CANCELLED" && selectedTransaction.status !== "AWAITING PAYMENT" && selectedTransaction.status == "RELEASED" && (
+						{selectedTransaction.status !== "CANCELLED" && selectedTransaction.status !== "REFUNDED" && (
 							<>
-								<button onClick={() => requestForReturnRefundFunc()}>Request refund/return</button>
-								<textarea type="text" value={notes} onChange={(e) => setNotes(e.target.value)} />
+								<TextArea type="text" value={notes} onChange={(e) => setNotes(e.target.value)} />
+
+								<p>Contact number: </p>
+								<ContactNumber
+									type="text"
+									maxlength="12"
+									placeholder="Enter phone number"
+									value={contact}
+									onChange={(e) => {
+										const value = e.target.value;
+										// Remove anything that is not a digit
+										const sanitizedValue = value.replace(/[^0-9]/g, "");
+										setContact(sanitizedValue);
+									}}
+									required
+								/>
+
+								<ButtonReport onClick={(e) => requestForCancellationFunc(e)}>Report Issue</ButtonReport>
 							</>
 						)}
 					</OrdersWrapper>

@@ -8,52 +8,50 @@ forgot password - DONE
 
 expiry date for inventory - DONE
 
-add promo - DONE
-
-field for promo - DONE
-
-promo codes - DONE
-
-use promo - DONE
+display expiry date - DONE
 
 field for areas and warehouse in inventory - DONE
 
 transferring of inventory - DONE
 
-inventory logs - COMPLETE
+Lahat ng logs nasa iisang page nalang - DONE
+
+yung inventory ang ipapakita lang initially is yung may mga laman - DONE
+
+yung orders yuing ipapakita rin yung mga need iaapprove - DONE
+
+YUNG MGA MALAPIT NANG MAG EXPIRE NEED NG NOTIFICATION - DONE
+
+CANCELLATION - DONE
+
+RETURN/REFUND - DONE
+
+ONLY ADMIN CAN CHANGE PASSWORD OF USERS - DONE
+
+REPORT MUNA BEFORE CANCELLATION, SO USERS CANT REQUEST FOR CANCELLATION - DONE
+
+send receipt to email - DONE KASO PANGIT ITSURA PWEDE NA
+
+add promo - STARTED
+
+field for promo - STARTED
+
+promo codes - STARTED
+
+use promo - STARTED
+
+box to pcs - STARTED
+
+pcs to box - STARTED
 
 change of products after order
-
-send receipt to email
 
 Reports
 
 notifications
 
-box to pcs
-
-pcs to box
-
-DATA NG EXPIRATION SA REPORT
-
-ONLY ADMIN CAN CHANGE PASSWORD OF USERS - DONE
-
-CANCELLATION
-
-RETURN/REFUND
-
-REPORT MUNA BEFORE CANCELLATION, SO USERS CANT REQUEST FOR CANCELLATION
-
 YUNG MGA MALAPIT NA MAEXPIRE NA STOCK DAPAT MAY OPTION NA IPROMO
 
-Lahat ng logs nasa iisang page nalang
+IMPORT DATA GALING EXCEL
 
-yung inventory ang ipapakita lang initially is yung may mga laman
-
-yung orders yuing ipapakita rin yung mga need iapprove
-
-QUESTIONS
-
-PWEDE BANG MAG ADD NG INVENTORY NA IBA YUNG DATE SA CURRENT DATE? DONE
-
-KELAN PWEDENG MAG CHANGE NG ORDER?
+CART DAPAT MAG SSTAY LANG

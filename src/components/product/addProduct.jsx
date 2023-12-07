@@ -234,7 +234,7 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 						</div>
 
 						<div>
-							<FieldTitleLabel notFirst>Image (optional)</FieldTitleLabel>
+							<FieldTitleLabel notFirst>Image </FieldTitleLabel>
 							<ProfilePictureContainer>
 								<Centered>
 									<input type="file" name="product_image" required />

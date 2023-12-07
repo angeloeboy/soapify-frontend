@@ -4,7 +4,7 @@ import DashboardLayout from "@/components/misc/dashboardLayout";
 import PageTitle from "@/components/misc/pageTitle";
 import Table, { ActionContainer, Status, TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
 import StyledPanel from "@/styled-components/StyledPanel";
-import { faEllipsis, faFilter, faPen, faPlus, faPlusCircle, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faBoxOpen, faEllipsis, faFilter, faPen, faPlus, faPlusCircle, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TableControlPanel from "@/styled-components/TableControlPanel";
 import PdfExporter from "@/components/misc/pdfExporter";
@@ -217,6 +217,11 @@ const InventoryPage = ({ hasAddinventory }) => {
 												>
 													<FontAwesomeIcon icon={faTrash} /> Move Inventory
 												</p>
+												{inventory.Product.isBox && (
+													<p>
+														<FontAwesomeIcon icon={faBoxOpen} /> Unpack
+													</p>
+												)}
 											</ActionContainer>
 										)}
 									</TableData>

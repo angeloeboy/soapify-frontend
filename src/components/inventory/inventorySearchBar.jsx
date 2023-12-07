@@ -42,6 +42,7 @@ const InventorySearchBar = ({ setIsAddPopUpOpen, inventory, setinventoryDisplay,
 				(term) =>
 					item.Product.product_name.toLowerCase().includes(term.toLowerCase()) ||
 					item.Product.product_code.toLowerCase().includes(term.toLowerCase()) ||
+					item.batch_no.toLowerCase().includes(term.toLowerCase()) ||
 					(item.Product.attribute && item.Product.attribute.some((attr) => attr.value?.toLowerCase().includes(term.toLowerCase())))
 			);
 		});

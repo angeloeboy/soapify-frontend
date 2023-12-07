@@ -51,7 +51,7 @@ const EditOrder = ({ setIsEditPopUpOpen, selectedTransactionId, transaction }) =
 				</FieldContainer>
 				<ButtonsContainer>
 					<CloseButton onClick={() => setIsEditPopUpOpen(false)}>Close </CloseButton>
-					{/* <Button onClick={() => addPaymentMethodFunc()}>Save</Button> */}
+					{/* <Button onClick={() => addPaymentMethodFunc()}>Save</Button>w */}
 				</ButtonsContainer>
 
 				{/* <ToastNotifier message={notification.text} type={notification.type} key={showToast} /> */}

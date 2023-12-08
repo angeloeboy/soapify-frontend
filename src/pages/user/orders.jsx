@@ -11,6 +11,7 @@ import { getCustomerTransaction } from "@/api/transaction";
 import styled from "styled-components";
 import UserDashboardLayout from "@/components/misc/userDashboardLayout";
 import UserOrdersInfo from "@/components/user_components/UserorderInfo";
+import generatePDF from "@/components/orders/orderReceipt";
 
 const Circle = styled.span`
 	width: 10px;
@@ -104,10 +105,10 @@ const Orders = () => {
 						{filteredTransactions.map((transaction, index) => (
 							<TableRows
 								key={transaction.id}
-								onClick={() => {
-									setSelectedTransaction(transaction);
-									setShowOrderInfo(true);
-								}}
+								// onClick={() => {
+								// 	setSelectedTransaction(transaction);
+								// 	setShowOrderInfo(true);
+								// }}
 							>
 								<TableData>{transaction.transaction_unique_id}</TableData>
 								<TableData>{transaction.transaction_number}</TableData>
@@ -138,8 +139,12 @@ const Orders = () => {
 												<FontAwesomeIcon icon={faPen} />
 												Edit
 											</p>
-											<p>
-												<FontAwesomeIcon icon={faTrash} /> Delete
+											<p
+												onClick={() => {
+													generatePDF(transaction);
+												}}
+											>
+												<FontAwesomeIcon icon={faTrash} /> See receipt
 											</p>
 										</ActionContainer>
 									)}

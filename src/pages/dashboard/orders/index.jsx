@@ -4,7 +4,7 @@ import PageTitle from "@/components/misc/pageTitle";
 import Table, { ActionContainer, TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
 import StyledPanel from "@/styled-components/StyledPanel";
 import PdfExporter from "@/components/misc/pdfExporter";
-import { faEllipsis, faTrash, faPen } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsis, faTrash, faPen, faReceipt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getTransactions } from "@/api/transaction";
 import OrdersSearchBar from "@/components/orders/ordersSearchBar";
@@ -127,13 +127,7 @@ const Orders = () => {
 							) : null
 						) : (
 							paginatedTransactions.map((transaction, index) => (
-								<TableRows
-									key={transaction.transaction_unique_id}
-									onClick={() => {
-										setSelectedTransactionId(transaction);
-										setIsOrdersInfoOpen(true);
-									}}
-								>
+								<TableRows key={transaction.transaction_unique_id}>
 									<TableData $bold>{transaction.transaction_unique_id}</TableData>
 									{/* <TableData>{transaction.transaction_number ? transaction.transaction_number : "N/A"}</TableData> */}
 									<TableData>{transaction.items.length}</TableData>
@@ -154,19 +148,28 @@ const Orders = () => {
 										/>
 
 										{activeActionContainer === index && (
-											<ActionContainer onClick={() => setActiveActionContainer(-1)}>
+											<ActionContainer
+												onClick={(e) => {
+													setActiveActionContainer(-1);
+												}}
+											>
 												<p
 													onClick={() => {
-														setSelectedTransactionId(transaction.transaction_id);
-														setSelectedTransaction(transaction);
-														setIsEditPopUpOpen(true);
+														setSelectedTransactionId(transaction);
+														setIsOrdersInfoOpen(true);
 													}}
 												>
 													<FontAwesomeIcon icon={faPen} />
-													Edit
+													View
 												</p>
-												<p>
-													<FontAwesomeIcon icon={faTrash} /> Delete
+
+												<p
+													onClick={() => {
+														generatePDF(transaction);
+														console.log("receipt clicked");
+													}}
+												>
+													<FontAwesomeIcon icon={faReceipt} /> Receipt
 												</p>
 											</ActionContainer>
 										)}
@@ -199,6 +202,7 @@ const Orders = () => {
 export default Orders;
 
 import cookie from "cookie";
+import generatePDF from "@/components/orders/orderReceipt";
 export async function getServerSideProps(context) {
 	const { req } = context;
 	const parsedCookies = cookie.parse(req.headers.cookie || "").permissions;

@@ -211,7 +211,7 @@ const Products = ({ hasAddProduct, hasDeactivateProduct, hasDeleteProduct, hasEd
 									<TableData>{product.product_price / 100}</TableData>
 									<TableData>
 										{product.status === "Low" && (
-											<Status $bgColor={"rgba(255, 116, 116, 0.49)"} color={"#EA0000"}>
+											<Status $bgColor={"rgba(255, 116, 116, 0.49)"} color={"#300000"}>
 												{product.status}
 											</Status>
 										)}
@@ -223,7 +223,7 @@ const Products = ({ hasAddProduct, hasDeactivateProduct, hasDeleteProduct, hasEd
 										)}
 
 										{product.status === "High" && (
-											<Status $bgColor={"rgba(179, 255, 116, 0.49)"} color={"#56ea00"}>
+											<Status $bgColor={"rgba(179, 255, 116, 0.49)"} color={"#0e2700"}>
 												{product.status}
 											</Status>
 										)}

@@ -30,7 +30,9 @@ ONLY ADMIN CAN CHANGE PASSWORD OF USERS - DONE
 
 REPORT MUNA BEFORE CANCELLATION, SO USERS CANT REQUEST FOR CANCELLATION - DONE
 
-send receipt to email - DONE KASO PANGIT ITSURA PWEDE NA
+send receipt to email - DONE
+
+print receipt - DONE
 
 add promo - STARTED
 
@@ -40,13 +42,17 @@ promo codes - STARTED
 
 use promo - STARTED
 
-box to pcs - STARTED
+box to pcs - started
 
-pcs to box - STARTED
+pcs to box - started
+
+detecting if the area is full
 
 change of products after order
 
 Reports
+
+display products that has no stocks
 
 notifications
 

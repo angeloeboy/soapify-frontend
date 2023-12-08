@@ -4,14 +4,14 @@ import DashboardLayout from "@/components/misc/dashboardLayout";
 import PageTitle from "@/components/misc/pageTitle";
 import Table, { ActionContainer, Status, TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
 import StyledPanel from "@/styled-components/StyledPanel";
-import { faBoxOpen, faEllipsis, faFilter, faPen, faPlus, faPlusCircle, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faBox, faBoxOpen, faEllipsis, faFilter, faPen, faPlus, faPlusCircle, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TableControlPanel from "@/styled-components/TableControlPanel";
 import PdfExporter from "@/components/misc/pdfExporter";
 import { Button, ButtonAddInventory, ButtonAddAccountType, ButtonAddStatus } from "@/styled-components/ItemActionModal";
 import AddInventory from "@/components/inventory/addInventory"; // Import your popup content component
 import EditInventoryComponent from "@/components/inventory/editInventory";
-import { getInventory } from "@/api/inventory";
+import { convertBoxToPcs, convertPcsToBox, getInventory } from "@/api/inventory";
 import InventorySearchBar from "@/components/inventory/inventorySearchBar";
 
 import { PaginationControl } from "@/styled-components/ItemActionModal";
@@ -42,7 +42,7 @@ const AboutToExpire = styled.p`
 `;
 
 const Good = styled.p`
-	color: #00ff40;
+	color: #001d07;
 	font-weight: bold;
 	background-color: #00ff4058;
 	padding: 0.5rem;
@@ -140,6 +140,32 @@ const InventoryPage = ({ hasAddinventory }) => {
 		return <Good>Good</Good>;
 	};
 
+	const convertBoxToPcsFunc = async (inventory, quantity) => {
+		const res = await convertBoxToPcs(inventory, quantity);
+
+		console.log(res);
+		if (res.status == "Success") {
+			toast.success("Inventory converted successfully");
+			fetchInventory();
+			return;
+		}
+
+		toast.error("Something went wrong");
+	};
+
+	const convertPcsToBoxFunc = async (inventory, quantity) => {
+		const res = await convertPcsToBox(inventory, quantity);
+
+		console.log(res);
+		if (res.status == "Success") {
+			toast.success("Inventory converted successfully");
+			fetchInventory();
+			return;
+		}
+
+		toast.error("Something went wrong");
+	};
+
 	const [selectedInventory, setSelectedInventory] = useState(null);
 
 	return (
@@ -217,9 +243,13 @@ const InventoryPage = ({ hasAddinventory }) => {
 												>
 													<FontAwesomeIcon icon={faTrash} /> Move Inventory
 												</p>
-												{inventory.Product.isBox && (
-													<p>
+												{inventory.Product.isBox ? (
+													<p onClick={() => convertBoxToPcsFunc(inventory, 1)}>
 														<FontAwesomeIcon icon={faBoxOpen} /> Unpack
+													</p>
+												) : (
+													<p onClick={() => convertPcsToBoxFunc(inventory, 300)}>
+														<FontAwesomeIcon icon={faBox} /> Pack
 													</p>
 												)}
 											</ActionContainer>
@@ -253,6 +283,7 @@ export default InventoryPage;
 
 import cookie, { parse } from "cookie";
 import styled from "styled-components";
+import { toast } from "react-toastify";
 export async function getServerSideProps(context) {
 	const { req } = context;
 	const parsedCookies = cookie.parse(req.headers.cookie || "").permissions;

@@ -59,7 +59,26 @@ export const convertBoxToPcs = async (inventory, pcs) => {
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify(inventory),
+			body: JSON.stringify({ inventory_id: inventory.inventory_id, quantity: pcs }),
+			credentials: "include",
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		// Handle error
+		console.log(error);
+	}
+};
+
+export const convertPcsToBox = async (inventory, pcs) => {
+	try {
+		const response = await fetch("/api/inventory/convert/pc", {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ inventory_id: inventory.inventory_id, quantity: pcs }),
 			credentials: "include",
 		});
 

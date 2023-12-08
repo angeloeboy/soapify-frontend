@@ -43,6 +43,7 @@ const PaymentTable = () => {
 			setAttributesDisplay([]); // Initialize attributesDisplay
 			setPaginatedAttributes([]); // Initialize paginatedAttributes
 			setAttributesLoading(false);
+
 			return;
 		}
 
@@ -136,6 +137,7 @@ const PaymentTable = () => {
 														onClick={() => {
 															setSelectedAttribute(attribute);
 															openEditAttribute(selectedAttribute);
+															setSelectedAttributeId(attribute);
 														}}
 													>
 														<FontAwesomeIcon icon={faPen} /> Edit
@@ -169,7 +171,7 @@ const PaymentTable = () => {
 				/>
 			</StyledPanel>
 			{isPopUpOpen && <AddAttribute setPopUpOpen={setPopUpOpen} fetchAttributes={fetchAttributes} />}
-			{isEditAttributeOpen && <EditAttribute onClose={closeEditAttribute} />}
+			{isEditAttributeOpen && <EditAttribute onClose={closeEditAttribute} fetchAttributes={fetchAttributes} selectedAttr={selectedAttributeId} />}
 
 			{showDeactivate && (
 				<DeleteModal type="attributes" text={clickedName} close={setShowDeactivate} confirm={() => deleteAttributeFunc(selectedAttributeId)} />

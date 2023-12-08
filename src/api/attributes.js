@@ -46,6 +46,24 @@ export const deleteAttribute = async (id) => {
 		const data = await response.json();
 		return data;
 	} catch (error) {
-		console.log(error)
+		console.log(error);
+	}
+};
+
+export const editAttribute = async (id, attribute) => {
+	try {
+		const response = await fetch(`/api/attributes/${id}`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(attribute),
+			credentials: "include",
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.log(error);
 	}
 };

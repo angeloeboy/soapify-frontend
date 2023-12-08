@@ -143,7 +143,6 @@ const Warehouse = () => {
 				<Table id="warehouse-table">
 					<tbody>
 						<TableRows $heading>
-							<TableHeadings>Warehouse ID</TableHeadings>
 							<TableHeadings>Warehouse Name</TableHeadings>
 							<TableHeadings>Location</TableHeadings>
 							<TableHeadings>Status</TableHeadings>
@@ -154,7 +153,6 @@ const Warehouse = () => {
 						{warehouses.map((warehouse, index) => (
 							<React.Fragment key={index}>
 								<TableRows onClick={() => showAreasFunc(warehouse.warehouse_id)}>
-									<TableData>{warehouse.warehouse_id}</TableData>
 									<TableData>{warehouse.warehouse_name}</TableData>
 									<TableData>{warehouse.warehouse_location}</TableData>
 									<TableData>{warehouse.isActive ? "Active" : "Not active"}</TableData>
@@ -179,19 +177,25 @@ const Warehouse = () => {
 												>
 													<FontAwesomeIcon icon={faTrash} /> Delete
 												</p>
-												<p
-													onClick={() => {
-														//GAWIN MO TO
-														setShowDeactivate(true);
-														setClickedName(warehouse.warehouse_name);
-														setSelectedWarehouseId(warehouse.warehouse_id);
-													}}
-												>
-													<FontAwesomeIcon icon={faXmarkCircle} /> Deactivate Warehouse
-												</p>
-												<p onClick={() => handleReactivateModal(warehouse.warehouse_id, warehouse.warehouse_name)}>
-													<FontAwesomeIcon icon={faCheckCircle} /> Reactivate Warehouse
-												</p>
+
+												{warehouse.isActive && (
+													<p
+														onClick={() => {
+															setShowDeactivate(true);
+															setClickedName(warehouse.warehouse_name);
+															setSelectedWarehouseId(warehouse.warehouse_id);
+														}}
+													>
+														<FontAwesomeIcon icon={faXmarkCircle} /> Deactivate
+													</p>
+												)}
+
+												{!warehouse.isActive && (
+													<p onClick={() => handleReactivateModal(warehouse.warehouse_id, warehouse.warehouse_name)}>
+														<FontAwesomeIcon icon={faCheckCircle} /> Activate
+													</p>
+												)}
+
 												<p
 													onClick={() => {
 														setShowAddArea(true);

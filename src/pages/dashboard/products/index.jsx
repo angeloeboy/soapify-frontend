@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { deactivateProduct, getProducts, activateProduct, deleteProduct } from "@/api/products";
 import "react-loading-skeleton/dist/skeleton.css";
 // import Button from "@/components/misc/button";
-import Table, { ActionContainer, TableData, TableHeadings, TableRows, Status } from "@/styled-components/TableComponent";
+import Table, { ActionContainer, TableData, TableHeadings, TableRows, Status, TableContainer } from "@/styled-components/TableComponent";
 import PdfExporter from "@/components/misc/pdfExporter";
 import AddProduct from "@/components/product/addProduct";
 import EditProduct from "@/components/product/editProduct";
@@ -174,111 +174,115 @@ const Products = ({ hasAddProduct, hasDeactivateProduct, hasDeleteProduct, hasEd
 					setCurrentPage={setCurrentPage}
 					hasAddProduct={hasAddProduct}
 				/>
-				<Table id="products-table">
-					<tbody>
-						<TableRows $heading>
-							<TableHeadings>Product ID</TableHeadings>
 
-							<TableHeadings>Name</TableHeadings>
-							{/* <TableHeadings>Attributes</TableHeadings> */}
-							<TableHeadings>Stock</TableHeadings>
-							<TableHeadings>Price</TableHeadings>
-							<TableHeadings>Stock Status</TableHeadings>
-							<TableHeadings>Actions</TableHeadings>
-						</TableRows>
+				<TableContainer>
+					<Table id="products-table">
+						<tbody>
+							<TableRows $heading>
+								<TableHeadings>Product ID</TableHeadings>
 
-						{products.length === 0 ? (
-							productsLoading ? (
-								<LoadingSkeleton columns={6} />
+								<TableHeadings>Name</TableHeadings>
+								{/* <TableHeadings>Attributes</TableHeadings> */}
+								<TableHeadings>Stock</TableHeadings>
+								<TableHeadings>Price</TableHeadings>
+								<TableHeadings>Stock Status</TableHeadings>
+								<TableHeadings>Actions</TableHeadings>
+							</TableRows>
+
+							{products.length === 0 ? (
+								productsLoading ? (
+									<LoadingSkeleton columns={6} />
+								) : (
+									<p>No Products found</p>
+								)
 							) : (
-								<p>No Products found</p>
-							)
-						) : (
-							paginatedProducts.map((product, index) => (
-								<TableRows key={product.product_id}>
-									<TableData $bold $withImage>
-										<Image
-											src={product.image_link == "testing" ? "/sabon.png" : product.image_link.replace(/\\/g, "/")}
-											alt="My Image"
-											width="40"
-											height="40"
-										/>
-										{product.product_code}
-									</TableData>
-									<TableData>{product.product_name}</TableData>
+								paginatedProducts.map((product, index) => (
+									<TableRows key={product.product_id}>
+										<TableData $bold $withImage>
+											<Image
+												src={product.image_link == "testing" ? "/sabon.png" : product.image_link.replace(/\\/g, "/")}
+												alt="My Image"
+												width="40"
+												height="40"
+											/>
+											{product.product_code}
+										</TableData>
+										<TableData>{product.product_name}</TableData>
 
-									<TableData>{product.quantity_in_stock}</TableData>
-									<TableData>{product.product_price / 100}</TableData>
-									<TableData>
-										{product.status === "Low" && (
-											<Status $bgColor={"rgba(255, 116, 116, 0.49)"} color={"#300000"}>
-												{product.status}
-											</Status>
-										)}
+										<TableData>{product.quantity_in_stock}</TableData>
+										<TableData>{product.product_price / 100}</TableData>
+										<TableData>
+											{product.status === "Low" && (
+												<Status $bgColor={"rgba(255, 116, 116, 0.49)"} color={"#300000"}>
+													{product.status}
+												</Status>
+											)}
 
-										{product.status === "Moderate" && (
-											<Status $bgColor={"rgba(255, 246, 116, 0.49)"} color={"#312600"}>
-												{product.status}
-											</Status>
-										)}
+											{product.status === "Moderate" && (
+												<Status $bgColor={"rgba(255, 246, 116, 0.49)"} color={"#312600"}>
+													{product.status}
+												</Status>
+											)}
 
-										{product.status === "High" && (
-											<Status $bgColor={"rgba(179, 255, 116, 0.49)"} color={"#0e2700"}>
-												{product.status}
-											</Status>
-										)}
-									</TableData>
-									<TableData>
-										<FontAwesomeIcon
-											className="ellipsis"
-											icon={faEllipsis}
-											onClick={() => (activeActionContainer === index ? setActiveActionContainer(-1) : setActiveActionContainer(index))}
-										/>
+											{product.status === "High" && (
+												<Status $bgColor={"rgba(179, 255, 116, 0.49)"} color={"#0e2700"}>
+													{product.status}
+												</Status>
+											)}
+										</TableData>
+										<TableData>
+											<FontAwesomeIcon
+												className="ellipsis"
+												icon={faEllipsis}
+												onClick={() => (activeActionContainer === index ? setActiveActionContainer(-1) : setActiveActionContainer(index))}
+											/>
 
-										{activeActionContainer === index && (
-											<ActionContainer onClick={() => setActiveActionContainer(-1)}>
-												{hasEditProduct && (
-													<p
-														onClick={() => {
-															setSelectedProductId(product.product_id);
-															openEditPopUp(true);
-														}}
-													>
-														<FontAwesomeIcon icon={faPen} />
-														Edit
-													</p>
-												)}
+											{activeActionContainer === index && (
+												<ActionContainer onClick={() => setActiveActionContainer(-1)}>
+													{hasEditProduct && (
+														<p
+															onClick={() => {
+																setSelectedProductId(product.product_id);
+																openEditPopUp(true);
+															}}
+														>
+															<FontAwesomeIcon icon={faPen} />
+															Edit
+														</p>
+													)}
 
-												{hasDeleteProduct && (
-													<p
-														onClick={() => {
-															setShowDeactivate(true);
-															setClickedName(product.product_name);
-															setSelectedProductId(product.product_id);
-														}}
-													>
-														<FontAwesomeIcon icon={faTrash} /> Delete
-													</p>
-												)}
+													{hasDeleteProduct && (
+														<p
+															onClick={() => {
+																setShowDeactivate(true);
+																setClickedName(product.product_name);
+																setSelectedProductId(product.product_id);
+															}}
+														>
+															<FontAwesomeIcon icon={faTrash} /> Delete
+														</p>
+													)}
 
-												{product.isActive && <p onClick={() => goToInventoryPageAndAddInventory(product.product_id)}>Add Inventory</p>}
+													{product.isActive && <p onClick={() => goToInventoryPageAndAddInventory(product.product_id)}>Add Inventory</p>}
 
-												{hasReactivateProduct && !product.isActive && (
-													<p onClick={() => handleReactivate(product.product_id, product.product_name)}>Reactivate</p>
-												)}
+													{hasReactivateProduct && !product.isActive && (
+														<p onClick={() => handleReactivate(product.product_id, product.product_name)}>Reactivate</p>
+													)}
 
-												{hasDeactivateProduct && product.isActive && (
-													<p onClick={() => handleDeactivate(product.product_id, product.product_name)}>Deactivate</p>
-												)}
-												{/* <p onClick={() => handleAddInventoryClick(product.product_id)}>Add Inventory</p> */}
-											</ActionContainer>
-										)}
-									</TableData>
-								</TableRows>
-							))
-						)}
-					</tbody>
-				</Table>
+													{hasDeactivateProduct && product.isActive && (
+														<p onClick={() => handleDeactivate(product.product_id, product.product_name)}>Deactivate</p>
+													)}
+													{/* <p onClick={() => handleAddInventoryClick(product.product_id)}>Add Inventory</p> */}
+												</ActionContainer>
+											)}
+										</TableData>
+									</TableRows>
+								))
+							)}
+						</tbody>
+					</Table>
+				</TableContainer>
+
 				<PdfExporter tableId="products-table" fileName="products.pdf" />
 				<Pagination
 					totalItems={productDisplay.length}

@@ -23,12 +23,14 @@ import { getSuppliers } from "@/api/supplier";
 import { toast } from "react-toastify";
 import "react-loading-skeleton/dist/skeleton.css";
 import Image from "next/image";
+import { getParentProduct } from "@/api/parent_product";
 
 const EditProduct = ({ productId, onClose, fetchProducts }) => {
 	const [categories, setCategories] = useState([]);
 	const [attributes, setAttributes] = useState([]);
 	const [suppliers, setSuppliers] = useState([]);
 	const [subCategories, setSubCategories] = useState([]);
+	const [parentProducts, setParentProducts] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [product, setProduct] = useState({
 		product_name: null,
@@ -39,6 +41,7 @@ const EditProduct = ({ productId, onClose, fetchProducts }) => {
 		subcategory_id: 0,
 		quantity_in_stock: 0,
 		minimum_reorder_level: 1,
+		parent_product_id: null,
 		attributes: [],
 		attribute: [],
 	});
@@ -47,6 +50,7 @@ const EditProduct = ({ productId, onClose, fetchProducts }) => {
 		fetchSuppliers();
 		fetchProductData();
 		fetchProductCategories();
+		fetchParentProducts();
 	}, []);
 
 	useEffect(() => {
@@ -59,21 +63,59 @@ const EditProduct = ({ productId, onClose, fetchProducts }) => {
 			setProduct({
 				...productData.product,
 				product_price: productData.product.product_price / 100,
+				parent_product_id: productData.product.parent_product_id !== null ? productData.product.parent_product_id : 0,
 			});
+
+			//get the category of the product and load the subcategory of that category
+			const category = categories.find((category) => category.category_id === productData.product.category_id);
+			setSubCategories(category.subcategories);
 		} catch (error) {
 			console.log(error);
 		}
 	};
 
 	let fetchProductCategories = async () => {
-		const res = await getProductCategories();
-		res ? setCategories(res.categories) : setCategories([]);
-		res ? setSubCategories(res.categories[0].subcategories) : setSubCategories([]);
+		try {
+			const res = await getProductCategories();
+
+			if (res && res.categories) {
+				// Sort categories to make 'Uncategorized' the last item
+				const sortedCategories = res.categories.sort((a, b) => {
+					if (a.name === "Uncategorized") return 1;
+					if (b.name === "Uncategorized") return -1;
+					return 0;
+				});
+
+				setCategories(sortedCategories);
+				console.log(sortedCategories);
+
+				// // Set subcategories of the first category by default, if available
+				// if (sortedCategories.length > 0) {
+				// 	setSubCategories(sortedCategories[0].subcategories || []);
+				// 	console.log("sorted second: ", sortedCategories[0]);
+				// } else {
+				// 	setSubCategories([]);
+				// }
+			} else {
+				setCategories([]);
+				setSubCategories([]);
+			}
+		} catch (error) {
+			console.error("Error fetching product categories:", error);
+			setCategories([]);
+			setSubCategories([]);
+		}
 	};
 
 	let fetchSuppliers = async () => {
 		const res = await getSuppliers();
 		res ? setSuppliers(res.suppliers) : setSuppliers([]);
+	};
+
+	//fetch parent products
+	let fetchParentProducts = async () => {
+		const res = await getParentProduct();
+		res ? setParentProducts(res.parentProducts) : setParentProducts([]);
 	};
 
 	// Destructure the needed properties from the product state
@@ -206,7 +248,7 @@ const EditProduct = ({ productId, onClose, fetchProducts }) => {
 
 		setLoading(false);
 
-		toast.error("Something went wrong");
+		toast.error(res.errors[0].message);
 	};
 
 	return (
@@ -359,7 +401,40 @@ const EditProduct = ({ productId, onClose, fetchProducts }) => {
 									</div>
 								);
 							})}
+						<LabelContainer>
+							<Label>Parent Product</Label>
+						</LabelContainer>
+						<div>
+							<FieldTitleLabel notFirst>Parent Product </FieldTitleLabel>
+							<Select
+								value={product.parent_product_id}
+								onChange={(e) => {
+									if (e.target.value === "Undefined") {
+										setProduct({
+											...product,
+											parent_product_id: null,
+										});
 
+										return;
+									}
+
+									setProduct({
+										...product,
+
+										parent_product_id: Number(e.target.value),
+									});
+								}}
+							>
+								<Option value={0} key={0}>
+									Undefined
+								</Option>
+								{parentProducts.map((parentProduct) => (
+									<Option value={parentProduct.parent_product_id} key={parentProduct.parent_product_id}>
+										{parentProduct.name}
+									</Option>
+								))}
+							</Select>
+						</div>
 						<LabelContainer>
 							<Label>Supplier</Label>
 						</LabelContainer>

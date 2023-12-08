@@ -6,6 +6,7 @@ import { logout, test, register } from "@/api/auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
+import { toast } from "react-toastify";
 
 const RegisterContainer = styled.div`
 	/* height: 100vh; */
@@ -110,21 +111,32 @@ let Register = () => {
 		}
 
 		register(credentials).then((res) => {
-			setIsLoggingIn(false);
-
-			if (!res.errors) return;
 			console.log(res.errors);
-			const errors = res.errors;
+			const errors = res?.errors;
 
-			const usernameErrorMessage = errors.find((error) => error.path === "username")?.msg;
-			const passwordErrorMessage = errors.find((error) => error.path === "password")?.msg;
-			const emailErrorMessage = errors.find((error) => error.path === "email")?.msg;
+			const usernameErrorMessage = errors?.find((error) => error.path === "username")?.msg;
+			const passwordErrorMessage = errors?.find((error) => error.path === "password")?.msg;
+			const emailErrorMessage = errors?.find((error) => error.path === "email")?.msg;
 
 			setErrorMessages({
 				username: usernameErrorMessage || "",
 				password: passwordErrorMessage || "",
 				email: emailErrorMessage || "",
 			});
+
+			console.log(res);
+
+			if (res.status === "Success") {
+				console.log("Success");
+				toast.success("Account created");
+				//redirect to login after 2 seconds
+				setTimeout(() => {
+					window.location.href = "/login";
+				}, 2000);
+				return;
+			}
+
+			setIsLoggingIn(false);
 		});
 	};
 

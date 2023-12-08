@@ -2,7 +2,7 @@ import DashboardLayout from "@/components/misc/dashboardLayout";
 import PageTitle from "@/components/misc/pageTitle";
 import StyledPanel from "@/styled-components/StyledPanel";
 
-import Table, { TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
+import Table, { TableContainer, TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
 
 const { getInventoryLogs, getLogs } = require("@/api/logs");
 const { useEffect, useState } = require("react");
@@ -37,29 +37,31 @@ const Logs = ({ inventory }) => {
 			<PageTitle title="Logs" />
 
 			<StyledPanel>
-				<Table>
-					<tbody>
-						<TableRows $heading>
-							<TableHeadings>Action</TableHeadings>
-							<TableHeadings>Log Type</TableHeadings>
+				<TableContainer>
+					<Table>
+						<tbody>
+							<TableRows $heading>
+								<TableHeadings>Action</TableHeadings>
+								<TableHeadings>Log Type</TableHeadings>
 
-							<TableHeadings>User</TableHeadings>
-							<TableHeadings>Date</TableHeadings>
-						</TableRows>
+								<TableHeadings>User</TableHeadings>
+								<TableHeadings>Date</TableHeadings>
+							</TableRows>
 
-						{logs &&
-							logs.map((log) => (
-								<TableRows key={log.log_id}>
-									<TableData $bold>{log.log_description}</TableData>
-									<TableData $bold>{log.log_type}</TableData>
+							{logs &&
+								logs.map((log) => (
+									<TableRows key={log.log_id}>
+										<TableData $bold>{log.log_description}</TableData>
+										<TableData $bold>{log.log_type}</TableData>
 
-									<TableData>{`${log.user.first_name} ${log.user.last_name}`} </TableData>
+										<TableData>{`${log.user.first_name} ${log.user.last_name}`} </TableData>
 
-									<TableData>{convertToDateFormat(log.createdAt)}</TableData>
-								</TableRows>
-							))}
-					</tbody>
-				</Table>
+										<TableData>{convertToDateFormat(log.createdAt)}</TableData>
+									</TableRows>
+								))}
+						</tbody>
+					</Table>
+				</TableContainer>
 			</StyledPanel>
 		</DashboardLayout>
 	);

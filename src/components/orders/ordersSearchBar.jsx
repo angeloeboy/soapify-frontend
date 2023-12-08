@@ -10,33 +10,24 @@ const OrdersSearchBar = ({ setTransactionsDisplay, transactions, setCurrentPage 
 	const [selectedOrderStatus, setSelectedOrderStatus] = useState("AWAITING PAYMENT");
 
 	const handleSearch = () => {
-		console.log("is this running");
-
 		let query = searchQuery;
 		const queryTerms = query.split(" ");
 
 		let filteredTransactions;
 
 		filteredTransactions = transactions.filter((transaction) => {
-			// Check if transaction matches query terms
-			const matchesQuery = queryTerms.every((term) => {
-				return (
-					transaction.transaction_unique_id.toLowerCase().includes(term.toLowerCase()) ||
-					transaction.transaction_user_name.last_name.toLowerCase().includes(term.toLowerCase()) ||
-					transaction.transaction_user_name.first_name.toLowerCase().includes(term.toLowerCase())
-				);
-			});
-
-			// return matchesQuery;
-
-			// Check if transaction status matches the selected order status
-			const matchesStatus = selectedOrderStatus === "All" || transaction.status === selectedOrderStatus;
-
-			// Return true if both conditions are met
-			return matchesQuery && matchesStatus;
+			return (
+				(selectedOrderStatus === "All" || transaction.status.toUpperCase() === selectedOrderStatus) &&
+				queryTerms.every(
+					(term) =>
+						transaction.transaction_no?.toLowerCase().includes(term.toLowerCase()) ||
+						transaction.transaction_unique_id?.toLowerCase().includes(term.toLowerCase()) ||
+						transaction.transaction_user_name.first_name.toLowerCase().includes(term.toLowerCase()) ||
+						transaction.transaction_user_name.last_name.toLowerCase().includes(term.toLowerCase())
+				)
+			);
 		});
 
-		console.log(selectedOrderStatus);
 		setTransactionsDisplay(filteredTransactions);
 		setCurrentPage(1);
 	};
@@ -59,17 +50,11 @@ const OrdersSearchBar = ({ setTransactionsDisplay, transactions, setCurrentPage 
 				<p> Status</p>
 				<OrderStatus setSelectedOrderStatus={setSelectedOrderStatus} transactions={transactions} />
 			</div>
-			{/* 
-			<div>
-				<Button style={{ marginTop: "28px", padding: "16px 24px" }} onClick={() => setAddPaymentOpen(true)}>
-					+ Add Payment Method
-				</Button>
-			</div> */}
 		</TableControlPanel>
 	);
 };
 
-const OrderStatus = ({ selectedOrderStatus, setSelectedOrderStatus, transactions }) => {
+const OrderStatus = ({ setSelectedOrderStatus, transactions }) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const [selectedItem, setSelectedItem] = useState("Awaiting Payment");
 	const [status, setStatus] = useState(["Awaiting Payment", "Paid", "Cancelled", "Refunded", "Released", "Under Review"]);

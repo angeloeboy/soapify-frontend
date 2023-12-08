@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import DashboardLayout from "@/components/misc/dashboardLayout";
 import PageTitle from "@/components/misc/pageTitle";
-import Table, { ActionContainer, Status, TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
+import Table, { ActionContainer, Status, TableContainer, TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
 import StyledPanel from "@/styled-components/StyledPanel";
 import { faBox, faBoxOpen, faEllipsis, faFilter, faPen, faPlus, faPlusCircle, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -180,86 +180,89 @@ const InventoryPage = ({ hasAddinventory }) => {
 					setCurrentPage={setCurrentPage}
 					hasAddinventory={hasAddinventory}
 				/>
-				<Table id="inventory-table">
-					<tbody>
-						<TableRows $heading>
-							<TableHeadings>Batch No.</TableHeadings>
-							<TableHeadings>Product Id</TableHeadings>
 
-							<TableHeadings>Product Name</TableHeadings>
+				<TableContainer>
+					<Table id="inventory-table">
+						<tbody>
+							<TableRows $heading>
+								<TableHeadings>Batch No.</TableHeadings>
+								<TableHeadings>Product Id</TableHeadings>
 
-							{/* <TableHeadings>Attributes</TableHeadings> */}
-							<TableHeadings>SKU</TableHeadings>
-							<TableHeadings>Quantity</TableHeadings>
-							<TableHeadings>Quantity Remaining</TableHeadings>
-							<TableHeadings>Date Received</TableHeadings>
-							<TableHeadings>Expiration</TableHeadings>
-							<TableHeadings>Actions</TableHeadings>
-						</TableRows>
-						{inventory.length === 0 ? (
-							inventoryLoading ? (
-								<LoadingSkeleton columns={6} />
-							) : null
-						) : (
-							paginatedInventory.map((inventory, index) => (
-								<TableRows key={index}>
-									<TableData $bold>{inventory.batch_no}</TableData>
-									<TableData>{inventory.Product.product_code}</TableData>
-									<TableData> {inventory.Product.product_name}</TableData>
+								<TableHeadings>Product Name</TableHeadings>
 
-									<TableData> {inventory.warehouse && `W: ${inventory.warehouse?.warehouse_name} A: ${inventory.area?.area_name}`}</TableData>
+								{/* <TableHeadings>Attributes</TableHeadings> */}
+								<TableHeadings>SKU</TableHeadings>
+								<TableHeadings>Quantity</TableHeadings>
+								<TableHeadings>Quantity Remaining</TableHeadings>
+								<TableHeadings>Date Received</TableHeadings>
+								<TableHeadings>Expiration</TableHeadings>
+								<TableHeadings>Actions</TableHeadings>
+							</TableRows>
+							{inventory.length === 0 ? (
+								inventoryLoading ? (
+									<LoadingSkeleton columns={8} />
+								) : null
+							) : (
+								paginatedInventory.map((inventory, index) => (
+									<TableRows key={index}>
+										<TableData $bold>{inventory.batch_no}</TableData>
+										<TableData>{inventory.Product.product_code}</TableData>
+										<TableData> {inventory.Product.product_name}</TableData>
 
-									<TableData>{inventory.quantity}</TableData>
-									<TableData>{inventory.current_quantity}</TableData>
-									<TableData>{convertToDateFormat(inventory.date_added)}</TableData>
-									<TableData>{checkIfAboutToExpire(inventory.expiry_date)}</TableData>
+										<TableData> {inventory.warehouse && `W: ${inventory.warehouse?.warehouse_name} A: ${inventory.area?.area_name}`}</TableData>
 
-									<TableData>
-										<FontAwesomeIcon
-											className="ellipsis"
-											icon={faEllipsis}
-											onClick={() => (activeActionContainer === index ? setActiveActionContainer(-1) : setActiveActionContainer(index))}
-										/>
+										<TableData>{inventory.quantity}</TableData>
+										<TableData>{inventory.current_quantity}</TableData>
+										<TableData>{convertToDateFormat(inventory.date_added)}</TableData>
+										<TableData>{checkIfAboutToExpire(inventory.expiry_date)}</TableData>
 
-										{activeActionContainer === index && (
-											<ActionContainer onClick={() => setActiveActionContainer(-1)}>
-												<p
-													onClick={() => {
-														setSelectedInventory(inventory);
-														setIsEditPopUpOpen(selectedInventory);
-													}}
-												>
-													<FontAwesomeIcon icon={faPen} />
-													Edit
-												</p>
-												<p>
-													<FontAwesomeIcon icon={faTrash} /> Delete
-												</p>
-												<p
-													onClick={(e) => {
-														setIsMovePopUpOpen(true);
-														setSelectedInventory(inventory);
-													}}
-												>
-													<FontAwesomeIcon icon={faTrash} /> Move Inventory
-												</p>
-												{inventory.Product.isBox ? (
-													<p onClick={() => convertBoxToPcsFunc(inventory, 1)}>
-														<FontAwesomeIcon icon={faBoxOpen} /> Unpack
+										<TableData>
+											<FontAwesomeIcon
+												className="ellipsis"
+												icon={faEllipsis}
+												onClick={() => (activeActionContainer === index ? setActiveActionContainer(-1) : setActiveActionContainer(index))}
+											/>
+
+											{activeActionContainer === index && (
+												<ActionContainer onClick={() => setActiveActionContainer(-1)}>
+													<p
+														onClick={() => {
+															setSelectedInventory(inventory);
+															setIsEditPopUpOpen(selectedInventory);
+														}}
+													>
+														<FontAwesomeIcon icon={faPen} />
+														Edit
 													</p>
-												) : (
-													<p onClick={() => convertPcsToBoxFunc(inventory, 300)}>
-														<FontAwesomeIcon icon={faBox} /> Pack
+													<p>
+														<FontAwesomeIcon icon={faTrash} /> Delete
 													</p>
-												)}
-											</ActionContainer>
-										)}
-									</TableData>
-								</TableRows>
-							))
-						)}
-					</tbody>
-				</Table>
+													<p
+														onClick={(e) => {
+															setIsMovePopUpOpen(true);
+															setSelectedInventory(inventory);
+														}}
+													>
+														<FontAwesomeIcon icon={faTrash} /> Move Inventory
+													</p>
+													{inventory.Product.isBox ? (
+														<p onClick={() => convertBoxToPcsFunc(inventory, 1)}>
+															<FontAwesomeIcon icon={faBoxOpen} /> Unpack
+														</p>
+													) : (
+														<p onClick={() => convertPcsToBoxFunc(inventory, 300)}>
+															<FontAwesomeIcon icon={faBox} /> Pack
+														</p>
+													)}
+												</ActionContainer>
+											)}
+										</TableData>
+									</TableRows>
+								))
+							)}
+						</tbody>
+					</Table>
+				</TableContainer>
 				<PdfExporter tableId="inventory-table" fileName="inventory.pdf" />
 				<Pagination
 					setItemsPerPage={setItemsPerPage}

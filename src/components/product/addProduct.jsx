@@ -33,18 +33,6 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 	const [subCategories, setSubCategories] = useState([]);
 	const [parentProducts, setParentProducts] = useState([]);
 	const [product, setProduct] = useState({
-		// product_name: "",
-		// product_desc: "test description",
-		// product_price: 0,
-		// category_id: 1,
-		// supplier_id: 0,
-		// subcategory_id: 0,
-		// quantity_in_stock: 0,
-		// minimum_reorder_level: 1,
-		// isVariant: false,
-		// parent_product_id: 0,
-		// attributes: [],
-
 		product_name: "",
 		product_desc: "test description",
 		category_id: 1,
@@ -82,33 +70,39 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 		setLoading(true);
 		let formData = new FormData();
 
-		// Append the image to formData
-		formData.append("product_image", e.target.elements.product_image.files[0]);
+		try {
+			// Append the image to formData
+			formData.append("product_image", e.target.elements.product_image.files[0]);
 
-		// Append each property in the product object to formData
-		for (let key in product) {
-			if (product.hasOwnProperty(key)) {
-				// Check if the property is 'attributes', 'boxDetails', or 'pcDetails'
-				if (key === "attributes" || key === "boxDetails" || key === "pcDetails") {
-					// Convert the object to a JSON string and append it
-					formData.append(key, JSON.stringify(product[key]));
-				} else {
-					// Append other properties as they are
-					formData.append(key, product[key]);
+			// Append each property in the product object to formData
+			for (let key in product) {
+				if (product.hasOwnProperty(key)) {
+					// Check if the property is 'attributes', 'boxDetails', or 'pcDetails'
+					if (key === "attributes" || key === "boxDetails" || key === "pcDetails") {
+						// Convert the object to a JSON string and append it
+						formData.append(key, JSON.stringify(product[key]));
+					} else {
+						// Append other properties as they are
+						formData.append(key, product[key]);
+					}
 				}
 			}
+
+			const res = await addProduct(formData);
+			console.log(res);
+			setLoading(false);
+
+			if (!res) return;
+			if (res.status !== "Success") return toast.error(res.errors[0].message);
+
+			toast.success("Product added successfully");
+			GetProducts();
+			setIsAddPopUpOpen(false);
+		} catch (error) {
+			console.log(error);
+			setLoading(false);
+			toast.error("Something went wrong");
 		}
-
-		const res = await addProduct(formData);
-		console.log(res);
-		setLoading(false);
-
-		if (!res) return;
-		if (res.status !== "Success") return toast.error(res.errors[0].message);
-
-		toast.success("Product added successfully");
-		GetProducts();
-		setIsAddPopUpOpen(false);
 	};
 
 	let fetchProductCategories = async () => {
@@ -116,6 +110,20 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 
 		//get categories that are active
 		const activeCategories = res.categories.filter((category) => category.isActive == 1);
+
+		//make the category with the name "Uncategorized" the last element in the array
+		activeCategories.sort((a, b) => {
+			if (a.name === "Uncategorized") {
+				return 1;
+			}
+
+			if (b.name === "Uncategorized") {
+				return -1;
+			}
+
+			return 0;
+		});
+
 		const activeSubcategories = res.categories[0].subcategories.filter((subcategory) => subcategory.isActive == 1);
 
 		console.log(activeCategories);
@@ -147,7 +155,7 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 
 		let attributeArray = [];
 
-		initialAttributes.forEach((attribute) => {
+		initialAttributes?.forEach((attribute) => {
 			attributeArray.push({
 				attribute_id: attribute.attribute_id,
 				attribute_value_id: attribute.values[0].attribute_value_id,
@@ -158,7 +166,7 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 			...product,
 			supplier_id: suppliers[0]?.supplier_id ?? 0,
 			category_id: categories[0]?.category_id,
-			subcategory_id: categories[0]?.subcategories[0].subcategory_id,
+			subcategory_id: categories[0]?.subcategories[0]?.subcategory_id,
 			attributes: attributeArray,
 		});
 
@@ -292,7 +300,7 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 							<Label>Attributes</Label>
 						</LabelContainer>
 
-						{attributes.map((attribute, index) => {
+						{attributes?.map((attribute, index) => {
 							return (
 								<div key={attribute.attribute_id}>
 									<FieldTitleLabel notFirst>{attribute.attribute_name}</FieldTitleLabel>

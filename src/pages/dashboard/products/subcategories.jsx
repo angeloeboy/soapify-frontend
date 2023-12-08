@@ -13,7 +13,7 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
 // import Button from "@/components/misc/button";
-import Table, { ActionContainer, TableData, TableHeadings, TableRows, Status } from "@/styled-components/TableComponent";
+import Table, { ActionContainer, TableData, TableHeadings, TableRows, Status, TableContainer } from "@/styled-components/TableComponent";
 import { Button } from "@/styled-components/ItemActionModal";
 
 import SearchBarComponent from "@/components/product/subcategory/searchBarAndFilter";
@@ -38,9 +38,6 @@ const ProductTemplates = () => {
 	const [clickedName, setClickedName] = useState(null);
 	const [showDeactivate, setShowDeactivate] = useState(false);
 	const [selectedSubCategoryId, setSelectedSubCategoryId] = useState(null);
-  
-  
-
 
 	const router = useRouter();
 
@@ -98,81 +95,81 @@ const ProductTemplates = () => {
 
 			<StyledPanel>
 				<SearchBarComponent setisAddSubCatOpen={setisAddSubCatOpen} subCategories={subCategories} setSubcategoryDisplay={setSubcategoryDisplay} />
-				<Table id="subcategories-table">
-					<tbody>
-						<TableRows $heading>
-							<TableHeadings>ID</TableHeadings>
-							<TableHeadings>Name</TableHeadings>
-							<TableHeadings>Attributes</TableHeadings>
-							<TableHeadings>Actions</TableHeadings>
-						</TableRows>
 
-						{subCategories.length === 0 ? (
-							subCategoriesLoading ? (
-								Array.from({ length: 8 }, (_, index) => (
-									<TableRows key={index}>
-										<TableData className="imgContainer">
-											<Skeleton circle={true} height={40} width={40} />
-											{/* <Skeleton width={100} height={20} /> */}
-										</TableData>
+				<TableContainer>
+					<Table id="subcategories-table">
+						<tbody>
+							<TableRows $heading>
+								<TableHeadings>Name</TableHeadings>
+								<TableHeadings>Attributes</TableHeadings>
+								<TableHeadings>Actions</TableHeadings>
+							</TableRows>
+
+							{subCategories.length === 0 ? (
+								subCategoriesLoading ? (
+									Array.from({ length: 8 }, (_, index) => (
+										<TableRows key={index}>
+											<TableData className="imgContainer">
+												<Skeleton circle={true} height={40} width={40} />
+												{/* <Skeleton width={100} height={20} /> */}
+											</TableData>
+											<TableData>
+												<Skeleton width={50} height={20} />
+											</TableData>
+											<TableData>
+												<Skeleton width={50} height={20} />
+											</TableData>
+											<TableData>
+												<Skeleton width={50} height={20} />
+											</TableData>
+										</TableRows>
+									))
+								) : (
+									<p>No Subcategories found</p>
+								)
+							) : (
+								paginatedSubcategories.map((subcategory, index) => (
+									<TableRows key={subcategory.subcategory_id}>
+										<TableData>{subcategory.subcategory_name}</TableData>
+										<TableData>{subcategory.attributes.length}</TableData>
 										<TableData>
-											<Skeleton width={50} height={20} />
-										</TableData>
-										<TableData>
-											<Skeleton width={50} height={20} />
-										</TableData>
-										<TableData>
-											<Skeleton width={50} height={20} />
+											<FontAwesomeIcon
+												className="ellipsis"
+												icon={faEllipsis}
+												onClick={() => (activeActionContainer === index ? setActiveActionContainer(-1) : setActiveActionContainer(index))}
+											/>
+
+											{activeActionContainer === index && (
+												<ActionContainer onClick={() => setActiveActionContainer(-1)}>
+													<p
+														onClick={() => {
+															setSelectedSubCat(subcategory);
+															setEditSubCatOpen(true);
+														}}
+													>
+														<FontAwesomeIcon icon={faPen} />
+														Edit
+													</p>
+													<p
+														onClick={() => {
+															//GAWIN MO TO
+															setShowDeactivate(true);
+															setClickedName(subcategory.subcategory_name);
+															setSelectedSubCategoryId(subcategory.subcategory_id);
+														}}
+													>
+														<FontAwesomeIcon icon={faTrash} /> Delete
+													</p>
+												</ActionContainer>
+											)}
 										</TableData>
 									</TableRows>
 								))
-							) : (
-								<p>No Subcategories found</p>
-							)
-						) : (
-							paginatedSubcategories.map((subcategory, index) => (
-								<TableRows key={subcategory.subcategory_id}>
-									<TableData>{subcategory.subcategory_id}</TableData>
-									<TableData>{subcategory.subcategory_name}</TableData>
-									<TableData>{subcategory.attributes.length}</TableData>
-									<TableData>
-										<FontAwesomeIcon
-											className="ellipsis"
-											icon={faEllipsis}
-											onClick={() => (activeActionContainer === index ? setActiveActionContainer(-1) : setActiveActionContainer(index))}
-										/>
+							)}
+						</tbody>
+					</Table>
+				</TableContainer>
 
-										{activeActionContainer === index && (
-											<ActionContainer onClick={() => setActiveActionContainer(-1)}>
-												<p
-													onClick={() => {
-														setSelectedSubCat(subcategory);
-														setEditSubCatOpen(true);
-													}}
-												>
-													<FontAwesomeIcon icon={faPen} />
-													Edit
-												</p>
-												<p  
-												onClick={() =>{
-													//GAWIN MO TO 
-												setShowDeactivate(true);
-												setClickedName(subcategory.subcategory_name);
-												setSelectedSubCategoryId(subcategory.subcategory_id); 
-												
-												  }}
-												
-												>
-													<FontAwesomeIcon icon={faTrash} /> Delete
-												</p>
-											</ActionContainer>
-										)}
-									</TableData>
-								</TableRows>
-							))
-						)}
-					</tbody>
-				</Table>
 				<PdfExporter tableId="subcategories-table" fileName="subcategories.pdf" />
 				<Pagination
 					totalItems={subcategoryDisplay.length} // Total number of items
@@ -197,15 +194,9 @@ const ProductTemplates = () => {
 				<EditSubCategory setEditSubCatOpen={setEditSubCatOpen} selectedSubCat={selectedSubCat} fetchSubCategories={fetchProductSubcategories} />
 			)}
 
-				{showDeactivate && (
-						<DeleteModal
-						type="subcategories"
-						text={clickedName}
-						close={setShowDeactivate}
-						confirm={() => deleteSubCategoryFunc(selectedSubCategoryId)}
-
-						/>
-					)}
+			{showDeactivate && (
+				<DeleteModal type="subcategories" text={clickedName} close={setShowDeactivate} confirm={() => deleteSubCategoryFunc(selectedSubCategoryId)} />
+			)}
 		</DashboardLayout>
 	);
 };

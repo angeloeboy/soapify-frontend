@@ -346,6 +346,10 @@ const UserCart = ({ setActiveAction }) => {
 										const valueAsNumber = Number(valueAsString);
 
 										if (e.key === "ArrowUp") {
+											//disable arrow up if quantity is greater than quantity_in_stock
+											if (valueAsNumber >= item.quantity_in_stock) {
+												return;
+											}
 											let updatedCart = cart.map((product) => (product.product_id === item.product_id ? { ...product, quantity: valueAsNumber + 1 } : product));
 											setCart(updatedCart);
 										} else if (e.key === "ArrowDown") {

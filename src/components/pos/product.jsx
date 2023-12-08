@@ -269,6 +269,9 @@ const ProductComponent = ({ product, onClick, index }) => {
 						const valueAsNumber = Number(valueAsString);
 
 						if (e.key === "ArrowUp") {
+							//disable the arrow up if the quantity is already equal to the quantity_in_stock
+							if (valueAsNumber >= item.quantity_in_stock) return;
+
 							let updatedCart = cart.map((product) => (product.product_id === item.product_id ? { ...product, quantity: valueAsNumber + 1 } : product));
 							setCart(updatedCart);
 						} else if (e.key === "ArrowDown") {

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import DashboardLayout from "@/components/misc/dashboardLayout";
 import StyledPanel from "@/styled-components/StyledPanel";
 import PageTitle from "@/components/misc/pageTitle";
-import Table, { ActionContainer, TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
+import Table, { ActionContainer, TableContainer, TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import pdfExporter from "@/components/misc/pdfExporter";
 import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
@@ -106,59 +106,61 @@ const PaymentTable = () => {
 			<StyledPanel>
 				{/* <PaymentSearchBarComponent searchQuery={searchQuery} handleSearchChange={handleSearchChange} handleOpenPopup={handleOpenPopup} /> */}
 				<AttributeSearchBar setPopUpOpen={setPopUpOpen} />
+				<TableContainer>
+					<Table id="attributes-table">
+						<tbody>
+							<TableRows $heading>
+								<TableHeadings>Attribute Name</TableHeadings>
+								<TableHeadings>Choices</TableHeadings>
+								<TableHeadings>Additional info?</TableHeadings>
+								<TableHeadings>Actions</TableHeadings>
+							</TableRows>
 
-				<Table id="attributes-table">
-					<tbody>
-						<TableRows $heading>
-							<TableHeadings>Attribute Name</TableHeadings>
-							<TableHeadings>Choices</TableHeadings>
-							<TableHeadings>Additional info?</TableHeadings>
-							<TableHeadings>Actions</TableHeadings>
-						</TableRows>
+							{attributes.length === 0
+								? attributesLoading && <LoadingSkeleton columns={4} />
+								: paginatedAttributes.map((attribute, index) => (
+										<TableRows key={attribute.attribute_id}>
+											<TableData>{attribute.attribute_name}</TableData>
+											<TableData>{attribute.values.length}</TableData>
 
-						{attributes.length === 0
-							? attributesLoading && <LoadingSkeleton columns={4} />
-							: paginatedAttributes.map((attribute, index) => (
-									<TableRows key={attribute.attribute_id}>
-										<TableData>{attribute.attribute_name}</TableData>
-										<TableData>{attribute.values.length}</TableData>
+											<TableData>{attribute.requires_additional_value ? "Yes" : "No"}</TableData>
+											<TableData>
+												<FontAwesomeIcon
+													className="ellipsis"
+													icon={faEllipsis}
+													onClick={() => (activeActionContainer === index ? setActiveActionContainer(-1) : setActiveActionContainer(index))}
+												/>
 
-										<TableData>{attribute.requires_additional_value ? "Yes" : "No"}</TableData>
-										<TableData>
-											<FontAwesomeIcon
-												className="ellipsis"
-												icon={faEllipsis}
-												onClick={() => (activeActionContainer === index ? setActiveActionContainer(-1) : setActiveActionContainer(index))}
-											/>
+												{activeActionContainer === index && (
+													<ActionContainer onClick={() => setActiveActionContainer(-1)}>
+														<p
+															onClick={() => {
+																setSelectedAttribute(attribute);
+																openEditAttribute(selectedAttribute);
+																setSelectedAttributeId(attribute);
+															}}
+														>
+															<FontAwesomeIcon icon={faPen} /> Edit
+														</p>
+														<p
+															onClick={() => {
+																//GAWIN MO TO
+																setShowDeactivate(true);
+																setClickedName(attribute.attribute_name);
+																setSelectedAttributeId(attribute.attribute_id);
+															}}
+														>
+															<FontAwesomeIcon icon={faTrash} /> Delete
+														</p>
+													</ActionContainer>
+												)}
+											</TableData>
+										</TableRows>
+								  ))}
+						</tbody>
+					</Table>
+				</TableContainer>
 
-											{activeActionContainer === index && (
-												<ActionContainer onClick={() => setActiveActionContainer(-1)}>
-													<p
-														onClick={() => {
-															setSelectedAttribute(attribute);
-															openEditAttribute(selectedAttribute);
-															setSelectedAttributeId(attribute);
-														}}
-													>
-														<FontAwesomeIcon icon={faPen} /> Edit
-													</p>
-													<p
-														onClick={() => {
-															//GAWIN MO TO
-															setShowDeactivate(true);
-															setClickedName(attribute.attribute_name);
-															setSelectedAttributeId(attribute.attribute_id);
-														}}
-													>
-														<FontAwesomeIcon icon={faTrash} /> Delete
-													</p>
-												</ActionContainer>
-											)}
-										</TableData>
-									</TableRows>
-							  ))}
-					</tbody>
-				</Table>
 				<PdfExporter tableId="attributes-table" fileName="attributes.pdf" className="export-btn" />
 				<Pagination
 					totalItems={attributesDisplay.length}

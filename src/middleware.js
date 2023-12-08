@@ -99,10 +99,6 @@ export async function middleware(req) {
 		}
 
 		const next_response = NextResponse.next();
-		// next_response.cookies.set("permissions", JSON.stringify(permissions), {
-		// 	httpOnly: false,
-		// 	path: "/",
-		// });
 
 		return next_response;
 	} catch (error) {

@@ -1,9 +1,10 @@
 const { FontAwesomeIcon } = require("@fortawesome/react-fontawesome");
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DropdownHeader, DropdownItem, DropdownMenu, DropdownWrapper, SearchBar, TableControlPanel, Button } from "@/styled-components/TableControlPanel";
 import { getProducts } from "@/api/products";
 import { getAllWarehouse, getWarehouse } from "@/api/warehouse";
+import useOutsideClick from "@/hooks/useOutsideclick";
 
 const InventorySearchBar = ({ setIsAddPopUpOpen, inventory, setinventoryDisplay, setCurrentPage, hasAddinventory }) => {
 	const [searchQuery, setSearchQuery] = useState("");
@@ -62,9 +63,9 @@ const InventorySearchBar = ({ setIsAddPopUpOpen, inventory, setinventoryDisplay,
 		//filter inventory based on search and on selected product
 		filteredInventory = inventory.filter((item) => {
 			return (
-				(selectedProduct === "All" || item.Product.product_name === selectedProduct) &&
-				(selectedWarehouse === "All" || item.warehouse.warehouse_name === selectedWarehouse) &&
-				(selectedArea === "All" || item.area.area_name === selectedArea) &&
+				(selectedProduct === "All" || item.Product?.product_name === selectedProduct) &&
+				(selectedWarehouse === "All" || item.warehouse?.warehouse_name === selectedWarehouse) &&
+				(selectedArea === "All" || item.area?.area_name === selectedArea) &&
 				queryTerms.every(
 					(term) =>
 						item.Product.product_name.toLowerCase().includes(term.toLowerCase()) ||
@@ -110,9 +111,14 @@ const InventorySearchBar = ({ setIsAddPopUpOpen, inventory, setinventoryDisplay,
 const Dropdown = ({ products, handleProductChange }) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const [selectedItem, setSelectedItem] = useState("All");
+	const dropdownRef = useRef(null);
+
+	useOutsideClick(dropdownRef, () => {
+		if (isOpen) setIsOpen(false);
+	});
 
 	return (
-		<DropdownWrapper onClick={() => setIsOpen(!isOpen)}>
+		<DropdownWrapper ref={dropdownRef} onClick={() => setIsOpen(!isOpen)}>
 			<DropdownHeader>
 				<FontAwesomeIcon icon={faFilter} />
 				{selectedItem}
@@ -149,8 +155,14 @@ const DropDownWarehouse = ({ warehouses, handleWarehouseChange }) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const [selectedItem, setSelectedItem] = useState("All");
 
+	const dropdownRef = useRef(null);
+
+	useOutsideClick(dropdownRef, () => {
+		if (isOpen) setIsOpen(false);
+	});
+
 	return (
-		<DropdownWrapper onClick={() => setIsOpen(!isOpen)}>
+		<DropdownWrapper ref={dropdownRef} onClick={() => setIsOpen(!isOpen)}>
 			<DropdownHeader>
 				<FontAwesomeIcon icon={faFilter} />
 				{selectedItem}
@@ -187,8 +199,14 @@ const DropdownArea = ({ areas, handleAreaChange }) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const [selectedItem, setSelectedItem] = useState("All");
 
+	const dropdownRef = useRef(null);
+
+	useOutsideClick(dropdownRef, () => {
+		if (isOpen) setIsOpen(false);
+	});
+
 	return (
-		<DropdownWrapper onClick={() => setIsOpen(!isOpen)}>
+		<DropdownWrapper ref={dropdownRef} onClick={() => setIsOpen(!isOpen)}>
 			<DropdownHeader>
 				<FontAwesomeIcon icon={faFilter} />
 				{selectedItem}

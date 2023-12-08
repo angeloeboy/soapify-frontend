@@ -1,7 +1,7 @@
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 
-const generatePDF = (transaction) => {
+const generatePDF = async (transaction) => {
 	const doc = new jsPDF();
 
 	// Add title
@@ -18,11 +18,10 @@ const generatePDF = (transaction) => {
 
 	// Add other details similarly
 
-	// Add table for items
 	const tableColumn = ["Product Name", "Quantity", "Price", "Total Price"];
 	const tableRows = [];
-
-	transaction.items.forEach((item) => {
+	let currentY = 80;
+	for (const item of transaction.items) {
 		const itemData = [
 			item.product.product_name,
 			item.quantity,
@@ -31,7 +30,10 @@ const generatePDF = (transaction) => {
 			// Add other item details if needed
 		];
 		tableRows.push(itemData);
-	});
+
+		// Update Y position for the next row
+		currentY += 30; // Adjust based on your layout
+	}
 
 	tableRows.push(["Total", "", "", transaction.total_amount]);
 
@@ -40,5 +42,21 @@ const generatePDF = (transaction) => {
 	// Save the PDF
 	doc.save(`transaction-receipt-${transaction.transaction_unique_id}.pdf`);
 };
+
+async function loadImage(url) {
+	return new Promise((resolve, reject) => {
+		const xhr = new XMLHttpRequest();
+		xhr.onload = function () {
+			const reader = new FileReader();
+			reader.onloadend = function () {
+				resolve(reader.result);
+			};
+			reader.readAsDataURL(xhr.response);
+		};
+		xhr.open("GET", url);
+		xhr.responseType = "blob";
+		xhr.send();
+	});
+}
 
 export default generatePDF;

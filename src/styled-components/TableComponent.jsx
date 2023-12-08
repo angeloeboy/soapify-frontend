@@ -1,16 +1,21 @@
 import styled from "styled-components";
 
-const Table = styled.table`
+export const TableContainer = styled.div`
+	min-height: 800px;
+	width: 100%;
+	overflow-x: auto;
+`;
+
+export const Table = styled.table`
 	width: 100%;
 	border: none;
 	border-collapse: collapse;
-	min-width: 1300px; // adjust as needed
-	max-width: 100%; // ensures table doesn't exceed the container width
+	min-width: 1300px; // Adjust as needed
+	max-width: 100%; // Ensures table doesn't exceed the container width
 	margin-top: 32px;
 
-	// Optional: for larger screens
 	@media (min-width: 1024px) {
-		table-layout: auto; // allows flexible column widths
+		table-layout: auto; // Allows flexible column widths
 	}
 `;
 

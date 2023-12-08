@@ -36,7 +36,7 @@ print receipt - DONE
 
 add promo - STARTED
 
-field for promo - STARTED
+field for promo - DONE
 
 promo codes - STARTED
 
@@ -57,6 +57,8 @@ display products that has no stocks
 notifications
 
 YUNG MGA MALAPIT NA MAEXPIRE NA STOCK DAPAT MAY OPTION NA IPROMO
+
+LIST OF PROMOS
 
 IMPORT DATA GALING EXCEL
 

@@ -158,20 +158,6 @@ let Login = () => {
 					<p>Enter your email and password to sign in!</p>
 
 					<div className="formsContainer">
-						{/* <label htmlFor="username">Username</label>
-						<FormField
-							type="text"
-							onChange={(e) => {
-								setCredentials({ ...credentials, username: e.target.value });
-								setErrorMessages({ ...errorMessages, username: "" });
-							}}
-							value={credentials.username}
-							id="username"
-							name="username"
-							error={errorMessages.username ? true : false}
-						/>
-						{errorMessages.username && <Error>{errorMessages.username}</Error>} */}
-
 						<label htmlFor="username">Email</label>
 						<FormField
 							type="email"
@@ -201,6 +187,7 @@ let Login = () => {
 						{errorMessages.password && <Error>{errorMessages.password}</Error>}
 
 						<Link href="/">Forgot Password</Link>
+						<Link href="/register">Create an account</Link>
 
 						<Button className="loginBtn" width="100%" onClick={(e) => handleLogin(e)}>
 							{loggingIn ? <FontAwesomeIcon icon={faSpinner} spin /> : "Log In"}

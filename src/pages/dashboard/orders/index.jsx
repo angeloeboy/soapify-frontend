@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import DashboardLayout from "@/components/misc/dashboardLayout";
 import PageTitle from "@/components/misc/pageTitle";
-import Table, { ActionContainer, TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
+import Table, { ActionContainer, TableContainer, TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
 import StyledPanel from "@/styled-components/StyledPanel";
 import PdfExporter from "@/components/misc/pdfExporter";
 import { faEllipsis, faTrash, faPen, faReceipt } from "@fortawesome/free-solid-svg-icons";
@@ -68,7 +68,7 @@ const Orders = () => {
 
 	useEffect(() => {
 		getAllTransactions();
-	}, [currentPage, itemsPerPage]);
+	}, []);
 
 	const handleClickOutside = (event) => {
 		if (!event.target.closest(".action-container") && !event.target.closest(".ellipsis")) {
@@ -109,76 +109,77 @@ const Orders = () => {
 			<StyledPanel>
 				{/* <ReturnSearchBar onSearch={handleSearch} setIsAddPopUpOpen={setIsAddPopUpOpen} setReturnsDisplay={setReturns} /> */}
 				<OrdersSearchBar setTransactionsDisplay={setTransactionsDisplay} transactions={transactions} setCurrentPage={setCurrentPage} />
-				<Table id="orders-table">
-					<tbody>
-						<TableRows $heading>
-							<TableHeadings>Transaction Number</TableHeadings>
-							{/* <TableHeadings>Payment Transaction Number</TableHeadings> */}
-							<TableHeadings>No. of Products</TableHeadings>
-							<TableHeadings>Status</TableHeadings>
-							<TableHeadings>Ordered By</TableHeadings>
-							<TableHeadings>Date</TableHeadings>
+				<TableContainer>
+					<Table id="orders-table">
+						<tbody>
+							<TableRows $heading>
+								<TableHeadings>Transaction Number</TableHeadings>
+								{/* <TableHeadings>Payment Transaction Number</TableHeadings> */}
+								<TableHeadings>Status</TableHeadings>
+								<TableHeadings>Ordered By</TableHeadings>
+								<TableHeadings>Date</TableHeadings>
 
-							<TableHeadings>Actions</TableHeadings>
-						</TableRows>
-						{transactions.length == 0 ? (
-							transactionsLoading ? (
-								<LoadingSkeleton columns={7} />
-							) : null
-						) : (
-							paginatedTransactions.map((transaction, index) => (
-								<TableRows key={transaction.transaction_unique_id}>
-									<TableData $bold>{transaction.transaction_unique_id}</TableData>
-									{/* <TableData>{transaction.transaction_number ? transaction.transaction_number : "N/A"}</TableData> */}
-									<TableData>{transaction.items.length}</TableData>
-									<TableData>
-										<Animated status={transaction.status}>
-											<Circle status={transaction.status} />
-											{transaction.status}
-										</Animated>
-									</TableData>
-									<TableData>{`${transaction.transaction_user_name.first_name} ${transaction.transaction_user_name.last_name}`}</TableData>
-									<TableData>{convertToDateFormat(transaction.createdAt)}</TableData>
+								<TableHeadings>Actions</TableHeadings>
+							</TableRows>
+							{transactions.length == 0 ? (
+								transactionsLoading ? (
+									<LoadingSkeleton columns={7} />
+								) : null
+							) : (
+								paginatedTransactions.map((transaction, index) => (
+									<TableRows key={transaction.transaction_unique_id}>
+										<TableData $bold>{transaction.transaction_unique_id}</TableData>
 
-									<TableData>
-										<FontAwesomeIcon
-											className="ellipsis"
-											icon={faEllipsis}
-											onClick={() => (activeActionContainer === index ? setActiveActionContainer(-1) : setActiveActionContainer(index))}
-										/>
+										<TableData>
+											<Animated status={transaction.status}>
+												<Circle status={transaction.status} />
+												{transaction.status}
+											</Animated>
+										</TableData>
+										<TableData>{`${transaction.transaction_user_name.first_name} ${transaction.transaction_user_name.last_name}`}</TableData>
+										<TableData>{convertToDateFormat(transaction.createdAt)}</TableData>
 
-										{activeActionContainer === index && (
-											<ActionContainer
-												onClick={(e) => {
-													setActiveActionContainer(-1);
-												}}
-											>
-												<p
-													onClick={() => {
-														setSelectedTransactionId(transaction);
-														setIsOrdersInfoOpen(true);
+										<TableData>
+											<FontAwesomeIcon
+												className="ellipsis"
+												icon={faEllipsis}
+												onClick={() => (activeActionContainer === index ? setActiveActionContainer(-1) : setActiveActionContainer(index))}
+											/>
+
+											{activeActionContainer === index && (
+												<ActionContainer
+													onClick={(e) => {
+														setActiveActionContainer(-1);
 													}}
 												>
-													<FontAwesomeIcon icon={faPen} />
-													View
-												</p>
+													<p
+														onClick={() => {
+															setSelectedTransactionId(transaction);
+															setIsOrdersInfoOpen(true);
+														}}
+													>
+														<FontAwesomeIcon icon={faPen} />
+														View
+													</p>
 
-												<p
-													onClick={() => {
-														generatePDF(transaction);
-														console.log("receipt clicked");
-													}}
-												>
-													<FontAwesomeIcon icon={faReceipt} /> Receipt
-												</p>
-											</ActionContainer>
-										)}
-									</TableData>
-								</TableRows>
-							))
-						)}
-					</tbody>
-				</Table>
+													<p
+														onClick={() => {
+															generatePDF(transaction);
+															console.log("receipt clicked");
+														}}
+													>
+														<FontAwesomeIcon icon={faReceipt} /> Receipt
+													</p>
+												</ActionContainer>
+											)}
+										</TableData>
+									</TableRows>
+								))
+							)}
+						</tbody>
+					</Table>
+				</TableContainer>
+
 				<PdfExporter tableId="orders-table" fileName="orders.pdf" />
 				{isEditPopUpOpen && (
 					<EditOrder setIsEditPopUpOpen={setIsEditPopUpOpen} selectedTransactionId={selectedTransactionId} transaction={selectedTransaction} />

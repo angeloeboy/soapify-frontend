@@ -13,16 +13,15 @@ import PdfExporter from "@/components/misc/pdfExporter";
 import { useRouter } from "next/router";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import Table, { ActionContainer, TableData, TableHeadings, TableRows, Status } from "@/styled-components/TableComponent";
+import Table, { ActionContainer, TableData, TableHeadings, TableRows, Status, TableContainer } from "@/styled-components/TableComponent";
 import { Button } from "@/styled-components/ItemActionModal";
 
 import CategoriesSearchBar from "@/components/product/categories/categoriesSearchBar";
 import AddCategories from "./../../../components/product/categories/addCategories";
 import EditCategory from "@/components/product/categories/editCategory";
 import Pagination from "@/components/misc/pagination";
-import DeleteModal from "@/components/misc/delete"; 
+import DeleteModal from "@/components/misc/delete";
 import { toast } from "react-toastify";
-
 
 const Categories = () => {
 	const [categories, setCategories] = useState([]);
@@ -35,8 +34,8 @@ const Categories = () => {
 	const [itemsPerPage, setItemsPerPage] = useState(10);
 
 	const [clickedName, setClickedName] = useState(null);
-  	const [showDeactivate, setShowDeactivate] = useState(false);
-  	const [selectedCategoriesId, setSelectedCategoriesId] = useState(null);
+	const [showDeactivate, setShowDeactivate] = useState(false);
+	const [selectedCategoriesId, setSelectedCategoriesId] = useState(null);
 
 	const startIndex = (currentPage - 1) * itemsPerPage;
 	const endIndex = currentPage * itemsPerPage;
@@ -91,79 +90,78 @@ const Categories = () => {
 
 			<StyledPanel>
 				<CategoriesSearchBar setIsAddPopUpOpen={setIsAddPopUpOpen} setCategoriesDisplay={setCategoriesDisplay} categories={categories} />
+				<TableContainer>
+					<Table id="categories-table">
+						<tbody>
+							<TableRows $heading>
+								<TableHeadings>Name</TableHeadings>
+								<TableHeadings>Status</TableHeadings>
+								<TableHeadings>Actions</TableHeadings>
+							</TableRows>
 
-				<Table id="categories-table">
-					<tbody>
-						<TableRows $heading>
-							<TableHeadings>Name</TableHeadings>
-							<TableHeadings>Status</TableHeadings>
-							<TableHeadings>Actions</TableHeadings>
-						</TableRows>
+							{categories.length === 0 ? (
+								categoriesLoading ? (
+									Array.from({ length: 8 }, (_, index) => (
+										<TableRows key={index}>
+											<TableData className="imgContainer">
+												<Skeleton circle={true} height={40} width={40} />
+											</TableData>
 
-						{categories.length === 0 ? (
-							categoriesLoading ? (
-								Array.from({ length: 8 }, (_, index) => (
-									<TableRows key={index}>
-										<TableData className="imgContainer">
-											<Skeleton circle={true} height={40} width={40} />
-										</TableData>
+											<TableData>
+												<Skeleton width={50} height={20} />
+											</TableData>
+											<TableData>
+												<Skeleton width={50} height={20} />
+											</TableData>
+										</TableRows>
+									))
+								) : (
+									<p>No Categories found</p>
+								)
+							) : (
+								paginatedCategories.map((category, index) => (
+									<TableRows key={category.category_id}>
+										<TableData>{category.name}</TableData>
+
+										<TableData>{category.isActive ? "Active" : "Not active"}</TableData>
 
 										<TableData>
-											<Skeleton width={50} height={20} />
-										</TableData>
-										<TableData>
-											<Skeleton width={50} height={20} />
+											<FontAwesomeIcon
+												className="ellipsis"
+												icon={faEllipsis}
+												onClick={() => (activeActionContainer === index ? setActiveActionContainer(-1) : setActiveActionContainer(index))}
+											/>
+
+											{activeActionContainer === index && (
+												<ActionContainer onClick={() => setActiveActionContainer(-1)}>
+													<p
+														onClick={() => {
+															setSelectedCategory();
+															openEditPopUp(selectedCategory);
+														}}
+													>
+														<FontAwesomeIcon icon={faPen} />
+														Edit
+													</p>
+													<p
+														onClick={() => {
+															setShowDeactivate(true);
+															setClickedName(category.name);
+															setSelectedCategoriesId(category.category_id);
+														}}
+													>
+														<FontAwesomeIcon icon={faTrash} /> Delete
+													</p>
+												</ActionContainer>
+											)}
 										</TableData>
 									</TableRows>
 								))
-							) : (
-								<p>No Categories found</p>
-							)
-						) : (
-							paginatedCategories.map((category, index) => (
-								<TableRows key={category.category_id}>
-									<TableData>{category.name}</TableData>
+							)}
+						</tbody>
+					</Table>
+				</TableContainer>
 
-									<TableData>{category.isActive ? "Active" : "Not active"}</TableData>
-
-									<TableData>
-										<FontAwesomeIcon
-											className="ellipsis"
-											icon={faEllipsis}
-											onClick={() => (activeActionContainer === index ? setActiveActionContainer(-1) : setActiveActionContainer(index))}
-										/>
-
-										{activeActionContainer === index && (
-											<ActionContainer onClick={() => setActiveActionContainer(-1)}>
-												<p
-													onClick={() => {
-														setSelectedCategory();
-														openEditPopUp(selectedCategory);
-													}}
-												>
-													<FontAwesomeIcon icon={faPen} />
-													Edit
-												</p>
-												<p  
-												
-												onClick={() =>{
- 													setShowDeactivate(true);
-													setClickedName(category.name);
-													setSelectedCategoriesId(category.category_id); 
-					  
-												  }}
-												
-												>
-													<FontAwesomeIcon icon={faTrash} /> Delete
-												</p>
-											</ActionContainer>
-										)}
-									</TableData>
-								</TableRows>
-							))
-						)}
-					</tbody>
-				</Table>
 				<PdfExporter tableId="categories-table" fileName="categories.pdf" />
 				<Pagination
 					totalItems={categoriesDisplay.length} // Total number of items
@@ -178,17 +176,7 @@ const Categories = () => {
 			{isAddPopUpOpen && <AddCategories setIsAddPopUpOpen={setIsAddPopUpOpen} fetchCategories={fetchCategories} />}
 			{isEditCategoryOpen && <EditCategory onClose={closeEditPopUp} setEditCategoryOpen={setEditCategoryOpen} />}
 
-		{showDeactivate && (
-        <DeleteModal
-          type="Category"
-          text={clickedName}
-          close={setShowDeactivate}
-          confirm={() => deleteCategoryFunc(selectedCategoriesId)}
-
-        />
-      )}											
-
-
+			{showDeactivate && <DeleteModal type="Category" text={clickedName} close={setShowDeactivate} confirm={() => deleteCategoryFunc(selectedCategoriesId)} />}
 		</DashboardLayout>
 	);
 };

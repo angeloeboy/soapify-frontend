@@ -68,6 +68,10 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId, openModa
 
 		if (res && res.warehouses.length > 0) {
 			let activeWarehouses = res.warehouses.filter((warehouse) => warehouse.isActive);
+
+			//select only warehouse with areas
+			activeWarehouses = activeWarehouses.filter((warehouse) => warehouse.areas.length > 0);
+
 			setWarehouses(activeWarehouses);
 			setAreas(activeWarehouses[0].areas);
 		}

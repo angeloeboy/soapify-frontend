@@ -284,7 +284,8 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 					</LabelContainer>
 					<OrdersWrapper>
 						<h5>Payment Details</h5>
-						<p>Transaction number: {selectedTransaction.transaction_number}</p>
+						<p>Payment method: {selectedTransaction.payment_method.name}</p>
+						<p>Transaction number: {selectedTransaction.transaction_number ? selectedTransaction.transaction_number : "N/A"}</p>
 						{selectedTransaction.transaction_screenshot && (
 							<>
 								<p>Screenshot of payment</p>

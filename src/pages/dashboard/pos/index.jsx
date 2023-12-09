@@ -71,6 +71,7 @@ const Pos = () => {
 		transaction_number: "",
 		total_amount: 0,
 		items: [],
+		promo_code: "",
 	});
 
 	const [parentProducts, setParentProducts] = useState([]);

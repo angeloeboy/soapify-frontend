@@ -94,7 +94,7 @@ const PromoPage = () => {
 									<TableData>
 										{promo.promo_code_value} {promo.promo_code_type == "PERCENTAGE" ? "%" : "PHP"}
 									</TableData>
-									<TableData>{promo.promo_code_max_use}</TableData>
+									<TableData>{promo.promo_code_max_use !== null ? promo.promo_code_max_use : "Unlimited"}</TableData>
 									<TableData>{promo.promo_code_current_use}</TableData>
 
 									<TableData>{convertToDateFormat(promo.promo_code_expiry)}</TableData>

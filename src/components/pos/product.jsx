@@ -48,6 +48,8 @@ const Product = styled.div`
 		}
 	}
 
+	user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+
 	.quantity {
 		display: inline-flex;
 		/* margin-left: auto; */
@@ -256,7 +258,7 @@ const ProductComponent = ({ product, onClick, index }) => {
 						if (item.quantity == 0) return;
 						updateCart(item, "subtract");
 					}}
-					className={item.quantity > 0 ? "minus" : "minus disabled"}
+					className={item.quantity >= 0 ? "minus" : "minus disabled"}
 				>
 					<FontAwesomeIcon icon={faMinus} />
 				</span>

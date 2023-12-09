@@ -103,6 +103,7 @@ const InventoryPage = ({ hasAddinventory }) => {
 		getInventory().then((res) => {
 			console.log(res);
 
+			if (!res) return;
 			res.inventory = res.inventory.filter((inventory) => inventory.current_quantity > 0);
 			res.inventory ? setInventory(res.inventory) : setInventory([]);
 			res.inventory ? setinventoryDisplay(res.inventory) : setinventoryDisplay([]);

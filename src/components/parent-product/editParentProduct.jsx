@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import {
 	Button,
@@ -17,15 +17,20 @@ import { CloseButton } from "../styled-components/PopUp";
 import { addPaymentMethod } from "@/api/payment_method";
 
 import { toast } from "react-toastify";
-import { addParentProduct } from "@/api/parent_product";
+import { addParentProduct, editParentProduct } from "@/api/parent_product";
 
-const AddParentProduct = ({ setAddParentProductOpen, fetchParentProducts }) => {
+const EditParentProduct = ({ setEditParentProductOpen, fetchParentProducts, selectedParentProduct }) => {
 	const [parentProduct, setParentProduc] = useState({
 		name: "",
 	});
 
-	const addParentProductFunc = async () => {
-		const response = await addParentProduct(parentProduct);
+	useEffect(() => {
+		setParentProduc(selectedParentProduct);
+		console.log("Parent Product", selectedParentProduct);
+	}, [selectedParentProduct]);
+
+	const editParentProductFunc = async () => {
+		const response = await editParentProduct(parentProduct, selectedParentProduct.parent_product_id);
 
 		if (!response) return;
 		console.log(response);
@@ -33,7 +38,7 @@ const AddParentProduct = ({ setAddParentProductOpen, fetchParentProducts }) => {
 		if (response.status == "Success") {
 			fetchParentProducts();
 			toast.success(response.message);
-			setAddParentProductOpen(false);
+			setEditParentProductOpen(false);
 		} else {
 			toast.warning(response.message);
 		}
@@ -42,7 +47,7 @@ const AddParentProduct = ({ setAddParentProductOpen, fetchParentProducts }) => {
 	return (
 		<PopupOverlay>
 			<PopupContent>
-				<HeaderTitle>Add Parent Product</HeaderTitle>
+				<HeaderTitle>Edit Parent Product</HeaderTitle>
 				<FieldContainer>
 					<LabelContainer first>
 						<Label>Parent Product Information</Label>
@@ -56,18 +61,16 @@ const AddParentProduct = ({ setAddParentProductOpen, fetchParentProducts }) => {
 					<CloseButton
 						onClick={() => {
 							window.history.replaceState(null, null, window.location.pathname);
-							setAddParentProductOpen(false);
+							setEditParentProductOpen(false);
 						}}
 					>
 						Close
 					</CloseButton>
-					<Button onClick={() => addParentProductFunc()}>Save</Button>
+					<Button onClick={() => editParentProductFunc()}>Save</Button>
 				</ButtonsContainer>
-
-				{/* <ToastNotifier message={notification.text} type={notification.type} key={showToast} /> */}
 			</PopupContent>
 		</PopupOverlay>
 	);
 };
 
-export default AddParentProduct;
+export default EditParentProduct;

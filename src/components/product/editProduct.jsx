@@ -464,27 +464,6 @@ const EditProduct = ({ productId, onClose, fetchProducts }) => {
 								))}
 							</Select>
 						</div>
-						<LabelContainer>
-							<Label>Supplier</Label>
-						</LabelContainer>
-						<div>
-							<FieldTitleLabel notFirst>Supplier</FieldTitleLabel>
-							<Select
-								value={product.supplier_id}
-								onChange={(e) => {
-									setProduct({
-										...product,
-										supplier_id: Number(e.target.value),
-									});
-								}}
-							>
-								{suppliers.map((supplier) => (
-									<Option value={supplier.supplier_id} key={supplier.supplier_id}>
-										{supplier.supplier_name}
-									</Option>
-								))}
-							</Select>
-						</div>
 					</FieldContainer>
 
 					<ButtonsContainer>

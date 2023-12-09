@@ -266,13 +266,45 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 
 						<p className="total">Total: P{selectedTransaction.total_amount / 100}</p>
 					</OrdersWrapper>
-
-					<LabelContainer>
-						<Label>Action</Label>
-					</LabelContainer>
-					<OrdersWrapper>
-						{selectedTransaction.status !== "CANCELLED" && selectedTransaction.status !== "REFUNDED" && (
+					{selectedTransaction.status !== "CANCELLED" &&
+						selectedTransaction.status !== "REFUNDED" &&
+						selectedTransaction.status !== "AWAITING PAYMENT" &&
+						selectedTransaction.status !== "RELEASED" && (
 							<>
+								<LabelContainer>
+									<Label>Action</Label>
+								</LabelContainer>
+								<OrdersWrapper>
+									<TextArea type="text" value={notes} onChange={(e) => setNotes(e.target.value)} />
+
+									<p>
+										Contact number: <span>(Admin will contact you to this number. Make sure to stay open)</span>{" "}
+									</p>
+									<ContactNumber
+										type="text"
+										maxlength="12"
+										placeholder="Enter phone number"
+										value={contact}
+										onChange={(e) => {
+											const value = e.target.value;
+											// Remove anything that is not a digit
+											const sanitizedValue = value.replace(/[^0-9]/g, "");
+											setContact(sanitizedValue);
+										}}
+										required
+									/>
+
+									<ButtonReport onClick={(e) => requestForCancellationFunc(e)}>Request Cancellation</ButtonReport>
+								</OrdersWrapper>
+							</>
+						)}
+
+					{selectedTransaction.status === "RELEASED" && (
+						<>
+							<LabelContainer>
+								<Label>Action</Label>
+							</LabelContainer>
+							<OrdersWrapper>
 								<TextArea type="text" value={notes} onChange={(e) => setNotes(e.target.value)} />
 
 								<p>
@@ -292,10 +324,15 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 									required
 								/>
 
-								<ButtonReport onClick={(e) => requestForCancellationFunc(e)}>Report Issue</ButtonReport>
-							</>
-						)}
-					</OrdersWrapper>
+								<ButtonReport onClick={(e) => requestForReturnRefundFunc(e)}>Report Issue</ButtonReport>
+
+								<p>
+									Important Notice: We understand that plans can change, and you may need to cancel an order occasionally. However, to maintain the efficiency
+									of our services and fairness to all customers, we apply penalties for frequent cancellations.
+								</p>
+							</OrdersWrapper>
+						</>
+					)}
 				</FieldContainer>
 
 				<ButtonsContainer>

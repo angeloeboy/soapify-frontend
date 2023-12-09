@@ -41,12 +41,19 @@ const PromoCode = () => {
 	const { setTransaction, transaction, cart, setPromoCodeResponse } = useContext(TransactionContext);
 
 	const validate = async () => {
-		const res = await validatePromo(promoCode, cart);
-		console.log(res);
+		console.log(transaction);
+		if (transaction.promo_codeApplied) {
+			console.log("test");
+			return toast.error("Promo already applied");
+		}
 
+		const res = await validatePromo(promoCode, cart);
+		setTransaction((prev) => ({ ...prev, promo_code: promoCode }));
+		console.log("CArt", cart);
 		if (res.isValid) {
 			setPromoCodeResponse(res);
 			toast.success("Promo code applied!");
+			setTransaction((prev) => ({ ...prev, promo_codeApplied: true }));
 			return;
 		}
 

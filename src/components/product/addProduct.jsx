@@ -22,6 +22,7 @@ import { getSuppliers } from "@/api/supplier";
 import { toast } from "react-toastify";
 import { getParentProduct } from "@/api/parent_product";
 import Image from "next/image";
+import Link from "next/link";
 
 const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 	const [categories, setCategories] = useState([]);
@@ -604,6 +605,11 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 									</Option>
 								))}
 							</Select>
+							{parentProducts.length <= 0 && (
+								<Link className="sml-link" href="/dashboard/parent-product?add=true">
+									Add Parent Product
+								</Link>
+							)}
 						</div>
 
 						{/* <LabelContainer>

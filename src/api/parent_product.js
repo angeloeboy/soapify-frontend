@@ -49,3 +49,21 @@ export const deleteParentProduct = async (id) => {
 		console.log(error);
 	}
 };
+
+export const editParentProduct = async (parentProduct, id) => {
+	try {
+		const response = await fetch(`/api/parent-product/edit/${id}`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			credentials: "include",
+			body: JSON.stringify(parentProduct),
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};

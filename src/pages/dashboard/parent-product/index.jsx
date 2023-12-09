@@ -20,6 +20,7 @@ import { toast } from "react-toastify";
 import { deleteParentProduct, getParentProduct } from "@/api/parent_product";
 import ParentProductSearchBar from "@/components/parent-product/parentProductSearchBar";
 import AddParentProduct from "@/components/parent-product/addParentProduct";
+import EditParentProduct from "@/components/parent-product/editParentProduct";
 
 const ParentProduct = () => {
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
@@ -32,7 +33,7 @@ const ParentProduct = () => {
 
 	const [isEditParentProductOpen, setEditParentProductOpen] = useState(false);
 	const [isAddParentProductOpen, setAddParentProductOpen] = useState(false);
-
+	const [selectedParentProduct, setSelectedParentProduct] = useState(null);
 	const [clickedId, setClickedId] = useState(null);
 
 	const [currentPage, setCurrentPage] = useState(1);
@@ -81,6 +82,12 @@ const ParentProduct = () => {
 	};
 
 	useEffect(() => {
+		//if link has add query, open add payment popup
+		const url = new URL(window.location.href);
+		if (url.searchParams.get("add")) {
+			setAddParentProductOpen(true);
+		}
+
 		document.addEventListener("click", handleClickOutside);
 		return () => {
 			document.removeEventListener("click", handleClickOutside);
@@ -114,7 +121,7 @@ const ParentProduct = () => {
 								: paginatedOParentProduct.map((parentProduct, index) => (
 										<TableRows key={index}>
 											<TableData>{parentProduct.name}</TableData>
-											<TableData>10</TableData>
+											<TableData>{parentProduct.product_count}</TableData>
 											<TableData>{parentProduct.isActive ? "Active" : "Inactive"}</TableData>
 
 											<TableData>
@@ -128,8 +135,8 @@ const ParentProduct = () => {
 													<ActionContainer onClick={() => setActiveActionContainer(-1)}>
 														<p
 															onClick={() => {
-																// setClickedId(method.payment_method_id);
-																// openEditPayment();
+																setSelectedParentProduct(parentProduct);
+																setEditParentProductOpen(true);
 															}}
 														>
 															<FontAwesomeIcon icon={faPen} /> Edit
@@ -155,7 +162,14 @@ const ParentProduct = () => {
 				/>
 			</StyledPanel>
 			{isAddParentProductOpen && <AddParentProduct setAddParentProductOpen={setAddParentProductOpen} fetchParentProducts={fetchParentProducts} />}
-			{isAddPaymentOpen && <AddPayment setAddPaymentOpen={setAddPaymentOpen} fetchPaymentMethods={fetchPaymentMethods} />}
+			{isEditParentProductOpen && (
+				<EditParentProduct
+					setEditParentProductOpen={setEditParentProductOpen}
+					fetchParentProducts={fetchParentProducts}
+					selectedParentProduct={selectedParentProduct}
+				/>
+			)}
+			{/* {isAddPaymentOpen && <AddPayment setAddPaymentOpen={setAddPaymentOpen} fetchPaymentMethods={fetchPaymentMethods} />} */}
 		</DashboardLayout>
 	);
 };

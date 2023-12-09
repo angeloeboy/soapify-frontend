@@ -53,6 +53,8 @@ edit promo code - STARTED
 
 use promo - STARTED
 
+unlimited promo - DONE
+
 box to pcs - DONE
 
 pcs to box - DONE
@@ -68,6 +70,8 @@ SA REPORT DAPAT NAKA LIST RIN HINDI LANG NAKA GRAPH
 display products that has no stocks
 
 notifications
+
+pag mag return or refund, may option yung admin if ibabalik sa inventory or hindi
 
 YUNG MGA MALAPIT NA MAEXPIRE NA STOCK DAPAT MAY OPTION NA IPROMO
 

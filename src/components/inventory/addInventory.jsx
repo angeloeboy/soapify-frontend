@@ -269,7 +269,15 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId, openModa
 					</FieldContainer>
 
 					<ButtonsContainer>
-						<CloseButton onClick={() => setIsAddPopUpOpen(false)}>Close</CloseButton>
+						<CloseButton
+							onClick={() => {
+								//remove the ?productId=1&openModal=true from the url
+								window.history.replaceState(null, null, window.location.pathname);
+								setIsAddPopUpOpen(false);
+							}}
+						>
+							Close
+						</CloseButton>
 						<Button type="submit">{loading ? <Image src="/loading.svg" alt="loading" width="20" height="20" /> : "Save"} </Button>
 					</ButtonsContainer>
 				</form>

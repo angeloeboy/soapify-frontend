@@ -42,9 +42,15 @@ const AddPromo = ({ setIsAddPopUpOpen, getPromotionsFunc }) => {
 	const [chosen_products, setchosen_products] = useState([]);
 	const [product, setProduct] = useState(null);
 	const [isloading, setIsLoading] = useState(false);
+	const [isUnli, setIsUnli] = useState(false);
+
 	useEffect(() => {
 		fetchProducts();
 	}, []);
+
+	useEffect(() => {
+		console.log("is Unli", isUnli);
+	}, [isUnli]);
 
 	const [promo, setPromo] = useState({
 		promo_code: "",
@@ -152,8 +158,34 @@ const AddPromo = ({ setIsAddPopUpOpen, getPromotionsFunc }) => {
 						</div>
 
 						<div>
-							<FieldTitleLabel>Max Use</FieldTitleLabel>
-							<InputHolder type="number" onChange={(e) => setPromo({ ...promo, promo_code_max_use: e.target.value })} value={promo.promo_code_max_use} />
+							<FieldTitleLabel>Unlimited Use?</FieldTitleLabel>
+
+							<Select
+								value={isUnli}
+								onChange={(e) => {
+									if (e.target.value == "true") {
+										setPromo({ ...promo, promo_code_max_use: null });
+										setIsUnli(true);
+									} else {
+										setIsUnli(false);
+										setPromo({ ...promo, promo_code_max_use: 1 });
+									}
+								}}
+							>
+								<Option value={true} key={1}>
+									Yes
+								</Option>
+								<Option value={false} key={2}>
+									No
+								</Option>
+							</Select>
+							{!isUnli && (
+								<>
+									<FieldTitleLabel>Max Use</FieldTitleLabel>
+
+									<InputHolder type="number" onChange={(e) => setPromo({ ...promo, promo_code_max_use: e.target.value })} value={promo.promo_code_max_use} />
+								</>
+							)}
 						</div>
 
 						<div>

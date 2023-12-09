@@ -83,7 +83,10 @@ const AddSupplier = ({ onClose, onButtonClick, fetchSuppliers }) => {
 							<InputHolder
 								type="text"
 								onChange={(e) => {
-									setSupplier({ ...supplier, supplier_phone: e.target.value });
+									const value = e.target.value;
+									///remove anything that is not a digit and limit it to 12 digits
+									const sanitizedValue = value.replace(/\D/g, "").slice(0, 12);
+									setSupplier({ ...supplier, supplier_phone: sanitizedValue });
 								}}
 								value={supplier.supplier_phone}
 							/>

@@ -88,8 +88,6 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId, openModa
 
 		if (res && res.suppliers.length > 0) {
 			setSuppliers(res.suppliers);
-
-			setInventory({ ...inventory, supplier_id: res.suppliers[0].supplier_id });
 		}
 	};
 
@@ -122,7 +120,7 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId, openModa
 		if (selectedWarehouse) {
 			setAreas(selectedWarehouse.areas);
 			if (selectedWarehouse.areas.length > 0) {
-				setInventory((inv) => ({ ...inv, area_id: selectedWarehouse.areas[0].area_id }));
+				setInventory((inv) => ({ ...inv, area_id: selectedWarehouse.areas[0].area_id, supplier_id: suppliers[0]?.supplier_id }));
 			} else {
 				setInventory((inv) => ({ ...inv, area_id: 0 }));
 			}
@@ -131,12 +129,12 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId, openModa
 
 	useEffect(() => {
 		if (warehouses.length > 0) {
-			setInventory((inv) => ({ ...inv, warehouse_id: warehouses[0].warehouse_id }));
+			setInventory((inv) => ({ ...inv, warehouse_id: warehouses[0].warehouse_id, supplier_id: suppliers[0]?.supplier_id }));
 		}
 
 		if (products.length > 0) {
 			if (productId && openModal) return;
-			setInventory((inv) => ({ ...inv, product_id: products[0].product_id }));
+			setInventory((inv) => ({ ...inv, product_id: products[0].product_id, supplier_id: suppliers[0]?.supplier_id }));
 		}
 	}, [warehouses, products]);
 

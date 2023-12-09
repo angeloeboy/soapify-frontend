@@ -42,6 +42,7 @@ const EditProduct = ({ productId, onClose, fetchProducts }) => {
 		quantity_in_stock: 0,
 		minimum_reorder_level: 1,
 		parent_product_id: null,
+		pcsPerBox: 0,
 		attributes: [],
 		attribute: [],
 	});
@@ -348,6 +349,34 @@ const EditProduct = ({ productId, onClose, fetchProducts }) => {
 								}}
 								required
 								value={product.minimum_reorder_level}
+							/>
+						</div>
+
+						<div>
+							<FieldTitleLabel>Pieces per Box</FieldTitleLabel>
+							<InputHolder
+								type="number"
+								min="0"
+								onChange={(e) => {
+									// Regular expression to allow only positive whole numbers
+									const validPositiveWholeNumberRegex = /^[0-9]+$/;
+
+									if (e.target.value === "") {
+										setProduct({
+											...product,
+											pcsPerBox: "",
+										});
+									} else if (validPositiveWholeNumberRegex.test(e.target.value)) {
+										setProduct({
+											...product,
+											pcsPerBox: Number(e.target.value),
+										});
+									}
+								}}
+								pattern="^[0-9]+$"
+								title="Please enter a valid positive whole number."
+								required
+								value={product.pcsPerBox}
 							/>
 						</div>
 						<div>

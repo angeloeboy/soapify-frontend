@@ -110,7 +110,7 @@ const PackInventory = ({ setIsPackPopUpOpen, getInventoryFunc, selectedInventory
 						</LabelContainer>
 
 						<div>
-							<FieldTitleLabel notFirst>How many pcs?</FieldTitleLabel>
+							<FieldTitleLabel notFirst>How many pcs? A box contains {selectedInventory.Product.pcsPerBox} pcs</FieldTitleLabel>
 
 							<InputHolder
 								type="number"

@@ -15,6 +15,8 @@ import styled from "styled-components";
 import OrdersInfo from "@/components/orders/ordersInfo";
 // import EditOrder from "@/components/orders/EditOrders";
 
+import { useAppContext } from "@/components/context/AppContext";
+
 const Circle = styled.span`
 	width: 10px;
 	height: 10px;
@@ -66,6 +68,8 @@ const Orders = () => {
 	const endIndex = currentPage * itemsPerPage;
 	const paginatedTransactions = transactionsDisplay.slice(startIndex, endIndex);
 
+	const { setOrders } = useAppContext();
+
 	useEffect(() => {
 		getAllTransactions();
 	}, []);
@@ -100,6 +104,9 @@ const Orders = () => {
 		res.transactions ? setTransactionsDisplay(res.transactions) : setTransactionsDisplay([]);
 		setTransactionsLoading(false);
 		console.log(res.transactions);
+		res.transactions = res.transactions.filter((order) => order.status == "AWAITING PAYMENT");
+
+		setOrders(res.transactions);
 	};
 
 	return (

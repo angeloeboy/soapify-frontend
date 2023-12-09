@@ -106,7 +106,7 @@ const UserDashboard = () => {
 	}, [promoCodeResponse]); // Dependency array includes only promoCodeResponse
 
 	useEffect(() => {
-		console.log("orig cart: ", cart);
+		// console.log("orig cart: ", cart);
 		setTransaction((prev) => ({
 			...prev,
 			total_amount: cart.reduce((acc, item) => acc + item.product_price * item.quantity, 0),

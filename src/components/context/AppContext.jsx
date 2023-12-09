@@ -1,16 +1,35 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { usePermissions } from "./PermissionsContext";
 import { useRouter } from "next/router";
+import { getTransactions } from "@/api/transaction";
 
 const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
 	const { permissions } = usePermissions();
 	const [permissions_list, setPermissions] = useState([]); // Permissions state
+	const [orders, setOrders] = useState([]);
 	const router = useRouter();
 	const [loadingPermissions, setLoadingPermissions] = useState(true); // New state to track loading of permissions
 
 	const hasPermission = (permission) => permissions.includes(permission);
+
+	const getOrders = async () => {
+		try {
+			const response = await getTransactions();
+
+			//get orders that are "Awating payment"
+			response.transactions = response.transactions.filter((order) => order.status == "AWAITING PAYMENT");
+
+			setOrders(response.transactions);
+		} catch (error) {
+			console.error("Error fetching orders", error);
+		}
+	};
+
+	useEffect(() => {
+		getOrders();
+	}, []);
 
 	const generateSidebarData = () => {
 		const sidebarData = [
@@ -21,7 +40,7 @@ export const AppProvider = ({ children }) => {
 				submenus: [
 					{ title: "POS", link: "/dashboard/pos" },
 					{ title: "Overview", link: "/dashboard" },
-					{ title: "Orders", link: "/dashboard/orders", permission: "View Orders:orders" },
+					{ title: `${orders.length > 0 ? `Orders (${orders.length})` : "Orders"}`, link: "/dashboard/orders", permission: "View Orders:orders" },
 					{ title: "Promos", link: "/dashboard/promos" },
 				],
 			},
@@ -76,7 +95,7 @@ export const AppProvider = ({ children }) => {
 		setPermissions(permissions);
 		setLoadingPermissions(false);
 		setSidebarData(generateSidebarData()); // Update sidebar data when permissions change
-	}, [permissions]);
+	}, [permissions, orders]);
 
 	useEffect(() => {
 		const currentPath = router.pathname;
@@ -115,7 +134,7 @@ export const AppProvider = ({ children }) => {
 	}, [router.pathname, sidebarData, permissions]); // Dependency on the path and sidebarData
 
 	// Add logic to fetch and set permissions here
-	return <AppContext.Provider value={{ permissions_list, sidebarState, setSidebarState, sidebarData }}>{children}</AppContext.Provider>;
+	return <AppContext.Provider value={{ permissions_list, sidebarState, setSidebarState, sidebarData, setOrders }}>{children}</AppContext.Provider>;
 };
 
 export const useAppContext = () => useContext(AppContext);

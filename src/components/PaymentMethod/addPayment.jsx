@@ -37,17 +37,15 @@ const AddPayment = ({ setAddPaymentOpen, fetchPaymentMethods }) => {
 		if (!response) return;
 
 		//check if response is successful
-		if (response.success) {
+		if (response.status == "Success") {
 			fetchPaymentMethods();
 			// setNotification({ text: response.message, type: "success" });
 			toast.success(response.message);
 			// setShowToast((prev) => !prev); // toggle the showToast state
+			setAddPaymentOpen(false);
 		} else {
-			toast.success(response.message);
-
-			// setNotification({ text: response.errors[0].message, type: "error" });
-			// setShowToast((prev) => !prev); // toggle the showToast state
-			// console.log(response.errors);
+			console.log(response);
+			toast.error(response.errors[0].message);
 		}
 	};
 

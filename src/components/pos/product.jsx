@@ -267,6 +267,13 @@ const ProductComponent = ({ product, onClick, index }) => {
 						const valueAsString = e.target.value;
 						const valueAsNumber = Number(valueAsString); // convert to number
 
+						//if the product is not yet in the cart, add it to cart and set the quantity to the valueAsNumber
+						if (!cart.find((product) => product.product_id === item.product_id)) {
+							let updatedCart = [...cart, { ...item, quantity: valueAsNumber }];
+							setCart(updatedCart);
+							return;
+						}
+
 						//if the quantity_in_stock is smaller than the valueAsNumber, set the valueAsNumber to the quantity_in_stock
 						if (valueAsNumber > item.quantity_in_stock) {
 							let updatedCart = cart.map((product) => (product.product_id === item.product_id ? { ...product, quantity: item.quantity_in_stock } : product));

@@ -319,6 +319,12 @@ const Cart = ({ setActiveAction }) => {
 											let updatedCart = cart.map((product) => (product.product_id === item.product_id ? { ...product, quantity: valueAsNumber } : product));
 											setCart(updatedCart);
 										}
+
+										//if 0 is entered, remove the item from the cart
+										if (valueAsNumber === 0) {
+											let updatedCart = cart.filter((product) => product.product_id !== item.product_id);
+											setCart(updatedCart);
+										}
 									}}
 									onKeyDown={(e) => {
 										const valueAsString = e.target.value;
@@ -338,6 +344,16 @@ const Cart = ({ setActiveAction }) => {
 												);
 												setCart(updatedCart);
 											}
+										}
+									}}
+									//if unfocused and the value is 0, remove the item from the cart
+									onBlur={(e) => {
+										const valueAsString = e.target.value;
+										const valueAsNumber = Number(valueAsString);
+
+										if (valueAsNumber === 0) {
+											let updatedCart = cart.filter((product) => product.product_id !== item.product_id);
+											setCart(updatedCart);
 										}
 									}}
 								/>

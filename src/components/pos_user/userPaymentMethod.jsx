@@ -146,15 +146,16 @@ const UserPaymentMethods = (props) => {
 		if (response.status == "Success") {
 			toast.success("Transaction Successful");
 			setOrderFromBackend(response.transaction);
+
+			setTimeout(() => {
+				window.location.href = "/user/orders";
+			}, 1000);
 		} else {
 			toast.error("Transaction Failed");
 		}
+
 		setLoading(false);
 		console.log(response.transaction);
-
-		setTimeout(() => {
-			window.location.href = "/user/orders";
-		}, 1000);
 	};
 
 	const fetchPaymentMethods = () => {

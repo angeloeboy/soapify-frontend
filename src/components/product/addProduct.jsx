@@ -106,30 +106,36 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 	};
 
 	let fetchProductCategories = async () => {
-		const res = await getProductCategories();
+		try {
+			const res = await getProductCategories();
 
-		//get categories that are active
-		const activeCategories = res.categories.filter((category) => category.isActive == 1);
+			if (res && res.categories) {
+				// Sort categories to make 'Uncategorized' the last item
+				const sortedCategories = res.categories.sort((a, b) => {
+					if (a.name === "Uncategorized") return 1;
+					if (b.name === "Uncategorized") return -1;
+					return 0;
+				});
 
-		//make the category with the name "Uncategorized" the last element in the array
-		activeCategories.sort((a, b) => {
-			if (a.name === "Uncategorized") {
-				return 1;
+				setCategories(sortedCategories);
+				console.log(sortedCategories);
+
+				// Set subcategories of the first category by default, if available
+				if (sortedCategories.length > 0) {
+					setSubCategories(sortedCategories[0].subcategories || []);
+					console.log("sorted second: ", sortedCategories[0]);
+				} else {
+					setSubCategories([]);
+				}
+			} else {
+				setCategories([]);
+				setSubCategories([]);
 			}
-
-			if (b.name === "Uncategorized") {
-				return -1;
-			}
-
-			return 0;
-		});
-
-		const activeSubcategories = res.categories[0].subcategories.filter((subcategory) => subcategory.isActive == 1);
-
-		console.log(activeCategories);
-
-		res ? setCategories(activeCategories) : setCategories([]);
-		res ? setSubCategories(activeSubcategories) : setSubCategories([]);
+		} catch (error) {
+			console.error("Error fetching product categories:", error);
+			setCategories([]);
+			setSubCategories([]);
+		}
 	};
 
 	let fetchSuppliers = async () => {
@@ -172,6 +178,10 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 
 		setAttributes(categories[0]?.subcategories[0]?.attributes);
 	}, [categories]);
+
+	useEffect(() => {
+		console.log("SubCategories: ", subCategories);
+	}, [subCategories]);
 
 	let handleCategoryChange = (e) => {
 		let subcategory_id = categories.find((category) => category.category_id == e.target.value).subcategories[0].subcategory_id;
@@ -596,7 +606,7 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 							</Select>
 						</div>
 
-						<LabelContainer>
+						{/* <LabelContainer>
 							<Label>Supplier</Label>
 						</LabelContainer>
 						<div>
@@ -616,7 +626,7 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 									</Option>
 								))}
 							</Select>
-						</div>
+						</div> */}
 					</FieldContainer>
 
 					<ButtonsContainer>

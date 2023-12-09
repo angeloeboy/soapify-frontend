@@ -27,10 +27,6 @@ const AddCategories = ({ setIsAddPopUpOpen, fetchCategories }) => {
 		name: "",
 	});
 
-	// useEffect(() => {
-	// 	fetchProductCategories();
-	// }, []);
-
 	let AddCategory = (e) => {
 		e.preventDefault();
 

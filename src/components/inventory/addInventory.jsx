@@ -20,6 +20,8 @@ import { addInventory } from "@/api/inventory";
 import { toast } from "react-toastify";
 import Image from "next/image";
 import { getAllWarehouse } from "@/api/warehouse";
+import Link from "next/link";
+import { getSuppliers } from "@/api/supplier";
 
 const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId, openModal }) => {
 	const currentDate = new Date().toISOString();
@@ -38,12 +40,13 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId, openModa
 		expiry_date: getCurrentDateTime(),
 		warehouse_id: 0,
 		area_id: 0,
+		supplier_id: 0,
 	});
 
 	const [products, setProducts] = useState([]);
 	const [warehouses, setWarehouses] = useState([]);
 	const [areas, setAreas] = useState([]);
-
+	const [suppliers, setSuppliers] = useState([]);
 	const fetchProducts = async () => {
 		getProducts().then((res) => {
 			const activeProducts = res.products.filter((product) => product.isActive);
@@ -68,12 +71,25 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId, openModa
 
 		if (res && res.warehouses.length > 0) {
 			let activeWarehouses = res.warehouses.filter((warehouse) => warehouse.isActive);
-
+			console.log(res);
 			//select only warehouse with areas
-			activeWarehouses = activeWarehouses.filter((warehouse) => warehouse.areas.length > 0);
+			// activeWarehouses = activeWarehouses.filter((warehouse) => warehouse.areas.length > 0);
 
 			setWarehouses(activeWarehouses);
-			setAreas(activeWarehouses[0].areas);
+
+			setAreas(activeWarehouses[0]?.areas ? activeWarehouses[0].areas : []);
+		}
+	};
+
+	const fetchSuppliers = async () => {
+		const res = await getSuppliers();
+
+		if (!res) return;
+
+		if (res && res.suppliers.length > 0) {
+			setSuppliers(res.suppliers);
+
+			setInventory({ ...inventory, supplier_id: res.suppliers[0].supplier_id });
 		}
 	};
 
@@ -131,6 +147,7 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId, openModa
 	const setup = async () => {
 		await fetchWarehouses();
 		await fetchProducts();
+		await fetchSuppliers();
 	};
 
 	useEffect(() => {
@@ -205,7 +222,7 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId, openModa
 								})}
 							</Select>
 						</div>
-						{areas.length > 0 && (
+						{areas.length > 0 ? (
 							<div>
 								<FieldTitleLabel notFirst>Area</FieldTitleLabel>
 								<Select value={inventory.area_id} onChange={(e) => setInventory({ ...inventory, area_id: Number(e.target.value) })}>
@@ -218,7 +235,39 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId, openModa
 									})}
 								</Select>
 							</div>
+						) : (
+							<Link className="sml-link" href="/dashboard/warehouse">
+								A warehouse needs an area. Add area first
+							</Link>
 						)}
+
+						<LabelContainer>
+							<Label>Supplier</Label>
+						</LabelContainer>
+						<div>
+							<FieldTitleLabel notFirst>Supplier</FieldTitleLabel>
+							<Select
+								value={inventory.supplier_id}
+								onChange={(e) => {
+									setInventory({
+										...inventory,
+										supplier_id: Number(e.target.value),
+									});
+								}}
+							>
+								{suppliers.map((supplier) => (
+									<Option value={supplier.supplier_id} key={supplier.supplier_id}>
+										{supplier.supplier_name}
+									</Option>
+								))}
+							</Select>
+
+							{suppliers.length == 0 && (
+								<Link className="sml-link" href="/dashboard/suppliers?add=true">
+									Add Supplier
+								</Link>
+							)}
+						</div>
 					</FieldContainer>
 
 					<ButtonsContainer>

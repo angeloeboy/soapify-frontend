@@ -47,6 +47,11 @@ const Suppliers = () => {
 
 	const handleClosePopup = () => {
 		setPopupOpen(false);
+
+		//remove the ?add=true query from url
+		const url = new URL(window.location.href);
+		url.searchParams.delete("add");
+		window.history.replaceState({}, "", url);
 	};
 
 	const openEditSupplier = () => {
@@ -72,6 +77,15 @@ const Suppliers = () => {
 		});
 		setSupplierLoading(false);
 	};
+
+	useEffect(() => {
+		//check if link has ?add=true quert
+		const url = new URL(window.location.href);
+		const add = url.searchParams.get("add");
+		if (add) {
+			setPopupOpen(true);
+		}
+	}, []);
 
 	return (
 		<DashboardLayout>

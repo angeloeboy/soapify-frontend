@@ -30,27 +30,40 @@ ONLY ADMIN CAN CHANGE PASSWORD OF USERS - DONE
 
 REPORT MUNA BEFORE CANCELLATION, SO USERS CANT REQUEST FOR CANCELLATION - DONE
 
+Cancellation of order must happen after verification of payment to reduce conflict. Do not show this option during awaiting payment status. Inform the customer about cancellation of order. Ex “To cancel the order, blah blah”​
+
+​
+Include punishment to customers who will cancel more than twice to eliminate frequent cancellation. Also, include warning to customer when cancellation of order that punishment will be applied. ​
+
+Change report issue to cancellation during payment verified​
+
+“Report issue” after release​
+
 send receipt to email - DONE
 
 print receipt - DONE
 
-add promo - STARTED
+add promo - DONE
 
 field for promo - DONE
 
 promo codes - STARTED
 
+edit promo code - STARTED
+
 use promo - STARTED
 
-box to pcs - started
+box to pcs - DONE
 
-pcs to box - started
+pcs to box - DONE
 
-detecting if the area is full
+detecting if the area is full - DONE
 
 change of products after order
 
 Reports
+
+SA REPORT DAPAT NAKA LIST RIN HINDI LANG NAKA GRAPH
 
 display products that has no stocks
 

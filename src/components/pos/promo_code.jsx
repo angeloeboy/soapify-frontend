@@ -72,7 +72,7 @@ const PromoCode = () => {
 	if (cart.length !== 0) {
 		return (
 			<div>
-				<PromoCodeInput type="text" value={promoCode} onChange={(e) => setPromoCode(e.target.value)} />
+				<PromoCodeInput type="text" value={promoCode} onChange={(e) => setPromoCode(e.target.value)} placeholder="Apply voucher " />
 				<ApplyButton onClick={() => validate()}>Apply</ApplyButton>
 			</div>
 		);

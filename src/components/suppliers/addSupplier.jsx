@@ -1,103 +1,103 @@
 import {
-  Button,
-  LabelContainer,
-  Label,
-  FieldContainer,
-  CloseButton,
-  ButtonsContainer,
-  PopupOverlay,
-  PopupContent,
-  HeaderTitle,
-  FieldTitleLabel,
-  InputHolder,
+	Button,
+	LabelContainer,
+	Label,
+	FieldContainer,
+	CloseButton,
+	ButtonsContainer,
+	PopupOverlay,
+	PopupContent,
+	HeaderTitle,
+	FieldTitleLabel,
+	InputHolder,
 } from "@/styled-components/ItemActionModal";
 
 import { useEffect, useState } from "react";
-import {
-  addCategory,
-  addProduct,
-  getProductCategories,
-  getProducts,
-} from "@/api/products";
+import { addCategory, addProduct, getProductCategories, getProducts } from "@/api/products";
 import { addSupplier } from "@/api/supplier";
+import { toast } from "react-toastify";
 
 const AddSupplier = ({ onClose, onButtonClick, fetchSuppliers }) => {
-  const [category, setCategory] = useState({
-    name: "",
-  });
+	const [category, setCategory] = useState({
+		name: "",
+	});
 
-  const [supplier, setSupplier] = useState({
-    supplier_name: "",
-    supplier_address: "",
-    supplier_phone: "",
-    supplier_email: "",
-    supplier_status: true,
-  });
+	const [supplier, setSupplier] = useState({
+		supplier_name: "",
+		supplier_address: "",
+		supplier_phone: "",
+		supplier_email: "",
+		supplier_status: true,
+	});
 
-  let AddSupplier = (e) => {
-    e.preventDefault();
+	let AddSupplier = async (e) => {
+		e.preventDefault();
 
-    addSupplier(supplier)
-      .then((res) => {
-        console.log(res);
-      })
-      .then(() => {
-        fetchSuppliers();
-      });
-  };
+		const res = await addSupplier(supplier);
+		if (!res) {
+			toast.error("Something went wrong");
+			return;
+		}
 
-  return (
-    <PopupOverlay>
-      <PopupContent>
-        <form onSubmit={(e) => AddSupplier(e)}>
-          <FieldContainer>
-            <HeaderTitle>Add Suppliers</HeaderTitle>
+		if (res.status == "Success") {
+			toast.success("Supplier added successfully");
+			fetchSuppliers();
+			onClose();
+		}
+	};
 
-            <LabelContainer first>
-              <Label>General Information</Label>{" "}
-            </LabelContainer>
-            <div>
-              <FieldTitleLabel>Name </FieldTitleLabel>
-              <InputHolder
-                type="text"
-                onChange={(e) => {
-                  setSupplier({ ...supplier, supplier_name: e.target.value });
-                }}
-                required
-                value={supplier.supplier_name}
-              />
+	return (
+		<PopupOverlay>
+			<PopupContent>
+				<form onSubmit={(e) => AddSupplier(e)}>
+					<FieldContainer>
+						<HeaderTitle>Add Suppliers</HeaderTitle>
 
-              <FieldTitleLabel> Address </FieldTitleLabel>
-              <InputHolder
-                type="text"
-                onChange={(e) => {
-                  setSupplier({
-                    ...supplier,
-                    supplier_address: e.target.value,
-                  });
-                }}
-                value={supplier.supplier_address}
-              />
+						<LabelContainer first>
+							<Label>General Information</Label>{" "}
+						</LabelContainer>
+						<div>
+							<FieldTitleLabel>Name </FieldTitleLabel>
+							<InputHolder
+								type="text"
+								onChange={(e) => {
+									setSupplier({ ...supplier, supplier_name: e.target.value });
+								}}
+								required
+								value={supplier.supplier_name}
+							/>
 
-              <FieldTitleLabel> Phone No.</FieldTitleLabel>
-              <InputHolder
-                type="text"
-                onChange={(e) => {
-                  setSupplier({ ...supplier, supplier_phone: e.target.value });
-                }}
-                value={supplier.supplier_phone}
-              />
-            </div>
-          </FieldContainer>
+							<FieldTitleLabel> Address </FieldTitleLabel>
+							<InputHolder
+								type="text"
+								onChange={(e) => {
+									setSupplier({
+										...supplier,
+										supplier_address: e.target.value,
+									});
+								}}
+								value={supplier.supplier_address}
+							/>
 
-          <ButtonsContainer>
-            <CloseButton onClick={onClose}>Close</CloseButton>
-            <Button type="submit">Save</Button>
-          </ButtonsContainer>
-        </form>
-      </PopupContent>
-    </PopupOverlay>
-  );
+							<FieldTitleLabel> Phone No.</FieldTitleLabel>
+							<InputHolder
+								type="text"
+								onChange={(e) => {
+									setSupplier({ ...supplier, supplier_phone: e.target.value });
+								}}
+								value={supplier.supplier_phone}
+							/>
+						</div>
+					</FieldContainer>
+
+					<ButtonsContainer>
+						<CloseButton onClick={onClose}>Close</CloseButton>
+						<Button type="submit">Save</Button>
+					</ButtonsContainer>
+				</form>
+			</PopupContent>
+		</PopupOverlay>
+	);
 };
 
 export default AddSupplier;

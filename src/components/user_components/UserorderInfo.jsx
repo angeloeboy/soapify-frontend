@@ -18,6 +18,7 @@ import { requestForCancelTransaction, requestOrderReturnRefund, setTransactionSt
 import { toast } from "react-toastify";
 import styled from "styled-components";
 import Image from "next/image";
+import { getUser } from "@/api/users";
 
 const Product = styled.div`
 	/* display: flex; */
@@ -144,7 +145,7 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 	const [contact, setContact] = useState(undefined);
 
 	useEffect(() => {
-		console.log(selectedTransaction.items);
+		getUserInfo();
 	}, []);
 
 	const convertToDateFormat = (date) => {
@@ -155,6 +156,13 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 			day: "numeric",
 		});
 		return formattedDate;
+	};
+
+	const getUserInfo = async () => {
+		const res = await getUser();
+		if (res.status === "Success") {
+			setContact(res.user.phone_number);
+		}
 	};
 
 	const requestForCancellationFunc = async (e) => {
@@ -202,6 +210,29 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 			<PopupContent>
 				<HeaderTitle>Order {selectedTransaction.transaction_id} </HeaderTitle>
 				<FieldContainer>
+					<LabelContainer>
+						<Label>Order Status</Label>
+					</LabelContainer>
+					<OrdersWrapper>
+						<h5>Status: {selectedTransaction.status}</h5>
+						<h5>Pickup date: {convertToDateFormat(selectedTransaction.pickup_date)}</h5>
+					</OrdersWrapper>
+					<LabelContainer>
+						<Label>Payment Information</Label>
+					</LabelContainer>
+					<OrdersWrapper>
+						<h5>Payment Details</h5>
+						<h5>Payment method: {selectedTransaction.payment_method.name}</h5>
+						<h5>Transaction number: {selectedTransaction.transaction_number}</h5>
+						{selectedTransaction.transaction_screenshot && (
+							<>
+								<p>Screenshot of payment</p>
+								<ImageScreenshot>
+									<img src={selectedTransaction.transaction_screenshot} alt="Payment image" />
+								</ImageScreenshot>
+							</>
+						)}
+					</OrdersWrapper>
 					<LabelContainer first>
 						<Label>Items</Label>
 					</LabelContainer>
@@ -237,33 +268,16 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 					</OrdersWrapper>
 
 					<LabelContainer>
-						<Label>Payment Information</Label>
+						<Label>Action</Label>
 					</LabelContainer>
 					<OrdersWrapper>
-						<h5>Payment Details</h5>
-						<p>Transaction number: {selectedTransaction.transaction_number}</p>
-						{selectedTransaction.transaction_screenshot && (
-							<>
-								<p>Screenshot of payment</p>
-								<ImageScreenshot>
-									<img src={selectedTransaction.transaction_screenshot} alt="Payment image" />
-								</ImageScreenshot>
-							</>
-						)}
-					</OrdersWrapper>
-
-					<LabelContainer>
-						<Label>Order Status</Label>
-					</LabelContainer>
-					<OrdersWrapper>
-						<h5>Status: {selectedTransaction.status}</h5>
-						<p>Pickup date: {convertToDateFormat(selectedTransaction.pickup_date)}</p>
-
 						{selectedTransaction.status !== "CANCELLED" && selectedTransaction.status !== "REFUNDED" && (
 							<>
 								<TextArea type="text" value={notes} onChange={(e) => setNotes(e.target.value)} />
 
-								<p>Contact number: </p>
+								<p>
+									Contact number: <span>(Admin will contact you to this number. Make sure to stay open)</span>{" "}
+								</p>
 								<ContactNumber
 									type="text"
 									maxlength="12"

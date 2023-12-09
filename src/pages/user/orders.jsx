@@ -3,7 +3,7 @@ import DashboardLayout from "@/components/misc/dashboardLayout";
 import PageTitle from "@/components/misc/pageTitle";
 import Table, { ActionContainer, TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
 import StyledPanel from "@/styled-components/StyledPanel";
-import { faEllipsis, faTrash, faPen } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsis, faTrash, faPen, faReceipt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AddReturnComponent from "@/components/return/addReturn";
 import ReturnSearchBar from "@/components/return/returnSearchBar";
@@ -137,14 +137,14 @@ const Orders = () => {
 												}}
 											>
 												<FontAwesomeIcon icon={faPen} />
-												Edit
+												View
 											</p>
 											<p
 												onClick={() => {
 													generatePDF(transaction);
 												}}
 											>
-												<FontAwesomeIcon icon={faTrash} /> See receipt
+												<FontAwesomeIcon icon={faReceipt} /> See receipt
 											</p>
 										</ActionContainer>
 									)}

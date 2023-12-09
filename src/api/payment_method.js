@@ -48,7 +48,6 @@ export const editPayment = async (id, paymentMethod) => {
 	} catch (error) {}
 };
 
-
 export const deactivatePaymentMethod = async (payment_method_id, paymentMethod) => {
 	try {
 		const response = await fetch(`/api/paymentMethods/deactivate/${payment_method_id}`, {
@@ -77,6 +76,19 @@ export const activatePaymentMethod = async (payment_method_id, paymentMethod) =>
 			body: JSON.stringify(paymentMethod),
 		});
 
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const deletePaymentMethod = async (id) => {
+	try {
+		const response = await fetch(`/api/paymentMethods/${id}`, {
+			method: "DELETE",
+			credentials: "include",
+		});
 		const data = await response.json();
 		return data;
 	} catch (error) {

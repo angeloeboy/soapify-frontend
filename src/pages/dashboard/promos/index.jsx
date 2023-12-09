@@ -13,12 +13,15 @@ import AddPromo from "@/components/promo/addPromo";
 import { getPromos } from "@/api/promos";
 import { getProducts } from "@/api/products";
 import Pagination from "@/components/misc/pagination";
+import EditPromo from "@/components/promo/editPromo";
 
 const PromoPage = () => {
 	const [promotions, setPromotions] = useState([]);
 	const [promotionsDisplay, setPromotionsDisplay] = useState([]);
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
 	const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false); // State to control the popup
+	const [isEditPopUpOpen, setIsEditPopUpOpen] = useState(false); // State to control the popup
+	const [selectedPromo, setSelectedPromo] = useState(null);
 	const [isLoading, setIsLoading] = useState(false);
 
 	const [currentPage, setCurrentPage] = useState(1);
@@ -104,7 +107,12 @@ const PromoPage = () => {
 
 										{activeActionContainer === index && (
 											<ActionContainer onClick={() => setActiveActionContainer(-1)}>
-												<p>
+												<p
+													onClick={() => {
+														setSelectedPromo(promo);
+														setIsEditPopUpOpen(true);
+													}}
+												>
 													<FontAwesomeIcon icon={faPen} />
 													Edit
 												</p>
@@ -131,6 +139,7 @@ const PromoPage = () => {
 			</StyledPanel>
 
 			{isAddPopUpOpen && <AddPromo setIsAddPopUpOpen={setIsAddPopUpOpen} getPromotionsFunc={getPromotionsFunc} />}
+			{isEditPopUpOpen && <EditPromo setIsEditPopUpOpen={setIsEditPopUpOpen} getPromotionsFunc={getPromotionsFunc} selectedPromo={selectedPromo} />}
 		</DashboardLayout>
 	);
 };

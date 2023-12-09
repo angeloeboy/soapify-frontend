@@ -17,6 +17,7 @@ export const UserAppProvider = ({ children }) => {
 			submenus: [
 				{ title: "Products", link: "/" },
 				{ title: "Orders", link: "/user/orders" },
+				{ title: "User Settings", link: "/user/user-settings" },
 			],
 		},
 	];

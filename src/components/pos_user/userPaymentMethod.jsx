@@ -77,6 +77,15 @@ const Centered = styled.div`
 	margin-bottom: 30px;
 `;
 
+const Note = styled.p`
+	font-size: 14px;
+	color: #536686;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+	margin-bottom: 1rem;
+`;
+
 const UserPaymentMethods = (props) => {
 	const [paymentMethods, setPaymentMethods] = useState([]);
 	const [paymentMethod, setPaymentMethod] = useState(1);
@@ -172,6 +181,7 @@ const UserPaymentMethods = (props) => {
 			</ComponentTitle>
 			<PaymentMethodsContainer>
 				{paymentMethods.length <= 0 && <p>No payment Methods </p>}
+				<Note>Transfer your payment to these accounts. Enter the transaction number to proceed</Note>
 				{paymentMethods.map((payment) => {
 					return (
 						<PaymentMethod

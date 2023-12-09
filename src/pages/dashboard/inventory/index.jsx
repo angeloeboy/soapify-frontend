@@ -63,6 +63,8 @@ const InventoryPage = ({ hasAddinventory }) => {
 	const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false);
 	const [isMovePopUpOpen, setIsMovePopUpOpen] = useState(false);
 	const [isEditPopUpOpen, setIsEditPopUpOpen] = useState(false);
+	const [isPackPopUpOpen, setIsPackPopUpOpen] = useState(false);
+	const [isUnpackPopUpOpen, setIsUnpackPopUpOpen] = useState(false);
 	const [inventoryLoading, setInventoryLoading] = useState(true);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -246,11 +248,23 @@ const InventoryPage = ({ hasAddinventory }) => {
 														<FontAwesomeIcon icon={faTrash} /> Move Inventory
 													</p>
 													{inventory.Product.isBox ? (
-														<p onClick={() => convertBoxToPcsFunc(inventory, 1)}>
+														<p
+															onClick={() => {
+																setSelectedInventory(inventory);
+																setIsUnpackPopUpOpen(true);
+															}}
+														>
 															<FontAwesomeIcon icon={faBoxOpen} /> Unpack
 														</p>
 													) : (
-														<p onClick={() => convertPcsToBoxFunc(inventory, 300)}>
+														<p
+															onClick={() => {
+																setSelectedInventory(inventory);
+																setIsPackPopUpOpen(true);
+
+																// convertPcsToBoxFunc(inventory, 300);
+															}}
+														>
 															<FontAwesomeIcon icon={faBox} /> Pack
 														</p>
 													)}
@@ -278,6 +292,10 @@ const InventoryPage = ({ hasAddinventory }) => {
 			{isAddPopUpOpen && <AddInventory setIsAddPopUpOpen={setIsAddPopUpOpen} getInventoryFunc={fetchInventory} productId={productId} openModal={openModal} />}
 			{isEditPopUpOpen && <EditInventoryComponent setIsEditPopUpOpen={setIsEditPopUpOpen} getInventoryFunc={fetchInventory} />}
 			{isMovePopUpOpen && <MoveInventory setIsMovePopUpOpen={setIsMovePopUpOpen} getInventoryFunc={fetchInventory} selectedInventory={selectedInventory} />}
+			{isPackPopUpOpen && <PackInventory setIsPackPopUpOpen={setIsPackPopUpOpen} getInventoryFunc={fetchInventory} selectedInventory={selectedInventory} />}
+			{isUnpackPopUpOpen && (
+				<UnpackInventory setIsUnpackPopUpOpen={setIsUnpackPopUpOpen} getInventoryFunc={fetchInventory} selectedInventory={selectedInventory} />
+			)}
 		</DashboardLayout>
 	);
 };
@@ -287,6 +305,8 @@ export default InventoryPage;
 import cookie, { parse } from "cookie";
 import styled from "styled-components";
 import { toast } from "react-toastify";
+import PackInventory from "@/components/inventory/pack";
+import UnpackInventory from "@/components/inventory/unpack";
 export async function getServerSideProps(context) {
 	const { req } = context;
 	const parsedCookies = cookie.parse(req.headers.cookie || "").permissions;

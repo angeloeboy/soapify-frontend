@@ -61,7 +61,7 @@ const UserDashboard = () => {
 		transaction_number: "",
 		total_amount: 0,
 		items: [],
-		pickup_date: new Date().toISOString().split("T")[0],
+		pickup_date: new Date(),
 	});
 
 	const [parentProducts, setParentProducts] = useState([]);

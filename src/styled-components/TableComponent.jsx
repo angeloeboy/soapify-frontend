@@ -93,10 +93,8 @@ export const TableRows = styled.tr`
 
 export const ActionContainer = styled.div`
 	display: flex;
-	/* justify-content: center; */
-	/* align-items: center; */
+
 	flex-direction: column;
-	/* gap: 16px; */
 	cursor: pointer;
 	color: #002056;
 	font-size: 14px;
@@ -111,7 +109,7 @@ export const ActionContainer = styled.div`
 	position: absolute;
 	left: 50%;
 	bottom: 0px;
-	transform: translate(-50%, 40%);
+	transform: translate(-80%, 40%);
 	z-index: 2;
 	p {
 		padding: 8px 16px;

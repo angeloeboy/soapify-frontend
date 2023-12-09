@@ -53,6 +53,9 @@ const AddSubCategory = ({ setisAddSubCatOpen, fetchProductSubcategories }) => {
 
 	let fetchProductCategories = async () => {
 		const res = await getProductCategories();
+
+		//remove category with the name "Uncategorized"
+		res.categories = res.categories.filter((category) => category.name != "Uncategorized");
 		res.categories ? setCategories(res.categories) : setCategories([]);
 		console.log(res.categories);
 

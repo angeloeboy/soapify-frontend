@@ -32,8 +32,10 @@ const ProductsList = styled.div`
 const POSWrapper = styled.div`
 	display: flex;
 	justify-content: space-between;
-	display: flex;
-	justify-content: space-between;
+
+	@media (max-width: 1200px) {
+		flex-direction: column;
+	}
 `;
 
 const StickyContainer = styled.div`
@@ -46,11 +48,10 @@ const StickyContainer = styled.div`
 	max-width: 300px;
 	margin-top: 48px;
 
-	/* @media (max-width: 1200px) {
-		position: fixed;
-		right: 5%;
-		top: 17%;
-	} */
+	@media (max-width: 1200px) {
+		max-width: calc(100% - 5%);
+		margin-left: 5%;
+	}
 `;
 
 const Pos = () => {

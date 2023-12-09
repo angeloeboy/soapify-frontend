@@ -392,6 +392,11 @@ export const OrdersWrapper = styled.div`
 		text-align: right;
 		font-weight: bold;
 	}
+
+	span {
+		font-size: 14px;
+		color: #1a69f0;
+	}
 `;
 
 export const PaymentInformation = styled.div`

@@ -15,10 +15,11 @@ import EditPayment from "../../../components/PaymentMethod/editPayment";
 import AddPayment from "@/components/PaymentMethod/addPayment";
 import LoadingSkeleton from "@/components/misc/loadingSkeleton";
 import Pagination from "@/components/misc/pagination";
-import { activatePaymentMethod, deactivatePaymentMethod } from "@/api/payment_method";
+import { activatePaymentMethod, deactivatePaymentMethod, deletePaymentMethod } from "@/api/payment_method";
 import ReactivateModal from "@/components/misc/reactivate";
 import DeactivateModal from "@/components/misc/deactivate";
 import { toast } from "react-toastify";
+import DeleteModal from "@/components/misc/delete";
 
 const PaymentTable = () => {
 	const [paymentMethods, setPaymentMethods] = useState([]);
@@ -34,7 +35,7 @@ const PaymentTable = () => {
 	const [clickedName, setClickedName] = useState(null);
 	const [showDeactivate, setShowDeactivate] = useState(false);
 	const [showReactivateModal, setShowReactivateModal] = useState(false);
-
+	const [showDeleteModal, setShowDeleteModal] = useState(false);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [itemsPerPage, setItemsPerPage] = useState(10);
 
@@ -121,6 +122,19 @@ const PaymentTable = () => {
 		fetchPaymentMethods();
 	};
 
+	const deletePaymentMethodFunc = async (payment_method_id) => {
+		const res = await deletePaymentMethod(payment_method_id);
+		console.log(res);
+
+		if (!res) {
+			toast.error("Something went wrong");
+			return;
+		}
+		toast.success(res.message);
+
+		fetchPaymentMethods();
+	};
+
 	return (
 		<DashboardLayout>
 			<PageTitle title="Payment" />
@@ -165,22 +179,31 @@ const PaymentTable = () => {
 														>
 															<FontAwesomeIcon icon={faPen} /> Edit
 														</p>
-														<p>
-															<FontAwesomeIcon icon={faTrash} /> Delete
-														</p>
+
 														<p
 															onClick={() => {
-																//GAWIN MO TO
-																setShowDeactivate(true);
+																setShowDeleteModal(true);
 																setClickedName(method.name);
 																setSelectedPaymentMethodId(method.payment_method_id);
 															}}
 														>
-															<FontAwesomeIcon icon={faXmarkCircle} /> Deactivate Payment Method
+															<FontAwesomeIcon icon={faTrash} /> Delete
 														</p>
-														<p onClick={() => handleReactivateModal(method.payment_method_id, method.name)}>
-															<FontAwesomeIcon icon={faCheckCircle} /> Reactivate Payment Method
-														</p>
+														{method.isActive ? (
+															<p
+																onClick={() => {
+																	setShowDeactivate(true);
+																	setClickedName(method.name);
+																	setSelectedPaymentMethodId(method.payment_method_id);
+																}}
+															>
+																<FontAwesomeIcon icon={faXmarkCircle} /> Deactivate
+															</p>
+														) : (
+															<p onClick={() => handleReactivateModal(method.payment_method_id, method.name)}>
+																<FontAwesomeIcon icon={faCheckCircle} /> Reactivate
+															</p>
+														)}
 													</ActionContainer>
 												)}
 											</TableData>
@@ -221,6 +244,18 @@ const PaymentTable = () => {
 					confirm={() => {
 						activatePaymentMethodFunc(selectedPaymentMethodId);
 						setShowReactivateModal(false);
+					}}
+				/>
+			)}
+
+			{showDeleteModal && (
+				<DeleteModal
+					type="payment method"
+					text={clickedName}
+					close={setShowDeactivate}
+					confirm={() => {
+						deletePaymentMethodFunc(selectedPaymentMethodId);
+						setShowDeleteModal(false);
 					}}
 				/>
 			)}

@@ -16,13 +16,17 @@ import {
 
 import { useEffect, useState } from "react";
 import { addProduct, getProducts } from "@/api/products";
-import { addInventory, moveInventory } from "@/api/inventory";
+import { addInventory, convertPcsToBox, moveInventory } from "@/api/inventory";
 import { toast } from "react-toastify";
 import Image from "next/image";
 import { getAllWarehouse } from "@/api/warehouse";
 
-const MoveInventory = ({ setIsMovePopUpOpen, getInventoryFunc, selectedInventory }) => {
+const PackInventory = ({ setIsPackPopUpOpen, getInventoryFunc, selectedInventory }) => {
 	const [loading, setLoading] = useState(false);
+
+	const [warehouses, setWarehouses] = useState([]);
+	const [areas, setAreas] = useState([]);
+
 	const [inventory, setInventory] = useState({
 		inventory_id: 0,
 		quantity: 1,
@@ -30,24 +34,7 @@ const MoveInventory = ({ setIsMovePopUpOpen, getInventoryFunc, selectedInventory
 		area_id: 0,
 	});
 
-	const [warehouses, setWarehouses] = useState([]);
-	const [areas, setAreas] = useState([]);
-
-	const moveInventoryFunc = async (e) => {
-		e.preventDefault();
-
-		setLoading(true);
-		const res = await moveInventory(inventory);
-		setLoading(false);
-
-		if (!res) return;
-
-		if (res.errors) return toast.error(res.errors[0].message);
-		toast.success("Inventory moved successfully");
-		getInventoryFunc();
-		setIsMovePopUpOpen(false);
-	};
-
+	const [quantity, setQuantity] = useState(0);
 	const fetchWarehouses = async () => {
 		const res = await getAllWarehouse();
 
@@ -55,6 +42,9 @@ const MoveInventory = ({ setIsMovePopUpOpen, getInventoryFunc, selectedInventory
 
 		if (res && res.warehouses.length > 0) {
 			let activeWarehouses = res.warehouses.filter((warehouse) => warehouse.isActive);
+			//select only warehouses with areas
+			activeWarehouses = activeWarehouses.filter((warehouse) => warehouse.areas.length > 0);
+
 			setWarehouses(activeWarehouses);
 			setAreas(activeWarehouses[0].areas);
 		}
@@ -94,21 +84,57 @@ const MoveInventory = ({ setIsMovePopUpOpen, getInventoryFunc, selectedInventory
 		console.log(inventory);
 	}, [inventory]);
 
+	const convertPcsToBoxFunc = async (e) => {
+		e.preventDefault();
+		const res = await convertPcsToBox(selectedInventory, quantity);
+
+		console.log(res);
+		if (res.status == "Success") {
+			toast.success("Inventory converted successfully");
+			getInventoryFunc();
+			setIsPackPopUpOpen(false);
+			return;
+		}
+
+		toast.error(res.errors[0].message);
+	};
+
 	return (
 		<PopupOverlay>
 			<PopupContent>
-				<form onSubmit={(e) => moveInventoryFunc(e)}>
-					<HeaderTitle>Add Inventory</HeaderTitle>
+				<form onSubmit={(e) => convertPcsToBoxFunc(e)}>
+					<HeaderTitle>Pack product to box</HeaderTitle>
 					<FieldContainer>
 						<LabelContainer first>
-							<Label>General Information</Label>{" "}
+							<Label>Quantity</Label>{" "}
 						</LabelContainer>
 
 						<div>
-							<FieldTitleLabel notFirst>Quantity to move</FieldTitleLabel>
-							<InputHolder type="number" onChange={(e) => setInventory({ ...inventory, quantity: Number(e.target.value) })} value={inventory.quantity} />
+							<FieldTitleLabel notFirst>How many pcs?</FieldTitleLabel>
+
+							<InputHolder
+								type="number"
+								min="0"
+								onChange={(e) => {
+									// Regular expression to allow only positive numbers and decimals
+									const validPositiveNumberRegex = /^[0-9]*(\.[0-9]+)?$/;
+
+									if (e.target.value === "") {
+										setQuantity("");
+									} else if (validPositiveNumberRegex.test(e.target.value)) {
+										setQuantity(Number(e.target.value));
+									}
+								}}
+								pattern="^[0-9]*(\.[0-9]+)?$"
+								title="Please enter a valid positive number. Decimals are allowed."
+								required
+								value={quantity}
+							/>
 						</div>
 
+						<LabelContainer>
+							<Label>Position </Label>
+						</LabelContainer>
 						<div>
 							<FieldTitleLabel notFirst>Warehouse</FieldTitleLabel>
 							<Select value={inventory.warehouse_id} onChange={(e) => setInventory({ ...inventory, warehouse_id: Number(e.target.value) })}>
@@ -138,10 +164,10 @@ const MoveInventory = ({ setIsMovePopUpOpen, getInventoryFunc, selectedInventory
 					</FieldContainer>
 
 					<ButtonsContainer>
-						<CloseButton type="button" onClick={() => setIsMovePopUpOpen(false)}>
+						<CloseButton type="button" onClick={() => setIsPackPopUpOpen(false)}>
 							Close
 						</CloseButton>
-						<Button type="submit">{loading ? <Image src="/loading.svg" alt="loading" width="20" height="20" /> : "Save"} </Button>
+						<Button type="submit">{loading ? <Image src="/loading.svg" alt="loading" width="20" height="20" /> : "Convert"} </Button>
 					</ButtonsContainer>
 				</form>
 			</PopupContent>
@@ -149,4 +175,4 @@ const MoveInventory = ({ setIsMovePopUpOpen, getInventoryFunc, selectedInventory
 	);
 };
 
-export default MoveInventory;
+export default PackInventory;

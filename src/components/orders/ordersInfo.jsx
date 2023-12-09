@@ -111,6 +111,48 @@ const ImageScreenshot = styled.div`
 	}
 `;
 
+const ButtonAccept = styled.button`
+	background-color: #0b20dd;
+	color: #fff;
+	padding: 10px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 16px;
+	margin-top: 10px;
+	margin-right: 6px;
+`;
+
+const TextArea = styled.textarea`
+	width: 100%;
+	height: 100px;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	padding: 10px;
+	margin-top: 10px;
+`;
+
+const ContactNumber = styled.input`
+	width: 100%;
+	height: 40px;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	padding: 10px;
+	margin-top: 10px;
+`;
+
+const BatchInfo = styled.div`
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	padding: 10px;
+	margin-top: 10px;
+	font-size: 6px;
+
+	p {
+		font-size: 12px !important;
+	}
+`;
+
 const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransactions }) => {
 	useEffect(() => {
 		console.log(selectedTransaction.items);
@@ -165,7 +207,7 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 		console.log(res.message);
 
 		if (res.status === "Success") {
-			toast.success("Transaction accepted");
+			toast.success("Transaction cancelled");
 			setIsOrdersInfoOpen(false);
 			fetchTransactions();
 			return;
@@ -220,16 +262,16 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 											<p>PHP {(item.price * item.quantity) / 100}</p>
 										</div>
 									</div>
-									{/* 
+
 									{item.batch_info &&
 										batchInfo(item.batch_info).map((info, index) => {
 											return (
-												<div key={index}>
+												<BatchInfo key={index}>
 													<p className="productName">Batch Number: {info.batch_no}</p>
 													<p className="productName">Quantity: {info.quantity}</p>
-												</div>
+												</BatchInfo>
 											);
-										})} */}
+										})}
 								</div>
 							</Product>
 						))}
@@ -242,7 +284,8 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 					</LabelContainer>
 					<OrdersWrapper>
 						<h5>Payment Details</h5>
-						<p>Transaction number: {selectedTransaction.transaction_number}</p>
+						<p>Payment method: {selectedTransaction.payment_method.name}</p>
+						<p>Transaction number: {selectedTransaction.transaction_number ? selectedTransaction.transaction_number : "N/A"}</p>
 						{selectedTransaction.transaction_screenshot && (
 							<>
 								<p>Screenshot of payment</p>
@@ -252,7 +295,7 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 							</>
 						)}
 
-						{selectedTransaction.status === "AWAITING PAYMENT" && <button onClick={() => acceptTransactionFunc()}>Verify Payment</button>}
+						{selectedTransaction.status === "AWAITING PAYMENT" && <ButtonAccept onClick={() => acceptTransactionFunc()}>Verify Payment</ButtonAccept>}
 					</OrdersWrapper>
 
 					<LabelContainer>
@@ -262,19 +305,25 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 						<h5>Status: {selectedTransaction.status}</h5>
 						<p>Pickup date: {convertToDateFormat(selectedTransaction.pickup_date)}</p>
 
-						{selectedTransaction.status === "CANCELLATION REQUESTED" && <button onClick={() => acceptCancellationFunc()}>Accept Cancellation</button>}
-						{selectedTransaction.status === "CANCELLATION REQUESTED" && <p>Reason: {selectedTransaction.status_notes}</p>}
+						{selectedTransaction.status === "UNDER REVIEW" && (
+							<>
+								<p>Issue:</p>
 
-						{selectedTransaction.status === "RETURN/REFUND REQUESTED" && <button onClick={() => acceptReturnRefundFunc()}>Accept return/refund</button>}
-						{selectedTransaction.status === "RETURN/REFUND REQUESTED" && <p>Reason: {selectedTransaction.status_notes}</p>}
+								<TextArea type="text" value={selectedTransaction.status_notes} readOnly />
+								<ContactNumber type="text" maxlength="12" value={selectedTransaction.contact_number} readOnly />
 
-						{selectedTransaction.status === "PAID" && <button onClick={() => updateStatus("RELEASED")}>Mark as released</button>}
+								<ButtonAccept onClick={() => acceptCancellationFunc()}>Cancel Order</ButtonAccept>
+								<ButtonAccept onClick={() => acceptReturnRefundFunc()}>Issue Refund</ButtonAccept>
+								<ButtonAccept onClick={() => acceptCancellationFunc()}>Modify Items</ButtonAccept>
+							</>
+						)}
+
+						{selectedTransaction.status === "PAID" && <ButtonAccept onClick={() => updateStatus("RELEASED")}>Mark as released</ButtonAccept>}
 					</OrdersWrapper>
 				</FieldContainer>
 
 				<ButtonsContainer>
 					<CloseButton onClick={() => setIsOrdersInfoOpen(false)}>Close </CloseButton>
-					<Button onClick={() => addPaymentMethodFunc()}>Save</Button>
 				</ButtonsContainer>
 			</PopupContent>
 		</PopupOverlay>

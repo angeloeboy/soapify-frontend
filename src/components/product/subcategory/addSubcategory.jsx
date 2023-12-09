@@ -18,6 +18,7 @@ import { useEffect, useState } from "react";
 import { getProductCategories } from "@/api/products";
 import { getAttributes } from "@/api/attributes";
 import { addSubCategory } from "@/api/subcategories";
+import { toast } from "react-toastify";
 
 const AddSubCategory = ({ setisAddSubCatOpen, fetchProductSubcategories }) => {
 	const [subCategory, setSubCategory] = useState({
@@ -52,6 +53,9 @@ const AddSubCategory = ({ setisAddSubCatOpen, fetchProductSubcategories }) => {
 
 	let fetchProductCategories = async () => {
 		const res = await getProductCategories();
+
+		//remove category with the name "Uncategorized"
+		res.categories = res.categories.filter((category) => category.name != "Uncategorized");
 		res.categories ? setCategories(res.categories) : setCategories([]);
 		console.log(res.categories);
 
@@ -69,6 +73,8 @@ const AddSubCategory = ({ setisAddSubCatOpen, fetchProductSubcategories }) => {
 		console.log(res);
 		fetchProductSubcategories();
 		setisAddSubCatOpen(false);
+
+		toast.success("Subcategory added successfully");
 	};
 
 	return (

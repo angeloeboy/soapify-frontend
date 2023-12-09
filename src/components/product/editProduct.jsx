@@ -22,13 +22,16 @@ import { getProduct, editProduct, getProductCategories, getSubCategories } from 
 import { getSuppliers } from "@/api/supplier";
 import { toast } from "react-toastify";
 import "react-loading-skeleton/dist/skeleton.css";
+import Image from "next/image";
+import { getParentProduct } from "@/api/parent_product";
 
 const EditProduct = ({ productId, onClose, fetchProducts }) => {
 	const [categories, setCategories] = useState([]);
 	const [attributes, setAttributes] = useState([]);
 	const [suppliers, setSuppliers] = useState([]);
 	const [subCategories, setSubCategories] = useState([]);
-
+	const [parentProducts, setParentProducts] = useState([]);
+	const [loading, setLoading] = useState(false);
 	const [product, setProduct] = useState({
 		product_name: null,
 		product_desc: "dfasdfasdfd",
@@ -38,6 +41,7 @@ const EditProduct = ({ productId, onClose, fetchProducts }) => {
 		subcategory_id: 0,
 		quantity_in_stock: 0,
 		minimum_reorder_level: 1,
+		parent_product_id: null,
 		attributes: [],
 		attribute: [],
 	});
@@ -46,6 +50,7 @@ const EditProduct = ({ productId, onClose, fetchProducts }) => {
 		fetchSuppliers();
 		fetchProductData();
 		fetchProductCategories();
+		fetchParentProducts();
 	}, []);
 
 	useEffect(() => {
@@ -58,21 +63,59 @@ const EditProduct = ({ productId, onClose, fetchProducts }) => {
 			setProduct({
 				...productData.product,
 				product_price: productData.product.product_price / 100,
+				parent_product_id: productData.product.parent_product_id !== null ? productData.product.parent_product_id : 0,
 			});
+
+			//get the category of the product and load the subcategory of that category
+			const category = categories.find((category) => category.category_id === productData.product.category_id);
+			setSubCategories(category.subcategories);
 		} catch (error) {
 			console.log(error);
 		}
 	};
 
 	let fetchProductCategories = async () => {
-		const res = await getProductCategories();
-		res ? setCategories(res.categories) : setCategories([]);
-		res ? setSubCategories(res.categories[0].subcategories) : setSubCategories([]);
+		try {
+			const res = await getProductCategories();
+
+			if (res && res.categories) {
+				// Sort categories to make 'Uncategorized' the last item
+				const sortedCategories = res.categories.sort((a, b) => {
+					if (a.name === "Uncategorized") return 1;
+					if (b.name === "Uncategorized") return -1;
+					return 0;
+				});
+
+				setCategories(sortedCategories);
+				console.log(sortedCategories);
+
+				// // Set subcategories of the first category by default, if available
+				// if (sortedCategories.length > 0) {
+				// 	setSubCategories(sortedCategories[0].subcategories || []);
+				// 	console.log("sorted second: ", sortedCategories[0]);
+				// } else {
+				// 	setSubCategories([]);
+				// }
+			} else {
+				setCategories([]);
+				setSubCategories([]);
+			}
+		} catch (error) {
+			console.error("Error fetching product categories:", error);
+			setCategories([]);
+			setSubCategories([]);
+		}
 	};
 
 	let fetchSuppliers = async () => {
 		const res = await getSuppliers();
 		res ? setSuppliers(res.suppliers) : setSuppliers([]);
+	};
+
+	//fetch parent products
+	let fetchParentProducts = async () => {
+		const res = await getParentProduct();
+		res ? setParentProducts(res.parentProducts) : setParentProducts([]);
 	};
 
 	// Destructure the needed properties from the product state
@@ -164,16 +207,48 @@ const EditProduct = ({ productId, onClose, fetchProducts }) => {
 
 	let saveProduct = async (e) => {
 		e.preventDefault();
-		const res = await editProduct(product, productId);
+		// setLoading(true);
+		// const res = await editProduct(product, productId);
+		// console.log(res);
+		// if (res.status == "Success") {
+		// 	toast.success("Product updated successfully");
+		// 	fetchProducts();
+		// 	onClose();
+		// 	setLoading(false);
+
+		// 	return;
+		// }
+
+		let formData = new FormData();
+
+		// Append the image to formData
+		formData.append("product_image", e.target.elements.product_image.files[0]);
+
+		// Append each property in the product object to formData
+		for (let key in product) {
+			if (product.hasOwnProperty(key)) {
+				if (key === "attributes" || key === "boxDetails" || key === "pcDetails") {
+					formData.append(key, JSON.stringify(product[key]));
+				} else {
+					formData.append(key, product[key]);
+				}
+			}
+		}
+
+		const res = await editProduct(formData, productId);
 		console.log(res);
 		if (res.status == "Success") {
 			toast.success("Product updated successfully");
 			fetchProducts();
 			onClose();
+			setLoading(false);
+
 			return;
 		}
 
-		toast.error("Something went wrong");
+		setLoading(false);
+
+		toast.error(res.errors[0].message);
 	};
 
 	return (
@@ -276,10 +351,10 @@ const EditProduct = ({ productId, onClose, fetchProducts }) => {
 							/>
 						</div>
 						<div>
-							<FieldTitleLabel notFirst>Image (optional)</FieldTitleLabel>
+							<FieldTitleLabel notFirst>Image </FieldTitleLabel>
 							<ProfilePictureContainer>
-								<Centered>
-									<input type="file" name="product_image" required />
+								<Centered image={product.image_link}>
+									<input type="file" name="product_image" />
 								</Centered>
 							</ProfilePictureContainer>
 						</div>
@@ -326,7 +401,40 @@ const EditProduct = ({ productId, onClose, fetchProducts }) => {
 									</div>
 								);
 							})}
+						<LabelContainer>
+							<Label>Parent Product</Label>
+						</LabelContainer>
+						<div>
+							<FieldTitleLabel notFirst>Parent Product </FieldTitleLabel>
+							<Select
+								value={product.parent_product_id}
+								onChange={(e) => {
+									if (e.target.value === "Undefined") {
+										setProduct({
+											...product,
+											parent_product_id: null,
+										});
 
+										return;
+									}
+
+									setProduct({
+										...product,
+
+										parent_product_id: Number(e.target.value),
+									});
+								}}
+							>
+								<Option value={0} key={0}>
+									Undefined
+								</Option>
+								{parentProducts.map((parentProduct) => (
+									<Option value={parentProduct.parent_product_id} key={parentProduct.parent_product_id}>
+										{parentProduct.name}
+									</Option>
+								))}
+							</Select>
+						</div>
 						<LabelContainer>
 							<Label>Supplier</Label>
 						</LabelContainer>
@@ -352,9 +460,7 @@ const EditProduct = ({ productId, onClose, fetchProducts }) => {
 
 					<ButtonsContainer>
 						<CloseButton onClick={onClose}>Close</CloseButton>
-						<Button type="submit" onClick={(e) => saveProduct(e)}>
-							Save
-						</Button>
+						<Button type="submit">{loading ? <Image src="/loading.svg" alt="loading" width="20" height="20" /> : "Save"}</Button>
 					</ButtonsContainer>
 				</form>
 			</PopupContent>

@@ -15,44 +15,41 @@ export const AppProvider = ({ children }) => {
 	const generateSidebarData = () => {
 		const sidebarData = [
 			{
-				title: "Dashboard",
-				icon: "/home-icon.png",
+				title: "Sales",
+				icon: "/sales-icon.png",
 				hasSubmenu: true,
 				submenus: [
 					{ title: "POS", link: "/dashboard/pos" },
-					{ title: "Sales Overview", link: "/dashboard" },
+					{ title: "Overview", link: "/dashboard" },
 					{ title: "Orders", link: "/dashboard/orders", permission: "View Orders:orders" },
-					{ title: "Returns", link: "/dashboard/returns" },
-					{ title: "Refunds", link: "/dashboard/refunds" },
 					{ title: "Promos", link: "/dashboard/promos" },
-					{ title: "Parent Products", link: "/dashboard/parent-product" },
 				],
 			},
-
 			{
 				title: "Inventory",
 				icon: "/inventory-icon.png",
 				hasSubmenu: true,
 				submenus: [
-					{ title: "Products", link: "/dashboard/products" },
-					{ title: "Inventory", link: "/dashboard/inventory" },
-					{ title: "Categories", link: "/dashboard/products/categories" },
-					{ title: "Suppliers", link: "/dashboard/suppliers" },
-					{ title: "Subcategories", link: "/dashboard/products/subcategories" },
+					{ title: "Overview", link: "/dashboard/inventory", permission: "View Inventory:inventory" },
+					{ title: "Products", link: "/dashboard/products", permission: "View Products:products" },
 					{ title: "Attributes", link: "/dashboard/attributes" },
-					{ title: "Shelving", link: "/dashboard/shelving" },
+					{ title: "Categories", link: "/dashboard/products/categories" },
+					{ title: "Subcategories", link: "/dashboard/products/subcategories" },
+					{ title: "Parent Products", link: "/dashboard/parent-product" },
 				],
 			},
 			{
-				title: "Settings",
+				title: "Operations",
 				icon: "/settings-icon.png",
 				hasSubmenu: true,
 				submenus: [
 					{ title: "Users", link: "/dashboard/user" },
 					{ title: "Warehouse", link: "/dashboard/warehouse" },
-					{ title: "Payment Methods", link: "/dashboard/payment" },
+					{ title: "Areas", link: "/dashboard/areas" },
+					{ title: "Payments", link: "/dashboard/payment" },
+					{ title: "Suppliers", link: "/dashboard/suppliers" },
 					{ title: "Roles", link: "/dashboard/roles" },
-					{ title: "User Settings", link: "/dashboard/user-settings" },
+					{ title: "Logs", link: "/dashboard/logs" },
 				],
 			},
 		];

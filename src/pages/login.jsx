@@ -202,6 +202,7 @@ let Login = () => {
 						{errorMessages.password && <Error>{errorMessages.password}</Error>}
 
 						<Link href="/forgot-password">Forgot Password</Link>
+						<Link href="/register">Create an account</Link>
 
 						<Button className="loginBtn" width="100%" onClick={(e) => handleLogin(e)}>
 							{loggingIn ? <FontAwesomeIcon icon={faSpinner} spin /> : "Log In"}

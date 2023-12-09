@@ -4,7 +4,7 @@ import DashboardLayout from "@/components/misc/dashboardLayout";
 import StyledPanel from "@/styled-components/StyledPanel";
 import PdfExporter from "@/components/misc/pdfExporter";
 import PageTitle from "@/components/misc/pageTitle";
-import Table, { ActionContainer, TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
+import Table, { ActionContainer, TableContainer, TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheckCircle, faEllipsis, faPen, faTrash, faTrashCan, faXmarkCircle } from "@fortawesome/free-solid-svg-icons";
 import AddWarehouse from "@/components/warehouse/addWarehouse";
@@ -53,8 +53,14 @@ const Warehouse = () => {
 
 	const fetchWarehouses = async () => {
 		const res = await getAllWarehouse();
+
+		if (!res) {
+			return;
+		}
+
 		res ? setWarehouses(res.warehouses) : setWarehouses([]);
 		res ? setWarehouseDisplay(res.warehouses) : setWarehouseDisplay([]);
+		console.log(res.warehouses);
 	};
 
 	const handleReactivateModal = (warehouse_id, warehouse_name) => {
@@ -133,84 +139,90 @@ const Warehouse = () => {
 					setWarehouseDisplay={setWarehouseDisplay}
 					setCurrentPage={setCurrentPage}
 				/>
+				<TableContainer>
+					<Table id="warehouse-table">
+						<tbody>
+							<TableRows $heading>
+								<TableHeadings>Warehouse Name</TableHeadings>
+								<TableHeadings>Location</TableHeadings>
+								<TableHeadings>Status</TableHeadings>
 
-				<Table id="warehouse-table">
-					<tbody>
-						<TableRows $heading>
-							<TableHeadings>Warehouse ID</TableHeadings>
-							<TableHeadings>Warehouse Name</TableHeadings>
-							<TableHeadings>Location</TableHeadings>
-							<TableHeadings>Status</TableHeadings>
+								<TableHeadings>Actions </TableHeadings>
+							</TableRows>
 
-							<TableHeadings>Actions </TableHeadings>
-						</TableRows>
+							{warehouses.map((warehouse, index) => (
+								<React.Fragment key={index}>
+									<TableRows onClick={() => showAreasFunc(warehouse.warehouse_id)}>
+										<TableData>{warehouse.warehouse_name}</TableData>
+										<TableData>{warehouse.warehouse_location}</TableData>
+										<TableData>{warehouse.isActive ? "Active" : "Not active"}</TableData>
+										<TableData>
+											<FontAwesomeIcon className="ellipsis" icon={faEllipsis} onClick={() => setActiveActionContainer(index)} />
+											{activeActionContainer === index && (
+												<ActionContainer ref={actionContainerRef}>
+													<p
+														onClick={() => {
+															setClickedId(warehouse.warehouse_id);
+															setEditPopUpOpen(true);
+														}}
+													>
+														<FontAwesomeIcon icon={faPen} />
+														Edit
+													</p>
+													<p
+														onClick={() => {
+															setShowDeactivate(true);
+															setClickedName(warehouse.warehouse_name);
+														}}
+													>
+														<FontAwesomeIcon icon={faTrash} /> Delete
+													</p>
 
-						{warehouses.map((warehouse, index) => (
-							<React.Fragment key={index}>
-								<TableRows onClick={() => showAreasFunc(warehouse.warehouse_id)}>
-									<TableData>{warehouse.warehouse_id}</TableData>
-									<TableData>{warehouse.warehouse_name}</TableData>
-									<TableData>{warehouse.warehouse_location}</TableData>
-									<TableData>{warehouse.isActive ? "Active" : "Not active"}</TableData>
-									<TableData>
-										<FontAwesomeIcon className="ellipsis" icon={faEllipsis} onClick={() => setActiveActionContainer(index)} />
-										{activeActionContainer === index && (
-											<ActionContainer ref={actionContainerRef}>
-												<p
-													onClick={() => {
-														setClickedId(warehouse.warehouse_id);
-														setEditPopUpOpen(true);
-													}}
-												>
-													<FontAwesomeIcon icon={faPen} />
-													Edit
-												</p>
-												<p
-													onClick={() => {
-														setShowDeactivate(true);
-														setClickedName(warehouse.warehouse_name);
-													}}
-												>
-													<FontAwesomeIcon icon={faTrash} /> Delete
-												</p>
-												<p
-													onClick={() => {
-														//GAWIN MO TO
-														setShowDeactivate(true);
-														setClickedName(warehouse.warehouse_name);
-														setSelectedWarehouseId(warehouse.warehouse_id);
-													}}
-												>
-													<FontAwesomeIcon icon={faXmarkCircle} /> Deactivate Warehouse
-												</p>
-												<p onClick={() => handleReactivateModal(warehouse.warehouse_id, warehouse.warehouse_name)}>
-													<FontAwesomeIcon icon={faCheckCircle} /> Reactivate Warehouse
-												</p>
-												<p
-													onClick={() => {
-														setShowAddArea(true);
-														setClickedId(warehouse.warehouse_id);
-													}}
-												>
-													Add Area
-												</p>
+													{warehouse.isActive && (
+														<p
+															onClick={() => {
+																setShowDeactivate(true);
+																setClickedName(warehouse.warehouse_name);
+																setSelectedWarehouseId(warehouse.warehouse_id);
+															}}
+														>
+															<FontAwesomeIcon icon={faXmarkCircle} /> Deactivate
+														</p>
+													)}
 
-												<p
-													onClick={() => {
-														setShowAreasModal(true);
-														setWarehouseIdForModal(warehouse.warehouse_id);
-													}}
-												>
-													Show Areas
-												</p>
-											</ActionContainer>
-										)}
-									</TableData>
-								</TableRows>
-							</React.Fragment>
-						))}
-					</tbody>
-				</Table>
+													{!warehouse.isActive && (
+														<p onClick={() => handleReactivateModal(warehouse.warehouse_id, warehouse.warehouse_name)}>
+															<FontAwesomeIcon icon={faCheckCircle} /> Activate
+														</p>
+													)}
+
+													<p
+														onClick={() => {
+															setShowAddArea(true);
+															setClickedId(warehouse.warehouse_id);
+														}}
+													>
+														Add Area
+													</p>
+
+													<p
+														onClick={() => {
+															setShowAreasModal(true);
+															setWarehouseIdForModal(warehouse.warehouse_id);
+														}}
+													>
+														Show Areas
+													</p>
+												</ActionContainer>
+											)}
+										</TableData>
+									</TableRows>
+								</React.Fragment>
+							))}
+						</tbody>
+					</Table>
+				</TableContainer>
+
 				<PdfExporter tableId="warehouse-table" filename="warehouse" />
 				<Pagination
 					totalItems={warehouses.length}

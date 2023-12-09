@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import DashboardLayout from "@/components/misc/dashboardLayout";
 import PageTitle from "@/components/misc/pageTitle";
-import Table, { ActionContainer, TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
+import Table, { ActionContainer, TableContainer, TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
 import StyledPanel from "@/styled-components/StyledPanel";
 import { faEllipsis, faTrash, faPen } from "@fortawesome/free-solid-svg-icons";
 import PdfExporter from "@/components/misc/pdfExporter";
@@ -67,58 +67,60 @@ const Roles = () => {
 			<PageTitle title="Roles" />
 			<StyledPanel>
 				<RolesSearchBar setIsAddPopUpOpen={setIsAddPopUpOpen} roles={roles} setRolesDisplay={setRolesDisplay} setCurrentPage={setCurrentPage} />
+				<TableContainer>
+					<Table id="roles-table">
+						<tbody>
+							<TableRows $heading>
+								<TableHeadings>Role </TableHeadings>
+								<TableHeadings># of Users</TableHeadings>
+								<TableHeadings># of Permissions</TableHeadings>
 
-				<Table id="roles-table">
-					<tbody>
-						<TableRows $heading>
-							<TableHeadings>Role </TableHeadings>
-							<TableHeadings># of Users</TableHeadings>
-							<TableHeadings># of Permissions</TableHeadings>
+								<TableHeadings>Actions</TableHeadings>
+							</TableRows>
 
-							<TableHeadings>Actions</TableHeadings>
-						</TableRows>
+							{roles.length === 0 ? (
+								rolesLoading ? (
+									<LoadingSkeleton columns={6} />
+								) : null
+							) : (
+								paginatedRoles.map((role, index) => (
+									<TableRows key={index}>
+										<TableData>{role.role_name}</TableData>
 
-						{roles.length === 0 ? (
-							rolesLoading ? (
-								<LoadingSkeleton columns={6} />
-							) : null
-						) : (
-							paginatedRoles.map((role, index) => (
-								<TableRows key={index}>
-									<TableData>{role.role_name}</TableData>
+										<TableData>{role.users}</TableData>
+										<TableData>{role.permissions.length}</TableData>
 
-									<TableData>{role.users}</TableData>
-									<TableData>{role.permissions.length}</TableData>
+										<TableData>
+											<FontAwesomeIcon
+												className="ellipsis"
+												icon={faEllipsis}
+												onClick={() => (activeActionContainer === index ? setActivecAtionContainer(-1) : setActiveActionContainer(index))}
+											/>
 
-									<TableData>
-										<FontAwesomeIcon
-											className="ellipsis"
-											icon={faEllipsis}
-											onClick={() => (activeActionContainer === index ? setActivecAtionContainer(-1) : setActiveActionContainer(index))}
-										/>
+											{activeActionContainer === index && (
+												<ActionContainer onClick={() => setActiveActionContainer(-1)}>
+													<p
+														onClick={() => {
+															setClickedRole(role);
+															setIsEditPopUpOpen(true);
+														}}
+													>
+														<FontAwesomeIcon icon={faPen} />
+														Edit
+													</p>
+													<p onClick={() => deleteRolefunc(role.role_id)}>
+														<FontAwesomeIcon icon={faTrash} /> Delete
+													</p>
+												</ActionContainer>
+											)}
+										</TableData>
+									</TableRows>
+								))
+							)}
+						</tbody>
+					</Table>
+				</TableContainer>
 
-										{activeActionContainer === index && (
-											<ActionContainer onClick={() => setActiveActionContainer(-1)}>
-												<p
-													onClick={() => {
-														setClickedRole(role);
-														setIsEditPopUpOpen(true);
-													}}
-												>
-													<FontAwesomeIcon icon={faPen} />
-													Edit
-												</p>
-												<p onClick={() => deleteRolefunc(role.role_id)}>
-													<FontAwesomeIcon icon={faTrash} /> Delete
-												</p>
-											</ActionContainer>
-										)}
-									</TableData>
-								</TableRows>
-							))
-						)}
-					</tbody>
-				</Table>
 				<PdfExporter tableId="roles-table" filename="roles.pdf" />
 				<Pagination totalItems={rolesDisplay.length} itemsPerPage={pagePerItem} currentPage={currentPage} onPageChange={(newPage) => setCurrentPage(newPage)} />
 			</StyledPanel>

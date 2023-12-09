@@ -87,3 +87,19 @@ const styles = {
 };
 
 export default ProfileSettings;
+
+import cookie, { parse } from "cookie";
+
+export async function getServerSideProps(context) {
+	const { req } = context;
+	const parsedCookies = cookie.parse(req.headers.cookie || "").role;
+
+	if (parsedCookies !== 1) {
+		return {
+			redirect: {
+				destination: "/",
+				permanent: false,
+			},
+		};
+	}
+}

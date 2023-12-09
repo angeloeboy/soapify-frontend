@@ -22,6 +22,7 @@ import ItemActionModal, {
 } from "@/styled-components/ItemActionModal";
 import StyledPanel from "@/styled-components/StyledPanel";
 import { addWarehouse, editWarehouse, getWarehouse } from "@/api/warehouse";
+import { toast } from "react-toastify";
 
 const EditWarehouse = ({ setEditPopUpOpen, fetchWarehouses, clickedId }) => {
 	const [warehouse, setWarehouse] = useState({
@@ -47,6 +48,8 @@ const EditWarehouse = ({ setEditPopUpOpen, fetchWarehouses, clickedId }) => {
 		console.log(res.warehouse);
 		if (res.warehouse) {
 			fetchWarehouses();
+			setEditPopUpOpen(false);
+			toast.success("Warehouse edited successfully!");
 		}
 	};
 

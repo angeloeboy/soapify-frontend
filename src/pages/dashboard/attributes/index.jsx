@@ -2,12 +2,7 @@ import React, { useState, useEffect } from "react";
 import DashboardLayout from "@/components/misc/dashboardLayout";
 import StyledPanel from "@/styled-components/StyledPanel";
 import PageTitle from "@/components/misc/pageTitle";
-import Table, {
-  ActionContainer,
-  TableData,
-  TableHeadings,
-  TableRows,
-} from "@/styled-components/TableComponent";
+import Table, { ActionContainer, TableContainer, TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import pdfExporter from "@/components/misc/pdfExporter";
 import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
@@ -22,195 +17,169 @@ import PdfExporter from "@/components/misc/pdfExporter";
 // // eto din
 // import DeactivateModal from "@/components/misc/deactivate";
 
- 
 const PaymentTable = () => {
-  const [activeActionContainer, setActiveActionContainer] = useState(-1);
+	const [activeActionContainer, setActiveActionContainer] = useState(-1);
 
-  const [attributes, setAttributes] = useState([]);
-  const [attributesLoading, setAttributesLoading] = useState(false);
-  const [isEditAttributeOpen, setEditAttributeOpen] = useState(false); // Define isEditOpen state variable
-  const [isPopUpOpen, setPopUpOpen] = useState(false);
+	const [attributes, setAttributes] = useState([]);
+	const [attributesLoading, setAttributesLoading] = useState(false);
+	const [isEditAttributeOpen, setEditAttributeOpen] = useState(false); // Define isEditOpen state variable
+	const [isPopUpOpen, setPopUpOpen] = useState(false);
 
-  //IMPORT MO TO
-  const [clickedName, setClickedName] = useState(null);
-  const [showDeactivate, setShowDeactivate] = useState(false);
- 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [attributesDisplay, setAttributesDisplay] = useState([]); // Define attributesDisplay state variable
-  const [paginatedAttributes, setPaginatedAttributes] = useState([]); // Define paginatedAttributes state variable
-  const [selectedAttributeId, setSelectedAttributeId] = useState(null);
+	//IMPORT MO TO
+	const [clickedName, setClickedName] = useState(null);
+	const [showDeactivate, setShowDeactivate] = useState(false);
 
-  const fetchAttributes = async () => {
-    const res = await getAttributes();
+	const [currentPage, setCurrentPage] = useState(1);
+	const [itemsPerPage, setItemsPerPage] = useState(10);
+	const [attributesDisplay, setAttributesDisplay] = useState([]); // Define attributesDisplay state variable
+	const [paginatedAttributes, setPaginatedAttributes] = useState([]); // Define paginatedAttributes state variable
+	const [selectedAttributeId, setSelectedAttributeId] = useState(null);
 
-    if (!res) {
-      setAttributes([]);
-      setAttributesDisplay([]); // Initialize attributesDisplay
-      setPaginatedAttributes([]); // Initialize paginatedAttributes
-      setAttributesLoading(false);
-      return;
-    }
+	const fetchAttributes = async () => {
+		const res = await getAttributes();
 
-    const attributesArray = res.attributes || [];
-    setAttributes(attributesArray);
-    setAttributesDisplay(attributesArray);
-    // Use setPagePerItem here
-    setPaginatedAttributes(attributesArray.slice(0, itemsPerPage)); // Initialize paginatedAttributes with the first page
-    setAttributesLoading(false);
-  };
+		if (!res) {
+			setAttributes([]);
+			setAttributesDisplay([]); // Initialize attributesDisplay
+			setPaginatedAttributes([]); // Initialize paginatedAttributes
+			setAttributesLoading(false);
 
-  useEffect(() => {
-    // Step 3: Use pagePerItem state in the useEffect
-    fetchAttributes();
-  }, [itemsPerPage]); // Fetch attributes when pagePerItem changes
+			return;
+		}
 
-  useEffect(() => {
-    // Use setAttributesDisplay instead of attributesDisplay
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = currentPage * itemsPerPage;
-    const paginatedAttributesSlice = attributesDisplay.slice(
-      startIndex,
-      endIndex
-    );
-    setPaginatedAttributes(paginatedAttributesSlice);
-  }, [currentPage, attributesDisplay, itemsPerPage]);
+		const attributesArray = res.attributes || [];
+		setAttributes(attributesArray);
+		setAttributesDisplay(attributesArray);
+		// Use setPagePerItem here
+		setPaginatedAttributes(attributesArray.slice(0, itemsPerPage)); // Initialize paginatedAttributes with the first page
+		setAttributesLoading(false);
+	};
 
-  useEffect(() => {
-    fetchAttributes();
-  }, []);
+	useEffect(() => {
+		// Step 3: Use pagePerItem state in the useEffect
+		fetchAttributes();
+	}, [itemsPerPage]); // Fetch attributes when pagePerItem changes
 
-  useEffect(() => {
-    console.log(isPopUpOpen);
-  }, [isPopUpOpen]);
+	useEffect(() => {
+		// Use setAttributesDisplay instead of attributesDisplay
+		const startIndex = (currentPage - 1) * itemsPerPage;
+		const endIndex = currentPage * itemsPerPage;
+		const paginatedAttributesSlice = attributesDisplay.slice(startIndex, endIndex);
+		setPaginatedAttributes(paginatedAttributesSlice);
+	}, [currentPage, attributesDisplay, itemsPerPage]);
 
-  const handleClosePopup = () => {
-    setPopupOpen(false);
-  };
+	useEffect(() => {
+		fetchAttributes();
+	}, []);
 
-  const closeEditAttribute = () => {
-    setEditAttributeOpen(false);
-  };
-  const openEditAttribute = () => {
-    setEditAttributeOpen(true);
-  };
+	useEffect(() => {
+		console.log(isPopUpOpen);
+	}, [isPopUpOpen]);
 
-  const deleteAttributeFunc = async (attribute_id) => {
-    const res = await deleteAttribute(attribute_id);
-    console.log(res);
+	const handleClosePopup = () => {
+		setPopupOpen(false);
+	};
 
-    if (!res) {
-      return;
-    }
+	const closeEditAttribute = () => {
+		setEditAttributeOpen(false);
+	};
+	const openEditAttribute = () => {
+		setEditAttributeOpen(true);
+	};
 
-    fetchAttributes();
-  };
+	const deleteAttributeFunc = async (attribute_id) => {
+		const res = await deleteAttribute(attribute_id);
+		console.log(res);
 
-  const [selectedAttribute, setSelectedAttribute] = useState(null);
+		if (!res) {
+			return;
+		}
 
-  return (
-    <DashboardLayout>
-      <PageTitle title="Attributes" />
-      <StyledPanel>
-        {/* <PaymentSearchBarComponent searchQuery={searchQuery} handleSearchChange={handleSearchChange} handleOpenPopup={handleOpenPopup} /> */}
-        <AttributeSearchBar setPopUpOpen={setPopUpOpen} />
+		fetchAttributes();
+	};
 
-        <Table id="attributes-table">
-          <tbody>
-            <TableRows $heading>
-              <TableHeadings>Attribute Name</TableHeadings>
-              <TableHeadings>Choices</TableHeadings>
-              <TableHeadings>Additional info?</TableHeadings>
-              <TableHeadings>Actions</TableHeadings>
-            </TableRows>
+	const [selectedAttribute, setSelectedAttribute] = useState(null);
 
-            {attributes.length === 0
-              ? attributesLoading && <LoadingSkeleton columns={4} />
-              : paginatedAttributes.map((attribute, index) => (
-                  <TableRows key={attribute.attribute_id}>
-                    <TableData>{attribute.attribute_name}</TableData>
-                    <TableData>{attribute.values.length}</TableData>
+	return (
+		<DashboardLayout>
+			<PageTitle title="Attributes" />
+			<StyledPanel>
+				{/* <PaymentSearchBarComponent searchQuery={searchQuery} handleSearchChange={handleSearchChange} handleOpenPopup={handleOpenPopup} /> */}
+				<AttributeSearchBar setPopUpOpen={setPopUpOpen} />
+				<TableContainer>
+					<Table id="attributes-table">
+						<tbody>
+							<TableRows $heading>
+								<TableHeadings>Attribute Name</TableHeadings>
+								<TableHeadings>Choices</TableHeadings>
+								<TableHeadings>Additional info?</TableHeadings>
+								<TableHeadings>Actions</TableHeadings>
+							</TableRows>
 
-                    <TableData>
-                      {attribute.requires_additional_value ? "Yes" : "No"}
-                    </TableData>
-                    <TableData>
-                      <FontAwesomeIcon
-                        className="ellipsis"
-                        icon={faEllipsis}
-                        onClick={() =>
-                          activeActionContainer === index
-                            ? setActiveActionContainer(-1)
-                            : setActiveActionContainer(index)
-                        }
-                      />
+							{attributes.length === 0
+								? attributesLoading && <LoadingSkeleton columns={4} />
+								: paginatedAttributes.map((attribute, index) => (
+										<TableRows key={attribute.attribute_id}>
+											<TableData>{attribute.attribute_name}</TableData>
+											<TableData>{attribute.values.length}</TableData>
 
-                      {activeActionContainer === index && (
-                        <ActionContainer
-                          onClick={() => setActiveActionContainer(-1)}
-                        >
-                          <p
-                            onClick={() => {
-                              setSelectedAttribute(attribute);
-                              openEditAttribute(selectedAttribute);
-                            }}
-                          >
-                            <FontAwesomeIcon icon={faPen} /> Edit
-                          </p>
-                          <p
-                            onClick={() =>{
-                              //GAWIN MO TO 
-                              setShowDeactivate(true);
-                              setClickedName(attribute.attribute_name);
-                              setSelectedAttributeId(attribute.attribute_id); 
+											<TableData>{attribute.requires_additional_value ? "Yes" : "No"}</TableData>
+											<TableData>
+												<FontAwesomeIcon
+													className="ellipsis"
+													icon={faEllipsis}
+													onClick={() => (activeActionContainer === index ? setActiveActionContainer(-1) : setActiveActionContainer(index))}
+												/>
 
-                            }}
-                          >
-                            <FontAwesomeIcon icon={faTrash} /> Delete
-                          </p>
-                        </ActionContainer>
-                      )}
-                    </TableData>
-                  </TableRows>
-                ))}
-          </tbody>
-      
-        </Table>
-        <PdfExporter tableId="attributes-table" fileName="attributes.pdf" />
-        <Pagination
-          totalItems={attributesDisplay.length}
-          itemsPerPage={itemsPerPage}
-          currentPage={currentPage}
-          onPageChange={setCurrentPage}
-          itemsPerPageOptions={[5, 10, 15, 20]}
-          defaultItemsPerPage={10}
-          setItemsPerPage={setItemsPerPage}
-        />
-      </StyledPanel>
-      {isPopUpOpen && (
-        <AddAttribute
-          setPopUpOpen={setPopUpOpen}
-          fetchAttributes={fetchAttributes}
-        />
-      )}
-      {isEditAttributeOpen && <EditAttribute onClose={closeEditAttribute} />}
- 
-      {showDeactivate && (
-        <DeleteModal
-          type="attributes"
-          text={clickedName}
-          close={setShowDeactivate}
-          confirm={() => deleteAttributeFunc(selectedAttributeId)}
+												{activeActionContainer === index && (
+													<ActionContainer onClick={() => setActiveActionContainer(-1)}>
+														<p
+															onClick={() => {
+																setSelectedAttribute(attribute);
+																openEditAttribute(selectedAttribute);
+																setSelectedAttributeId(attribute);
+															}}
+														>
+															<FontAwesomeIcon icon={faPen} /> Edit
+														</p>
+														<p
+															onClick={() => {
+																//GAWIN MO TO
+																setShowDeactivate(true);
+																setClickedName(attribute.attribute_name);
+																setSelectedAttributeId(attribute.attribute_id);
+															}}
+														>
+															<FontAwesomeIcon icon={faTrash} /> Delete
+														</p>
+													</ActionContainer>
+												)}
+											</TableData>
+										</TableRows>
+								  ))}
+						</tbody>
+					</Table>
+				</TableContainer>
 
-        />
-      )}
+				<PdfExporter tableId="attributes-table" fileName="attributes.pdf" className="export-btn" />
+				<Pagination
+					totalItems={attributesDisplay.length}
+					itemsPerPage={itemsPerPage}
+					currentPage={currentPage}
+					onPageChange={setCurrentPage}
+					itemsPerPageOptions={[5, 10, 15, 20]}
+					defaultItemsPerPage={10}
+					setItemsPerPage={setItemsPerPage}
+				/>
+			</StyledPanel>
+			{isPopUpOpen && <AddAttribute setPopUpOpen={setPopUpOpen} fetchAttributes={fetchAttributes} />}
+			{isEditAttributeOpen && <EditAttribute onClose={closeEditAttribute} fetchAttributes={fetchAttributes} selectedAttr={selectedAttributeId} />}
 
-     
-    </DashboardLayout>
-
- 
-
-  );
+			{showDeactivate && (
+				<DeleteModal type="attributes" text={clickedName} close={setShowDeactivate} confirm={() => deleteAttributeFunc(selectedAttributeId)} />
+			)}
+		</DashboardLayout>
+	);
 };
 
 export default PaymentTable;

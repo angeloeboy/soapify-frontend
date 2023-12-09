@@ -5,7 +5,7 @@ import { styled } from "styled-components";
 import "react-toastify/dist/ReactToastify.css";
 import { SearchBar } from "@/styled-components/TableControlPanel";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAdd, faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faAdd, faClose, faCross, faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { TransactionContext } from "../context/TransactionContext";
 import ProductComponent from "./product";
 import useOutsideClick from "@/hooks/useOutsideclick";
@@ -172,7 +172,7 @@ const VariantsModalWrapper = styled.div`
 		z-index: 100;
 		padding-top: 60px;
 		/* position: relative; */
-
+		position: relative;
 		.variants-wrapper {
 			display: flex;
 			flex-wrap: wrap;
@@ -226,6 +226,13 @@ const VariantsModalWrapper = styled.div`
 			}
 		}
 	}
+`;
+
+const Close = styled.div`
+	position: absolute;
+	top: 20px;
+	right: 20px;
+	cursor: pointer;
 `;
 
 const ParentProductDisplay = ({ parentProduct, updateCart }) => {
@@ -301,7 +308,7 @@ const VariantsContainer = ({ variants, updateCart, setShowVariants }) => {
 			variants.filter((product) => {
 				return (
 					product.product_name.toLowerCase().includes(searchQuery) ||
-					(product.attribute && product.attribute.some((attr) => attr.value.toLowerCase().includes(searchQuery)))
+					(product.attribute && product.attribute.some((attr) => attr.value?.toLowerCase().includes(searchQuery)))
 				);
 			})
 		);
@@ -335,7 +342,9 @@ const VariantsContainer = ({ variants, updateCart, setShowVariants }) => {
 					})}
 				</div>
 
-				<p onClick={() => setShowVariants(false)}>close</p>
+				<Close onClick={() => setShowVariants(false)}>
+					<FontAwesomeIcon icon={faClose} />
+				</Close>
 			</div>
 		</VariantsModalWrapper>
 	);

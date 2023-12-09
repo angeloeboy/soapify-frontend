@@ -20,6 +20,18 @@ const PosSearchBar = ({ products, setProductDisplay, parentProducts, setParentPr
 
 	const fetchProductCategories = async () => {
 		const response = await getProductCategories();
+
+		//make the category withthe name Uncategorized the last item in the array
+		response.categories.sort((a, b) => {
+			if (a.name === "Uncategorized") {
+				return 1;
+			}
+			if (b.name === "Uncategorized") {
+				return -1;
+			}
+			return 0;
+		});
+
 		setProductCategories(response.categories || []);
 	};
 	const handleSearchChange = (e) => {
@@ -70,10 +82,6 @@ const PosSearchBar = ({ products, setProductDisplay, parentProducts, setParentPr
 
 		if (category === "All") {
 			filteredParentProducts = parentProducts.filter((parent_product) => {
-				//loop throught the products of the parent product
-				//if the product name or attribute value matches the search query
-				//return true
-
 				return parent_product.products.some((product) => {
 					return queryTerms.every(
 						(term) =>
@@ -84,24 +92,20 @@ const PosSearchBar = ({ products, setProductDisplay, parentProducts, setParentPr
 			});
 		} else {
 			filteredParentProducts = parentProducts.filter((parent_product) => {
-				//loop throught the products of the parent product
-				//if the product name or attribute value matches the search query
-				//return true
-
 				return parent_product.products.some((product) => {
 					return (
-						//dont show if they are a variant
-						product.parent_product_id === null &&
-						queryTerms.every(
-							(term) =>
-								product.product_name.toLowerCase().includes(term.toLowerCase()) ||
-								product.attribute.some((attr) => attr.value?.toLowerCase().includes(term.toLowerCase()))
-						) &&
-						product.category.name.toLowerCase().includes(category.toLowerCase())
+						product.parent_product_id === null ||
+						(product.category.name.toLowerCase().includes(category.toLowerCase()) &&
+							queryTerms.every(
+								(term) =>
+									product.product_name.toLowerCase().includes(term.toLowerCase()) ||
+									product.attribute.some((attr) => attr.value?.toLowerCase().includes(term.toLowerCase()))
+							))
 					);
 				});
 			});
 		}
+		console.log(filteredParentProducts);
 
 		setParentProductsDisplay(filteredParentProducts);
 	};

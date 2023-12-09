@@ -1,13 +1,22 @@
 import styled from "styled-components";
 
-const Table = styled.table`
+export const TableContainer = styled.div`
+	min-height: 800px;
+	width: 100%;
+	overflow-x: auto;
+`;
+
+export const Table = styled.table`
 	width: 100%;
 	border: none;
 	border-collapse: collapse;
-	table-layout: fixed;
-	min-width: 1000px;
-	width: 100%;
+	min-width: 1300px; // Adjust as needed
+	max-width: 100%; // Ensures table doesn't exceed the container width
 	margin-top: 32px;
+
+	@media (min-width: 1024px) {
+		table-layout: auto; // Allows flexible column widths
+	}
 `;
 
 export const TableHeadings = styled.th`
@@ -84,10 +93,8 @@ export const TableRows = styled.tr`
 
 export const ActionContainer = styled.div`
 	display: flex;
-	/* justify-content: center; */
-	/* align-items: center; */
+
 	flex-direction: column;
-	/* gap: 16px; */
 	cursor: pointer;
 	color: #002056;
 	font-size: 14px;
@@ -102,7 +109,7 @@ export const ActionContainer = styled.div`
 	position: absolute;
 	left: 50%;
 	bottom: 0px;
-	transform: translate(-50%, 40%);
+	transform: translate(-80%, 40%);
 	z-index: 2;
 	p {
 		padding: 8px 16px;

@@ -20,7 +20,21 @@ import Image from "next/image";
 
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import styled from "styled-components";
 //import { addPromo } from "@/api/promos"; // Adjust the API import based on your requirements
+
+const ButtonAdd = styled.button`
+	background-color: #0b20dd;
+	color: #fff;
+	padding: 10px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 16px;
+	margin-top: 10px;
+	margin-right: 6px;
+	margin-left: 24px;
+`;
 
 const AddPromo = ({ setIsAddPopUpOpen, getPromotionsFunc }) => {
 	const currentDate = new Date().toISOString();
@@ -168,7 +182,7 @@ const AddPromo = ({ setIsAddPopUpOpen, getPromotionsFunc }) => {
 											</Option>
 										))}
 									</Select>
-									<button
+									<ButtonAdd
 										type="button"
 										onClick={(e) => {
 											if (chosen_products.find((chosen_product) => chosen_product.product_id == product.product_id)) {
@@ -179,7 +193,7 @@ const AddPromo = ({ setIsAddPopUpOpen, getPromotionsFunc }) => {
 										}}
 									>
 										Add Product
-									</button>
+									</ButtonAdd>
 								</>
 							)}
 
@@ -189,9 +203,9 @@ const AddPromo = ({ setIsAddPopUpOpen, getPromotionsFunc }) => {
 										<span>
 											{product.product_code} - {product.product_name}
 										</span>
-										<button onClick={() => setchosen_products(chosen_products.filter((chosen_product) => chosen_product.product_id !== product.product_id))}>
+										<ButtonAdd onClick={() => setchosen_products(chosen_products.filter((chosen_product) => chosen_product.product_id !== product.product_id))}>
 											Remove
-										</button>
+										</ButtonAdd>
 									</div>
 								);
 							})}

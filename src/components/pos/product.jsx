@@ -6,7 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { SearchBar } from "@/styled-components/TableControlPanel";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { TransactionContext } from "../context/TransactionContext";
-import { faAdd, faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faAdd, faCartPlus, faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 
 const Product = styled.div`
 	display: flex;
@@ -25,8 +25,8 @@ const Product = styled.div`
 	transition: all 0.3s ease;
 	opacity: ${({ unclickable }) => (unclickable ? "0.5" : "1")};
 	&:hover {
-		border: ${({ unclickable }) => (unclickable ? "1px solid #dddd" : "1px solid #005eff")};
-		background-color: ${({ unclickable }) => (unclickable ? "none" : "#f8f8f8b3")};
+		/* border: ${({ unclickable }) => (unclickable ? "1px solid #dddd" : "1px solid #005eff")};
+		background-color: ${({ unclickable }) => (unclickable ? "none" : "#f8f8f8b3")}; */
 	}
 	img {
 		margin: 0 auto;
@@ -40,10 +40,7 @@ const Product = styled.div`
 		margin-top: 27px;
 	}
 
-	@media (max-width: 1100px) {
-		/* width: 100%; */
-		margin: 8px 0px;
-
+	@media (max-width: 1200px) {
 		max-width: 200px;
 
 		img {
@@ -189,6 +186,30 @@ const Attribute = styled.p`
 	margin: 0px 4px 4px 0px;
 `;
 
+const AddToCart = styled.div`
+	margin-top: 16px;
+	button {
+		width: 100%;
+		height: 40px;
+		/* background-color: #1a69f0; */
+		border-radius: 4px;
+		border: none;
+		color: #fff;
+		font-size: 14px;
+		font-style: normal;
+		font-weight: 400;
+		line-height: normal;
+		letter-spacing: 0em;
+		text-align: center;
+		cursor: pointer;
+
+		&:hover {
+			border: ${({ unclickable }) => (unclickable ? "1px solid #dddd" : "1px solid #005eff")};
+			background-color: ${({ unclickable }) => (unclickable ? "none" : "#f8f8f8b3")};
+		}
+	}
+`;
+
 const ProductComponent = ({ product, onClick, index }) => {
 	const { cart, setCart, updateCart } = useContext(TransactionContext);
 
@@ -209,7 +230,7 @@ const ProductComponent = ({ product, onClick, index }) => {
 	};
 
 	return (
-		<Product key={product.product_id} onClick={() => handleProductClick()} unclickable={product.quantity_in_stock <= 0} active={item.quantity > 0}>
+		<Product key={product.product_id} unclickable={product.quantity_in_stock <= 0} active={item.quantity > 0}>
 			<div>
 				<Image src={product.image_link == "testing" ? "/sabon.png" : product.image_link.replace(/\\/g, "/")} width={200} height={400} alt="Product image" />
 				<ProductTitle>{product.product_name}</ProductTitle>
@@ -269,6 +290,9 @@ const ProductComponent = ({ product, onClick, index }) => {
 						const valueAsNumber = Number(valueAsString);
 
 						if (e.key === "ArrowUp") {
+							//disable the arrow up if the quantity is already equal to the quantity_in_stock
+							if (valueAsNumber >= item.quantity_in_stock) return;
+
 							let updatedCart = cart.map((product) => (product.product_id === item.product_id ? { ...product, quantity: valueAsNumber + 1 } : product));
 							setCart(updatedCart);
 						} else if (e.key === "ArrowDown") {
@@ -284,6 +308,17 @@ const ProductComponent = ({ product, onClick, index }) => {
 					<FontAwesomeIcon icon={faPlus} />
 				</span>
 			</div>
+
+			<AddToCart unclickable={product.quantity_in_stock <= 0}>
+				<button
+					onClick={(e) => {
+						// if (item.quantity == 0) return;
+						updateCart(item, "add");
+					}}
+				>
+					<FontAwesomeIcon icon={faCartPlus} />
+				</button>
+			</AddToCart>
 
 			<StockTitleContainer>
 				<StockTitle>Stock: {product.quantity_in_stock}</StockTitle>
@@ -332,93 +367,5 @@ const generateColors = (index) => {
 		fontColor: fontColor,
 	};
 };
-
-// const VariantsContainer = ({ variants, updateCart, setShowVariants }) => {
-// 	const [variantsV, setVariantsV] = useState(variants);
-// 	const [search, setSearch] = useState("");
-// 	const [variantsDisplay, setVariantsDisplay] = useState(variants);
-
-// 	useEffect(() => {
-// 		const activeVariants = variantsV.filter((variant) => variant.isActive == 1);
-
-// 		setVariantsDisplay(activeVariants);
-// 		setVariantsV(activeVariants);
-// 	}, [variants]);
-
-// 	let handleProductClick = (variant) => {
-// 		const remove_variants = { ...variant };
-// 		delete remove_variants.variants;
-
-// 		console.log(remove_variants);
-
-// 		variant.quantity_in_stock <= 0 ? null : updateCart(remove_variants, "add");
-// 		toast.success("Added to cart");
-// 	};
-
-// 	let handleSearch = (e) => {
-// 		// setSearch(e.target.value);
-// 		const searchQuery = e.target.value;
-// 		const queryTerms = searchQuery.split(" ");
-
-// 		let filteredVariants;
-
-// 		filteredVariants = variantsV.filter((product) => {
-// 			return queryTerms.every(
-// 				(term) =>
-// 					product.product_name.toLowerCase().includes(term.toLowerCase()) ||
-// 					(product.attribute && product.attribute.some((attr) => attr.value.toLowerCase().includes(term.toLowerCase())))
-// 			);
-// 		});
-
-// 		setVariantsDisplay(filteredVariants);
-// 		console.log("teststst");
-// 	};
-
-// 	return (
-// 		<VariantsModalWrapper>
-// 			<div className="group_modal">
-// 				<SearchBar>
-// 					<input type="text" onChange={(e) => handleSearch(e)} />
-// 				</SearchBar>
-
-// 				<div className="variants-wrapper">
-// 					{variantsDisplay.map((variant, index) => (
-// 						<Product key={variant.product_id} onClick={() => handleProductClick(variant)} unclickable={variant.quantity_in_stock <= 0}>
-// 							<div>
-// 								<Image src="/sabon.png" width={200} height={400} alt="Product image" />
-// 								<ProductTitle>{variant.product_name}</ProductTitle>
-// 								<PriceTitle>P{variant.product_price / 100}</PriceTitle>
-// 								<Attributes>
-// 									{variant.attribute.map((attribute, attributeIndex) => {
-// 										const combinedIndex = index * variant.attribute.length + attributeIndex;
-
-// 										return (
-// 											<Attribute color={generateColors(combinedIndex)} key={attributeIndex}>
-// 												{attribute.name}: {attribute.value}
-// 											</Attribute>
-// 										);
-// 									})}
-// 								</Attributes>
-// 							</div>
-
-// 							<StockTitleContainer>
-// 								<StockTitle>Stock: {variant.quantity_in_stock}</StockTitle>
-// 							</StockTitleContainer>
-// 						</Product>
-// 					))}
-// 				</div>
-
-// 				<p
-// 					onClick={() => {
-// 						console.log("testing");
-// 						setShowVariants(false);
-// 					}}
-// 				>
-// 					close
-// 				</p>
-// 			</div>
-// 		</VariantsModalWrapper>
-// 	);
-// };
 
 export default ProductComponent;

@@ -3,7 +3,7 @@ import DashboardLayout from "@/components/misc/dashboardLayout";
 import PageTitle from "@/components/misc/pageTitle";
 import Table, { ActionContainer, TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
 import StyledPanel from "@/styled-components/StyledPanel";
-import { faEllipsis, faTrash, faPen } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsis, faTrash, faPen, faReceipt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AddReturnComponent from "@/components/return/addReturn";
 import ReturnSearchBar from "@/components/return/returnSearchBar";
@@ -11,6 +11,7 @@ import { getCustomerTransaction } from "@/api/transaction";
 import styled from "styled-components";
 import UserDashboardLayout from "@/components/misc/userDashboardLayout";
 import UserOrdersInfo from "@/components/user_components/UserorderInfo";
+import generatePDF from "@/components/orders/orderReceipt";
 
 const Circle = styled.span`
 	width: 10px;
@@ -104,10 +105,10 @@ const Orders = () => {
 						{filteredTransactions.map((transaction, index) => (
 							<TableRows
 								key={transaction.id}
-								onClick={() => {
-									setSelectedTransaction(transaction);
-									setShowOrderInfo(true);
-								}}
+								// onClick={() => {
+								// 	setSelectedTransaction(transaction);
+								// 	setShowOrderInfo(true);
+								// }}
 							>
 								<TableData>{transaction.transaction_unique_id}</TableData>
 								<TableData>{transaction.transaction_number}</TableData>
@@ -136,10 +137,14 @@ const Orders = () => {
 												}}
 											>
 												<FontAwesomeIcon icon={faPen} />
-												Edit
+												View
 											</p>
-											<p>
-												<FontAwesomeIcon icon={faTrash} /> Delete
+											<p
+												onClick={() => {
+													generatePDF(transaction);
+												}}
+											>
+												<FontAwesomeIcon icon={faReceipt} /> See receipt
 											</p>
 										</ActionContainer>
 									)}

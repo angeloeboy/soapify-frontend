@@ -31,9 +31,11 @@ const StyledPanel = styled.div`
 		width: calc(100% - 320px);
 		display: inline-block;
 
-		// @media (max-width: 1500px) {
-		// 	flex: 1 0 100%; 
-		// }
+		@media (max-width: 1200px) {
+			width: 100%;
+			width: calc(100% - 5%);
+			margin-left: 5%;
+		}
 
 	
 	`}

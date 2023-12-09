@@ -65,7 +65,7 @@ const PaymentMethods = (props) => {
 	const [paymentMethod, setPaymentMethod] = useState(1);
 	const [transactionNo, setTransactionNo] = useState("");
 	const [loading, setLoading] = useState(false);
-	const { setTransaction, transaction, setOrderFromBackend } = useContext(TransactionContext);
+	const { setTransaction, transaction, cart, setOrderFromBackend } = useContext(TransactionContext);
 	const [transactionSuccess, setTransactionSuccess] = useState(false);
 
 	const [selectedPaymentName, setSelectedPaymentName] = useState("");
@@ -79,6 +79,11 @@ const PaymentMethods = (props) => {
 		if (response.status == "Success") {
 			toast.success("Transaction Successful");
 			setOrderFromBackend(response.transaction);
+
+			//refresh the page after 3 seconds
+			setTimeout(() => {
+				window.location.reload();
+			}, 3000);
 		} else {
 			toast.error(response.errors[0].message);
 		}

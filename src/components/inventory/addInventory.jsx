@@ -21,16 +21,21 @@ import { toast } from "react-toastify";
 import Image from "next/image";
 import { getAllWarehouse } from "@/api/warehouse";
 
-const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId }) => {
-	const currentDate = new Date().toISOString().split("T")[0];
+const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId, openModal }) => {
+	const currentDate = new Date().toISOString();
+
+	const getCurrentDateTime = () => {
+		const now = new Date();
+		return now.toISOString().split("T")[0] + " " + now.toTimeString().split(" ")[0];
+	};
 
 	const [loading, setLoading] = useState(false);
 	const [inventory, setInventory] = useState({
-		product_id: productId ? parseInt(productId) : 0,
+		product_id: productId && openModal ? parseInt(productId) : 0,
 		quantity: 1,
-		date_added: currentDate,
-		date_updated: currentDate,
-		expiry_date: currentDate,
+		date_added: getCurrentDateTime(),
+		date_updated: getCurrentDateTime(),
+		expiry_date: getCurrentDateTime(),
 		warehouse_id: 0,
 		area_id: 0,
 	});
@@ -45,8 +50,15 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId }) => {
 
 			res ? setProducts(activeProducts) : setProducts([]);
 
+			if (productId && openModal) return;
 			setInventory({ ...inventory, product_id: activeProducts[0].product_id });
 		});
+	};
+
+	const appendCurrentTime = (date) => {
+		const now = new Date();
+		const time = `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+		return `${date} ${time}`; // Combine date and time
 	};
 
 	const fetchWarehouses = async () => {
@@ -55,8 +67,13 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId }) => {
 		if (!res) return;
 
 		if (res && res.warehouses.length > 0) {
-			setWarehouses(res.warehouses);
-			setAreas(res.warehouses[0].areas);
+			let activeWarehouses = res.warehouses.filter((warehouse) => warehouse.isActive);
+
+			//select only warehouse with areas
+			activeWarehouses = activeWarehouses.filter((warehouse) => warehouse.areas.length > 0);
+
+			setWarehouses(activeWarehouses);
+			setAreas(activeWarehouses[0].areas);
 		}
 	};
 
@@ -73,12 +90,12 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId }) => {
 
 		const res = await addInventory(inventory);
 
-		if (res.status == "Success") {
+		if (res.status && res.status == "Success") {
 			toast.success("Successfully added inventory");
 			await getInventoryFunc();
 			setIsAddPopUpOpen(false);
 		} else {
-			// toast.error(res.errors[0].message);
+			toast.error(res.errors[0].message);
 		}
 
 		setLoading(false);
@@ -102,6 +119,7 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId }) => {
 		}
 
 		if (products.length > 0) {
+			if (productId && openModal) return;
 			setInventory((inv) => ({ ...inv, product_id: products[0].product_id }));
 		}
 	}, [warehouses, products]);
@@ -140,10 +158,7 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId }) => {
 								})}
 							</Select>
 						</div>
-						<div>
-							<FieldTitleLabel notFirst>SKU</FieldTitleLabel>
-							<InputHolder type="text" placeholder="" />
-						</div>
+
 						<div>
 							<FieldTitleLabel notFirst>Quantity</FieldTitleLabel>
 							<InputHolder
@@ -153,23 +168,28 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId }) => {
 								value={inventory.quantity}
 							/>
 						</div>
-						<div>
+						{/* <div>
 							<FieldTitleLabel notFirst>Date Received</FieldTitleLabel>
 							<InputHolder
 								type="date"
 								placeholder="Enter your Quantity Remaining"
-								onChange={(e) => setInventory({ ...inventory, date_added: e.target.value })}
-								value={inventory.date_added}
+								onChange={(e) =>
+									setInventory({
+										...inventory,
+										date_added: appendCurrentTime(e.target.value),
+									})
+								}
+								value={inventory.date_added.split(" ")[0]} // Display only the date part in the input
 							/>
-						</div>
+						</div> */}
 
 						<div>
 							<FieldTitleLabel notFirst>Expiration date</FieldTitleLabel>
 							<InputHolder
 								type="date"
 								placeholder=""
-								onChange={(e) => setInventory({ ...inventory, expiry_date: e.target.value })}
-								value={inventory.expiry_date}
+								onChange={(e) => setInventory({ ...inventory, expiry_date: appendCurrentTime(e.target.value) })}
+								value={inventory.expiry_date.split(" ")[0]}
 							/>
 						</div>
 

@@ -90,14 +90,15 @@ export async function middleware(req) {
 				path: "/",
 			});
 
+			next_response.cookies.set("role", JSON.stringify(data?.user?.role_id), {
+				httpOnly: false,
+				path: "/",
+			});
+
 			return next_response;
 		}
 
 		const next_response = NextResponse.next();
-		// next_response.cookies.set("permissions", JSON.stringify(permissions), {
-		// 	httpOnly: false,
-		// 	path: "/",
-		// });
 
 		return next_response;
 	} catch (error) {

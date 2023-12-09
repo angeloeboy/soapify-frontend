@@ -5,7 +5,7 @@ import DashboardLayout from "@/components/misc/dashboardLayout";
 import StyledPanel from "@/styled-components/StyledPanel";
 import PageTitle from "@/components/misc/pageTitle";
 import PdfExporter from "@/components/misc/pdfExporter";
-import Table, { ActionContainer, TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
+import Table, { ActionContainer, TableContainer, TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
 import { Button } from "@/styled-components/ItemActionModal";
 import TopBar from "@/components/misc/topbar";
 import { useRouter } from "next/router";
@@ -78,52 +78,54 @@ const User = () => {
 					setIsLoading={setIsLoading}
 					setUserDisplay={setUserDisplay}
 				/>
-
-				<Table id="user-table">
-					<tbody>
-						<TableRows $heading>
-							<TableHeadings>Name</TableHeadings>
-							<TableHeadings>Username</TableHeadings>
-							<TableHeadings>Type</TableHeadings>
-							<TableHeadings>Actions</TableHeadings>
-						</TableRows>
-
-						{paginatedUser.map((user, index) => (
-							<TableRows key={index}>
-								<TableData $bold $withImage>
-									<Image src="/product_img2.png" width={40} height={40} alt={"Product image"} />
-									{user.first_name.charAt(0).toUpperCase() + user.first_name.slice(1)} {user.last_name.charAt(0).toUpperCase() + user.last_name.slice(1)}
-								</TableData>
-								<TableData>{user.email}</TableData>
-								<TableData>{user.role.role_name}</TableData>
-								<TableData>
-									<FontAwesomeIcon
-										className="ellipsis"
-										icon={faEllipsis}
-										onClick={() => (activeActionContainer === index ? setActiveActionContainer(-1) : setActiveActionContainer(index))}
-									/>
-
-									{activeActionContainer === index && (
-										<ActionContainer onClick={() => setActiveActionContainer(-1)}>
-											<p
-												onClick={() => {
-													setSelectedUser(user);
-													openEditUserPopUp();
-												}}
-											>
-												<FontAwesomeIcon icon={faPen} />
-												Edit
-											</p>
-											<p>
-												<FontAwesomeIcon icon={faTrash} /> Delete
-											</p>
-										</ActionContainer>
-									)}
-								</TableData>
+				<TableContainer>
+					<Table id="user-table">
+						<tbody>
+							<TableRows $heading>
+								<TableHeadings>Name</TableHeadings>
+								<TableHeadings>Username</TableHeadings>
+								<TableHeadings>Type</TableHeadings>
+								<TableHeadings>Actions</TableHeadings>
 							</TableRows>
-						))}
-					</tbody>
-				</Table>
+
+							{paginatedUser.map((user, index) => (
+								<TableRows key={index}>
+									<TableData $bold $withImage>
+										<Image src="/product_img2.png" width={40} height={40} alt={"Product image"} />
+										{user.first_name.charAt(0).toUpperCase() + user.first_name.slice(1)} {user.last_name.charAt(0).toUpperCase() + user.last_name.slice(1)}
+									</TableData>
+									<TableData>{user.email}</TableData>
+									<TableData>{user.role.role_name}</TableData>
+									<TableData>
+										<FontAwesomeIcon
+											className="ellipsis"
+											icon={faEllipsis}
+											onClick={() => (activeActionContainer === index ? setActiveActionContainer(-1) : setActiveActionContainer(index))}
+										/>
+
+										{activeActionContainer === index && (
+											<ActionContainer onClick={() => setActiveActionContainer(-1)}>
+												<p
+													onClick={() => {
+														setSelectedUser(user);
+														openEditUserPopUp();
+													}}
+												>
+													<FontAwesomeIcon icon={faPen} />
+													Edit
+												</p>
+												<p>
+													<FontAwesomeIcon icon={faTrash} /> Delete
+												</p>
+											</ActionContainer>
+										)}
+									</TableData>
+								</TableRows>
+							))}
+						</tbody>
+					</Table>
+				</TableContainer>
+
 				<PdfExporter tableId="user-table" filename="user-list" />
 				<Pagination
 					totalItems={userDisplay.length}

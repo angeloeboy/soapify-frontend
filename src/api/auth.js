@@ -32,7 +32,9 @@ export const register = async (userInfo) => {
 
 		const data = await response.json();
 		return data;
-	} catch (error) {}
+	} catch (error) {
+		console.log(error);
+	}
 };
 
 export const logout = async () => {

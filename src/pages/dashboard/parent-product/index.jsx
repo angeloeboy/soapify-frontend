@@ -3,7 +3,7 @@ import styled from "styled-components";
 import DashboardLayout from "@/components/misc/dashboardLayout";
 import StyledPanel from "@/styled-components/StyledPanel";
 import PageTitle from "@/components/misc/pageTitle";
-import Table, { ActionContainer, TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
+import Table, { ActionContainer, TableContainer, TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis, faPen, faTrash, faXmarkCircle, faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 import PaymentMethodSearchBar from "@/components/PaymentMethod/paymentMethodSearchBar";
@@ -98,52 +98,54 @@ const ParentProduct = () => {
 					setCurrentPage={setCurrentPage}
 					setAddParentProductOpen={setAddParentProductOpen}
 				/>
+				<TableContainer>
+					<Table>
+						<tbody>
+							<TableRows $heading>
+								<TableHeadings>Name</TableHeadings>
+								<TableHeadings>Number of Products</TableHeadings>
+								<TableHeadings>Status</TableHeadings>
 
-				<Table>
-					<tbody>
-						<TableRows $heading>
-							<TableHeadings>Name</TableHeadings>
-							<TableHeadings>Number of Products</TableHeadings>
-							<TableHeadings>Status</TableHeadings>
+								<TableHeadings>Actions</TableHeadings>
+							</TableRows>
 
-							<TableHeadings>Actions</TableHeadings>
-						</TableRows>
+							{parentProduct.length === 0
+								? parentProductLoading && <LoadingSkeleton columns={3} />
+								: paginatedOParentProduct.map((parentProduct, index) => (
+										<TableRows key={index}>
+											<TableData>{parentProduct.name}</TableData>
+											<TableData>10</TableData>
+											<TableData>{parentProduct.isActive ? "Active" : "Inactive"}</TableData>
 
-						{parentProduct.length === 0
-							? parentProductLoading && <LoadingSkeleton columns={3} />
-							: paginatedOParentProduct.map((parentProduct, index) => (
-									<TableRows key={index}>
-										<TableData>{parentProduct.name}</TableData>
-										<TableData>10</TableData>
-										<TableData>{parentProduct.isActive ? "Active" : "Inactive"}</TableData>
+											<TableData>
+												<FontAwesomeIcon
+													className="ellipsis"
+													icon={faEllipsis}
+													onClick={() => (activeActionContainer === index ? setActiveActionContainer(-1) : setActiveActionContainer(index))}
+												/>
 
-										<TableData>
-											<FontAwesomeIcon
-												className="ellipsis"
-												icon={faEllipsis}
-												onClick={() => (activeActionContainer === index ? setActiveActionContainer(-1) : setActiveActionContainer(index))}
-											/>
+												{activeActionContainer === index && (
+													<ActionContainer onClick={() => setActiveActionContainer(-1)}>
+														<p
+															onClick={() => {
+																// setClickedId(method.payment_method_id);
+																// openEditPayment();
+															}}
+														>
+															<FontAwesomeIcon icon={faPen} /> Edit
+														</p>
+														<p onClick={() => deleteParentProductFunc(parentProduct.parent_product_id)}>
+															<FontAwesomeIcon icon={faTrash} /> Delete
+														</p>
+													</ActionContainer>
+												)}
+											</TableData>
+										</TableRows>
+								  ))}
+						</tbody>
+					</Table>
+				</TableContainer>
 
-											{activeActionContainer === index && (
-												<ActionContainer onClick={() => setActiveActionContainer(-1)}>
-													<p
-														onClick={() => {
-															// setClickedId(method.payment_method_id);
-															// openEditPayment();
-														}}
-													>
-														<FontAwesomeIcon icon={faPen} /> Edit
-													</p>
-													<p onClick={() => deleteParentProductFunc(parentProduct.parent_product_id)}>
-														<FontAwesomeIcon icon={faTrash} /> Delete
-													</p>
-												</ActionContainer>
-											)}
-										</TableData>
-									</TableRows>
-							  ))}
-					</tbody>
-				</Table>
 				<Pagination
 					setItemsPerPage={setItemsPerPage}
 					totalItems={parentProductDisplay.length}

@@ -1,142 +1,187 @@
 import React, { useEffect, useState } from "react";
 import {
-  Button,
-  Select,
-  LabelContainer,
-  Label,
-  Option,
-  FieldContainer,
-  CloseButton,
-  ButtonsContainer,
-  PopupOverlay,
-  PopupContent,
-  HeaderTitle,
-  FieldTitleLabel,
-  InputHolder,
+	Button,
+	Select,
+	LabelContainer,
+	Label,
+	Option,
+	FieldContainer,
+	CloseButton,
+	ButtonsContainer,
+	PopupOverlay,
+	PopupContent,
+	HeaderTitle,
+	FieldTitleLabel,
+	InputHolder,
 } from "@/styled-components/ItemActionModal";
+import styled from "styled-components";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { editAttribute } from "@/api/attributes";
+import { toast } from "react-toastify";
 
-const EditAttribute = ({ onClose, fetchAttributes }) => {
-  const [attribute, setAttribute] = useState({
-    attribute_name: "",
-    requires_additional_value: false,
-    input_type: "none",
-    values: [],
-  });
+const ButtonTwo = styled.button`
+	background-color: #0b20dd;
+	color: #fff;
+	padding: 10px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 16px;
+	margin-top: 10px;
+	margin-left: 24px;
+	margin-right: 6px;
+	width: 100px;
+`;
 
-  //   useEffect(() => {
-  //     fetchAttributeData();
-  //   }, []);
+const AttrValue = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0px 8px;
+	font-size: 10px;
+	cursor: pointer;
 
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
+	svg {
+		margin-right: 8px;
+	}
+`;
 
-    console.log(attribute);
-    editAttribute(attribute, attributeID)
-      .then((res) => {
-        console.log(res);
-        fetchAttributes();
-      })
-      .then(() => {});
-  };
+const EditAttribute = ({ onClose, fetchAttributes, selectedAttr }) => {
+	const [attribute, setAttribute] = useState({
+		attribute_name: "",
+		requires_additional_value: false,
+		input_type: "none",
+		values: [],
+	});
 
-  return (
-    <PopupOverlay>
-      <PopupContent>
-        <form>
-          <HeaderTitle>Edit Attribute</HeaderTitle>
-          <FieldContainer>
-            <LabelContainer first>
-              <Label>Attribute Information</Label>{" "}
-            </LabelContainer>
-            <div>
-              <FieldTitleLabel notFirst>Attribute Name</FieldTitleLabel>
-              <InputHolder
-                type="text"
-                onChange={(e) =>
-                  setAttribute({ ...attribute, attribute_name: e.target.value })
-                }
-                value={attribute.attribute_name}
-              />
-            </div>
-            <div>
-              <FieldTitleLabel notFirst>
-                Requires Additional Value
-              </FieldTitleLabel>
-              <Select
-                value={attribute.requires_additional_value}
-                onChange={(e) => {
-                  // setAttribute({ ...attribute, requires_additional_value: e.target.value === "true" });
+	const [attributeValue, setAttributeValue] = useState({
+		attribute_value: "",
+	});
 
-                  if (e.target.value == "true") {
-                    setAttribute({
-                      ...attribute,
-                      requires_additional_value: e.target.value === "true",
-                      input_type: "number",
-                    });
-                  } else {
-                    setAttribute({
-                      ...attribute,
-                      requires_additional_value: e.target.value === "true",
-                      input_type: "none",
-                    });
-                  }
-                }}
-              >
-                <Option value="true">Yes</Option>
-                <Option value="false">No</Option>
-              </Select>
-            </div>
-            {attribute.requires_additional_value && (
-              <div>
-                <FieldTitleLabel notFirst>
-                  Additional Value Type
-                </FieldTitleLabel>
+	useEffect(() => {
+		setAttribute(selectedAttr);
+	}, [selectedAttr]);
 
-                <Select
-                  value={attribute.input_type}
-                  onChange={(e) =>
-                    setAttribute({ ...attribute, input_type: e.target.value })
-                  }
-                >
-                  <Option value="number">Number</Option>
-                  <Option value="string">String</Option>
-                </Select>
-              </div>
-            )}
+	useEffect(() => {
+		console.log(attribute);
+	}, [attribute]);
 
-            <LabelContainer first>
-              <Label>Choices</Label>
-            </LabelContainer>
-            <div>
-              <FieldTitleLabel notFirst> Name</FieldTitleLabel>
-              <InputHolder type="text" />
+	const handleFormSubmit = (e) => {
+		e.preventDefault();
 
-              <Button type="button">Add</Button>
-            </div>
+		console.log(attribute);
+		editAttribute(selectedAttr.attribute_id, attribute)
+			.then((res) => {
+				console.log(res);
+				fetchAttributes();
 
-            {/* <div>
-              {attribute.values.map((value, index) => (
-                <div key={index}>
-                  <FieldTitleLabel notFirst>
-                    <FontAwesomeIcon
-                      icon={faTrash}
-                      onClick={() => deleteValue(index)}
-                    />{" "}
-                    {value}
-                  </FieldTitleLabel>
-                </div>
-              ))}
-            </div> */}
-          </FieldContainer>
+				if (res.error) return toast.error(res.error);
+				toast.success("Attribute edited successfully");
+			})
+			.then(() => {});
+	};
 
-          <ButtonsContainer>
-            <CloseButton onClick={onClose}>Close</CloseButton>
-            <Button type="submit">Save</Button>
-          </ButtonsContainer>
-        </form>
-      </PopupContent>
-    </PopupOverlay>
-  );
+	const addValue = (value) => {
+		let values = attribute.values;
+
+		if (value == "") return;
+
+		if (values.includes(value)) return;
+
+		values.push(value);
+		setAttribute({ ...attribute, values: values });
+		setAttributeValue({ attribute_value: "" });
+	};
+
+	const deleteValue = (index) => {
+		let values = attribute.values;
+		//delete by index
+		values.splice(index, 1);
+		setAttribute({ ...attribute, values: values });
+	};
+
+	return (
+		<PopupOverlay>
+			<PopupContent>
+				<form onSubmit={(e) => handleFormSubmit(e)}>
+					<HeaderTitle>Edit Attribute</HeaderTitle>
+					<FieldContainer>
+						<LabelContainer first>
+							<Label>Attribute Information</Label>{" "}
+						</LabelContainer>
+						<div>
+							<FieldTitleLabel notFirst>Attribute Name</FieldTitleLabel>
+							<InputHolder type="text" onChange={(e) => setAttribute({ ...attribute, attribute_name: e.target.value })} value={attribute.attribute_name} />
+						</div>
+						{/* <div>
+							<FieldTitleLabel notFirst>Requires Additional Value</FieldTitleLabel>
+							<Select
+								value={attribute.requires_additional_value}
+								onChange={(e) => {
+									// setAttribute({ ...attribute, requires_additional_value: e.target.value === "true" });
+
+									if (e.target.value == "true") {
+										setAttribute({
+											...attribute,
+											requires_additional_value: e.target.value === "true",
+											input_type: "number",
+										});
+									} else {
+										setAttribute({
+											...attribute,
+											requires_additional_value: e.target.value === "true",
+											input_type: "none",
+										});
+									}
+								}}
+							>
+								<Option value="true">Yes</Option>
+								<Option value="false">No</Option>
+							</Select>
+						</div> */}
+						{attribute.requires_additional_value && (
+							<div>
+								<FieldTitleLabel notFirst>Additional Value Type</FieldTitleLabel>
+
+								<Select value={attribute.input_type} onChange={(e) => setAttribute({ ...attribute, input_type: e.target.value })}>
+									<Option value="number">Number</Option>
+									<Option value="string">String</Option>
+								</Select>
+							</div>
+						)}
+
+						<LabelContainer first>
+							<Label>Choices</Label>
+						</LabelContainer>
+						<div>
+							<FieldTitleLabel notFirst> Name</FieldTitleLabel>
+							<InputHolder type="text" onChange={(e) => setAttributeValue({ attribute_value: e.target.value })} value={attributeValue.attribute_value} />
+
+							<ButtonTwo type="button" onClick={() => addValue(attributeValue)}>
+								Add
+							</ButtonTwo>
+						</div>
+
+						<div>
+							{attribute.values.map((value, index) => (
+								<AttrValue key={index}>
+									<FieldTitleLabel notFirst>
+										<FontAwesomeIcon icon={faTrash} onClick={() => deleteValue(index)} /> {value.attribute_value}
+									</FieldTitleLabel>
+								</AttrValue>
+							))}
+						</div>
+					</FieldContainer>
+
+					<ButtonsContainer>
+						<CloseButton onClick={onClose}>Close</CloseButton>
+						<Button type="submit">Save</Button>
+					</ButtonsContainer>
+				</form>
+			</PopupContent>
+		</PopupOverlay>
+	);
 };
 
 export default EditAttribute;

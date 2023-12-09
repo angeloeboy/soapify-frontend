@@ -6,7 +6,8 @@ import { logout, test, register } from "@/api/auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const RegisterContainer = styled.div`
 	/* height: 100vh; */
 	width: 100%;
@@ -97,41 +98,74 @@ let Register = () => {
 		email: "",
 		username: "",
 		password: "",
+		phone_number: "",
 	});
 
-	const handleRegister = (e) => {
+	const handleRegister = async (e) => {
 		e.preventDefault();
+
 		setIsLoggingIn(true);
 
+		// Email validation
+		const emailRegex = /\S+@\S+\.\S+/;
+		if (!emailRegex.test(credentials.email)) {
+			setErrorMessages({ ...errorMessages, email: "Invalid email" });
+			setIsLoggingIn(false);
+			return;
+		}
+
+		// Password confirmation check
 		if (credentials.confirmPassword !== credentials.password) {
 			setErrorMessages({ ...errorMessages, confirmPassword: "Passwords do not match" });
 			setIsLoggingIn(false);
 			return;
 		}
 
-		register(credentials).then((res) => {
-			setIsLoggingIn(false);
+		try {
+			const res = await register(credentials);
 
-			if (!res.errors) return;
-			console.log(res.errors);
-			const errors = res.errors;
-
-			const usernameErrorMessage = errors.find((error) => error.path === "username")?.msg;
-			const passwordErrorMessage = errors.find((error) => error.path === "password")?.msg;
-			const emailErrorMessage = errors.find((error) => error.path === "email")?.msg;
+			const errors = res?.errors;
+			const usernameErrorMessage = errors?.find((error) => error.path === "username")?.msg;
+			const passwordErrorMessage = errors?.find((error) => error.path === "password")?.msg;
+			const emailErrorMessage = errors?.find((error) => error.path === "email")?.msg;
 
 			setErrorMessages({
 				username: usernameErrorMessage || "",
 				password: passwordErrorMessage || "",
 				email: emailErrorMessage || "",
 			});
-		});
+
+			if (res.status === "Success") {
+				toast.success("Registration successful. Redirecting to login page...");
+				setTimeout(() => {
+					window.location.href = "/login";
+				}, 2000);
+			}
+		} catch (error) {
+			console.error("Registration error:", error);
+			// Optionally handle errors like network issues here
+		} finally {
+			setIsLoggingIn(false);
+		}
 	};
 
 	return (
 		<>
 			<RegisterContainer>
 				<h2 className="appTitle">Soapify</h2>
+				<ToastContainer
+					position="top-right"
+					autoClose={2000}
+					hideProgressBar={false}
+					newestOnTop={false}
+					closeOnClick
+					rtl={false}
+					pauseOnFocusLoss
+					draggable
+					pauseOnHover
+					theme="light"
+					className="toast-container"
+				/>
 
 				<Form onSubmit={(e) => handleLogin(e)}>
 					<h3>Register</h3>
@@ -164,7 +198,7 @@ let Register = () => {
 
 						<label htmlFor="username">Email</label>
 						<FormField
-							type="text"
+							type="email"
 							onChange={(e) => {
 								setCredentials({ ...credentials, email: e.target.value });
 								setErrorMessages({ ...errorMessages, email: "" });
@@ -176,6 +210,19 @@ let Register = () => {
 						/>
 						{errorMessages.email && <Error>{errorMessages.email}</Error>}
 
+						<label htmlFor="phone_number">Phone Number</label>
+						<FormField
+							type="text"
+							onChange={(e) => {
+								const value = e.target.value;
+								///remove anything that is not a digit and limit it to 12 digits
+								const sanitizedValue = value.replace(/\D/g, "").slice(0, 12);
+								setCredentials({ ...credentials, phone_number: sanitizedValue });
+							}}
+							value={credentials.phone_number}
+							id="phone_number"
+							name="phone_number"
+						/>
 						<label htmlFor="password">Password</label>
 						<FormField
 							type="password"

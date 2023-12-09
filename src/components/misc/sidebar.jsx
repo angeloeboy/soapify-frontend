@@ -175,7 +175,6 @@ const SubMenu = styled.div`
 // SIDEBAR DATA
 
 const Sidebar = (props) => {
-
 	const [isLoggingOut, setIsLoggingOut] = useState(false);
 
 	const { sidebarState, setSidebarState, sidebarData } = useAppContext();
@@ -273,7 +272,7 @@ const Sidebar = (props) => {
 								handleLogout();
 							}}
 						>
-							<Image src="/inventory-icon.png" alt="/inventory-icon.png" width="24" height="24" />
+							<Image src="/logout-icon.png" alt="/logout-icon.png" width="20" height="20" />
 							Log out
 							{isLoggingOut && <Image src="/loading.svg" alt="loading" width="24" height="24" className="loading" />}
 						</p>
@@ -285,5 +284,3 @@ const Sidebar = (props) => {
 };
 
 export default Sidebar;
-
-

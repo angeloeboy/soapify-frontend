@@ -166,6 +166,7 @@ export const FieldContainer = styled.div`
 
 export const ProfilePictureContainer = styled.div`
 	width: 780.824px;
+	width: calc(100% - (23.92px * 2));
 	flex-shrink: 0;
 	padding: 10px;
 	margin-top: -15px;
@@ -275,6 +276,12 @@ export const Centered = styled.div`
 	margin-left: 10px;
 	height: 300px;
 	width: 100%;
+
+	background-image: url(${(props) => props.image});
+	background-size: cover;
+	background-position: center center;
+	background-size: contain;
+	background-repeat: no-repeat;
 `;
 
 export const SecondaryButton = styled.button`
@@ -384,6 +391,11 @@ export const OrdersWrapper = styled.div`
 	.total {
 		text-align: right;
 		font-weight: bold;
+	}
+
+	span {
+		font-size: 14px;
+		color: #1a69f0;
 	}
 `;
 

@@ -3,20 +3,9 @@ import styled from "styled-components";
 import DashboardLayout from "@/components/misc/dashboardLayout";
 import StyledPanel from "@/styled-components/StyledPanel";
 import PageTitle from "@/components/misc/pageTitle";
-import Table, {
-  ActionContainer,
-  TableData,
-  TableHeadings,
-  TableRows,
-} from "@/styled-components/TableComponent";
+import Table, { ActionContainer, TableContainer, TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faEllipsis,
-  faPen,
-  faTrash,
-  faXmarkCircle,
-  faCheckCircle,
-} from "@fortawesome/free-solid-svg-icons";
+import { faEllipsis, faPen, faTrash, faXmarkCircle, faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 import PaymentMethodSearchBar from "@/components/PaymentMethod/paymentMethodSearchBar";
 import { getPaymentMethods } from "@/api/pos";
 import PdfExporter from "@/components/misc/pdfExporter";
@@ -26,269 +15,252 @@ import EditPayment from "../../../components/PaymentMethod/editPayment";
 import AddPayment from "@/components/PaymentMethod/addPayment";
 import LoadingSkeleton from "@/components/misc/loadingSkeleton";
 import Pagination from "@/components/misc/pagination";
-import {
-  activatePaymentMethod,
-  deactivatePaymentMethod,
-} from "@/api/payment_method";
+import { activatePaymentMethod, deactivatePaymentMethod, deletePaymentMethod } from "@/api/payment_method";
 import ReactivateModal from "@/components/misc/reactivate";
 import DeactivateModal from "@/components/misc/deactivate";
 import { toast } from "react-toastify";
+import DeleteModal from "@/components/misc/delete";
 
 const PaymentTable = () => {
-  const [paymentMethods, setPaymentMethods] = useState([]);
-  const [paymentMethodsDisplay, setPaymentMethodsDisplay] = useState([]);
-  const [paymentMethodsLoading, setPaymentMethodsLoading] = useState(false);
+	const [paymentMethods, setPaymentMethods] = useState([]);
+	const [paymentMethodsDisplay, setPaymentMethodsDisplay] = useState([]);
+	const [paymentMethodsLoading, setPaymentMethodsLoading] = useState(false);
 
-  const [activeActionContainer, setActiveActionContainer] = useState(-1);
-  const [isEditPaymentOpen, setEditPaymentOpen] = useState(false);
-  const [isAddPaymentOpen, setAddPaymentOpen] = useState(false);
- 
-  const [clickedId, setClickedId] = useState(null);
-  const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState(null);
-  const [clickedName, setClickedName] = useState(null);
-  const [showDeactivate, setShowDeactivate] = useState(false);
-  const [showReactivateModal, setShowReactivateModal] = useState(false);
+	const [activeActionContainer, setActiveActionContainer] = useState(-1);
+	const [isEditPaymentOpen, setEditPaymentOpen] = useState(false);
+	const [isAddPaymentOpen, setAddPaymentOpen] = useState(false);
 
+	const [clickedId, setClickedId] = useState(null);
+	const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState(null);
+	const [clickedName, setClickedName] = useState(null);
+	const [showDeactivate, setShowDeactivate] = useState(false);
+	const [showReactivateModal, setShowReactivateModal] = useState(false);
+	const [showDeleteModal, setShowDeleteModal] = useState(false);
+	const [currentPage, setCurrentPage] = useState(1);
+	const [itemsPerPage, setItemsPerPage] = useState(10);
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+	const [filteredPayments, setFilteredPayments] = useState([]);
 
-  const [filteredPayments, setFilteredPayments] = useState([]);
-  
+	useEffect(() => {
+		fetchPaymentMethods();
+	}, []);
 
-  useEffect(() => {
-    fetchPaymentMethods();
-  }, []);
+	useEffect(() => {
+		setPaymentMethodsDisplay(filteredPayments.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
+	}, [currentPage, filteredPayments, itemsPerPage]);
 
-  useEffect(() => {
-    setPaymentMethodsDisplay(
-      filteredPayments.slice(
-        (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage
-      )
-    );
-  }, [currentPage, filteredPayments, itemsPerPage]);
+	const fetchPaymentMethods = () => {
+		setPaymentMethodsLoading(true);
 
-  const fetchPaymentMethods = () => {
-    setPaymentMethodsLoading(true);
+		getPaymentMethods().then((res) => {
+			console.log(res);
+			setPaymentMethods(res.paymentMethods);
+			setPaymentMethodsLoading(false);
 
-    getPaymentMethods().then((res) => {
-      console.log(res);
-      setPaymentMethods(res.paymentMethods);
-      setPaymentMethodsLoading(false);
+			setFilteredPayments(res.paymentMethods || []);
+		});
+	};
 
-      setFilteredPayments(res.paymentMethods || []);
-    });
-  };
+	const handleReactivateModal = (payment_method_id, name) => {
+		setSelectedPaymentMethodId(payment_method_id);
+		setClickedName(name);
+		setShowReactivateModal(true);
+	};
 
-  const handleReactivateModal = (payment_method_id, name) => {
-    setSelectedPaymentMethodId(payment_method_id);
-    setClickedName(name);
-    setShowReactivateModal(true);
-  };
+	const formatDateToMonthDayYear = (isoDate) => {
+		const date = new Date(isoDate);
+		const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+		const month = monthNames[date.getUTCMonth()];
+		const day = date.getUTCDate();
+		const year = date.getUTCFullYear();
 
-  const formatDateToMonthDayYear = (isoDate) => {
-    const date = new Date(isoDate);
-    const monthNames = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ];
-    const month = monthNames[date.getUTCMonth()];
-    const day = date.getUTCDate();
-    const year = date.getUTCFullYear();
+		return `${month} ${day}, ${year}`;
+	};
 
-    return `${month} ${day}, ${year}`;
-  };
+	const handleClickOutside = (event) => {
+		if (!event.target.closest(".action-container") && !event.target.closest(".ellipsis")) {
+			setActiveActionContainer(null);
+		}
+	};
 
-  const handleClickOutside = (event) => {
-    if (
-      !event.target.closest(".action-container") &&
-      !event.target.closest(".ellipsis")
-    ) {
-      setActiveActionContainer(null);
-    }
-  };
+	useEffect(() => {
+		document.addEventListener("click", handleClickOutside);
+		return () => {
+			document.removeEventListener("click", handleClickOutside);
+		};
+	}, []);
 
-  useEffect(() => {
-    document.addEventListener("click", handleClickOutside);
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, []);
+	const openEditPayment = () => {
+		setEditPaymentOpen(true);
+	};
 
-  const openEditPayment = () => {
-    setEditPaymentOpen(true);
-  };
+	const closeEditPayment = () => {
+		setEditPaymentOpen(false);
+	};
+	const deactivatePaymentMethodFunc = async (payment_method_id) => {
+		const res = await deactivatePaymentMethod(payment_method_id);
+		console.log(res);
 
-  const closeEditPayment = () => {
-    setEditPaymentOpen(false);
-  };
-  const deactivatePaymentMethodFunc = async (payment_method_id) => {
-    const res = await deactivatePaymentMethod(payment_method_id);
-    console.log(res);
+		if (!res) {
+			toast.error("Something went wrong");
+			return;
+		}
+		toast.success(res.message);
+		fetchPaymentMethods();
+	};
 
-    if (!res) {
-      toast.error("Something went wrong");
-      return;
-    }
-    toast.success(res.message);
-    fetchPaymentMethods();
-  };
+	const activatePaymentMethodFunc = async (payment_method_id) => {
+		const res = await activatePaymentMethod(payment_method_id);
+		console.log(res);
 
-  const activatePaymentMethodFunc = async (payment_method_id) => {
-    const res = await activatePaymentMethod(payment_method_id);
-    console.log(res);
+		if (!res) {
+			toast.error("Something went wrong");
+			return;
+		}
+		toast.success(res.message);
 
-    if (!res) {
-      toast.error("Something went wrong");
-      return;
-    }
-    toast.success(res.message);
+		fetchPaymentMethods();
+	};
 
-    fetchPaymentMethods();
-  };
+	const deletePaymentMethodFunc = async (payment_method_id) => {
+		const res = await deletePaymentMethod(payment_method_id);
+		console.log(res);
 
-  return (
-    <DashboardLayout>
-      <PageTitle title="Payment" />
-      <StyledPanel>
-        <PaymentMethodSearchBar
-          fetchPaymentMethods={fetchPaymentMethods}
-          setAddPaymentOpen={setAddPaymentOpen}
-        />
-        <Table id="payment-table">
-          <tbody>
-            <TableRows $heading>
-              <TableHeadings>Payment Name</TableHeadings>
-              <TableHeadings>Number/Account Number</TableHeadings>
-              <TableHeadings>Created</TableHeadings>
-              <TableHeadings>Status</TableHeadings>
+		if (!res) {
+			toast.error("Something went wrong");
+			return;
+		}
+		toast.success(res.message);
 
-              <TableHeadings>Actions</TableHeadings>
-            </TableRows>
+		fetchPaymentMethods();
+	};
 
-            {paymentMethods.length === 0
-              ? paymentMethodsLoading && <LoadingSkeleton columns={3} />
-              : paymentMethodsDisplay.map((method, index) => (
-                  <TableRows key={index}>
-                    <TableData>{method.name}</TableData>
-                    <TableData>{method.account_no}</TableData>
-                    <TableData>
-                      {formatDateToMonthDayYear(method.createdAt)}
-                    </TableData>
-                    <TableData>
-                      {method.isActive ? "Active" : "Inactive"}
-                    </TableData>
+	return (
+		<DashboardLayout>
+			<PageTitle title="Payment" />
+			<StyledPanel>
+				<PaymentMethodSearchBar fetchPaymentMethods={fetchPaymentMethods} setAddPaymentOpen={setAddPaymentOpen} />
 
-                    <TableData>
-                      <FontAwesomeIcon
-                        className="ellipsis"
-                        icon={faEllipsis}
-                        onClick={() =>
-                          activeActionContainer === index
-                            ? setActiveActionContainer(-1)
-                            : setActiveActionContainer(index)
-                        }
-                      />
+				<TableContainer>
+					<Table id="payment-table">
+						<tbody>
+							<TableRows $heading>
+								<TableHeadings>Payment Name</TableHeadings>
+								<TableHeadings>Number/Account Number</TableHeadings>
+								<TableHeadings>Created</TableHeadings>
+								<TableHeadings>Status</TableHeadings>
 
-                      {activeActionContainer === index && (
-                        <ActionContainer
-                          onClick={() => setActiveActionContainer(-1)}
-                        >
-                          <p
-                            onClick={() => {
-                              setClickedId(method.payment_method_id);
-                              openEditPayment();
-                            }}
-                          >
-                            <FontAwesomeIcon icon={faPen} /> Edit
-                          </p>
-                          <p>
-                            <FontAwesomeIcon icon={faTrash} /> Delete
-                          </p>
-                          <p
-                            onClick={() =>{
-                              //GAWIN MO TO 
-                              setShowDeactivate(true);
-                              setClickedName(method.name);
-                              setSelectedPaymentMethodId(method.payment_method_id); 
-  
-                            }}
-                          >
-                            <FontAwesomeIcon icon={faXmarkCircle} /> Deactivate
-                            Payment Method
-                          </p>
-                          <p onClick={() => handleReactivateModal(method.payment_method_id, method.name)}>
+								<TableHeadings>Actions</TableHeadings>
+							</TableRows>
 
-                            <FontAwesomeIcon icon={faCheckCircle} /> Reactivate
-                            Payment Method
-                          </p>
-                        </ActionContainer>
-                      )}
-                    </TableData>
-                  </TableRows>
-                ))}
-          </tbody>
-        </Table>
-        <PdfExporter tableId="payment-table" fileName="payment-methods.pdf" />
-        <Pagination
-          totalItems={filteredPayments.length}
-          itemsPerPage={itemsPerPage}
-          currentPage={currentPage}
-          onPageChange={setCurrentPage}
-          itemsPerPageOptions={[5, 10, 15, 20]}
-          defaultItemsPerPage={10}
-          setItemsPerPage={setItemsPerPage}
-        />
-      </StyledPanel>
-      {isEditPaymentOpen && (
-        <EditPayment
-          onClose={closeEditPayment}
-          paymentId={clickedId}
-          fetchPaymentMethods={fetchPaymentMethods}
-        />
-      )}
-      {isAddPaymentOpen && (
-        <AddPayment
-          setAddPaymentOpen={setAddPaymentOpen}
-          fetchPaymentMethods={fetchPaymentMethods}
-        />
-      )}
+							{paymentMethods.length === 0
+								? paymentMethodsLoading && <LoadingSkeleton columns={3} />
+								: paymentMethodsDisplay.map((method, index) => (
+										<TableRows key={index}>
+											<TableData>{method.name}</TableData>
+											<TableData>{method.account_no}</TableData>
+											<TableData>{formatDateToMonthDayYear(method.createdAt)}</TableData>
+											<TableData>{method.isActive ? "Active" : "Inactive"}</TableData>
 
-      {showDeactivate && (
-        <DeactivateModal
-          type="Payment Method"
-          text={clickedName}
-          close={setShowDeactivate}
-          confirm={() => deactivatePaymentMethodFunc(selectedPaymentMethodId)}
+											<TableData>
+												<FontAwesomeIcon
+													className="ellipsis"
+													icon={faEllipsis}
+													onClick={() => (activeActionContainer === index ? setActiveActionContainer(-1) : setActiveActionContainer(index))}
+												/>
 
-        />
-      )}
+												{activeActionContainer === index && (
+													<ActionContainer onClick={() => setActiveActionContainer(-1)}>
+														<p
+															onClick={() => {
+																setClickedId(method.payment_method_id);
+																openEditPayment();
+															}}
+														>
+															<FontAwesomeIcon icon={faPen} /> Edit
+														</p>
 
-{showReactivateModal && (
-  <ReactivateModal
-    type="Payment Method"
-    text={clickedName}
-    close={() => setShowReactivateModal(false)}
-    confirm={() => {
-      activatePaymentMethodFunc(selectedPaymentMethodId);
-      setShowReactivateModal(false);
-    }}
-  />
-)}
+														<p
+															onClick={() => {
+																setShowDeleteModal(true);
+																setClickedName(method.name);
+																setSelectedPaymentMethodId(method.payment_method_id);
+															}}
+														>
+															<FontAwesomeIcon icon={faTrash} /> Delete
+														</p>
+														{method.isActive ? (
+															<p
+																onClick={() => {
+																	setShowDeactivate(true);
+																	setClickedName(method.name);
+																	setSelectedPaymentMethodId(method.payment_method_id);
+																}}
+															>
+																<FontAwesomeIcon icon={faXmarkCircle} /> Deactivate
+															</p>
+														) : (
+															<p onClick={() => handleReactivateModal(method.payment_method_id, method.name)}>
+																<FontAwesomeIcon icon={faCheckCircle} /> Reactivate
+															</p>
+														)}
+													</ActionContainer>
+												)}
+											</TableData>
+										</TableRows>
+								  ))}
+						</tbody>
+					</Table>
+				</TableContainer>
 
-    </DashboardLayout>
-  );
+				<PdfExporter tableId="payment-table" fileName="payment-methods.pdf" />
+				<Pagination
+					totalItems={filteredPayments.length}
+					itemsPerPage={itemsPerPage}
+					currentPage={currentPage}
+					onPageChange={setCurrentPage}
+					itemsPerPageOptions={[5, 10, 15, 20]}
+					defaultItemsPerPage={10}
+					setItemsPerPage={setItemsPerPage}
+				/>
+			</StyledPanel>
+			{isEditPaymentOpen && <EditPayment onClose={closeEditPayment} paymentId={clickedId} fetchPaymentMethods={fetchPaymentMethods} />}
+			{isAddPaymentOpen && <AddPayment setAddPaymentOpen={setAddPaymentOpen} fetchPaymentMethods={fetchPaymentMethods} />}
+
+			{showDeactivate && (
+				<DeactivateModal
+					type="Payment Method"
+					text={clickedName}
+					close={setShowDeactivate}
+					confirm={() => deactivatePaymentMethodFunc(selectedPaymentMethodId)}
+				/>
+			)}
+
+			{showReactivateModal && (
+				<ReactivateModal
+					type="Payment Method"
+					text={clickedName}
+					close={() => setShowReactivateModal(false)}
+					confirm={() => {
+						activatePaymentMethodFunc(selectedPaymentMethodId);
+						setShowReactivateModal(false);
+					}}
+				/>
+			)}
+
+			{showDeleteModal && (
+				<DeleteModal
+					type="payment method"
+					text={clickedName}
+					close={setShowDeactivate}
+					confirm={() => {
+						deletePaymentMethodFunc(selectedPaymentMethodId);
+						setShowDeleteModal(false);
+					}}
+				/>
+			)}
+		</DashboardLayout>
+	);
 };
 
 export default PaymentTable;

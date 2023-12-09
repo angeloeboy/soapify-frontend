@@ -259,89 +259,6 @@ const Cart = ({ setActiveAction }) => {
 		};
 	}, [cart]); // Watching the cartItems for changes
 
-	let createReceipt = async () => {
-		const transation = await getTransaction(15);
-
-		const pdfDoc = await PDFDocument.create();
-		const page = pdfDoc.addPage([600, 400]);
-
-		const { transaction } = transation;
-
-		// Define some basic colors and font size
-		const colorBlack = rgb(0, 0, 0);
-		const fontSize = 16;
-
-		// Define starting positions
-		let xPosition = 50;
-		let yPosition = 350;
-
-		// Add Transaction Details
-		page.drawText(`Transaction Number: ${transaction.transaction_number}`, { start: { x: xPosition, y: yPosition }, size: fontSize, color: colorBlack });
-		yPosition -= 20;
-		page.drawText(`Total Amount: ${transaction.total_amount}`, { x: xPosition, y: yPosition, size: fontSize, color: colorBlack });
-		yPosition -= 20;
-		page.drawText(`Payment Method: ${transaction.payment_method.name}`, { x: xPosition, y: yPosition, size: fontSize, color: colorBlack });
-		yPosition -= 20;
-
-		// Add a separator
-		yPosition -= 20;
-		page.drawLine({
-			start: { x: xPosition, y: yPosition },
-			end: { x: xPosition + 500, y: yPosition },
-			color: colorBlack,
-		});
-		yPosition -= 20;
-
-		// List out items
-		for (let item of transaction.items) {
-			page.drawText(`Product: ${item.product.product_name}`, { x: xPosition, y: yPosition, size: fontSize, color: colorBlack });
-			yPosition -= 20;
-			page.drawText(`Quantity: ${item.quantity}`, { x: xPosition, y: yPosition, size: fontSize, color: colorBlack });
-			yPosition -= 20;
-			page.drawText(`Price: ${item.price}`, { x: xPosition, y: yPosition, size: fontSize, color: colorBlack });
-			yPosition -= 20;
-
-			// Add a separator between items
-			yPosition -= 10;
-			page.drawLine({
-				start: { x: xPosition, y: yPosition },
-				end: { x: xPosition + 500, y: yPosition },
-				color: colorBlack,
-			});
-			yPosition -= 20;
-		}
-
-		const pdfBytes = await pdfDoc.save();
-
-		// Create a blob from the pdf bytes
-		const blob = new Blob([pdfBytes], { type: "application/pdf" });
-
-		// Create an object URL for the blob
-		const url = URL.createObjectURL(blob);
-
-		// Create a hidden anchor element
-		const a = document.createElement("a");
-		a.style.display = "none";
-		a.href = url;
-
-		// Set the download attribute of the anchor to give a name to the downloaded file
-		a.download = `receipt_${transaction.transaction_number}.pdf`;
-
-		// Append the anchor to the body (it's hidden, so won't affect your layout)
-		document.body.appendChild(a);
-
-		// Simulate a click on this anchor to start the download
-		a.click();
-
-		// Cleanup: remove the anchor once the download has started
-		document.body.removeChild(a);
-
-		// Cleanup: release the object URL to free up memory
-		URL.revokeObjectURL(url);
-
-		return pdfBytes;
-	};
-
 	return (
 		<>
 			<ComponentTitle>Cart</ComponentTitle>
@@ -408,6 +325,10 @@ const Cart = ({ setActiveAction }) => {
 										const valueAsNumber = Number(valueAsString);
 
 										if (e.key === "ArrowUp") {
+											//disable the arrow up if the quantity is greater than the quantity_in_stock
+											if (valueAsNumber >= item.quantity_in_stock) {
+												return;
+											}
 											let updatedCart = cart.map((product) => (product.product_id === item.product_id ? { ...product, quantity: valueAsNumber + 1 } : product));
 											setCart(updatedCart);
 										} else if (e.key === "ArrowDown") {

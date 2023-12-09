@@ -52,16 +52,27 @@ const ProductSalesGraph = () => {
 	const [monthData, setMonthData] = useState(null);
 	const [selectedYear, setSelectedYear] = useState(new Date().getFullYear()); // Initial year
 	const [selectedProductId, setSelectedProductId] = useState(null); // New state for selected product
+	const [startDate, setStartDate] = useState(''); // State for start date
+	const [endDate, setEndDate] = useState('');
 	const selectableYears = [selectedYear];
 
 	useEffect(() => {
 		fetchData();
 		fetchProducts();
-	}, [selectedProductId, selectedYear]);
+	}, [selectedProductId, selectedYear,  startDate, endDate]);
 
 	useEffect(() => {
 		generateChartData();
-	}, [productData, monthData, selectedProductId]);
+	}, [productData, monthData, selectedProductId,startDate,endDate]);
+
+	const handleStartDateChange = (e) => {
+		setStartDate(e.target.value);
+	  };
+	
+	  const handleEndDateChange = (e) => {
+		setEndDate(e.target.value);
+	  };
+	
 
 	//get products list from backend
 
@@ -127,69 +138,57 @@ const ProductSalesGraph = () => {
 	};
 
 	const generateChartData = async () => {
-		if (!productData || !monthData || !selectedProductId) {
-			return null;
+		if (!productData || !monthData || !selectedProductId || !startDate || !endDate) {
+		  return null;
 		}
-		// console.log("productData:", productData);
-		// console.log(typeof selectedProductId);
+	  
 		const selectedProduct = productData.find((product) => product.product_id === selectedProductId);
-		// console.log("selectedProduct:", selectedProduct);
 		if (!selectedProduct) {
-			console.error(`Product with product_id ${selectedProductId} not found`);
-			return null;
+		  console.error(`Product with product_id ${selectedProductId} not found`);
+		  return null;
 		}
-
+	  
 		const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEPT", "OCT", "NOV", "DEC"];
-		// console.log("months:", months);
-		const prices = Array(months.length).fill(selectedProduct.product_price);
-		const transactions = months.map((month, index) => monthData.transactions[index + 1] || 0);
+	    const prices = Array(months.length).fill(selectedProduct.product_price);
 
-		const salesData = prices.map((price, index) => {
-			const transaction = transactions[index];
-			const calculatedSale = (price / 100) * transaction;
-			// console.log(`Month: ${months[index]}, Price: ${price}, Transactions: ${transaction}, Sales: ${calculatedSale}`);
-			return calculatedSale;
+		// Logic to filter data within the specified date range
+		const filteredTransactions = Array.isArray(monthData.transactions)
+		? monthData.transactions.filter((transaction) => {
+			const transactionDate = new Date(transaction.date); // Replace 'date' with your actual date field
+			const startDateObj = new Date(startDate);
+			const endDateObj = new Date(endDate);
+	
+			return transactionDate >= startDateObj && transactionDate <= endDateObj;
+		  })
+		: [];
+	
+	  
+		const salesData = months.map((month) => {
+		  // Calculate sales for each month within the date range
+		  const monthTransactions = filteredTransactions.filter((transaction) => transaction.month === month);
+		  const totalSalesForMonth = monthTransactions.reduce((total, transaction) => {
+			// Calculate total sales for the month based on your transaction structure
+			return total + transaction.amount; // Replace 'amount' with your transaction amount field
+		  }, 0);
+		  return totalSalesForMonth;
 		});
-
-		// //get sales data from transaction_with_items
-
-		const transactionS = await months.map((month, index) => monthData.transactions_with_items[index + 1] || 0);
-		console.log(transactionS);
-
-		const dataSales = transactionS.map((transaction, index) => {
-			if (!Array.isArray(transaction) || transaction.length === 0) {
-				return 0;
-			}
-
-			let total = 0;
-			transaction.forEach((item, itemIndex) => {
-				if (!item || typeof item.quantity !== "number" || typeof item.price !== "number") {
-					return;
-				}
-
-				total += item.quantity * item.price;
-			});
-
-			return total / 100;
-		});
-
-		console.log("transaction", dataSales);
-
+	  
 		const chartData = {
-			labels: months,
-			datasets: [
-				{
-					label: "Sales",
-					data: dataSales,
-					backgroundColor: "rgba(255, 99, 132, 0.2)",
-					borderColor: "rgba(255, 99, 132, 1)",
-					borderWidth: 1,
-				},
-			],
+		  labels: months,
+		  datasets: [
+			{
+			  label: "Sales",
+			  data: salesData,
+			  backgroundColor: "rgba(255, 99, 132, 0.2)",
+			  borderColor: "rgba(255, 99, 132, 1)",
+			  borderWidth: 1,
+			},
+		  ],
 		};
-
+	  
 		setChartData(chartData);
-	};
+	  };
+	  
 
 	const handleProductChange = (e) => {
 		const selectedProductId = parseInt(e.target.value);
@@ -203,39 +202,46 @@ const ProductSalesGraph = () => {
 
 	return (
 		<LineGraphContainer>
-			<div className="title">Product Sales</div>
-			<div className="selection-container">
-				<div className="selection">
-					<label htmlFor="product">Select Product: </label>
-					<select id="product" value={selectedProductId} onChange={(e) => handleProductChange(e)}>
-						{productData === null ? (
-							<option value="" disabled>
-								Loading products...
-							</option>
-						) : (
-							productData.map((product) => (
-								<option value={product.product_id} key={product.product_id}>
-									{product.product_name}
-								</option>
-							))
-						)}
-					</select>
-				</div>
-				<div className="selection">
-					<label htmlFor="year">Select Year: </label>
-					<select id="year" value={selectedYear} onChange={(e) => setSelectedYear(parseInt(e.target.value, 10))}>
-						{selectableYears.map((year) => (
-							<option key={year} value={year}>
-								{year}
-							</option>
-						))}
-					</select>
-				</div>
+		  <div className="title">Product Sales</div>
+		  <div className="selection-container">
+			<div className="selection">
+			  <label htmlFor="product">Select Product: </label>
+			  <select id="product" value={selectedProductId} onChange={(e) => handleProductChange(e)}>
+				{productData === null ? (
+				  <option value="" disabled>
+					Loading products...
+				  </option>
+				) : (
+				  productData.map((product) => (
+					<option value={product.product_id} key={product.product_id}>
+					  {product.product_name}
+					</option>
+				  ))
+				)}
+			  </select>
 			</div>
-			<div className="chart-container">
-				{/* {productData && monthData &&  />} */}
-				<Bar data={chartData} options={options} />
+			<div className="selection">
+			  <label htmlFor="start-date">Start Date:</label>
+			  <input
+				type="date"
+				id="start-date"
+				value={startDate}
+				onChange={handleStartDateChange}
+			  />
 			</div>
+			<div className="selection">
+			  <label htmlFor="end-date">End Date:</label>
+			  <input
+				type="date"
+				id="end-date"
+				value={endDate}
+				onChange={handleEndDateChange}
+			  />
+			</div>
+		  </div>
+		  <div className="chart-container">
+			<Bar data={chartData} options={options} />
+		  </div>
 		</LineGraphContainer>
 	);
 };

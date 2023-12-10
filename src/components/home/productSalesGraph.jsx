@@ -51,9 +51,11 @@ const ProductSalesGraph = () => {
 	//   const [productsList, setProductsList] = useState(null);
 	const [monthData, setMonthData] = useState(null);
 	const [selectedYear, setSelectedYear] = useState(new Date().getFullYear()); // Initial year
-	const [selectedProductId, setSelectedProductId] = useState(null); // New state for selected product
-	const [startDate, setStartDate] = useState(""); // State for start date
-	const [endDate, setEndDate] = useState("");
+	const [selectedProductId, setSelectedProductId] = useState(4); // New state for selected product
+ 
+	const [startDate, setStartDate] = useState('2023-01-01');  
+	const [endDate, setEndDate] = useState('2023-12-31'); 
+
 	const selectableYears = [selectedYear];
 
 	useEffect(() => {
@@ -75,19 +77,28 @@ const ProductSalesGraph = () => {
 
 	//get products list from backend
 
-	const fetchProducts = () => {
+	useEffect(() => {
+		fetchProducts();
+	  }, []);
+	
+	  const fetchProducts = () => {
 		getProducts()
-			.then((res) => {
-				if (Array.isArray(res.products)) {
-					setProductData(res.products);
-				} else {
-					setProductData([]);
-				}
-			})
-			.catch((error) => {
-				console.log(error);
-			});
-	};
+		  .then((res) => {
+			if (Array.isArray(res.products)) {
+			  setProductData(res.products);
+	
+			  // Set the default product ID only if it's not already set
+			  if (selectedProductId === 4 && res.products.length > 0) {
+				setSelectedProductId(res.products[0].product_id);
+			  }
+			} else {
+			  setProductData([]);
+			}
+		  })
+		  .catch((error) => {
+			console.log(error);
+		  });
+	  };
 
 	const fetchData = async () => {
 		try {

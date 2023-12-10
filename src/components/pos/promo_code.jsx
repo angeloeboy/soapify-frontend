@@ -48,9 +48,10 @@ const PromoCode = () => {
 		}
 
 		const res = await validatePromo(promoCode, cart);
-		setTransaction((prev) => ({ ...prev, promo_code: promoCode }));
-		console.log("CArt", cart);
 		if (res.isValid) {
+			console.log(res);
+
+			setTransaction((prev) => ({ ...prev, promo_code: promoCode }));
 			setPromoCodeResponse(res);
 			toast.success("Promo code applied!");
 			setTransaction((prev) => ({ ...prev, promo_codeApplied: true }));
@@ -79,7 +80,15 @@ const PromoCode = () => {
 	if (cart.length !== 0) {
 		return (
 			<div>
-				<PromoCodeInput type="text" value={promoCode} onChange={(e) => setPromoCode(e.target.value)} placeholder="Apply voucher " />
+				<PromoCodeInput
+					type="text"
+					value={transaction.promo_code}
+					onChange={(e) => {
+						setTransaction((prev) => ({ ...prev, promo_code: e.target.value }));
+						setPromoCode(e.target.value);
+					}}
+					placeholder="Apply voucher "
+				/>
 				<ApplyButton onClick={() => validate()}>Apply</ApplyButton>
 			</div>
 		);

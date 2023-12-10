@@ -63,3 +63,35 @@ export const validatePromo = async (promoCode, items) => {
 		console.log(error);
 	}
 };
+
+export const deactivatePromo = async (promo_id) => {
+	try {
+		const res = await fetch(`/api/promos/deactivate/${promo_id}`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
+
+		const data = await res.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const activatePromo = async (promo_id) => {
+	try {
+		const res = await fetch(`/api/promos/activate/${promo_id}`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
+
+		const data = await res.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};

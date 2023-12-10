@@ -10,10 +10,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import PromoSearchBar from "@/components/promo/promoSearchBar";
 import AddPromo from "@/components/promo/addPromo";
-import { getPromos } from "@/api/promos";
+import { activatePromo, deactivatePromo, getPromos } from "@/api/promos";
 import { getProducts } from "@/api/products";
 import Pagination from "@/components/misc/pagination";
 import EditPromo from "@/components/promo/editPromo";
+import DeactivateModal from "@/components/misc/deactivate";
+import { toast } from "react-toastify";
+import ReactivateModal from "@/components/misc/reactivate";
 
 const PromoPage = () => {
 	const [promotions, setPromotions] = useState([]);
@@ -21,12 +24,15 @@ const PromoPage = () => {
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
 	const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false); // State to control the popup
 	const [isEditPopUpOpen, setIsEditPopUpOpen] = useState(false); // State to control the popup
+	const [showDeactivatePopUp, setShowDeactivatePopUp] = useState(false); // State to control the popup\
+	const [showActivatePopUp, setShowActivatePopUp] = useState(false); // State to control the popup\
+	const [clickedName, setClickedName] = useState("");
+
 	const [selectedPromo, setSelectedPromo] = useState(null);
 	const [isLoading, setIsLoading] = useState(false);
 
 	const [currentPage, setCurrentPage] = useState(1);
 	const [itemsPerPage, setItemsPerPage] = useState(10);
-
 	const startIndex = (currentPage - 1) * itemsPerPage;
 	const endIndex = currentPage * itemsPerPage;
 	const paginatedPromotions = promotionsDisplay.slice(startIndex, endIndex);
@@ -61,6 +67,34 @@ const PromoPage = () => {
 			day: "numeric",
 		});
 		return formattedDate;
+	};
+
+	const deactivatePromoFunc = async (promoID) => {
+		const res = await deactivatePromo(promoID);
+
+		if (!res) {
+			return;
+		}
+
+		if (res.status === "Success") {
+			getPromotionsFunc();
+			// setShowDeactivatePopUp(false);
+			toast.success("Promo deactivated");
+		}
+	};
+
+	const activatePromoFunc = async (promoID) => {
+		const res = await activatePromo(promoID);
+
+		if (!res) {
+			return;
+		}
+
+		if (res.status === "Success") {
+			getPromotionsFunc();
+			// setShowDeactivatePopUp(false);
+			toast.success("Promo activated");
+		}
 	};
 
 	return (
@@ -119,6 +153,28 @@ const PromoPage = () => {
 												<p>
 													<FontAwesomeIcon icon={faTrash} /> Delete
 												</p>
+
+												{promo.isActive ? (
+													<p
+														onClick={() => {
+															setSelectedPromo(promo);
+															setShowDeactivatePopUp(true);
+															setClickedName(promo.promo_code);
+														}}
+													>
+														<FontAwesomeIcon icon={faTrash} /> Deactivate
+													</p>
+												) : (
+													<p
+														onClick={() => {
+															setSelectedPromo(promo);
+															setShowActivatePopUp(true);
+															setClickedName(promo.promo_code);
+														}}
+													>
+														<FontAwesomeIcon icon={faTrash} /> Activate
+													</p>
+												)}
 											</ActionContainer>
 										)}
 									</TableData>
@@ -140,6 +196,13 @@ const PromoPage = () => {
 
 			{isAddPopUpOpen && <AddPromo setIsAddPopUpOpen={setIsAddPopUpOpen} getPromotionsFunc={getPromotionsFunc} />}
 			{isEditPopUpOpen && <EditPromo setIsEditPopUpOpen={setIsEditPopUpOpen} getPromotionsFunc={getPromotionsFunc} selectedPromo={selectedPromo} />}
+			{showDeactivatePopUp && (
+				<DeactivateModal type="Promo" text={clickedName} close={setShowDeactivatePopUp} confirm={() => deactivatePromoFunc(selectedPromo.promo_code_id)} />
+			)}
+
+			{showActivatePopUp && (
+				<ReactivateModal type="Promo" text={clickedName} close={setShowActivatePopUp} confirm={() => activatePromoFunc(selectedPromo.promo_code_id)} />
+			)}
 		</DashboardLayout>
 	);
 };

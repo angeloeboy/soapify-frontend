@@ -17,7 +17,7 @@ import PdfExporter from "@/components/misc/pdfExporter";
 // // eto din
 // import DeactivateModal from "@/components/misc/deactivate";
 
-const PaymentTable = () => {
+const PaymentTable = ({ hasAddPermission, hasEditPermission, hasDeletePermission }) => {
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
 
 	const [attributes, setAttributes] = useState([]);
@@ -105,7 +105,7 @@ const PaymentTable = () => {
 			<PageTitle title="Attributes" />
 			<StyledPanel>
 				{/* <PaymentSearchBarComponent searchQuery={searchQuery} handleSearchChange={handleSearchChange} handleOpenPopup={handleOpenPopup} /> */}
-				<AttributeSearchBar setPopUpOpen={setPopUpOpen} />
+				<AttributeSearchBar setPopUpOpen={setPopUpOpen} hasAddPermission={hasAddPermission} fetchAttributes={fetchAttributes} />
 				<TableContainer>
 					<Table id="attributes-table">
 						<tbody>
@@ -133,25 +133,30 @@ const PaymentTable = () => {
 
 												{activeActionContainer === index && (
 													<ActionContainer onClick={() => setActiveActionContainer(-1)}>
-														<p
-															onClick={() => {
-																setSelectedAttribute(attribute);
-																openEditAttribute(selectedAttribute);
-																setSelectedAttributeId(attribute);
-															}}
-														>
-															<FontAwesomeIcon icon={faPen} /> Edit
-														</p>
-														<p
-															onClick={() => {
-																//GAWIN MO TO
-																setShowDeactivate(true);
-																setClickedName(attribute.attribute_name);
-																setSelectedAttributeId(attribute.attribute_id);
-															}}
-														>
-															<FontAwesomeIcon icon={faTrash} /> Delete
-														</p>
+														{hasEditPermission && (
+															<p
+																onClick={() => {
+																	setSelectedAttribute(attribute);
+																	openEditAttribute(selectedAttribute);
+																	setSelectedAttributeId(attribute);
+																}}
+															>
+																<FontAwesomeIcon icon={faPen} /> Edit
+															</p>
+														)}
+
+														{hasDeletePermission && (
+															<p
+																onClick={() => {
+																	//GAWIN MO TO
+																	setShowDeactivate(true);
+																	setClickedName(attribute.attribute_name);
+																	setSelectedAttributeId(attribute.attribute_id);
+																}}
+															>
+																<FontAwesomeIcon icon={faTrash} /> Delete
+															</p>
+														)}
 													</ActionContainer>
 												)}
 											</TableData>
@@ -183,3 +188,26 @@ const PaymentTable = () => {
 };
 
 export default PaymentTable;
+
+import cookie, { parse } from "cookie";
+export async function getServerSideProps(context) {
+	const { req } = context;
+	const parsedCookies = cookie.parse(req.headers.cookie || "").permissions;
+
+	if (!parsedCookies.includes("View Attributes:attributes")) {
+		return {
+			redirect: {
+				destination: "/",
+				permanent: false,
+			},
+		};
+	}
+
+	return {
+		props: {
+			hasAddPermission: parsedCookies.includes("Add Attributes:attributes"),
+			hasEditPermission: parsedCookies.includes("Edit Attributes:attributes"),
+			hasDeletePermission: parsedCookies.includes("Delete Attributes:attributes"),
+		}, // will be passed to the page component as props
+	};
+}

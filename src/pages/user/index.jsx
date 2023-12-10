@@ -85,8 +85,21 @@ const UserDashboard = () => {
 		const applyDiscountsToCart = () => {
 			if (!promoCodeResponse.isValid) return;
 
+			if (promoCodeResponse.discountType === "FIXED") {
+				console.log("fixed");
+				promoCodeResponse.totalDiscountAmount;
+				setTransaction((prev) => ({
+					...prev,
+					total_amount: prev.total_amount - promoCodeResponse.totalDiscountAmount * 100,
+					discount_amount: promoCodeResponse.totalDiscountAmount * 100,
+				}));
+
+				return;
+			}
+
 			const updatedCart = cart.map((cartItem) => {
 				if (cartItem.isDiscounted) return cartItem;
+
 				const discountInfo = promoCodeResponse.discountedItems.find((di) => di.product_id === cartItem.product_id);
 				if (discountInfo) {
 					return {
@@ -106,10 +119,9 @@ const UserDashboard = () => {
 	}, [promoCodeResponse]); // Dependency array includes only promoCodeResponse
 
 	useEffect(() => {
-		// console.log("orig cart: ", cart);
 		setTransaction((prev) => ({
 			...prev,
-			total_amount: cart.reduce((acc, item) => acc + item.product_price * item.quantity, 0),
+			total_amount: cart.reduce((acc, item) => acc + item.product_price * item.quantity, 0) - (promoCodeResponse?.totalDiscountAmount * 100 || 0),
 			items: cart,
 		}));
 	}, [cart]);

@@ -113,7 +113,7 @@ const Orders = () => {
 								<TableData>{transaction.transaction_unique_id}</TableData>
 								<TableData>{transaction.transaction_number}</TableData>
 								<TableData>{transaction.items.length}</TableData>
-								<TableData>{transaction.payment_method.name}</TableData>
+								<TableData>{transaction.payment_method ? transaction.payment_method.name : "Deleted"}</TableData>
 								<TableData>
 									<Animated status={transaction.status}>
 										<Circle status={transaction.status} />

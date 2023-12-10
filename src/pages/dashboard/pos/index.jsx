@@ -94,6 +94,17 @@ const Pos = () => {
 	useEffect(() => {
 		const applyDiscountsToCart = () => {
 			if (!promoCodeResponse.isValid) return;
+			//if the promo type is fixed, apply the discount to the total price of the transaction
+			if (promoCodeResponse.discountType === "FIXED") {
+				console.log("fixed");
+				promoCodeResponse.totalDiscountAmount;
+				setTransaction((prev) => ({
+					...prev,
+					total_amount: prev.total_amount - promoCodeResponse.totalDiscountAmount * 100,
+				}));
+
+				return;
+			}
 
 			const updatedCart = cart.map((cartItem) => {
 				if (cartItem.isDiscounted) return cartItem;
@@ -119,7 +130,7 @@ const Pos = () => {
 		// console.log("orig cart: ", cart);
 		setTransaction((prev) => ({
 			...prev,
-			total_amount: cart.reduce((acc, item) => acc + item.product_price * item.quantity, 0),
+			total_amount: cart.reduce((acc, item) => acc + item.product_price * item.quantity, 0) - (promoCodeResponse?.totalDiscountAmount * 100 || 0),
 			items: cart,
 		}));
 	}, [cart]);

@@ -327,11 +327,22 @@ const EditProduct = ({ productId, onClose, fetchProducts }) => {
 								type="number"
 								placeholder="Enter your Price"
 								onChange={(e) => {
-									setProduct({
-										...product,
-										product_price: parseInt(e.target.value, 10),
-									});
+									const validPositiveNumberRegex = /^[0-9]*(\.[0-9]+)?$/;
+
+									if (e.target.value === "") {
+										setProduct({
+											...product,
+											product_price: "",
+										});
+									} else if (validPositiveNumberRegex.test(e.target.value)) {
+										setProduct({
+											...product,
+											product_price: Number(e.target.value),
+										});
+									}
 								}}
+								pattern="^[0-9]*(\.[0-9]+)?$"
+								title="Please enter a valid positive number. Decimals are allowed."
 								required
 								value={product.product_price}
 							/>

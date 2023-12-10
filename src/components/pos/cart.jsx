@@ -234,8 +234,21 @@ const Total = styled.div`
 	}
 `;
 
+const PromoCodeDiscount = styled.div`
+	display: flex;
+	justify-content: space-between;
+	margin: 24px 0px;
+	border-top: 1px solid #dddd;
+	padding-top: 24px;
+	p {
+		text-transform: uppercase;
+		font-weight: bold;
+		/* fonts-size: 14px; */
+	}
+`;
+
 const Cart = ({ setActiveAction }) => {
-	const { cart, setCart, updateCart } = useContext(TransactionContext);
+	const { cart, setCart, updateCart, transaction, promoCodeResponse } = useContext(TransactionContext);
 
 	const total = useMemo(() => {
 		return cart.reduce((acc, item) => acc + item.quantity * (item.product_price / 100), 0).toFixed(2);
@@ -374,6 +387,19 @@ const Cart = ({ setActiveAction }) => {
 				<p>Total</p>
 				<p>{total}</p>
 			</Total>
+			{transaction.promo_codeApplied && (
+				<PromoCodeDiscount>
+					<p>Discount</p>
+					<p> - {promoCodeResponse.totalDiscountAmount} PHP </p>
+				</PromoCodeDiscount>
+			)}
+
+			{transaction.promo_codeApplied && (
+				<PromoCodeDiscount>
+					<p>Total</p>
+					{transaction.promo_codeApplied && <p>{Number(transaction.total_amount / 100).toFixed(2)}</p>}
+				</PromoCodeDiscount>
+			)}
 
 			<PromoCode />
 

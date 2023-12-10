@@ -158,8 +158,21 @@ const Total = styled.div`
 	}
 `;
 
+const PromoCodeDiscount = styled.div`
+	display: flex;
+	justify-content: space-between;
+	margin: 24px 0px;
+	border-top: 1px solid #dddd;
+	padding-top: 24px;
+	p {
+		text-transform: uppercase;
+		font-weight: bold;
+		/* fonts-size: 14px; */
+	}
+`;
+
 const UserCart = ({ setActiveAction }) => {
-	const { cart, setCart, updateCart } = useContext(TransactionContext);
+	const { cart, setCart, updateCart, transaction, promoCodeResponse } = useContext(TransactionContext);
 
 	const total = useMemo(() => {
 		return cart.reduce((acc, item) => acc + item.quantity * (item.product_price / 100), 0).toFixed(2);
@@ -275,20 +288,6 @@ const UserCart = ({ setActiveAction }) => {
 				{cart.map((item) => (
 					<CSSTransition key={item.product_id} timeout={500} classNames="item">
 						<Product key={item.product_id} active={item.quantity > 1}>
-							{/* <FontAwesomeIcon icon={faTrash} onClick={() => updateCart(item, "delete")} className="delete" /> */}
-
-							{/* <div className="productInformation">
-								<p className="productName">
-									{item.product_name} |
-									{item.attribute.map((attribute) => {
-										return <> {attribute.value} | </>;
-									})}
-								</p>
-
-								<p className="productPrice">P{item.product_price / 100}</p>
-
-							</div> */}
-
 							<div className="productInformation">
 								<div className="wrapper">
 									<Image src={item.image_link == "testing" ? "/sabon.png" : item.image_link.replace(/\\/g, "/")} width={40} height={40} alt="Product image" />
@@ -340,13 +339,19 @@ const UserCart = ({ setActiveAction }) => {
 											let updatedCart = cart.map((product) => (product.product_id === item.product_id ? { ...product, quantity: valueAsNumber } : product));
 											setCart(updatedCart);
 										}
+
+										//if 0 is entered, remove the item from the cart
+										if (valueAsNumber === 0) {
+											let updatedCart = cart.filter((product) => product.product_id !== item.product_id);
+											setCart(updatedCart);
+										}
 									}}
 									onKeyDown={(e) => {
 										const valueAsString = e.target.value;
 										const valueAsNumber = Number(valueAsString);
 
 										if (e.key === "ArrowUp") {
-											//disable arrow up if quantity is greater than quantity_in_stock
+											//disable the arrow up if the quantity is greater than the quantity_in_stock
 											if (valueAsNumber >= item.quantity_in_stock) {
 												return;
 											}
@@ -359,6 +364,16 @@ const UserCart = ({ setActiveAction }) => {
 												);
 												setCart(updatedCart);
 											}
+										}
+									}}
+									//if unfocused and the value is 0, remove the item from the cart
+									onBlur={(e) => {
+										const valueAsString = e.target.value;
+										const valueAsNumber = Number(valueAsString);
+
+										if (valueAsNumber === 0) {
+											let updatedCart = cart.filter((product) => product.product_id !== item.product_id);
+											setCart(updatedCart);
 										}
 									}}
 								/>
@@ -379,6 +394,19 @@ const UserCart = ({ setActiveAction }) => {
 				<p>Total</p>
 				<p>{total}</p>
 			</Total>
+			{transaction.promo_codeApplied && (
+				<PromoCodeDiscount>
+					<p>Discount</p>
+					<p> - {promoCodeResponse.totalDiscountAmount} PHP </p>
+				</PromoCodeDiscount>
+			)}
+
+			{transaction.promo_codeApplied && (
+				<PromoCodeDiscount>
+					<p>Total</p>
+					{transaction.promo_codeApplied && <p>{Number(transaction.total_amount / 100).toFixed(2)}</p>}
+				</PromoCodeDiscount>
+			)}
 
 			<PromoCode />
 			<Button

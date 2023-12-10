@@ -222,7 +222,8 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 					</LabelContainer>
 					<OrdersWrapper>
 						<h5>Payment Details</h5>
-						<h5>Payment method: {selectedTransaction.payment_method.name}</h5>
+						<h5>Payment method: {selectedTransaction.payment_method ? selectedTransaction.payment_method.name : "Deleted"}</h5>
+
 						<h5>Transaction number: {selectedTransaction.transaction_number}</h5>
 						{selectedTransaction.transaction_screenshot && (
 							<>

@@ -21,6 +21,7 @@ import { deleteParentProduct, getParentProduct } from "@/api/parent_product";
 import ParentProductSearchBar from "@/components/parent-product/parentProductSearchBar";
 import AddParentProduct from "@/components/parent-product/addParentProduct";
 import EditParentProduct from "@/components/parent-product/editParentProduct";
+import DeleteModal from "@/components/misc/delete";
 
 const ParentProduct = () => {
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
@@ -34,6 +35,8 @@ const ParentProduct = () => {
 	const [isEditParentProductOpen, setEditParentProductOpen] = useState(false);
 	const [isAddParentProductOpen, setAddParentProductOpen] = useState(false);
 	const [selectedParentProduct, setSelectedParentProduct] = useState(null);
+	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+	const [clickedName, setClickedName] = useState(null);
 	const [clickedId, setClickedId] = useState(null);
 
 	const [currentPage, setCurrentPage] = useState(1);
@@ -141,7 +144,14 @@ const ParentProduct = () => {
 														>
 															<FontAwesomeIcon icon={faPen} /> Edit
 														</p>
-														<p onClick={() => deleteParentProductFunc(parentProduct.parent_product_id)}>
+														<p
+															onClick={() => {
+																setIsDeleteModalOpen(true);
+																setClickedName(parentProduct.name);
+																setSelectedParentProduct(parentProduct);
+																setClickedId(parentProduct.parent_product_id);
+															}}
+														>
 															<FontAwesomeIcon icon={faTrash} /> Delete
 														</p>
 													</ActionContainer>
@@ -167,6 +177,15 @@ const ParentProduct = () => {
 					setEditParentProductOpen={setEditParentProductOpen}
 					fetchParentProducts={fetchParentProducts}
 					selectedParentProduct={selectedParentProduct}
+				/>
+			)}
+
+			{isDeleteModalOpen && (
+				<DeleteModal
+					type="parent product"
+					text={clickedName}
+					close={setIsDeleteModalOpen}
+					confirm={() => deleteParentProductFunc(selectedParentProduct.parent_product_id)}
 				/>
 			)}
 			{/* {isAddPaymentOpen && <AddPayment setAddPaymentOpen={setAddPaymentOpen} fetchPaymentMethods={fetchPaymentMethods} />} */}

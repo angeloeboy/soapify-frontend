@@ -176,3 +176,26 @@ const Areas = () => {
 };
 
 export default Areas;
+
+import cookie, { parse } from "cookie";
+export async function getServerSideProps(context) {
+	const { req } = context;
+	const parsedCookies = cookie.parse(req.headers.cookie || "").permissions;
+
+	if (!parsedCookies.includes("View Areas:areas")) {
+		return {
+			redirect: {
+				destination: "/",
+				permanent: false,
+			},
+		};
+	}
+
+	return {
+		props: {
+			hasAddAreaPermission: parsedCookies.includes("Add Area:areas"),
+			hasEditAreaPermission: parsedCookies.includes("Edit Area:areas"),
+			hasDeleteAreaPermission: parsedCookies.includes("Delete Area:areas"),
+		}, // will be passed to the page component as props
+	};
+}

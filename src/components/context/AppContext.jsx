@@ -51,10 +51,10 @@ export const AppProvider = ({ children }) => {
 				submenus: [
 					{ title: "Overview", link: "/dashboard/inventory", permission: "View Inventory:inventory" },
 					{ title: "Products", link: "/dashboard/products", permission: "View Products:products" },
-					{ title: "Attributes", link: "/dashboard/attributes" },
-					{ title: "Categories", link: "/dashboard/products/categories" },
-					{ title: "Subcategories", link: "/dashboard/products/subcategories" },
-					{ title: "Parent Products", link: "/dashboard/parent-product" },
+					{ title: "Attributes", link: "/dashboard/attributes", permission: "View Attributes:attributes" },
+					{ title: "Categories", link: "/dashboard/products/categories", permission: "View Categories:categories" },
+					{ title: "Subcategories", link: "/dashboard/products/subcategories", permission: "View Subcategories:subcategories" },
+					{ title: "Parent Products", link: "/dashboard/parent-product", permission: "View Parent Products:parent_products" },
 				],
 			},
 			{
@@ -63,10 +63,10 @@ export const AppProvider = ({ children }) => {
 				hasSubmenu: true,
 				submenus: [
 					{ title: "Users", link: "/dashboard/user" },
-					{ title: "Warehouse", link: "/dashboard/warehouse" },
-					{ title: "Areas", link: "/dashboard/areas" },
+					{ title: "Warehouse", link: "/dashboard/warehouse", permission: "View Warehouses:warehouses" },
+					{ title: "Areas", link: "/dashboard/areas", permission: "View Areas:areas" },
 					{ title: "Payments", link: "/dashboard/payment" },
-					{ title: "Suppliers", link: "/dashboard/suppliers" },
+					{ title: "Suppliers", link: "/dashboard/suppliers", permission: "View Suppliers:suppliers" },
 					{ title: "Roles", link: "/dashboard/roles" },
 					{ title: "Logs", link: "/dashboard/logs" },
 				],

@@ -105,6 +105,11 @@ const PaymentTable = () => {
 			toast.error("Something went wrong");
 			return;
 		}
+
+		if (res.errors) {
+			toast.error(res.errors[0].message);
+			return;
+		}
 		toast.success(res.message);
 		fetchPaymentMethods();
 	};
@@ -117,6 +122,12 @@ const PaymentTable = () => {
 			toast.error("Something went wrong");
 			return;
 		}
+
+		if (res.errors) {
+			toast.error(res.errors[0].message);
+			return;
+		}
+
 		toast.success(res.message);
 
 		fetchPaymentMethods();
@@ -128,6 +139,11 @@ const PaymentTable = () => {
 
 		if (!res) {
 			toast.error("Something went wrong");
+			return;
+		}
+
+		if (res.errors) {
+			toast.error(res.errors[0].message);
 			return;
 		}
 		toast.success(res.message);

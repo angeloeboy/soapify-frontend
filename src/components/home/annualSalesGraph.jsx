@@ -6,10 +6,10 @@ const LineGraphContainer = styled.div`
 	border-radius: 8px;
 	border: 1px solid #dfdfdf;
 	background: #fff;
-	padding: 34px;
-	width: 48%;
-	height: 500px;
-	margin: 1%;
+	padding: 20px;
+	width: calc(70% - 20px); /* Adjust width as per your layout */
+	height: 800px; /* Adjust height as needed */
+	margin: 10px; /* Adjust margin for spacing */
 	.title {
 		color: #000;
 		font-size: 20px;
@@ -81,3 +81,5 @@ const AnnualSalesGraph = ({ annualSalesData }) => {
 };
 
 export default AnnualSalesGraph;
+
+// /ADJUST THE WIDHT AND HEIGHT OF EACH LINE GRAPH CONTAINER  TO FULLY ENCAPSULATES ALL THE SPACE IN THE DASHBOARD AND ALIGN IT WITH OTHER COMPONENTS

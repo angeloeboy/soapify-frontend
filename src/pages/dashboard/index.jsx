@@ -48,11 +48,7 @@ const DashboardCard = styled.div`
 	text-align: center;
 `;
 
-const Title = styled.h3`
-	color: #333;
-	font-size: 1.2em;
-	margin-bottom: 10px;
-`;
+ 
 
 const Count = styled.span`
 	color: #555;
@@ -79,6 +75,33 @@ const CenteredGraphContainer = styled.div`
   justify-content: center;
   align-items: center;
   height: 100%; /* Adjust as needed */
+`;
+
+const SelectContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  margin-left: 20px;
+`;
+
+const Title = styled.h3`
+  color: #333;
+  font-size: 1.2em;
+  margin-right: 20px;
+`;
+
+const Select = styled.select`
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 1em;
+  outline: none;
+  transition: border-color 0.3s ease-in-out;
+
+  &:hover,
+  &:focus {
+    border-color: #3498db;
+  }
 `;
 
 const Dashboard = () => {
@@ -343,13 +366,15 @@ const Dashboard = () => {
 			 
 			 </div>
 			 <div style={{ display: "flex", alignItems: "center" }}>
-			<Title style={{ marginRight: "10px" }}>Select a Report:</Title>
-			<select value={selectedReport} onChange={handleReportChange}>
+			 <SelectContainer>
+				<Title>Select a Report:</Title>
+					<Select value={selectedReport} onChange={handleReportChange}>
 					<option value="annualSalesGraph">Annual Sales Graph</option>
 					<option value="productSalesGraph">Product Sales Graph</option>
 					<option value="productPerformance">Product Performance</option>
-			</select>
-			</div>
+					</Select>
+				</SelectContainer>
+	  			</div>
 
 
 			{/* Display graphs based on report selection */}

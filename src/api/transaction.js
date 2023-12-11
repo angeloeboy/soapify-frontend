@@ -191,3 +191,21 @@ export const acceptOrderReturnRefund = async (id) => {
 		console.log(error);
 	}
 };
+
+export const reportOrder = async (id, notes, contact) => {
+	try {
+		const response = await fetch(`/api/transactions/report/${id}`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ reason: notes, contact_number: contact }),
+			credentials: "include",
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};

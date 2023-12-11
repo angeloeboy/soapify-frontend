@@ -36,20 +36,6 @@ let TopBarContainer = styled.div`
 const TopBar = () => {
 	const [notificationsList, setNotificationsList] = useState([]);
 
-	// Use useContext to access the WebSocketContext
-	const context = useContext(WebSocketContext);
-	if (!context) {
-		// handle the case where context is not available
-		return null;
-	}
-
-	const { notifications } = context;
-
-	useEffect(() => {
-		if (!notifications) return;
-		setNotificationsList(notifications);
-	}, [notifications]);
-
 	const getDate = () => {
 		let date = new Date();
 		let month = date.getMonth();

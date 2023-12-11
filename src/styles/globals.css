@@ -34,7 +34,7 @@ img {
 
 /* width */
 ::-webkit-scrollbar {
-	height: 5px;
+	height: 10px;
 	width: 5px;
 }
 

@@ -1,20 +1,18 @@
-// WebSocketContext.js
-import { connectToWebSocket } from "@/api/home";
+import React, { createContext, useState, useEffect } from "react";
+import { connectToWebSocket } from "@/api/home"; // Assuming this is your WebSocket connection function
 import { getNotifications } from "@/api/notifications";
-import React, { createContext, useState, useEffect, useContext } from "react";
 import { toast } from "react-toastify";
 
 export const WebSocketContext = createContext(null);
 
 export const WebSocketProvider = ({ children }) => {
-	const [notifications, setnotifications] = useState([]);
+	const [notifications, setNotifications] = useState([]);
 	const [webSocket, setWebSocket] = useState(null);
 
 	const getNotificationsFunc = async () => {
 		const res = await getNotifications();
-
 		if (!res) return;
-		setnotifications(res.notifications);
+		setNotifications(res.notifications);
 	};
 
 	useEffect(() => {
@@ -22,31 +20,50 @@ export const WebSocketProvider = ({ children }) => {
 		let reconnectInterval = 5000; // Time to wait before reconnecting, in milliseconds
 
 		const connect = () => {
-			ws = connectToWebSocket((message) => {
-				console.log("Received message:", message.data); // Log the raw message
+			if (webSocket && webSocket.readyState === WebSocket.OPEN) {
+				console.log("WebSocket is already connected.");
+				return;
+			}
+
+			ws = connectToWebSocket(); // Connect to WebSocket
+
+			ws.onopen = () => {
+				console.log("Connected to WebSocket");
+				getNotificationsFunc();
+			};
+
+			ws.onmessage = (event) => {
+				const message = JSON.parse(event.data); // Assuming the message is JSON
+
+				console.log("Received message:", message);
 
 				if (message.type === "newTransaction") {
-					// toast.success("New order received");
+					// Handle new transaction
+					toast.success("New order received");
 					getNotificationsFunc();
-
-					// Handle new order
+					console.log("testing testing ran again");
 				} else if (message.type === "notification") {
-					// toast.info("You have a new notification");
-					setnotifications((notifications) => [...notifications, message.data]);
 					// Handle new notification
-				} else {
-					// Handle other types of messages
+					toast.info("You have a new notification");
+					setNotifications((prevNotifications) => [...prevNotifications, message.data]);
+				} else if (message.type === "orderStatusChanged") {
+					// Handle order status change
+					console.log("Order status changed:", message.data);
+					toast.info(`Your order ${message.data.data.transaction_unique_id} status has changed to ${message.data.data.transaction_status}`);
 				}
-			});
+			};
 
-			// ws.onclose = () => {
-			// 	console.log("WebSocket disconnected. Attempting to reconnect...");
-			// 	setTimeout(connect, reconnectInterval); // Attempt to reconnect
-			// };
+			ws.onclose = () => {
+				console.log("WebSocket Disconnected. Attempting to Reconnect...");
+				setTimeout(connect, reconnectInterval); // Attempt to reconnect
+			};
+
+			ws.onerror = (error) => {
+				console.error("WebSocket Error:", error);
+				ws.close(); // Optionally close the connection on error
+			};
 
 			setWebSocket(ws);
-
-			getNotificationsFunc();
 		};
 
 		connect();

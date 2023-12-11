@@ -157,18 +157,30 @@ const UserPaymentMethods = (props) => {
 		setLoading(false);
 		console.log(response.transaction);
 	};
+	const fetchPaymentMethods = async () => {
+		try {
+			const res = await getPaymentMethods();
 
-	const fetchPaymentMethods = () => {
-		getPaymentMethods().then((res) => {
-			console.log(res.paymentMethods);
+			if (!res || res.paymentMethods.length <= 0) {
+				setPaymentMethods([]);
+				return;
+			}
 
-			if (res.paymentMethods.length <= 0 || !res) return;
+			const activePaymentMethod = res.paymentMethods.filter((payment) => payment.isActive && payment.name.toLowerCase() !== "cash");
+			console.log(activePaymentMethod);
+			setPaymentMethods(activePaymentMethod);
+			setPaymentMethod(activePaymentMethod[0].payment_method_id);
 
-			let activePaymentMethod = res.paymentMethods.filter((payment) => payment.isActive && payment.name !== "CASH");
-			res ? setPaymentMethods(activePaymentMethod) : setPaymentMethods([]);
-
-			setTransaction((prev) => ({ ...prev, payment_method_id: res.paymentMethods[0].payment_method_id }));
-		});
+			if (activePaymentMethod.length > 0) {
+				setTransaction((prev) => ({
+					...prev,
+					payment_method_id: activePaymentMethod[0].payment_method_id,
+				}));
+			}
+		} catch (error) {
+			console.error("Error fetching payment methods:", error);
+			// Handle the error as needed
+		}
 	};
 
 	useEffect(() => {

@@ -47,11 +47,11 @@ add promo - DONE
 
 field for promo - DONE
 
-promo codes - STARTED
+promo codes - DONE
 
-edit promo code - STARTED
+edit promo code - DONE
 
-use promo - STARTED
+use promo - DONE
 
 unlimited promo - DONE
 

@@ -221,7 +221,7 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 		console.log(res.message);
 
 		if (res.status === "Success") {
-			toast.success("Transaction accepted");
+			toast.success(res.message);
 			setIsOrdersInfoOpen(false);
 			fetchTransactions();
 			return;
@@ -312,9 +312,14 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 								<TextArea type="text" value={selectedTransaction.status_notes} readOnly />
 								<ContactNumber type="text" maxlength="12" value={selectedTransaction.contact_number} readOnly />
 
-								<ButtonAccept onClick={() => acceptCancellationFunc()}>Cancel Order</ButtonAccept>
-								<ButtonAccept onClick={() => acceptReturnRefundFunc()}>Issue Refund</ButtonAccept>
-								<ButtonAccept onClick={() => acceptCancellationFunc()}>Modify Items</ButtonAccept>
+								{selectedTransaction.current_stage != 4 ? (
+									<ButtonAccept onClick={() => acceptCancellationFunc()}>Cancel Order </ButtonAccept>
+								) : (
+									<>
+										<ButtonAccept onClick={() => acceptReturnRefundFunc()}>Issue Refund</ButtonAccept>
+										<ButtonAccept onClick={() => acceptCancellationFunc()}>Modify Items</ButtonAccept>
+									</>
+								)}
 							</>
 						)}
 

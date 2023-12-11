@@ -49,6 +49,7 @@ let DashboardLayout = memo(({ children }) => {
 				pauseOnHover
 				theme="light"
 				className="toast-container"
+				// limit={1}
 			/>
 
 			<DashboardRight $isSidebarOpen={isSidebarOpen}>

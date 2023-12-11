@@ -270,25 +270,25 @@ const Dashboard = () => {
 		return ordersData;
 	};
 
-	const [ws, setWs] = useState(null);
+	// const [ws, setWs] = useState(null);
 
-	useEffect(() => {
-		const webSocket = connectToWebSocket((message) => {
-			console.log("Real-time message received:", message);
-			// Process the message here (e.g., update state or UI)
+	// useEffect(() => {
+	// 	const webSocket = connectToWebSocket((message) => {
+	// 		console.log("Real-time message received:", message);
+	// 		// Process the message here (e.g., update state or UI)
 
-			fetchHomeData();
-			toast.success("New order received!");
-		});
+	// 		fetchHomeData();
+	// 		toast.success("New order received!");
+	// 	});
 
-		setWs(webSocket);
+	// 	setWs(webSocket);
 
-		return () => {
-			if (webSocket && webSocket.readyState === WebSocket.OPEN) {
-				webSocket.close();
-			}
-		};
-	}, []);
+	// 	return () => {
+	// 		if (webSocket && webSocket.readyState === WebSocket.OPEN) {
+	// 			webSocket.close();
+	// 		}
+	// 	};
+	// }, []);
 
 	return (
 		<DashboardLayout>

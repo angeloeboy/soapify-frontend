@@ -42,6 +42,8 @@ const EditPromo = ({ setIsEditPopUpOpen, getPromotionsFunc, selectedPromo }) => 
 	const [chosen_products, setchosen_products] = useState([]);
 	const [product, setProduct] = useState(null);
 	const [isloading, setIsLoading] = useState(false);
+	const [isUnli, setIsUnli] = useState(false);
+
 	useEffect(() => {
 		fetchProducts();
 	}, []);
@@ -138,7 +140,7 @@ const EditPromo = ({ setIsEditPopUpOpen, getPromotionsFunc, selectedPromo }) => 
 		<PopupOverlay>
 			<PopupContent>
 				<form onSubmit={(e) => addPromoFunc(e)}>
-					<HeaderTitle>Add Promotion</HeaderTitle>
+					<HeaderTitle>Edit Promotion</HeaderTitle>
 					<FieldContainer>
 						<LabelContainer first>
 							<Label>General Information</Label>
@@ -162,8 +164,34 @@ const EditPromo = ({ setIsEditPopUpOpen, getPromotionsFunc, selectedPromo }) => 
 						</div>
 
 						<div>
-							<FieldTitleLabel>Max Use</FieldTitleLabel>
-							<InputHolder type="number" onChange={(e) => setPromo({ ...promo, promo_code_max_use: e.target.value })} value={promo.promo_code_max_use} />
+							<FieldTitleLabel>Unlimited Use?</FieldTitleLabel>
+
+							<Select
+								value={isUnli}
+								onChange={(e) => {
+									if (e.target.value == "true") {
+										setPromo({ ...promo, promo_code_max_use: null });
+										setIsUnli(true);
+									} else {
+										setIsUnli(false);
+										setPromo({ ...promo, promo_code_max_use: 1 });
+									}
+								}}
+							>
+								<Option value={true} key={1}>
+									Yes
+								</Option>
+								<Option value={false} key={2}>
+									No
+								</Option>
+							</Select>
+							{!isUnli && (
+								<>
+									<FieldTitleLabel>Max Use</FieldTitleLabel>
+
+									<InputHolder type="number" onChange={(e) => setPromo({ ...promo, promo_code_max_use: e.target.value })} value={promo.promo_code_max_use} />
+								</>
+							)}
 						</div>
 
 						<div>
@@ -172,7 +200,7 @@ const EditPromo = ({ setIsEditPopUpOpen, getPromotionsFunc, selectedPromo }) => 
 								type="date"
 								placeholder="Enter end date"
 								onChange={(e) => setPromo({ ...promo, promo_code_expiry: e.target.value })}
-								value={promo.promo_code_expiry}
+								value={promo.promo_code_expiry?.split(" ")[0]}
 							/>
 						</div>
 

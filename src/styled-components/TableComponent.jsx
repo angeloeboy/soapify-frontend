@@ -7,11 +7,11 @@ export const TableContainer = styled.div`
 `;
 
 export const Table = styled.table`
-	width: 100%;
+	min-width: 100%;
 	border: none;
 	border-collapse: collapse;
-	min-width: 1300px; // Adjust as needed
-	max-width: 100%; // Ensures table doesn't exceed the container width
+	/* min-width: 1300px; // Adjust as needed */
+	/* max-width: 100%; // Ensures table doesn't exceed the container width */
 	margin-top: 32px;
 
 	@media (min-width: 1024px) {
@@ -41,7 +41,7 @@ export const TableData = styled.td`
 	border-bottom: 1px solid #dfdfdf;
 	position: relative;
 	padding-left: ${(props) => (props.bold ? "24px" : "0px")};
-
+	min-width: 130px;
 	${(props) =>
 		props.$withImage &&
 		`

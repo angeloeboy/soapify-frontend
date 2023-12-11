@@ -14,7 +14,7 @@ import {
 	OrdersWrapper,
 } from "@/styled-components/ItemActionModal";
 import { CloseButton } from "../styled-components/PopUp";
-import { requestForCancelTransaction, requestOrderReturnRefund, setTransactionStatus } from "@/api/transaction";
+import { reportOrder, requestForCancelTransaction, requestOrderReturnRefund, setTransactionStatus } from "@/api/transaction";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 import Image from "next/image";
@@ -205,6 +205,23 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 		toast.error(res.errors[0].message);
 	};
 
+	const reportOrderIssue = async () => {
+		if (notes == "") {
+			toast.error("Please enter a reason for cancellation");
+			return;
+		}
+		const res = await reportOrder(selectedTransaction.transaction_id, notes, contact);
+
+		if (res.status === "Success") {
+			toast.success("Report sent. A representative will contact you shortly via the contact number you provided.");
+			setShowOrderInfo(false);
+			getTransactions();
+			return;
+		}
+
+		toast.error(res.errors[0].message);
+	};
+
 	return (
 		<PopupOverlay>
 			<PopupContent>
@@ -270,10 +287,11 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 					{selectedTransaction.status !== "CANCELLED" &&
 						selectedTransaction.status !== "REFUNDED" &&
 						selectedTransaction.status !== "AWAITING PAYMENT" &&
-						selectedTransaction.status !== "RELEASED" && (
+						selectedTransaction.status !== "RELEASED" &&
+						selectedTransaction.current_stage != 4 && (
 							<>
 								<LabelContainer>
-									<Label>Action</Label>
+									<Label>Action {selectedTransaction.current_stage}</Label>
 								</LabelContainer>
 								<OrdersWrapper>
 									<TextArea type="text" value={notes} onChange={(e) => setNotes(e.target.value)} />
@@ -325,7 +343,7 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 									required
 								/>
 
-								<ButtonReport onClick={(e) => requestForReturnRefundFunc(e)}>Report Issue</ButtonReport>
+								<ButtonReport onClick={(e) => reportOrderIssue(e)}>Report Issue</ButtonReport>
 
 								<p>
 									Important Notice: We understand that plans can change, and you may need to cancel an order occasionally. However, to maintain the efficiency

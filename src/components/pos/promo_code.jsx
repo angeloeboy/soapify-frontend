@@ -48,9 +48,9 @@ const PromoCode = () => {
 		}
 
 		const res = await validatePromo(promoCode, cart);
-		if (res.isValid) {
-			console.log(res);
+		console.log(res);
 
+		if (res.isValid) {
 			setTransaction((prev) => ({ ...prev, promo_code: promoCode }));
 			setPromoCodeResponse(res);
 			toast.success("Promo code applied!");

@@ -23,11 +23,13 @@ import Pagination from "@/components/misc/pagination";
 import DeleteModal from "@/components/misc/delete";
 import { toast } from "react-toastify";
 
-const Categories = () => {
+const Categories = ({ hasAddPermission, hasEditPermission, hasDeletePermission }) => {
 	const [categories, setCategories] = useState([]);
 	const [categoriesDisplay, setCategoriesDisplay] = useState([]);
 	const [categoriesLoading, setCategoriesLoading] = useState(true);
 	const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false);
+	const [selectedCategory, setSelectedCategory] = useState(null);
+
 	const [isEditCategoryOpen, setEditCategoryOpen] = useState(false);
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
 	const [currentPage, setCurrentPage] = useState(1);
@@ -82,14 +84,18 @@ const Categories = () => {
 	};
 
 	const [selectedProductId, setSelectedProductId] = useState(null);
-	const [selectedCategory, setSelectedCategory] = useState(null);
 
 	return (
 		<DashboardLayout>
 			<PageTitle title="Category List" />
 
 			<StyledPanel>
-				<CategoriesSearchBar setIsAddPopUpOpen={setIsAddPopUpOpen} setCategoriesDisplay={setCategoriesDisplay} categories={categories} />
+				<CategoriesSearchBar
+					setIsAddPopUpOpen={setIsAddPopUpOpen}
+					setCategoriesDisplay={setCategoriesDisplay}
+					categories={categories}
+					hasAddPermission={hasAddPermission}
+				/>
 				<TableContainer>
 					<Table id="categories-table">
 						<tbody>
@@ -134,24 +140,30 @@ const Categories = () => {
 
 											{activeActionContainer === index && (
 												<ActionContainer onClick={() => setActiveActionContainer(-1)}>
-													<p
-														onClick={() => {
-															setSelectedCategory();
-															openEditPopUp(selectedCategory);
-														}}
-													>
-														<FontAwesomeIcon icon={faPen} />
-														Edit
-													</p>
-													<p
-														onClick={() => {
-															setShowDeactivate(true);
-															setClickedName(category.name);
-															setSelectedCategoriesId(category.category_id);
-														}}
-													>
-														<FontAwesomeIcon icon={faTrash} /> Delete
-													</p>
+													{hasEditPermission && (
+														<p
+															onClick={() => {
+																setSelectedCategory(category);
+																openEditPopUp(true);
+															}}
+														>
+															<FontAwesomeIcon icon={faPen} />
+															Edit
+														</p>
+													)}
+
+													{hasDeletePermission && (
+														<p
+															onClick={() => {
+																//GAWIN MO TO
+																setShowDeactivate(true);
+																setClickedName(category.name);
+																setSelectedCategoriesId(category.category_id);
+															}}
+														>
+															<FontAwesomeIcon icon={faTrash} /> Delete
+														</p>
+													)}
 												</ActionContainer>
 											)}
 										</TableData>
@@ -174,7 +186,14 @@ const Categories = () => {
 				/>
 			</StyledPanel>
 			{isAddPopUpOpen && <AddCategories setIsAddPopUpOpen={setIsAddPopUpOpen} fetchCategories={fetchCategories} />}
-			{isEditCategoryOpen && <EditCategory onClose={closeEditPopUp} setEditCategoryOpen={setEditCategoryOpen} />}
+			{isEditCategoryOpen && (
+				<EditCategory
+					onClose={closeEditPopUp}
+					setEditCategoryOpen={setEditCategoryOpen}
+					selectedCategory={selectedCategory}
+					fetchCategories={fetchCategories}
+				/>
+			)}
 
 			{showDeactivate && <DeleteModal type="Category" text={clickedName} close={setShowDeactivate} confirm={() => deleteCategoryFunc(selectedCategoriesId)} />}
 		</DashboardLayout>
@@ -182,3 +201,26 @@ const Categories = () => {
 };
 
 export default Categories;
+
+import cookie, { parse } from "cookie";
+export async function getServerSideProps(context) {
+	const { req } = context;
+	const parsedCookies = cookie.parse(req.headers.cookie || "").permissions;
+
+	if (!parsedCookies.includes("View Categories:categories")) {
+		return {
+			redirect: {
+				destination: "/",
+				permanent: false,
+			},
+		};
+	}
+
+	return {
+		props: {
+			hasAddPermission: parsedCookies.includes("Add Categories:categories"),
+			hasEditPermission: parsedCookies.includes("Edit Categories:categories"),
+			hasDeletePermission: parsedCookies.includes("Delete Categories:categories"),
+		}, // will be passed to the page component as props
+	};
+}

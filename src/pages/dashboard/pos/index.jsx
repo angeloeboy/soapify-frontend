@@ -130,7 +130,9 @@ const Pos = () => {
 		// console.log("orig cart: ", cart);
 		setTransaction((prev) => ({
 			...prev,
-			total_amount: cart.reduce((acc, item) => acc + item.product_price * item.quantity, 0) - (promoCodeResponse?.totalDiscountAmount * 100 || 0),
+			total_amount:
+				cart.reduce((acc, item) => acc + item.product_price * item.quantity, 0) -
+				((promoCodeResponse.discountType == "FIXED" && promoCodeResponse?.totalDiscountAmount * 100) || 0),
 			items: cart,
 		}));
 	}, [cart]);

@@ -387,14 +387,14 @@ const Cart = ({ setActiveAction }) => {
 				<p>Total</p>
 				<p>{total}</p>
 			</Total>
-			{transaction.promo_codeApplied && (
+			{promoCodeResponse.discountType == "FIXED" && transaction.promo_codeApplied && (
 				<PromoCodeDiscount>
 					<p>Discount</p>
 					<p> - {promoCodeResponse.totalDiscountAmount} PHP </p>
 				</PromoCodeDiscount>
 			)}
 
-			{transaction.promo_codeApplied && (
+			{promoCodeResponse.discountType == "FIXED" && transaction.promo_codeApplied && (
 				<PromoCodeDiscount>
 					<p>Total</p>
 					{transaction.promo_codeApplied && <p>{Number(transaction.total_amount / 100).toFixed(2)}</p>}

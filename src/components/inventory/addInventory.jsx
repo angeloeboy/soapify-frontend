@@ -125,7 +125,7 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId, openModa
 				setInventory((inv) => ({ ...inv, area_id: 0 }));
 			}
 		}
-	}, [inventory.warehouse_id, warehouses]);
+	}, [inventory.warehouse_id, warehouses, suppliers]);
 
 	useEffect(() => {
 		if (warehouses.length > 0) {

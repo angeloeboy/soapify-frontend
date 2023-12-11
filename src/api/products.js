@@ -216,3 +216,21 @@ export const deleteCategory = async (category_id) => {
 		console.log(error);
 	}
 };
+
+export const editCategory = async (category, category_id) => {
+	try {
+		const response = await fetch(`/api/product/category/edit/${category_id}`, {
+			method: "PUT",
+			body: JSON.stringify(category),
+			headers: {
+				"Content-Type": "application/json",
+			},
+			credentials: "include",
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};

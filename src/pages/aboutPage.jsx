@@ -1,7 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import TopBar from '@/components/misc/topbar';
-
 import PageTitle from '@/components/misc/pageTitle';
 
 
@@ -109,7 +107,7 @@ const AboutPage = () => {
   return (
     
     <PageContainer>
-      <TopBar pageName="About Us"  />
+      
         <PageTitle title=" About Us"  />
       <AboutContainer>
         <LeftColumn>

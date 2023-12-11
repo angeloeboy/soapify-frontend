@@ -4,28 +4,28 @@ import { Line } from "react-chartjs-2";
 import { getProductStats } from "@/api/home"; // Adjust the import path
 import { getProducts } from "@/api/products";
 const LineGraphContainer = styled.div`
-	border-radius: 8px;
-	border: 1px solid #dfdfdf;
-	background: #fff;
-	padding: 20px;
-	width: 50%;
-	margin-left: 25%;
+ border-radius: 8px;
+  border: 1px solid #dfdfdf;
+  background: #fff;
+  padding: 20px;
+  width: 48%; /* Adjust width as per your layout */
+  height: 600px;
+  margin: 0 auto; /* Center the container horizontally */
 
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start; /* Adjust alignment to top left */
+  .title {
+    color: #000;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-align: center; /* Center the title */
+  }
 
-	.title {
-		color: #000;
-		font-size: 16px;
-		font-weight: 700;
-		margin-bottom: 10px; /* Add some margin between title and totalSales */
-	}
+  .totalSales {
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center; /* Center the totalSales */
+  }
 
-	.totalSales {
-		font-size: 14px;
-		font-weight: bold;
-	}
 
 	.selection-container {
 		display: flex;
@@ -63,8 +63,8 @@ const ProductPerformance = () => {
 	const [productsList, setProductsList] = useState([]); // List of products
 	const [productStats, setProductStats] = useState([]); // Product stats
 
-	const [startDate, setStartDate] = useState(''); // State for start date
- 	const [endDate, setEndDate] = useState(''); // State for end date
+	const [startDate, setStartDate] = useState('2023-01-01');  
+	const [endDate, setEndDate] = useState('2023-12-31'); // State for end date
 
 	const [totalUnitsSold, setTotalUnitsSold] = useState(0);
 
@@ -255,26 +255,6 @@ const ProductPerformance = () => {
 					</select>
 				</div>
 				<div className="selection">
-					<label htmlFor="year">Select Year: </label>
-					<select id="year" value={selectedYear} onChange={(e) => setSelectedYear(parseInt(e.target.value, 10))}>
-						{selectableYears.map((year) => (
-							<option key={year} value={year}>
-								{year}
-							</option>
-						))}
-					</select>
-				</div>
-			</div>
-						<div className="chart-container">
-							<Line data={chartData} options={chartOptions} />
-						</div>
-						<p className="summary" style={{ fontSize: "14px", fontWeight: "bold" }}>
-							Most Sold Month: {calculateMostSoldMonth()}
-						</p>
-						<p className="summary" style={{ fontSize: "14px", fontWeight: "bold" }}>
-							Total Percentage Change: {calculatePercentageChange().toFixed(2)}%
-						</p>
-						<div className="selection">
 					<label htmlFor="start-date">Start Date:</label>
 					<input
 					type="date"
@@ -292,6 +272,17 @@ const ProductPerformance = () => {
 					onChange={handleEndDateChange}
 					/>
 				</div>
+			</div>
+						<div className="chart-container">
+							<Line data={chartData} options={chartOptions} />
+						</div>
+						<p className="summary" style={{ fontSize: "14px", fontWeight: "bold" }}>
+							Most Sold Month: {calculateMostSoldMonth()}
+						</p>
+						<p className="summary" style={{ fontSize: "14px", fontWeight: "bold" }}>
+							Total Percentage Change: {calculatePercentageChange().toFixed(2)}%
+						</p>
+					 
 
 
 		</LineGraphContainer>

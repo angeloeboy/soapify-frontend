@@ -1,16 +1,23 @@
 import React from 'react';
 import styled from 'styled-components';
-import DashboardLayout from '@/components/misc/dashboardLayout';
+import TopBar from '@/components/misc/topbar';
+
 import PageTitle from '@/components/misc/pageTitle';
 
 
+const PageContainer = styled.div`
+width: 100%;
+padding-left: 56px;
+`;
+
+
 const AboutContainer = styled.div`
-  padding: 20px;
+  padding: 55px;
   display: flex;
   flex-wrap: wrap;
   margin-bottom: 10px;
   box-sizing: border-box;
-  
+ 
 `;
 
 const LeftColumn = styled.div`
@@ -31,7 +38,7 @@ const MissionCard = styled.div`
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
   height: 100%;
-  width: 850px;
+  width: 99%;
   margin-bottom: 20px;
  
   transition: transform 0.2s ease-in-out;
@@ -93,9 +100,16 @@ const ContactCard = styled.div`
     transform: scale(1.05);
   }
 `;
+
+
+
+
+
 const AboutPage = () => {
   return (
-    <DashboardLayout>
+    
+    <PageContainer>
+      <TopBar pageName="About Us"  />
         <PageTitle title=" About Us"  />
       <AboutContainer>
         <LeftColumn>
@@ -103,24 +117,21 @@ const AboutPage = () => {
           <h2>Our Mission</h2>
           <p>
             <br></br>
-            At smsabon.com, our mission is to provide customers with a hassle-free and enjoyable shopping experience, offering a diverse selection of high-quality soap and cleaning products sourced from reputable distributors. Among them is our esteemed partner, SM Sabon.
+            At smsabon.com, our mission is to provide customers with a hassle-free and enjoyable shopping experience, offering a diverse selection of high-quality soap and cleaning products from reputable brands. 
           </p>
         </MissionCard>
         </LeftColumn>
         <RightColumn>
         <TeamCard>
-          <h2>Meet the Team</h2>
-          <p>
-            Welcome to smsabon.com, where innovation meets efficiency. Meet the minds behind the scenes—four dedicated individuals committed to revolutionizing the retail experience for SM Sabon:
-          </p>
-          <ul style={{ paddingLeft: '40px' }}>
-             
-              <li>Angelo R. Zuñiga</li>
-              <li>Rameses A. Tan</li>
-              <li>Jan Nicolas B. Ortega</li>
-              <li>Marc Dranreb A. Villaflores</li>
-            </ul>
-        </TeamCard>
+  <h2>Meet the Team</h2>
+  <p>
+    Welcome to smsabon.com, where innovation meets efficiency. Meet the visionary minds behind SM Sabon—dedicated individuals who have entrusted the development and management of the website to our skilled team.
+  </p>
+  <ul style={{ paddingLeft: '40px' }}>
+    <li>Key Contributor - Rommel V. Tan</li>
+    <li>Finance Manager - Maan B. Tan</li>
+  </ul>
+</TeamCard>
         </RightColumn>
         
         
@@ -161,12 +172,14 @@ const AboutPage = () => {
           <p>
             Have questions or feedback? Reach out to us! We value your input and are here to assist you. Connect with us through email or phone.
           </p>
-          <p>Email: info@smsabon.com</p>
-          <p>Phone: (123) 456-7890</p>
+          <br></br>
+          <p><strong>Email: maantan.sammig@gmail.com</strong></p>
+          <p><strong>Phone: 0932 103 0320</strong></p>
         </ContactCard>
         </RightColumn>
       </AboutContainer>
-    </DashboardLayout>
+      
+      </PageContainer>
   );
 };
 

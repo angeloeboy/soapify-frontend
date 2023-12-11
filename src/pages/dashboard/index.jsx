@@ -16,6 +16,7 @@ import AnnualSalesGraph from "@/components/home/annualSalesGraph";
 import ProductSalesGraph from "@/components/home/productSalesGraph";
 import { toast } from "react-toastify";
 import styled from "styled-components";
+
 import { usePermissions } from "@/components/context/PermissionsContext";
 
 const DashboardGrid = styled.div`
@@ -23,6 +24,10 @@ const DashboardGrid = styled.div`
 	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 	gap: 20px;
 	margin: 20px;
+`;
+const CenteredProductPerformance = styled.div`
+  display: flex;
+  justify-content: center;
 `;
 
 const DashboardCard = styled.div`
@@ -69,6 +74,12 @@ const Button = styled.button`
 		background-color: #2980b9;
 	}
 `;
+const CenteredGraphContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%; /* Adjust as needed */
+`;
 
 const Dashboard = () => {
 	const [data, setData] = useState({});
@@ -82,6 +93,12 @@ const Dashboard = () => {
 	const [TransactionCount, setTransactionCount] = useState(0);
 	const [paymentCount, setPaymentMethodCount] = useState(0);
 	const [subcategoriesCount, setsubcategoriesCount] = useState(0);
+	const [selectedReport, setSelectedReport] = useState("productPerformance");
+
+ 	const [startDate, setStartDate] = useState("");
+	const [endDate, setEndDate] = useState("");
+
+	const [showGraph, setShowGraph] = useState(false);
 
 	const { fetchPermissions } = usePermissions();
 
@@ -100,6 +117,20 @@ const Dashboard = () => {
 	}, []);
 
 	useEffect(() => {
+		if (
+		  selectedReport === "annualSalesGraph" ||
+		  ((selectedReport === "productPerformance" || selectedReport === "productSalesGraph") &&
+		  startDate &&
+		  endDate)
+		) {
+		  setShowGraph(true);
+		} else {
+		  setShowGraph(false);
+		}
+	  }, [selectedReport, startDate, endDate]);
+	
+
+	useEffect(() => {
 		setSalesData(getSalesData());
 		setOrdersData(getOrdersData());
 	}, [data]);
@@ -110,6 +141,16 @@ const Dashboard = () => {
 		setData(homeData.data);
 	};
 
+	
+	const handleReportChange = (event) => {
+		setSelectedReport(event.target.value);
+	  };
+	  const handleDateRangeSelection = () => {
+		// Perform actions based on selectedReport, startDate, and endDate
+		// Example: Fetch data for the selected report with the selected date range
+		// Once data is fetched, set showGraph to true to display the graph
+		setShowGraph(true);
+	  };
 	const fetchProductCount = async () => {
 		try {
 			const productsData = await getProducts();
@@ -292,15 +333,43 @@ const Dashboard = () => {
 
 	return (
 		<DashboardLayout>
+
+			
 			<div style={{ display: "flex" }}>
-				<Widget title="Sales Overview" width="50%" data={salesData} />
+				<Widget title="Reports Overview" width="50%" data={salesData} />
 				<Widget title="Orders Overview" width="50%" data={ordersData} />
 			</div>
 			<div style={{ display: "flex" }}>
-				{data.annual_sales_stats && <AnnualSalesGraph annualSalesData={data.annual_sales_stats} />}
-				<ProductSalesGraph />
+			 
+			 </div>
+			 <div style={{ display: "flex", alignItems: "center" }}>
+			<Title style={{ marginRight: "10px" }}>Select a Report:</Title>
+			<select value={selectedReport} onChange={handleReportChange}>
+					<option value="annualSalesGraph">Annual Sales Graph</option>
+					<option value="productSalesGraph">Product Sales Graph</option>
+					<option value="productPerformance">Product Performance</option>
+			</select>
 			</div>
-			<ProductPerformance />
+
+
+			{/* Display graphs based on report selection */}
+			{selectedReport === "annualSalesGraph" && data && data.annual_sales_stats && (
+				<CenteredGraphContainer>
+				<AnnualSalesGraph annualSalesData={data.annual_sales_stats} />
+				</CenteredGraphContainer>
+			)}
+
+			{selectedReport === "productSalesGraph" && (
+				<CenteredGraphContainer>
+				<ProductSalesGraph />
+				</CenteredGraphContainer>
+			)}
+
+			{selectedReport === "productPerformance" && (
+				<CenteredProductPerformance>
+				<ProductPerformance />
+				</CenteredProductPerformance>
+			)}
 			<DashboardGrid>
 				<DashboardCard>
 					<Title>Total Products </Title>

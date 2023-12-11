@@ -62,6 +62,10 @@ const ProductPerformance = () => {
 	const selectableYears = [selectedYear];
 	const [productsList, setProductsList] = useState([]); // List of products
 	const [productStats, setProductStats] = useState([]); // Product stats
+
+	const [startDate, setStartDate] = useState(''); // State for start date
+ 	const [endDate, setEndDate] = useState(''); // State for end date
+
 	const [totalUnitsSold, setTotalUnitsSold] = useState(0);
 
 	const calculatePercentageChange = () => {
@@ -87,6 +91,13 @@ const ProductPerformance = () => {
 
 		return totalPercentageChange;
 	};
+
+	const handleStartDateChange = (e) => {
+		setStartDate(e.target.value);
+	  };
+	  const handleEndDateChange = (e) => {
+		setEndDate(e.target.value);
+	  };
 
 	const calculateTotalUnitsSold = async () => {
 		let totalSold = 0;
@@ -118,7 +129,9 @@ const ProductPerformance = () => {
 	useEffect(() => {
 		fetchData();
 		fetchProducts();
-	}, [selectedProduct, selectedYear]);
+	}, [selectedProduct, selectedYear, startDate, endDate]);
+
+	 
 
 	useEffect(() => {
 		calculateMostSoldMonth();
@@ -147,38 +160,41 @@ const ProductPerformance = () => {
 	};
 
 	const fetchData = async () => {
-		const productStats = await getProductStats(selectedProduct, selectedYear);
-		setProductStats(productStats.transactions);
-		// console.log("product stats: ", productStats);
-		// console.log("Product ID:", selectedProduct);
-		// console.log("Product Transactions", productStats.transactions);
-		console.log(productStats.transactions);
+		const productStats = await getProductStats(selectedProduct, selectedYear, startDate, endDate);
+	
 		if (!productStats.transactions || Object.keys(productStats.transactions).length === 0) {
-			return; // Return to prevent further chart updates
-		}
-
-		if (productStats.transactions) {
-			const labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-			const initialData = Array(labels.length).fill(0);
-
-			const data = productStats.transactions ? Object.values(productStats.transactions) : initialData;
 			setChartData({
-				labels,
-				datasets: [
-					{
-						label: "Units Sold",
-						data,
-						borderColor: "rgb(75, 192, 192)",
-						fill: false,
-					},
-				],
+				labels: [],
+				datasets: [],
 			});
-		} else {
-			// Handle the case where productStats.transactions is undefined
 			console.log("No data available");
+			return;
 		}
+	
+		const labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+		const initialData = Array(labels.length).fill(0);
+		const data = productStats.transactions ? Object.values(productStats.transactions) : initialData;
+	
+		// Create Date objects from the start and end date strings
+		const start = new Date(startDate);
+		const end = new Date(endDate);
+	
+		// Filter data based on the selected date range
+		const filteredData = data.slice(start.getMonth(), end.getMonth() + 1);
+	
+		setChartData({
+			labels: labels.slice(start.getMonth(), end.getMonth() + 1),
+			datasets: [
+				{
+					label: "Units Sold",
+					data: filteredData,
+					borderColor: "rgb(75, 192, 192)",
+					fill: false,
+				},
+			],
+		});
 	};
-
+	
 	const chartOptions = {
 		maintainAspectRatio: true,
 		responsive: true,
@@ -249,15 +265,35 @@ const ProductPerformance = () => {
 					</select>
 				</div>
 			</div>
-			<div className="chart-container">
-				<Line data={chartData} options={chartOptions} />
-			</div>
-			<p className="summary" style={{ fontSize: "14px", fontWeight: "bold" }}>
-				Most Sold Month: {calculateMostSoldMonth()}
-			</p>
-			<p className="summary" style={{ fontSize: "14px", fontWeight: "bold" }}>
-				Total Percentage Change: {calculatePercentageChange().toFixed(2)}%
-			</p>
+						<div className="chart-container">
+							<Line data={chartData} options={chartOptions} />
+						</div>
+						<p className="summary" style={{ fontSize: "14px", fontWeight: "bold" }}>
+							Most Sold Month: {calculateMostSoldMonth()}
+						</p>
+						<p className="summary" style={{ fontSize: "14px", fontWeight: "bold" }}>
+							Total Percentage Change: {calculatePercentageChange().toFixed(2)}%
+						</p>
+						<div className="selection">
+					<label htmlFor="start-date">Start Date:</label>
+					<input
+					type="date"
+					id="start-date"
+					value={startDate}
+					onChange={handleStartDateChange}
+					/>
+				</div>
+				<div className="selection">
+					<label htmlFor="end-date">End Date:</label>
+					<input
+					type="date"
+					id="end-date"
+					value={endDate}
+					onChange={handleEndDateChange}
+					/>
+				</div>
+
+
 		</LineGraphContainer>
 	);
 };

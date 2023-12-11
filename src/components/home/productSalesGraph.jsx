@@ -52,16 +52,26 @@ const ProductSalesGraph = () => {
 	const [monthData, setMonthData] = useState(null);
 	const [selectedYear, setSelectedYear] = useState(new Date().getFullYear()); // Initial year
 	const [selectedProductId, setSelectedProductId] = useState(null); // New state for selected product
+	const [startDate, setStartDate] = useState(""); // State for start date
+	const [endDate, setEndDate] = useState("");
 	const selectableYears = [selectedYear];
 
 	useEffect(() => {
 		fetchData();
 		fetchProducts();
-	}, [selectedProductId, selectedYear]);
+	}, [selectedProductId, selectedYear, startDate, endDate]);
 
 	useEffect(() => {
 		generateChartData();
-	}, [productData, monthData, selectedProductId]);
+	}, [productData, monthData, selectedProductId, startDate, endDate]);
+
+	const handleStartDateChange = (e) => {
+		setStartDate(e.target.value);
+	};
+
+	const handleEndDateChange = (e) => {
+		setEndDate(e.target.value);
+	};
 
 	//get products list from backend
 
@@ -127,60 +137,73 @@ const ProductSalesGraph = () => {
 	};
 
 	const generateChartData = async () => {
-		if (!productData || !monthData || !selectedProductId) {
+		if (!productData || !monthData || !selectedProductId || !startDate || !endDate) {
 			return null;
 		}
-		// console.log("productData:", productData);
-		// console.log(typeof selectedProductId);
+
 		const selectedProduct = productData.find((product) => product.product_id === selectedProductId);
-		// console.log("selectedProduct:", selectedProduct);
 		if (!selectedProduct) {
 			console.error(`Product with product_id ${selectedProductId} not found`);
 			return null;
 		}
 
 		const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEPT", "OCT", "NOV", "DEC"];
-		// console.log("months:", months);
 		const prices = Array(months.length).fill(selectedProduct.product_price);
-		const transactions = months.map((month, index) => monthData.transactions[index + 1] || 0);
 
-		const salesData = prices.map((price, index) => {
-			const transaction = transactions[index];
-			const calculatedSale = (price / 100) * transaction;
-			// console.log(`Month: ${months[index]}, Price: ${price}, Transactions: ${transaction}, Sales: ${calculatedSale}`);
-			return calculatedSale;
-		});
+		// Logic to filter data within the specified date range
+		// const filteredTransactions = Array.isArray(monthData.transactions)
+		// 	? monthData.transactions.filter((transaction) => {
+		// 			const transactionDate = new Date(transaction.date); // Replace 'date' with your actual date field
+		// 			const startDateObj = new Date(startDate);
+		// 			const endDateObj = new Date(endDate);
 
-		// //get sales data from transaction_with_items
+		// 			return transactionDate >= startDateObj && transactionDate <= endDateObj;
+		// 	  })
+		// 	: [];
 
-		const transactionS = await months.map((month, index) => monthData.transactions_with_items[index + 1] || 0);
-		console.log(transactionS);
+		// console.log("Filtered transactions", filteredTransactions);
 
-		const dataSales = transactionS.map((transaction, index) => {
-			if (!Array.isArray(transaction) || transaction.length === 0) {
-				return 0;
-			}
+		// const salesData = months.map((month) => {
+		// 	const monthTransactions = filteredTransactions.filter((transaction) => transaction.month === month);
+		// 	const totalSalesForMonth = monthTransactions.reduce((total, transaction) => {
+		// 		// Calculate total sales for the month based on your transaction structure
+		// 		return total + transaction.amount; // Replace 'amount' with your transaction amount field
+		// 	}, 0);
+		// 	return totalSalesForMonth;
+		// });
 
-			let total = 0;
-			transaction.forEach((item, itemIndex) => {
-				if (!item || typeof item.quantity !== "number" || typeof item.price !== "number") {
-					return;
-				}
+		// const salesData = months.map((month, i) => {
+		// 	let index = i + 1;
 
-				total += item.quantity * item.price;
+		// 	const monthTransaction = monthData.transaction_with_items[index];
+
+		// 	console.log("monthTransaction", monthTransaction);
+		// });
+
+		//make transaction_with_items an array
+
+		// const resultArray = [].concat(...Object.values(monthData.transactions_with_items));
+		const resultArray = Object.entries(monthData.transactions_with_items).map(([key, value]) => value);
+
+		const salesData = resultArray.map((monthTransaction) => {
+			let totalSalesForMonth = 0;
+			monthTransaction.forEach((item) => {
+				totalSalesForMonth += (item.price / 100) * item.quantity;
 			});
-
-			return total / 100;
+			return totalSalesForMonth;
 		});
 
-		console.log("transaction", dataSales);
+		console.log("salesData", salesData);
+
+		const start = new Date(startDate);
+		const end = new Date(endDate);
 
 		const chartData = {
-			labels: months,
+			labels: months.slice(start.getMonth(), end.getMonth() + 1),
 			datasets: [
 				{
 					label: "Sales",
-					data: dataSales,
+					data: salesData.slice(start.getMonth(), end.getMonth() + 1),
 					backgroundColor: "rgba(255, 99, 132, 0.2)",
 					borderColor: "rgba(255, 99, 132, 1)",
 					borderWidth: 1,
@@ -222,18 +245,15 @@ const ProductSalesGraph = () => {
 					</select>
 				</div>
 				<div className="selection">
-					<label htmlFor="year">Select Year: </label>
-					<select id="year" value={selectedYear} onChange={(e) => setSelectedYear(parseInt(e.target.value, 10))}>
-						{selectableYears.map((year) => (
-							<option key={year} value={year}>
-								{year}
-							</option>
-						))}
-					</select>
+					<label htmlFor="start-date">Start Date:</label>
+					<input type="date" id="start-date" value={startDate} onChange={handleStartDateChange} />
+				</div>
+				<div className="selection">
+					<label htmlFor="end-date">End Date:</label>
+					<input type="date" id="end-date" value={endDate} onChange={handleEndDateChange} />
 				</div>
 			</div>
 			<div className="chart-container">
-				{/* {productData && monthData &&  />} */}
 				<Bar data={chartData} options={options} />
 			</div>
 		</LineGraphContainer>

@@ -1,16 +1,23 @@
 import React from 'react';
 import styled from 'styled-components';
-import DashboardLayout from '@/components/misc/dashboardLayout';
+import TopBar from '@/components/misc/topbar';
+
 import PageTitle from '@/components/misc/pageTitle';
 
 
+const PageContainer = styled.div`
+width: 100%;
+padding-left: 56px;
+`;
+
+
 const AboutContainer = styled.div`
-  padding: 20px;
+  padding: 55px;
   display: flex;
   flex-wrap: wrap;
   margin-bottom: 10px;
   box-sizing: border-box;
-  
+ 
 `;
 
 const LeftColumn = styled.div`
@@ -31,7 +38,7 @@ const MissionCard = styled.div`
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
   height: 100%;
-  width: 850px;
+  width: 99%;
   margin-bottom: 20px;
  
   transition: transform 0.2s ease-in-out;
@@ -93,9 +100,16 @@ const ContactCard = styled.div`
     transform: scale(1.05);
   }
 `;
+
+
+
+
+
 const AboutPage = () => {
   return (
-    <DashboardLayout>
+    
+    <PageContainer>
+      <TopBar pageName="About Us"  />
         <PageTitle title=" About Us"  />
       <AboutContainer>
         <LeftColumn>
@@ -164,7 +178,8 @@ const AboutPage = () => {
         </ContactCard>
         </RightColumn>
       </AboutContainer>
-    </DashboardLayout>
+      
+      </PageContainer>
   );
 };
 

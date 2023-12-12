@@ -209,3 +209,36 @@ export const reportOrder = async (id, notes, contact) => {
 		console.log(error);
 	}
 };
+
+export const editTransaction = async (id, transaction) => {
+	try {
+		const response = await fetch(`/api/transactions/${id}`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+				"x-source-page": "/dashboard/pos",
+			},
+			body: JSON.stringify(transaction),
+			credentials: "include",
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {}
+};
+
+export const issueReturn = async (id, transaction) => {
+	try {
+		const response = await fetch(`/api/transactions/return/${id}`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(transaction),
+			credentials: "include",
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {}
+};

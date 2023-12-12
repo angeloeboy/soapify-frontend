@@ -55,11 +55,6 @@ export async function middleware(req) {
 
 				permissions = data.permissions;
 
-				// next_response.cookies.set("permissions", JSON.stringify(data.permissions), {
-				// 	httpOnly: false,
-				// 	path: "/",
-				// });
-
 				return next_response;
 			}
 		}
@@ -96,6 +91,30 @@ export async function middleware(req) {
 			});
 
 			return next_response;
+		}
+
+		// For dashboard route, if token is not valid, redirect to login
+		if (req.nextUrl.pathname.startsWith("/user")) {
+			const response = await fetch(auth_link + "/verify-token", {
+				headers: {
+					Cookie: `token=${token.value}`,
+				},
+			});
+
+			let data = await response.json();
+			console.log("Role", data?.user?.role_id);
+
+			if (!data) {
+				const url = req.nextUrl.clone();
+				url.pathname = "/";
+				return NextResponse.redirect(url);
+			}
+
+			if (data?.user?.role_id !== 2) {
+				const url = req.nextUrl.clone();
+				url.pathname = "/dashboard";
+				return NextResponse.redirect(url);
+			}
 		}
 
 		const next_response = NextResponse.next();

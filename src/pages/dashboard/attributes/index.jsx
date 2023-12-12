@@ -112,7 +112,6 @@ const PaymentTable = ({ hasAddPermission, hasEditPermission, hasDeletePermission
 							<TableRows $heading>
 								<TableHeadings>Attribute Name</TableHeadings>
 								<TableHeadings>Choices</TableHeadings>
-								<TableHeadings>Additional info?</TableHeadings>
 								<TableHeadings>Actions</TableHeadings>
 							</TableRows>
 
@@ -123,7 +122,6 @@ const PaymentTable = ({ hasAddPermission, hasEditPermission, hasDeletePermission
 											<TableData>{attribute.attribute_name}</TableData>
 											<TableData>{attribute.values.length}</TableData>
 
-											<TableData>{attribute.requires_additional_value ? "Yes" : "No"}</TableData>
 											<TableData>
 												<FontAwesomeIcon
 													className="ellipsis"

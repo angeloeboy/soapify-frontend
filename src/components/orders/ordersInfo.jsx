@@ -19,6 +19,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import styled from "styled-components";
 import Image from "next/image";
+import IssueReturn from "./issueReturnModal";
 
 const Product = styled.div`
 	/* display: flex; */
@@ -154,6 +155,8 @@ const BatchInfo = styled.div`
 `;
 
 const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransactions }) => {
+	const [isIssueReturnOpen, setIsIssueReturnOpen] = useState(false);
+
 	useEffect(() => {
 		console.log(selectedTransaction.items);
 	}, []);
@@ -233,7 +236,7 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 	return (
 		<PopupOverlay>
 			<PopupContent>
-				<HeaderTitle>Order {selectedTransaction.transaction_id} </HeaderTitle>
+				<HeaderTitle>Order {selectedTransaction.transaction_unique_id} </HeaderTitle>
 				<FieldContainer>
 					<LabelContainer first>
 						<Label>Items</Label>
@@ -318,6 +321,7 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 									<>
 										<ButtonAccept onClick={() => acceptReturnRefundFunc()}>Issue Refund</ButtonAccept>
 										<ButtonAccept onClick={() => acceptCancellationFunc()}>Modify Items</ButtonAccept>
+										<ButtonAccept onClick={() => setIsIssueReturnOpen(true)}>Issue Return</ButtonAccept>
 									</>
 								)}
 							</>
@@ -331,6 +335,10 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 					<CloseButton onClick={() => setIsOrdersInfoOpen(false)}>Close </CloseButton>
 				</ButtonsContainer>
 			</PopupContent>
+
+			{isIssueReturnOpen && (
+				<IssueReturn setIsIssueReturnOpen={setIsIssueReturnOpen} selectedTransaction={selectedTransaction} fetchTransactions={fetchTransactions} />
+			)}
 		</PopupOverlay>
 	);
 };

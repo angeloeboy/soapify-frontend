@@ -113,34 +113,7 @@ const AddAttribute = ({ setPopUpOpen, fetchAttributes }) => {
 							<FieldTitleLabel notFirst>Attribute Name</FieldTitleLabel>
 							<InputHolder type="text" onChange={(e) => setAttribute({ ...attribute, attribute_name: e.target.value })} value={attribute.attribute_name} />
 						</div>
-						{/* <div>
-              <FieldTitleLabel notFirst>
-                Requires Additional Value
-              </FieldTitleLabel>
-              <Select
-                value={attribute.requires_additional_value}
-                onChange={(e) => {
-                  // setAttribute({ ...attribute, requires_additional_value: e.target.value === "true" });
 
-                  if (e.target.value == "true") {
-                    setAttribute({
-                      ...attribute,
-                      requires_additional_value: e.target.value === "true",
-                      input_type: "number",
-                    });
-                  } else {
-                    setAttribute({
-                      ...attribute,
-                      requires_additional_value: e.target.value === "true",
-                      input_type: "none",
-                    });
-                  }
-                }}
-              >
-                <Option value="true">Yes</Option>
-                <Option value="false">No</Option>
-              </Select>
-            </div> */}
 						{attribute.requires_additional_value && (
 							<div>
 								<FieldTitleLabel notFirst>Additional Value Type</FieldTitleLabel>
@@ -157,7 +130,12 @@ const AddAttribute = ({ setPopUpOpen, fetchAttributes }) => {
 						</LabelContainer>
 						<div>
 							<FieldTitleLabel notFirst> Name</FieldTitleLabel>
-							<InputHolder type="text" onChange={(e) => setAttributeValue(e.target.value)} value={attributeValue} />
+							<InputHolder
+								type="text"
+								onChange={(e) => setAttributeValue(e.target.value)}
+								value={attributeValue}
+								placeholder="Type here a choice and click add button"
+							/>
 
 							<ButtonTwo type="button" onClick={() => addValue(attributeValue)}>
 								Add

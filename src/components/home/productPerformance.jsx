@@ -4,13 +4,14 @@ import { Line } from "react-chartjs-2";
 import { getProductStats } from "@/api/home"; // Adjust the import path
 import { getProducts } from "@/api/products";
 const LineGraphContainer = styled.div`
- border-radius: 8px;
+  border-radius: 8px;
   border: 1px solid #dfdfdf;
   background: #fff;
   padding: 20px;
-  width: 48%; /* Adjust width as per your layout */
-  height: 600px;
-  margin: 0 auto; /* Center the container horizontally */
+  width: calc(70% - 20px); /* Adjust width as per your layout */
+  height: 800px; /* Adjust height as needed */
+  margin: 10px; /* Adjust margin for spacing */
+
 
   .title {
     color: #000;

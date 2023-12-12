@@ -7,14 +7,15 @@ const LineGraphContainer = styled.div`
 	border: 1px solid #dfdfdf;
 	background: #fff;
 	padding: 20px;
-	width: calc(70% - 20px); /* Adjust width as per your layout */
-	height: 800px; /* Adjust height as needed */
+	width: 98%; /* Adjust width as per your layout */
+	height: 900px; /* Adjust height as needed */
 	margin: 10px; /* Adjust margin for spacing */
 	.title {
 		color: #000;
 		font-size: 20px;
 		font-weight: 700;
 		margin-bottom: 0px;
+		text-align: center;
 	}
 	.totalSales {
 		font-size: 16px;
@@ -48,6 +49,11 @@ const AnnualSalesGraph = ({ annualSalesData }) => {
 	};
 
 	const options = {
+		layout: {
+			padding: {
+			  bottom: 40, // Add space at the bottom
+			},
+		  },
 		scales: {
 			y: {
 				ticks: {

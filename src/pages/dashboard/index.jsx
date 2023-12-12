@@ -20,10 +20,16 @@ import styled from "styled-components";
 import { usePermissions } from "@/components/context/PermissionsContext";
 
 const DashboardGrid = styled.div`
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-	gap: 20px;
-	margin: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  margin: 20px;
+  display: grid;
+  grid-template-rows: auto; /* Set initial rows to auto */
+ 
+  @media screen and (max-width: 768px) {
+    grid-template-columns: 1fr; /* Change to a single column layout on smaller screens */
+  }
 `;
 const CenteredProductPerformance = styled.div`
   display: flex;
@@ -37,6 +43,9 @@ const DashboardCard = styled.div`
 	padding: 20px;
 	transition: transform 0.3s ease-in-out;
 
+	@media screen and (max-width: 768px) {
+    width: 100%; /* Adjust card width for smaller screens */
+	}
 	&:hover {
 		transform: translateY(-5px);
 		box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.15);
@@ -116,7 +125,7 @@ const Dashboard = () => {
 	const [TransactionCount, setTransactionCount] = useState(0);
 	const [paymentCount, setPaymentMethodCount] = useState(0);
 	const [subcategoriesCount, setsubcategoriesCount] = useState(0);
-	const [selectedReport, setSelectedReport] = useState("productPerformance");
+	const [selectedReport, setSelectedReport] = useState("productSalesGraph");
 
  	const [startDate, setStartDate] = useState("");
 	const [endDate, setEndDate] = useState("");

@@ -8,49 +8,78 @@ const LineGraphContainer = styled.div`
   border: 1px solid #dfdfdf;
   background: #fff;
   padding: 20px;
-  width: calc(70% - 20px); /* Adjust width as per your layout */
-  height: 800px; /* Adjust height as needed */
+  width: 98%; /* Adjust width as per your layout */
+  height: auto; /* Change the height to auto or adjust to a larger value */
   margin: 10px; /* Adjust margin for spacing */
+  
+.selection {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
 
+.selection label {
+  margin-right: 10px;
+  font-size: 14px;
+  font-weight: bold;
+}
 
-  .title {
-    color: #000;
-    font-size: 16px;
-    font-weight: 700;
-    margin-bottom: 10px;
-    text-align: center; /* Center the title */
-  }
+.selection select,
+.selection input[type="date"] {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
 
-  .totalSales {
-    font-size: 14px;
-    font-weight: bold;
-    text-align: center; /* Center the totalSales */
-  }
+.selection select {
+  flex: 1;
+  max-width: 200px; /* Adjust as needed */
+}
 
+.selection input[type="date"] {
+  width: 150px; /* Adjust as needed */
+}
 
+// ... (rest of your code)
+
+	.title {
+		color: #000;
+		font-size: 20px;
+		font-weight: 700;
+		margin-bottom: 0px;
+		text-align: center; /* Center the title */
+
+	}
+	.totalSales {
+		font-weight: bold;
+	}
+	.chart-container {
+		width: 100%;
+		margin-top: 10px; /* Add space between selections and the chart */
+	}
 	.selection-container {
+		font-weight: bold;
+		font-size: 16px;
 		display: flex;
 		flex-direction: row; /* Place select elements side by side */
 		align-items: center; /* Center selection elements horizontally */
 		margin-top: 10px; /* Add space between totalSales and selections */
 	}
-
 	.selection {
 		font-size: 15px;
 		display: inline-block;
 		margin-right: 10px;
 	}
 
-	.chart-container {
-		padding-left: 80px;
-		width: 100%;
-		margin-top: 10px; /* Add space between selections and the chart */
-	}
 
 	.summary {
 		font-size: 14px;
-		margin-top: 5px; /* Add space between the chart and the summary */
-	}
+		font-weight: bold;
+		margin-top: 5px;
+		color: #000; /* Ensure text color is visible against the background */
+		}
+
 `;
 
 const ProductPerformance = () => {
@@ -93,6 +122,22 @@ const ProductPerformance = () => {
 		return totalPercentageChange;
 	};
 
+	useEffect(() => {
+ 		fetchProducts();
+		fetchData();
+	}, [selectedProduct, selectedYear, startDate, endDate]);
+
+	 
+
+	useEffect(() => {
+		calculateMostSoldMonth();
+	}, [selectedYear]);
+
+	useEffect(() => {
+		calculatePercentageChange();
+	}, [selectedYear,startDate,endDate]);
+
+
 	const handleStartDateChange = (e) => {
 		setStartDate(e.target.value);
 	  };
@@ -127,21 +172,7 @@ const ProductPerformance = () => {
 		setSelectedYear(newYear); // Update selectedYear to the new year
 	};
 
-	useEffect(() => {
-		fetchData();
-		fetchProducts();
-	}, [selectedProduct, selectedYear, startDate, endDate]);
-
 	 
-
-	useEffect(() => {
-		calculateMostSoldMonth();
-	}, [selectedYear]);
-
-	useEffect(() => {
-		calculatePercentageChange();
-	}, [selectedYear]);
-
 	//get products list from backend
 	const fetchProducts = () => {
 		getProducts()
@@ -161,7 +192,7 @@ const ProductPerformance = () => {
 	};
 
 	const fetchData = async () => {
-		const productStats = await getProductStats(selectedProduct, selectedYear, startDate, endDate);
+		const productStats = await getProductStats(selectedProduct, startDate, endDate);
 	
 		if (!productStats.transactions || Object.keys(productStats.transactions).length === 0) {
 			setChartData({
@@ -188,7 +219,7 @@ const ProductPerformance = () => {
 			datasets: [
 				{
 					label: "Units Sold",
-					data: filteredData,
+					data: filteredData, 
 					borderColor: "rgb(75, 192, 192)",
 					fill: false,
 				},
@@ -200,32 +231,45 @@ const ProductPerformance = () => {
 		maintainAspectRatio: true,
 		responsive: true,
 		scales: {
-			x: {
-				title: {
-					display: true,
-					font: {
-						size: 16,
-						weight: "bold",
-					},
-				},
+		  x: {
+			title: {
+			  display: true,
+			  text: 'Months', // Label for x-axis
+			  font: {
+				size: 16,
+				weight: "bold",
+			  },
 			},
-			y: {
-				grid: {
-					display: true,
-				},
-				title: {
-					display: true,
-					font: {
-						size: 16,
-						weight: "bold",
-					},
-				},
-				beginAtZero: true,
-				max: totalUnitsSold,
+		  },
+		  y: {
+			grid: {
+			  display: true,
 			},
+			title: {
+			  display: true,
+			  text: 'Units Sold', // Label for y-axis
+			  font: {
+				size: 16,
+				weight: "bold",
+			  },
+			},
+			beginAtZero: true,
+			max: totalUnitsSold,
+		  },
 		},
 		height: 500,
-	};
+		plugins: {
+		  tooltip: {
+			mode: 'index',
+			intersect: false,
+		  },
+		},
+		parsing: {
+		  xAxisKey: 'labels',
+		  yAxisKey: 'data',
+		},
+	  };
+	  
 
 	useEffect(() => {
 		const intervalId = setInterval(addNewYear, 1000 * 60 * 60 * 24 * 365); // Add a year every year
@@ -280,9 +324,7 @@ const ProductPerformance = () => {
 						<p className="summary" style={{ fontSize: "14px", fontWeight: "bold" }}>
 							Most Sold Month: {calculateMostSoldMonth()}
 						</p>
-						<p className="summary" style={{ fontSize: "14px", fontWeight: "bold" }}>
-							Total Percentage Change: {calculatePercentageChange().toFixed(2)}%
-						</p>
+						 
 					 
 
 

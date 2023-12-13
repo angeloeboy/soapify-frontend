@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import {
 	Button,
 	FieldContainer,
-	FieldTitleLabel,
 	InputHolder,
 	Label,
 	LabelContainer,
@@ -113,6 +112,8 @@ const ImageScreenshot = styled.div`
 
 const TextArea = styled.textarea`
 	width: 100%;
+	max-width: 100%;
+	min-width: 100%;
 	height: 100px;
 	border: 1px solid #ddd;
 	border-radius: 5px;
@@ -140,9 +141,52 @@ const ContactNumber = styled.input`
 	margin-top: 10px;
 `;
 
+export const FieldTitleLabel = styled.h3`
+	color: rgba(0, 32, 86, 0.5);
+	font-family: DM Sans;
+	font-size: 14px;
+	font-style: normal;
+	font-weight: 500;
+	line-height: normal;
+	padding: 15px;
+	padding-left: 0px;
+	margin-top: 14px;
+	margin-top: ${(props) => (props.notFirst ? "14px" : "0")};
+`;
+
+export const Select = styled.select`
+	color: #1a69f0;
+	/* width: 700.824px; */
+	height: 41px;
+	padding: 10px;
+	margin-bottom: 10px;
+	display: block;
+	border: 1px solid #ccc;
+	border-radius: 11px;
+	font-size: 16px;
+	font-family: DM Sans;
+	font-size: 14px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: normal;
+	margin-right: 23.92px;
+	width: calc(100% - (23.92px * 2));
+	width: 100%;
+`;
+
+export const Option = styled.option`
+	font-family: DM Sans;
+	font-size: 14px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: normal;
+	margin-left: 23.92px;
+`;
+
 const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions }) => {
 	const [notes, setNotes] = useState("");
 	const [contact, setContact] = useState(undefined);
+	const [reason_name, setReasonName] = useState("Other");
 
 	useEffect(() => {
 		getUserInfo();
@@ -210,7 +254,7 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 			toast.error("Please enter a reason for cancellation");
 			return;
 		}
-		const res = await reportOrder(selectedTransaction.transaction_id, notes, contact);
+		const res = await reportOrder(selectedTransaction.transaction_id, notes, contact, reason_name);
 
 		if (res.status === "Success") {
 			toast.success("Report sent. A representative will contact you shortly via the contact number you provided.");
@@ -288,6 +332,7 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 						selectedTransaction.status !== "REFUNDED" &&
 						selectedTransaction.status !== "AWAITING PAYMENT" &&
 						selectedTransaction.status !== "RELEASED" &&
+						selectedTransaction.status !== "RETURNED" &&
 						selectedTransaction.current_stage != 4 && (
 							<>
 								<LabelContainer>
@@ -312,6 +357,23 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 										}}
 										required
 									/>
+									<div>
+										<FieldTitleLabel notFirst>Reason </FieldTitleLabel>
+										<Select value={reason_name} onChange={(e) => setReasonName(e.target.value)}>
+											<Option value={"Damaged"} key={1}>
+												Damaged
+											</Option>
+											<Option value={"Wrong Item"} key={2}>
+												Wrong item
+											</Option>
+											<Option value={"Expired"} key={3}>
+												Expired
+											</Option>
+											<Option value={"Other"} key={4}>
+												Other
+											</Option>
+										</Select>
+									</div>
 
 									<ButtonReport onClick={(e) => requestForCancellationFunc(e)}>Request Cancellation</ButtonReport>
 								</OrdersWrapper>
@@ -326,9 +388,9 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 							<OrdersWrapper>
 								<TextArea type="text" value={notes} onChange={(e) => setNotes(e.target.value)} />
 
-								<p>
+								<FieldTitleLabel>
 									Contact number: <span>(Admin will contact you to this number. Make sure to stay open)</span>{" "}
-								</p>
+								</FieldTitleLabel>
 								<ContactNumber
 									type="text"
 									maxlength="12"
@@ -342,6 +404,23 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 									}}
 									required
 								/>
+								<div>
+									<FieldTitleLabel notFirst>Reason </FieldTitleLabel>
+									<Select value={reason_name} onChange={(e) => setReasonName(e.target.value)}>
+										<Option value={"Damaged"} key={1}>
+											Damaged
+										</Option>
+										<Option value={"Wrong Item"} key={2}>
+											Wrong item
+										</Option>
+										<Option value={"Expired"} key={3}>
+											Expired
+										</Option>
+										<Option value={"Other"} key={4}>
+											Other
+										</Option>
+									</Select>
+								</div>
 
 								<ButtonReport onClick={(e) => reportOrderIssue(e)}>Report Issue</ButtonReport>
 

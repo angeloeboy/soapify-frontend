@@ -77,6 +77,7 @@ const User = () => {
 					setCurrentPage={setCurrentPage}
 					setIsLoading={setIsLoading}
 					setUserDisplay={setUserDisplay}
+					setisAddUserOpen={setisAddUserOpen}
 				/>
 				<TableContainer>
 					<Table id="user-table">
@@ -135,7 +136,7 @@ const User = () => {
 					setItemsPerPage={setItemsPerPage}
 				/>
 			</StyledPanel>
-			{isAddUserOpen && <AddUser setisAddUserOpen={setisAddUserOpen} fetchUsers={fetchUsers} />}
+			{isAddUserOpen && <AddUser fetchUsers={fetchUsers} setisAddUserOpen={setisAddUserOpen} />}
 			{isEditUserPopup && <EditUser onClose={handleCloseEditUserPopUp} selectedUser={selectedUser} fetchUsers={fetchUsers} />}
 		</DashboardLayout>
 	);

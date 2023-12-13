@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import {
 	Button,
 	FieldContainer,
-	FieldTitleLabel,
 	InputHolder,
 	Label,
 	LabelContainer,
@@ -126,6 +125,8 @@ const ButtonAccept = styled.button`
 
 const TextArea = styled.textarea`
 	width: 100%;
+	max-width: 100%;
+	min-width: 100%;
 	height: 100px;
 	border: 1px solid #ddd;
 	border-radius: 5px;
@@ -151,6 +152,31 @@ const BatchInfo = styled.div`
 
 	p {
 		font-size: 12px !important;
+	}
+`;
+
+const FieldTitleLabel = styled.h3`
+	color: rgba(0, 32, 86, 0.5);
+	font-family: DM Sans;
+	font-size: 14px;
+	font-style: normal;
+	font-weight: 500;
+	line-height: normal;
+	padding: 15px;
+	padding-left: 0px;
+	margin-top: 14px;
+	margin-top: ${(props) => (props.notFirst ? "14px" : "0")};
+`;
+
+const Input = styled.input`
+	border-radius: 11px;
+	border: 1px solid #eee;
+	padding: 8px 16px;
+	width: 100%;
+	height: 41px;
+	flex-shrink: 0;
+	&:focus {
+		outline: 1px solid #0070f3;
 	}
 `;
 
@@ -310,11 +336,16 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 
 						{selectedTransaction.status === "UNDER REVIEW" && (
 							<>
-								<p>Issue:</p>
+								<FieldTitleLabel>Notes: </FieldTitleLabel>
 
 								<TextArea type="text" value={selectedTransaction.status_notes} readOnly />
+								<FieldTitleLabel>Contact Number: </FieldTitleLabel>
+
 								<ContactNumber type="text" maxlength="12" value={selectedTransaction.contact_number} readOnly />
 
+								<FieldTitleLabel>Reason: </FieldTitleLabel>
+
+								{selectedTransaction.reason && <Input type="text" value={selectedTransaction.reason} readOnly />}
 								{selectedTransaction.current_stage != 4 ? (
 									<ButtonAccept onClick={() => acceptCancellationFunc()}>Cancel Order </ButtonAccept>
 								) : (

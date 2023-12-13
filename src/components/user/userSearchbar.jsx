@@ -2,10 +2,8 @@ import React, { useEffect, useState } from "react";
 import { TableControlPanel, SearchBar, Button } from "@/styled-components/TableControlPanel";
 import AddUser from "./addUser";
 
-const UserSearchBarComponent = ({ users, setFilteredUsers, setCurrentPage, setIsLoading, setUserDisplay }) => {
+const UserSearchBarComponent = ({ users, setFilteredUsers, setCurrentPage, setUserDisplay, setisAddUserOpen }) => {
 	const [searchTerm, setSearchTerm] = useState("");
-	const [isPopupContenUserOpen, setIsPopupContentUserOpen] = useState(false);
-	const [selectedCategory, setSelectedCategory] = useState("All");
 
 	useEffect(() => {
 		handleSearch();
@@ -51,10 +49,9 @@ const UserSearchBarComponent = ({ users, setFilteredUsers, setCurrentPage, setIs
 			</SearchBar>
 
 			<div>
-				<Button style={{ marginTop: "10px", padding: "16px 24px" }} onClick={handleOpenPopupContentUser}>
+				<Button style={{ marginTop: "10px", padding: "16px 24px" }} onClick={() => setisAddUserOpen(true)}>
 					+ Add User
 				</Button>
-				{isPopupContenUserOpen && <AddUser onClose={handleClosePopupContentUser} />}
 			</div>
 		</TableControlPanel>
 	);

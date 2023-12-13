@@ -120,6 +120,25 @@ const InventoryPage = ({ hasAddinventory }) => {
 			month: "long",
 			day: "numeric",
 		});
+
+		//add time to formatted date
+		let hours = newDate.getHours();
+		let minutes = newDate.getMinutes();
+		let ampm = hours >= 12 ? "pm" : "am";
+		hours = hours % 12;
+		hours = hours ? hours : 12; // the hour '0' should be '12'
+		minutes = minutes < 10 ? "0" + minutes : minutes;
+		let strTime = hours + ":" + minutes + " " + ampm;
+
+		formattedDate = formattedDate + " " + strTime;
+
+		//add the seconds to formatted date
+		let seconds = newDate.getSeconds();
+		formattedDate = formattedDate + ":" + seconds;
+		//add the miliseconds to formatted date
+		let miliseconds = newDate.getMilliseconds();
+		formattedDate = formattedDate + ":" + miliseconds;
+
 		return formattedDate;
 	};
 

@@ -192,14 +192,14 @@ export const acceptOrderReturnRefund = async (id) => {
 	}
 };
 
-export const reportOrder = async (id, notes, contact) => {
+export const reportOrder = async (id, notes, contact, reason_notes) => {
 	try {
 		const response = await fetch(`/api/transactions/report/${id}`, {
 			method: "PUT",
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify({ reason: notes, contact_number: contact }),
+			body: JSON.stringify({ reason: notes, contact_number: contact, reason_notes: reason_notes }),
 			credentials: "include",
 		});
 

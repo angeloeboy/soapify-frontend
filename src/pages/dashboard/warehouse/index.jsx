@@ -114,6 +114,22 @@ const Warehouse = () => {
 		setClickedId(warehouse_id);
 	};
 
+	const deleteWarehouseFunc = async (warehouse_id) => {
+		const res = await deleteWarehouse(warehouse_id);
+		console.log(res);
+		if (!res) {
+			return;
+		}
+
+		if (res.errors && res.errors.length > 0) {
+			toast.error(res.errors[0].message);
+			return;
+		}
+
+		toast.success(res.message);
+		fetchWarehouses();
+	};
+
 	const actionContainerRef = useRef(null);
 
 	useEffect(() => {
@@ -171,8 +187,10 @@ const Warehouse = () => {
 													</p>
 													<p
 														onClick={() => {
-															setShowDeactivate(true);
-															setClickedName(warehouse.warehouse_name);
+															// setShowDeactivate(true);
+															// setClickedName(warehouse.warehouse_name);
+															deleteWarehouseFunc(warehouse.warehouse_id);
+															console.log("Delete warehouse with ID:", warehouse.warehouse_id);
 														}}
 													>
 														<FontAwesomeIcon icon={faTrash} /> Delete

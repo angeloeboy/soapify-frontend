@@ -10,6 +10,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
+import { getBusinessDays } from "@/api/site_settings";
 
 const PickupdateHolder = styled.input`
 	border-radius: 11px;
@@ -168,6 +169,20 @@ const TermsAndConditions = ({ close }) => {
 const PickupDate = (props) => {
 	const { setActiveAction, transaction, setTransaction } = useContext(TransactionContext);
 	const [checked, setChecked] = useState(false);
+	const [businessDays, setBusinessDays] = useState([]);
+	const fetchBusinessDates = async () => {
+		const res = await getBusinessDays();
+
+		console.log(res);
+
+		if (res.status === "Success") {
+			setBusinessDays(res.data.business_days);
+		}
+	};
+
+	useEffect(() => {
+		fetchBusinessDates();
+	}, []);
 
 	useEffect(() => {
 		console.log(transaction.pickup_date);
@@ -180,23 +195,31 @@ const PickupDate = (props) => {
 	];
 
 	const isDateDisabled = (date) => {
-		// Disable dates before today
+		// Get today's date with time set to midnight
 		const today = new Date();
 		today.setHours(0, 0, 0, 0);
+
+		// Enable dates in the past
 		if (date < today) {
 			return false;
 		}
 
-		// Disable specific dates
-		return !disabledDates.some(
-			(disabledDate) =>
-				date.getDate() === disabledDate.getDate() && date.getMonth() === disabledDate.getMonth() && date.getFullYear() === disabledDate.getFullYear()
-		);
+		// Get the day of the week (0 for Sunday, 6 for Saturday)
+		const day = date.getDay();
+
+		// Enable weekdays (i.e., disable weekends - Saturday and Sunday)
+		if (day === 0 || day === 6) {
+			return false;
+		}
+
+		// Disable the date if it's in the past or a weekend
+		return true;
 	};
 
 	const handleDateChange = (date) => {
 		setTransaction({ ...transaction, pickup_date: new Date(date) });
 	};
+
 	return (
 		<div className="pickup-date">
 			<ComponentTitle>

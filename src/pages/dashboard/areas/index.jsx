@@ -104,7 +104,7 @@ const Areas = () => {
 
 	return (
 		<DashboardLayout>
-			<PageTitle title="Shelving" />
+			<PageTitle title="Areas" />
 
 			<StyledPanel>
 				<ShelvingSearchBar setIsAddShelfPopupOpen={setIsAddShelfPopupOpen} setShelvesDisplay={setFilteredShelves} />

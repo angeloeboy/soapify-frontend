@@ -22,6 +22,7 @@ import ItemActionModal, {
 } from "@/styled-components/ItemActionModal";
 import StyledPanel from "@/styled-components/StyledPanel";
 import { addWarehouse } from "@/api/warehouse";
+import { toast } from "react-toastify";
 
 const AddWarehouse = ({ setAddPopUpOpen, fetchWarehouses }) => {
 	const [warehouse, setWarehouse] = useState({
@@ -32,6 +33,13 @@ const AddWarehouse = ({ setAddPopUpOpen, fetchWarehouses }) => {
 	const addWarehouseFunc = async () => {
 		const response = await addWarehouse(warehouse);
 		console.log(response);
+
+		if (!response) {
+			return;
+		}
+
+		setAddPopUpOpen(false);
+		toast.success("Warehouse added successfully!");
 		fetchWarehouses();
 	};
 	return (

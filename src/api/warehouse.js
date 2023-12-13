@@ -183,3 +183,20 @@ export const editArea = async (area) => {
 		console.log(error);
 	}
 };
+
+export const deleteWarehouse = async (warehouse_id) => {
+	try {
+		const response = await fetch(`/api/warehouse/${warehouse_id}`, {
+			method: "DELETE",
+			credentials: "include",
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};

@@ -68,6 +68,49 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 
 	let AddProduct = async (e) => {
 		e.preventDefault();
+
+		//check if product name is empty
+		if (product.product_name.trim() === "") {
+			toast.error("Product name cannot be empty");
+			return;
+		}
+
+		//check if the minimum reorder level is 0
+		if (product.addAsBox && product.boxDetails.minimum_reorder_level === 0) {
+			toast.error("Minimum reorder level cannot be 0");
+			return;
+		}
+
+		//check if the minimum reorder level is 0
+		if (product.addAsPc && product.pcDetails.minimum_reorder_level === 0) {
+			toast.error("Minimum reorder level cannot be 0");
+			return;
+		}
+
+		//check if the pcs per box is 0
+		if (product.addAsBox && product.boxDetails.pcsPerBox === 0) {
+			toast.error("Pieces per box cannot be 0");
+			return;
+		}
+
+		//check if the pcs per box is 0
+		if (product.addAsPc && product.boxDetails.pcsPerBox === 0) {
+			toast.error("Pieces per box cannot be 0");
+			return;
+		}
+
+		//check the price
+		if (product.addAsBox && product.boxDetails.product_price === 0) {
+			toast.error("Box price cannot be 0");
+			return;
+		}
+
+		//check the price
+		if (product.addAsPc && product.pcDetails.product_price === 0) {
+			toast.error("Piece price cannot be 0");
+			return;
+		}
+
 		setLoading(true);
 		let formData = new FormData();
 
@@ -434,7 +477,7 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 								</div>
 
 								<div>
-									<FieldTitleLabel notFirst>Box Reorder Threshold</FieldTitleLabel>
+									<FieldTitleLabel notFirst>Box minimum stock level</FieldTitleLabel>
 									<InputHolder
 										type="number"
 										min="0"
@@ -538,7 +581,7 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 									/>
 								</div>
 								<div>
-									<FieldTitleLabel notFirst>Per piece Reorder Threshold</FieldTitleLabel>
+									<FieldTitleLabel notFirst>Per piece minimum stock level</FieldTitleLabel>
 
 									<InputHolder
 										type="text"

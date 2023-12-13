@@ -132,7 +132,7 @@ const UnpackInventory = ({ setIsUnpackPopUpOpen, getInventoryFunc, selectedInven
 							/>
 						</div>
 
-						<LabelContainer>
+						{/* <LabelContainer>
 							<Label>Position </Label>
 						</LabelContainer>
 						<div>
@@ -160,7 +160,7 @@ const UnpackInventory = ({ setIsUnpackPopUpOpen, getInventoryFunc, selectedInven
 									})}
 								</Select>
 							</div>
-						)}
+						)} */}
 					</FieldContainer>
 
 					<ButtonsContainer>

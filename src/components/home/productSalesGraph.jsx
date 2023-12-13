@@ -10,15 +10,48 @@ const LineGraphContainer = styled.div`
 	border: 1px solid #dfdfdf;
 	background: #fff;
 	padding: 20px;
-	width: calc(70% - 20px); /* Adjust width as per your layout */
-	height: 800px; /* Adjust height as needed */
+	width: 98%; /* Adjust width as per your layout */
+	height: auto; /* Change the height to auto or adjust to a larger value */
 	margin: 10px; /* Adjust margin for spacing */
+
+.selection {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.selection label {
+  margin-right: 10px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.selection select,
+.selection input[type="date"] {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.selection select {
+  flex: 1;
+  max-width: 200px; /* Adjust as needed */
+}
+
+.selection input[type="date"] {
+  width: 150px; /* Adjust as needed */
+}
+
+// ... (rest of your code)
 
 	.title {
 		color: #000;
 		font-size: 20px;
 		font-weight: 700;
 		margin-bottom: 0px;
+		text-align: center; /* Center the title */
+
 	}
 	.totalSales {
 		font-weight: bold;
@@ -52,7 +85,7 @@ const ProductSalesGraph = () => {
 	//   const [productsList, setProductsList] = useState(null);
 	const [monthData, setMonthData] = useState(null);
 	const [selectedYear, setSelectedYear] = useState(new Date().getFullYear()); // Initial year
-	const [selectedProductId, setSelectedProductId] = useState(4); // New state for selected product
+	const [selectedProductId, setSelectedProductId] = useState(1); // New state for selected product
  
 	const [startDate, setStartDate] = useState('2023-01-01');  
 	const [endDate, setEndDate] = useState('2023-12-31'); 
@@ -114,10 +147,17 @@ const ProductSalesGraph = () => {
 	const options = {
 		maintainAspectRatio: true,
 		responsive: true,
+		layout: {
+			padding: {
+			  bottom: 40, // Add space at the bottom
+			},
+		  },
+
 		scales: {
 			x: {
 				title: {
 					display: true,
+					text: "Months",
 					font: {
 						size: 16,
 						weight: "bold",
@@ -130,6 +170,7 @@ const ProductSalesGraph = () => {
 				},
 				title: {
 					display: true,
+					text:"Product Sales",
 					font: {
 						size: 16,
 						weight: "bold",

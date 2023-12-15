@@ -5,7 +5,7 @@ import { styled } from "styled-components";
 import { DropdownHeader, DropdownItem, DropdownMenu, DropdownWrapper, SearchBar, TableControlPanel, Button } from "@/styled-components/TableControlPanel";
 import { getProductCategories } from "@/api/products";
 
-const AttributeSearchBar = ({ setPopUpOpen, hasAddPermission, fetchAttributes }) => {
+const AttributeSearchBar = ({ setPopUpOpen, hasAddPermission, fetchAttributes, attributes, setAttributesDisplay, setCurrentPage }) => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [selectedCategory, setSelectedCategory] = useState("All");
 	const [productCategories, setProductCategories] = useState([]);
@@ -31,17 +31,16 @@ const AttributeSearchBar = ({ setPopUpOpen, hasAddPermission, fetchAttributes })
 		const category = selectedCategory;
 		console.log(category);
 
-		// let filteredProducts;
+		let filteredAttributes = attributes.filter((attribute) => {
+			if (category === "All") {
+				return attribute.attribute_name.toLowerCase().includes(query.toLowerCase());
+			} else {
+				return attribute.attribute_name.toLowerCase().includes(query.toLowerCase()) && attribute.category === category;
+			}
+		});
 
-		// if (category == "All") {
-		// 	filteredProducts = query ? products.filter((product) => product.product_name.toLowerCase().includes(query.toLowerCase())) : products;
-		// } else {
-		// 	filteredProducts = products.filter(
-		// 		(product) => product.product_name.toLowerCase().includes(query.toLowerCase()) && product.category.name.toLowerCase().includes(category.toLowerCase())
-		// 	);
-		// }
-
-		// setProductDisplay(filteredProducts);
+		setAttributesDisplay(filteredAttributes);
+		setCurrentPage(1);
 	};
 
 	return (

@@ -117,7 +117,14 @@ const PaymentTable = ({ hasAddPermission, hasEditPermission, hasDeletePermission
 			<PageTitle title="Attributes" />
 			<StyledPanel>
 				{/* <PaymentSearchBarComponent searchQuery={searchQuery} handleSearchChange={handleSearchChange} handleOpenPopup={handleOpenPopup} /> */}
-				<AttributeSearchBar setPopUpOpen={setPopUpOpen} hasAddPermission={hasAddPermission} fetchAttributes={fetchAttributes} />
+				<AttributeSearchBar
+					setPopUpOpen={setPopUpOpen}
+					fetchAttributes={fetchAttributes}
+					setPaginatedAttributes={setPaginatedAttributes}
+					attributes={attributes}
+					setCurrentPage={setCurrentPage}
+					setAttributesDisplay={setAttributesDisplay}
+				/>
 				<TableContainer>
 					<Table id="attributes-table">
 						<tbody>

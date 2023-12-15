@@ -220,6 +220,36 @@ const EditProduct = ({ productId, onClose, fetchProducts }) => {
 		// 	return;
 		// }
 
+		//if product name is empty
+		if (product.product_name === "") {
+			toast.error("Product name cannot be empty");
+			return;
+		}
+
+		//if subcategory is empty or 0
+		if (product.subcategory_id === "" || product.subcategory_id === 0) {
+			toast.error("Subcategory cannot be empty");
+			return;
+		}
+
+		//if product price is empty
+		if (product.product_price === "" || product.product_price === 0) {
+			toast.error("Product price cannot be empty");
+			return;
+		}
+
+		//if minimum reorder level is empty
+		if (product.minimum_reorder_level === "" || product.minimum_reorder_level === 0) {
+			toast.error("Minimum reorder level cannot be empty");
+			return;
+		}
+
+		//if pcs per box is empty
+		if (product.pcsPerBox === "" || product.pcsPerBox === 0) {
+			toast.error("Pieces per box cannot be empty");
+			return;
+		}
+
 		let formData = new FormData();
 
 		// Append the image to formData

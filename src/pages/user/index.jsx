@@ -132,9 +132,23 @@ const UserDashboard = () => {
 		fetchParentProducts();
 	}, [products]);
 
+	// const fetchProducts = async () => {
+	// 	const response = await getProducts();
+	// 	const filteredProducts = response.products.filter((product) => product.isActive);
+
+	// 	setProducts(filteredProducts || []);
+	// };
+
 	const fetchProducts = async () => {
 		const response = await getProducts();
 		const filteredProducts = response.products.filter((product) => product.isActive);
+
+		console.log(filteredProducts);
+
+		filteredProducts.forEach((product) => {
+			//deduct the quantity_in_awaiting payment from the quantity_in_stock
+			product.quantity_in_stock -= product.quantity_in_awaiting_payment;
+		});
 
 		setProducts(filteredProducts || []);
 	};

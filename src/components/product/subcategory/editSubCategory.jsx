@@ -16,8 +16,27 @@ import {
 	Select,
 	Option,
 } from "@/styled-components/ItemActionModal";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import styled from "styled-components";
+
+const AttrValue = styled.div`
+	/* display: flex;
+	align-items: center;
+	justify-content: space-between; */
+	padding: 8px;
+	font-size: 10px;
+	cursor: pointer;
+
+	input {
+		max-width: 90% !important;
+	}
+	svg {
+		margin-right: 8px;
+	}
+`;
 
 const EditSubCategory = ({ setEditSubCatOpen, fetchSubCategories, selectedSubCat }) => {
 	const [subCategory, setSubCategory] = useState({
@@ -59,6 +78,12 @@ const EditSubCategory = ({ setEditSubCatOpen, fetchSubCategories, selectedSubCat
 
 	const editSubCategoryFunc = async (e) => {
 		e.preventDefault();
+
+		if (subCategory.attributes.length == 0) {
+			toast.error("Please add attributes");
+			return;
+		}
+
 		const res = await editSubCategory(selectedSubCat.subcategory_id, subCategory);
 
 		if (!res) {
@@ -73,7 +98,12 @@ const EditSubCategory = ({ setEditSubCatOpen, fetchSubCategories, selectedSubCat
 
 	let fetchProductCategories = async () => {
 		const res = await getProductCategories();
+
 		res.categories ? setCategories(res.categories) : setCategories([]);
+
+		res.categories = res.categories.filter((category) => category.name != "Uncategorized");
+		res.categories ? setCategories(res.categories) : setCategories([]);
+
 		console.log(res.categories);
 	};
 
@@ -169,10 +199,17 @@ const EditSubCategory = ({ setEditSubCatOpen, fetchSubCategories, selectedSubCat
 							<FieldTitleLabel> Attribute List </FieldTitleLabel>
 
 							{subCategory.attributes.map((attribute, index) => (
-								<>
-									<InputHolder type="text" key={index} readOnly value={attribute.attribute_name} />
-									<p> Delete </p>
-								</>
+								<AttrValue key={index}>
+									<InputHolder type="text" readOnly value={attribute.attribute_name} />
+									<FontAwesomeIcon
+										icon={faTrash}
+										onClick={() => {
+											let attrArr = subCategory.attributes;
+											attrArr.splice(index, 1);
+											setSubCategory({ ...subCategory, attributes: attrArr });
+										}}
+									/>
+								</AttrValue>
 							))}
 						</div>
 					</FieldContainer>

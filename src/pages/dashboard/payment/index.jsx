@@ -280,3 +280,23 @@ const PaymentTable = () => {
 };
 
 export default PaymentTable;
+
+export async function getServerSideProps(context) {
+	const { req } = context;
+	const parsedCookies = cookie.parse(req.headers.cookie || "").permissions;
+
+	if (!parsedCookies.includes("View Payment Methods:payment_methods")) {
+		return {
+			redirect: {
+				destination: "/",
+				permanent: false,
+			},
+		};
+	}
+
+	return {
+		props: {
+			permissions: parsedCookies ? JSON.parse(parsedCookies) : [],
+		}, // will be passed to the page component as props
+	};
+}

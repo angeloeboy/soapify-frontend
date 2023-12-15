@@ -9,12 +9,27 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { usePermissions } from "@/components/context/PermissionsContext";
 
+const BgContainer = styled.div`
+	min-height: 100vh;
+	background-image: url("/bg.png");
+	/* background-position: center 50%; */
+	//opsition background to right
+	background-position-x: right;
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-attachment: fixed;
+`;
+
 const LoginContainer = styled.div`
-	height: 100vh;
+	min-height: 100vh;
 	width: 100%;
 	max-width: 770px;
 	padding: 53px 10vw;
-	padding-top: 100px;
+	padding-top: 50px;
+	padding-bottom: 100px;
+	height: 100%;
+	background-color: #f5f5f5;
+
 	.appTitle {
 		text-transform: uppercase;
 		padding-bottom: 19px;
@@ -58,7 +73,7 @@ const Form = styled.form`
 			/* max-width: 443px; */
 			padding: 14px !important;
 			font-size: 16px;
-			margin-top: 75px;
+			margin-top: 30px;
 		}
 
 		a {
@@ -95,6 +110,11 @@ const Error = styled.p`
 	margin-top: 10px;
 `;
 
+const LinkContainers = styled.div`
+	display: flex;
+	justify-content: space-between;
+`;
+
 let Login = () => {
 	const [credentials, setCredentials] = useState({ username: "", email: "", password: "" });
 	const [loggingIn, setIsLoggingIn] = useState(false);
@@ -110,6 +130,10 @@ let Login = () => {
 	const handleLogin = (e) => {
 		e.preventDefault();
 		setIsLoggingIn(true);
+
+		//delete the spaces in the email
+		credentials.email = credentials.email.trim();
+
 		login(credentials)
 			.then((res) => {
 				if (res.status == "Success") {
@@ -150,7 +174,7 @@ let Login = () => {
 	};
 
 	return (
-		<>
+		<BgContainer>
 			<LoginContainer>
 				<h2 className="appTitle">Soapify</h2>
 
@@ -159,20 +183,6 @@ let Login = () => {
 					<p>Enter your email and password to sign in!</p>
 
 					<div className="formsContainer">
-						{/* <label htmlFor="username">Username</label>
-						<FormField
-							type="text"
-							onChange={(e) => {
-								setCredentials({ ...credentials, username: e.target.value });
-								setErrorMessages({ ...errorMessages, username: "" });
-							}}
-							value={credentials.username}
-							id="username"
-							name="username"
-							error={errorMessages.username ? true : false}
-						/>
-						{errorMessages.username && <Error>{errorMessages.username}</Error>} */}
-
 						<label htmlFor="username">Email</label>
 						<FormField
 							type="email"
@@ -200,19 +210,18 @@ let Login = () => {
 							error={errorMessages.password ? true : false}
 						/>
 						{errorMessages.password && <Error>{errorMessages.password}</Error>}
-
-						<Link href="/forgot-password">Forgot Password</Link>
-						<Link href="/register">Create an account</Link>
+						<LinkContainers>
+							<Link href="/forgot-password">Forgot Password</Link>
+							<Link href="/register">Create an account</Link>
+						</LinkContainers>
 
 						<Button className="loginBtn" width="100%" onClick={(e) => handleLogin(e)}>
 							{loggingIn ? <FontAwesomeIcon icon={faSpinner} spin /> : "Log In"}
 						</Button>
 					</div>
 				</Form>
-
-				{rateLimited && <p className="too_many_logins">Too many login attempts from this IP, please try again later.</p>}
 			</LoginContainer>
-		</>
+		</BgContainer>
 	);
 };
 

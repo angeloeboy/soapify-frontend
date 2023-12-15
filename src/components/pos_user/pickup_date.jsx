@@ -10,7 +10,8 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
-import { getBusinessDays } from "@/api/site_settings";
+import { getBusinessDays, getTermsAndConditions } from "@/api/site_settings";
+import RenderSlateContent from "../site-settings/renderAbout";
 
 const PickupdateHolder = styled.input`
 	border-radius: 11px;
@@ -135,11 +136,55 @@ const CheckedTerms = ({ checked, setChecked }) => {
 };
 
 const TermsAndConditions = ({ close }) => {
+	const [value, setValue] = useState([
+		// {
+		// 	type: "paragraph",
+		// 	children: [
+		// 		{
+		// 			text: "This is editable asdfasdf",
+		// 		},
+		// 	],
+		// },
+		// {
+		// 	type: "paragraph",
+		// 	children: [
+		// 		{
+		// 			text: "",
+		// 		},
+		// 	],
+		// },
+		// {
+		// 	type: "paragraph",
+		// 	children: [
+		// 		{
+		// 			text: "asdfasdfadfasdf",
+		// 		},
+		// 	],
+		// },
+	]);
+
+	const getTermsAndConditionsFunc = async () => {
+		const res = await getTermsAndConditions();
+
+		if (!res) return;
+
+		// if (res.status === "Success") {
+		// }
+
+		setValue(res.data.terms_and_conditions_text);
+
+		console.log(res.data.terms_and_conditions_text);
+	};
+
+	useEffect(() => {
+		getTermsAndConditionsFunc();
+	}, []);
+
 	return (
 		<TermsAndConditionsPopUp>
 			<div className="inner">
 				<h3>Terms and Conditions</h3>
-				<h4>Returns and Refunds:</h4>
+				{/* <h4>Returns and Refunds:</h4>
 				<p>
 					We acknowledge that circumstances may vary for each transaction. While we maintain a flexible approach to returns, any requests for refunds will be
 					assessed on a case-by-case basis.
@@ -156,7 +201,9 @@ const TermsAndConditions = ({ close }) => {
 					Payment Methods: We GCASH, and bank transfers on the website for customer transactions. Please note that these payment methods are subject to our
 					overall terms and conditions, which users are encouraged to review in full. The terms mentioned above are intended to provide a general overview, and
 					the complete terms and conditions document should cover all aspects of your business operations.
-				</p>
+				</p> */}
+
+				{value.length > 0 && <RenderSlateContent content={value} />}
 			</div>
 
 			<div className="close" onClick={close}>
@@ -194,12 +241,32 @@ const PickupDate = (props) => {
 		// Add more dates as needed
 	];
 
+	// const isDateDisabled = (date) => {
+	// 	// Get today's date with time set to midnight
+	// 	const today = new Date();
+	// 	today.setHours(0, 0, 0, 0);
+
+	// 	if (date < today) {
+	// 		return false;
+	// 	}
+
+	// 	// Get the day of the week (0 for Sunday, 6 for Saturday)
+	// 	const day = date.getDay();
+
+	// 	// Enable weekdays (i.e., disable weekends - Saturday and Sunday)
+	// 	if (day === 0 || day === 6) {
+	// 		return false;
+	// 	}
+
+	// 	// Disable the date if it's in the past or a weekend
+	// 	return true;
+	// };
+
 	const isDateDisabled = (date) => {
 		// Get today's date with time set to midnight
 		const today = new Date();
 		today.setHours(0, 0, 0, 0);
 
-		// Enable dates in the past
 		if (date < today) {
 			return false;
 		}
@@ -207,12 +274,15 @@ const PickupDate = (props) => {
 		// Get the day of the week (0 for Sunday, 6 for Saturday)
 		const day = date.getDay();
 
-		// Enable weekdays (i.e., disable weekends - Saturday and Sunday)
-		if (day === 0 || day === 6) {
+		// Array mapping day indices to day names
+		const dayNames = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+
+		// Check if the business is closed on this day
+		if (!businessDays[dayNames[day]]) {
 			return false;
 		}
 
-		// Disable the date if it's in the past or a weekend
+		// Enable the date if it's not in the past and the business is open on this day
 		return true;
 	};
 

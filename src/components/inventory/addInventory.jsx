@@ -23,7 +23,7 @@ import { getAllWarehouse } from "@/api/warehouse";
 import Link from "next/link";
 import { getSuppliers } from "@/api/supplier";
 
-const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId, openModal }) => {
+const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId, openModal, fromProducts, fetchProductsFunc }) => {
 	const currentDate = new Date().toISOString();
 
 	const getCurrentDateTime = () => {
@@ -47,6 +47,7 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId, openModa
 	const [warehouses, setWarehouses] = useState([]);
 	const [areas, setAreas] = useState([]);
 	const [suppliers, setSuppliers] = useState([]);
+
 	const fetchProducts = async () => {
 		getProducts().then((res) => {
 			const activeProducts = res.products.filter((product) => product.isActive);
@@ -106,8 +107,14 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId, openModa
 
 		if (res.status && res.status == "Success") {
 			toast.success("Successfully added inventory");
-			await getInventoryFunc();
 			setIsAddPopUpOpen(false);
+
+			if (fromProducts) {
+				fetchProductsFunc();
+				return;
+			}
+
+			await getInventoryFunc();
 		} else {
 			toast.error(res.errors[0].message);
 		}
@@ -275,6 +282,7 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId, openModa
 								window.history.replaceState(null, null, window.location.pathname);
 								setIsAddPopUpOpen(false);
 							}}
+							type="button"
 						>
 							Close
 						</CloseButton>

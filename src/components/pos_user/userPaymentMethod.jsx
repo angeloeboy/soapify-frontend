@@ -114,8 +114,8 @@ const UserPaymentMethods = (props) => {
 
 	const initiateTransaction = async (e) => {
 		// Create a new FormData object
-
 		e.preventDefault();
+
 		// setLoading(true);
 		let formData = new FormData();
 		setLoading(true);
@@ -215,12 +215,12 @@ const UserPaymentMethods = (props) => {
 
 			{selectedPaymentName !== "Cash" && selectedPaymentName !== "CASH" && (
 				<TransactionNo>
-					<ComponentTitle>Transaction Number</ComponentTitle>
+					<ComponentTitle>Reference Number</ComponentTitle>
 					<input type="text" value={transactionNo} onChange={(e) => setTransactionNo(e.target.value)} />
 				</TransactionNo>
 			)}
 
-			<ComponentTitle>Transaction Number screenshot (optional)</ComponentTitle>
+			<ComponentTitle>Reference Number screenshot (optional)</ComponentTitle>
 
 			<ImageContainer>
 				<Centered>

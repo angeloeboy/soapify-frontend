@@ -19,6 +19,25 @@ import { getProductCategories } from "@/api/products";
 import { getAttributes } from "@/api/attributes";
 import { addSubCategory } from "@/api/subcategories";
 import { toast } from "react-toastify";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import styled from "styled-components";
+
+const AttrValue = styled.div`
+	/* display: flex;
+	align-items: center;
+	justify-content: space-between; */
+	padding: 8px;
+	font-size: 10px;
+	cursor: pointer;
+
+	input {
+		max-width: 90% !important;
+	}
+	svg {
+		margin-right: 8px;
+	}
+`;
 
 const AddSubCategory = ({ setisAddSubCatOpen, fetchProductSubcategories }) => {
 	const [subCategory, setSubCategory] = useState({
@@ -163,10 +182,17 @@ const AddSubCategory = ({ setisAddSubCatOpen, fetchProductSubcategories }) => {
 							<FieldTitleLabel> Attribute List </FieldTitleLabel>
 
 							{subCategory.attributes.map((attribute, index) => (
-								<>
-									<InputHolder type="text" key={index} readOnly value={attribute.attribute_name} />
-									<p> Delete </p>
-								</>
+								<AttrValue key={index}>
+									<InputHolder type="text" readOnly value={attribute.attribute_name} />
+									<FontAwesomeIcon
+										icon={faTrash}
+										onClick={() => {
+											let attrArr = subCategory.attributes;
+											attrArr.splice(index, 1);
+											setSubCategory({ ...subCategory, attributes: attrArr });
+										}}
+									/>
+								</AttrValue>
 							))}
 						</div>
 					</FieldContainer>

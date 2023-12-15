@@ -10,7 +10,7 @@ const generatePDF = async (transaction) => {
 
 	// Add transaction details
 	doc.setFontSize(12);
-	doc.text(`Transaction Number: ${transaction.transaction_unique_id}`, 15, 30);
+	doc.text(`Reference Number: ${transaction.transaction_unique_id}`, 15, 30);
 	doc.text(`Total Amount: ${transaction.total_amount}`, 15, 40);
 	doc.text(`Bought by: ${transaction.transaction_user_name.first_name} ${transaction.transaction_user_name.last_name}`, 15, 50);
 	doc.text(`Payment Method: ${transaction.payment_method.name}`, 15, 60);
@@ -25,8 +25,8 @@ const generatePDF = async (transaction) => {
 		const itemData = [
 			item.product.product_name,
 			item.quantity,
-			item.price,
-			item.quantity * item.price,
+			item.price / 100,
+			(item.quantity * item.price) / 100,
 			// Add other item details if needed
 		];
 		tableRows.push(itemData);
@@ -35,7 +35,7 @@ const generatePDF = async (transaction) => {
 		currentY += 30; // Adjust based on your layout
 	}
 
-	tableRows.push(["Total", "", "", transaction.total_amount]);
+	tableRows.push(["Total", "", "", transaction.total_amount / 100]);
 
 	doc.autoTable(tableColumn, tableRows, { startY: 80 });
 

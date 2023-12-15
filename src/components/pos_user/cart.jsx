@@ -172,7 +172,7 @@ const PromoCodeDiscount = styled.div`
 `;
 
 const UserCart = ({ setActiveAction }) => {
-	const { cart, setCart, updateCart, transaction, promoCodeResponse } = useContext(TransactionContext);
+	const { cart, setCart, updateCart, transaction, promoCodeResponse, setTransaction } = useContext(TransactionContext);
 
 	const total = useMemo(() => {
 		return cart.reduce((acc, item) => acc + item.quantity * (item.product_price / 100), 0).toFixed(2);
@@ -394,26 +394,29 @@ const UserCart = ({ setActiveAction }) => {
 				<p>Total</p>
 				<p>{total}</p>
 			</Total>
-			{transaction.promo_codeApplied && (
+			{promoCodeResponse.discountType == "FIXED" && transaction.promo_codeApplied && (
 				<PromoCodeDiscount>
 					<p>Discount</p>
 					<p> - {promoCodeResponse.totalDiscountAmount} PHP </p>
 				</PromoCodeDiscount>
 			)}
 
-			{transaction.promo_codeApplied && (
+			{promoCodeResponse.discountType == "FIXED" && transaction.promo_codeApplied && (
 				<PromoCodeDiscount>
 					<p>Total</p>
 					{transaction.promo_codeApplied && <p>{Number(transaction.total_amount / 100).toFixed(2)}</p>}
 				</PromoCodeDiscount>
 			)}
-
 			<PromoCode />
 			<Button
 				width={"100%"}
 				onClick={() => {
 					if (cart.length <= 0) return;
 					setActiveAction("pickup");
+
+					if (!promoCodeResponse.isValid) {
+						setTransaction((prev) => ({ ...prev, promo_code: "" }));
+					}
 				}}
 			>
 				Confirm

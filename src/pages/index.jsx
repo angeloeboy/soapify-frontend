@@ -1,5 +1,5 @@
 import Button from "@/components/misc/button";
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import { useState } from "react";
 import { login, logout, test } from "@/api/auth";
@@ -7,13 +7,29 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { usePermissions } from "@/components/context/PermissionsContext";
+
+const BgContainer = styled.div`
+	min-height: 100vh;
+	background-image: url("/bg.png");
+	/* background-position: center 50%; */
+	//opsition background to right
+	background-position-x: right;
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-attachment: fixed;
+`;
 
 const LoginContainer = styled.div`
-	height: 100vh;
+	min-height: 100vh;
 	width: 100%;
 	max-width: 770px;
 	padding: 53px 10vw;
-	padding-top: 100px;
+	padding-top: 50px;
+	padding-bottom: 100px;
+	height: 100%;
+	background-color: #f5f5f5;
+
 	.appTitle {
 		text-transform: uppercase;
 		padding-bottom: 19px;
@@ -57,7 +73,7 @@ const Form = styled.form`
 			/* max-width: 443px; */
 			padding: 14px !important;
 			font-size: 16px;
-			margin-top: 75px;
+			margin-top: 30px;
 		}
 
 		a {
@@ -94,6 +110,11 @@ const Error = styled.p`
 	margin-top: 10px;
 `;
 
+const LinkContainers = styled.div`
+	display: flex;
+	justify-content: space-between;
+`;
+
 let Login = () => {
 	const [credentials, setCredentials] = useState({ username: "", email: "", password: "" });
 	const [loggingIn, setIsLoggingIn] = useState(false);
@@ -111,11 +132,9 @@ let Login = () => {
 		setIsLoggingIn(true);
 		login(credentials)
 			.then((res) => {
-				setIsLoggingIn(false);
-
 				if (res.status == "Success") {
 					//do actions here
-					console.log("success");
+
 					router.push("/dashboard");
 					return;
 				}
@@ -134,6 +153,8 @@ let Login = () => {
 					password: passwordErrorMessage || "",
 					email: emailErrorMessage || "",
 				});
+
+				setIsLoggingIn(false);
 			})
 			.catch((err) => {
 				console.log(err);
@@ -149,7 +170,7 @@ let Login = () => {
 	};
 
 	return (
-		<>
+		<BgContainer>
 			<LoginContainer>
 				<h2 className="appTitle">Soapify</h2>
 
@@ -185,19 +206,18 @@ let Login = () => {
 							error={errorMessages.password ? true : false}
 						/>
 						{errorMessages.password && <Error>{errorMessages.password}</Error>}
-
-						<Link href="/">Forgot Password</Link>
-						<Link href="/register">Create an account</Link>
+						<LinkContainers>
+							<Link href="/forgot-password">Forgot Password</Link>
+							<Link href="/register">Create an account</Link>
+						</LinkContainers>
 
 						<Button className="loginBtn" width="100%" onClick={(e) => handleLogin(e)}>
 							{loggingIn ? <FontAwesomeIcon icon={faSpinner} spin /> : "Log In"}
 						</Button>
 					</div>
 				</Form>
-
-				{rateLimited && <p className="too_many_logins">Too many login attempts from this IP, please try again later.</p>}
 			</LoginContainer>
-		</>
+		</BgContainer>
 	);
 };
 

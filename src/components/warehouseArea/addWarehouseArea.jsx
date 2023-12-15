@@ -55,7 +55,7 @@ const AddWarehouseArea = ({ setAddPopUpOpen, fetchWarehouseAreas, clickedId }) =
 					<div>
 						<FieldTitleLabel notFirst>Capacity</FieldTitleLabel>
 						<InputHolder
-							type="text"
+							type="number"
 							value={warehouseArea.max_capacity}
 							onChange={(e) => setWarehouseArea({ ...warehouseArea, max_capacity: e.target.value })}
 						/>

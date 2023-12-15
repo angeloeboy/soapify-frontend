@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
 	Button,
 	FieldContainer,
@@ -18,6 +18,7 @@ import { toast } from "react-toastify";
 import styled from "styled-components";
 import Image from "next/image";
 import { getUser } from "@/api/users";
+import { WebSocketContext } from "../context/WebsocketContext";
 
 const Product = styled.div`
 	/* display: flex; */
@@ -183,14 +184,38 @@ export const Option = styled.option`
 	margin-left: 23.92px;
 `;
 
+const PromoCodedisplay = ({ promo_code }) => {
+	return (
+		<div>
+			<p className="total">Promo code: {promo_code?.promo_code}</p>
+
+			{promo_code?.promo_code_type !== "PERCENTAGE" && (
+				<p className="total">
+					Value: {promo_code?.promo_code_value} {promo_code?.promo_code_type == "PERCENTAGE" ? "%" : "PHP"}
+				</p>
+			)}
+		</div>
+	);
+};
+
 const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions }) => {
 	const [notes, setNotes] = useState("");
 	const [contact, setContact] = useState(undefined);
 	const [reason_name, setReasonName] = useState("Other");
+	const [transaction, setTransaction] = useState(selectedTransaction); // Initialize with an empty array
+
+	const { userTransactions, getUserTransaction } = useContext(WebSocketContext);
 
 	useEffect(() => {
 		getUserInfo();
 	}, []);
+
+	useEffect(() => {
+		//get the transaction fomr transaction list
+		const transaction = userTransactions.find((transaction) => transaction.transaction_id == selectedTransaction.transaction_id);
+
+		setTransaction(transaction);
+	}, [userTransactions]);
 
 	const convertToDateFormat = (date) => {
 		let newDate = new Date(date);
@@ -220,7 +245,7 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 			toast.error("Please enter a valid contact number");
 			return;
 		}
-		const res = await requestForCancelTransaction(selectedTransaction.transaction_id, notes, contact);
+		const res = await requestForCancelTransaction(transaction.transaction_id, notes, contact);
 
 		if (res.status === "Success") {
 			toast.success("Report sent. A representative will contact you shortly via the contact number you provided.");
@@ -237,7 +262,7 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 			toast.error("Please enter a reason for cancellation");
 			return;
 		}
-		const res = await requestOrderReturnRefund(selectedTransaction.transaction_id, notes, contact);
+		const res = await requestOrderReturnRefund(transaction.transaction_id, notes, contact);
 
 		if (res.status === "Success") {
 			toast.success("Request for return/refund sent");
@@ -254,7 +279,7 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 			toast.error("Please enter a reason for cancellation");
 			return;
 		}
-		const res = await reportOrder(selectedTransaction.transaction_id, notes, contact, reason_name);
+		const res = await reportOrder(transaction.transaction_id, notes, contact, reason_name);
 
 		if (res.status === "Success") {
 			toast.success("Report sent. A representative will contact you shortly via the contact number you provided.");
@@ -266,31 +291,49 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 		toast.error(res.errors[0].message);
 	};
 
+	const isDiscounted = (product_id) => {
+		//check if the product is discounted based on the promo_code_object.promos
+
+		let isDiscounted = false;
+
+		if (transaction.promo_code_object) {
+			transaction.promo_code_object.products.forEach((promo) => {
+				if (promo.product_id === product_id) {
+					isDiscounted = true;
+				}
+			});
+		}
+
+		console.log(product_id);
+
+		return isDiscounted;
+	};
+
 	return (
 		<PopupOverlay>
 			<PopupContent>
-				<HeaderTitle>Order {selectedTransaction.transaction_id} </HeaderTitle>
+				<HeaderTitle>Order {transaction.transaction_unique_id} </HeaderTitle>
 				<FieldContainer>
 					<LabelContainer>
 						<Label>Order Status</Label>
 					</LabelContainer>
 					<OrdersWrapper>
-						<h5>Status: {selectedTransaction.status}</h5>
-						<h5>Pickup date: {convertToDateFormat(selectedTransaction.pickup_date)}</h5>
+						<h5>Status: {transaction.status}</h5>
+						<h5>Pickup date: {convertToDateFormat(transaction.pickup_date)}</h5>
 					</OrdersWrapper>
 					<LabelContainer>
 						<Label>Payment Information</Label>
 					</LabelContainer>
 					<OrdersWrapper>
 						<h5>Payment Details</h5>
-						<h5>Payment method: {selectedTransaction.payment_method ? selectedTransaction.payment_method.name : "Deleted"}</h5>
+						<h5>Payment method: {transaction.payment_method ? transaction.payment_method.name : "Deleted"}</h5>
 
-						<h5>Transaction number: {selectedTransaction.transaction_number}</h5>
-						{selectedTransaction.transaction_screenshot && (
+						<h5>Reference number: {transaction.transaction_number}</h5>
+						{transaction.transaction_screenshot && (
 							<>
 								<p>Screenshot of payment</p>
 								<ImageScreenshot>
-									<img src={selectedTransaction.transaction_screenshot} alt="Payment image" />
+									<img src={transaction.transaction_screenshot} alt="Payment image" />
 								</ImageScreenshot>
 							</>
 						)}
@@ -299,7 +342,7 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 						<Label>Items</Label>
 					</LabelContainer>
 					<OrdersWrapper>
-						{selectedTransaction.items.map((item) => (
+						{transaction.items.map((item) => (
 							<Product key={item.id} active={item.quantity > 1}>
 								<div className="productInformation">
 									<div className="wrapper">
@@ -314,7 +357,15 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 											<p>
 												{item.product.product_code} | {item.product.product_name}
 											</p>
-											<p>PHP {item.price / 100}</p>
+											<p>
+												PHP {item.price / 100}
+												{isDiscounted(item.product_id) &&
+													` ${
+														transaction.promo_code_object.promo_code_type == "PERCENTAGE"
+															? "(Discounted by " + transaction.promo_code_object.promo_code_value + "%)"
+															: ""
+													}`}
+											</p>
 											<p>Quantity: {item.quantity}</p>
 										</div>
 
@@ -325,18 +376,19 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 								</div>
 							</Product>
 						))}
+						{selectedTransaction.promo_code_object && <PromoCodedisplay promo_code={selectedTransaction.promo_code_object} />}
 
-						<p className="total">Total: P{selectedTransaction.total_amount / 100}</p>
+						<p className="total">Total: P{transaction.total_amount / 100}</p>
 					</OrdersWrapper>
-					{selectedTransaction.status !== "CANCELLED" &&
-						selectedTransaction.status !== "REFUNDED" &&
-						selectedTransaction.status !== "AWAITING PAYMENT" &&
-						selectedTransaction.status !== "RELEASED" &&
-						selectedTransaction.status !== "RETURNED" &&
-						selectedTransaction.current_stage != 4 && (
+					{transaction.status !== "CANCELLED" &&
+						transaction.status !== "REFUNDED" &&
+						transaction.status !== "AWAITING PAYMENT" &&
+						transaction.status !== "RELEASED" &&
+						transaction.status !== "RETURNED" &&
+						transaction.current_stage != 4 && (
 							<>
 								<LabelContainer>
-									<Label>Action {selectedTransaction.current_stage}</Label>
+									<Label>Action {transaction.current_stage}</Label>
 								</LabelContainer>
 								<OrdersWrapper>
 									<TextArea type="text" value={notes} onChange={(e) => setNotes(e.target.value)} />
@@ -380,7 +432,7 @@ const UserOrdersInfo = ({ setShowOrderInfo, selectedTransaction, getTransactions
 							</>
 						)}
 
-					{selectedTransaction.status === "RELEASED" && (
+					{transaction.status === "RELEASED" && (
 						<>
 							<LabelContainer>
 								<Label>Action</Label>

@@ -100,6 +100,18 @@ const PaymentTable = ({ hasAddPermission, hasEditPermission, hasDeletePermission
 
 	const [selectedAttribute, setSelectedAttribute] = useState(null);
 
+	useEffect(() => {
+		document.addEventListener("click", handleClickOutside);
+		return () => {
+			document.removeEventListener("click", handleClickOutside);
+		};
+	}, []);
+
+	const handleClickOutside = (event) => {
+		if (!event.target.closest(".action-container") && !event.target.closest(".ellipsis")) {
+			setActiveActionContainer(null);
+		}
+	};
 	return (
 		<DashboardLayout>
 			<PageTitle title="Attributes" />
@@ -131,30 +143,26 @@ const PaymentTable = ({ hasAddPermission, hasEditPermission, hasDeletePermission
 
 												{activeActionContainer === index && (
 													<ActionContainer onClick={() => setActiveActionContainer(-1)}>
-														{hasEditPermission && (
-															<p
-																onClick={() => {
-																	setSelectedAttribute(attribute);
-																	openEditAttribute(selectedAttribute);
-																	setSelectedAttributeId(attribute);
-																}}
-															>
-																<FontAwesomeIcon icon={faPen} /> Edit
-															</p>
-														)}
+														<p
+															onClick={() => {
+																setSelectedAttribute(attribute);
+																openEditAttribute(selectedAttribute);
+																setSelectedAttributeId(attribute);
+															}}
+														>
+															<FontAwesomeIcon icon={faPen} /> Edit
+														</p>
 
-														{hasDeletePermission && (
-															<p
-																onClick={() => {
-																	//GAWIN MO TO
-																	setShowDeactivate(true);
-																	setClickedName(attribute.attribute_name);
-																	setSelectedAttributeId(attribute.attribute_id);
-																}}
-															>
-																<FontAwesomeIcon icon={faTrash} /> Delete
-															</p>
-														)}
+														<p
+															onClick={() => {
+																//GAWIN MO TO
+																setShowDeactivate(true);
+																setClickedName(attribute.attribute_name);
+																setSelectedAttributeId(attribute.attribute_id);
+															}}
+														>
+															<FontAwesomeIcon icon={faTrash} /> Delete
+														</p>
 													</ActionContainer>
 												)}
 											</TableData>

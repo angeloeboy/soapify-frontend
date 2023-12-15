@@ -13,9 +13,9 @@ import UserSearchBarComponent from "@/components/user/userSearchbar";
 import EditUser from "@/components/user/editUser";
 import AddUser from "@/components/user/addUser";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsis, faPen, faRefresh, faTrash } from "@fortawesome/free-solid-svg-icons";
 import Pagination from "@/components/misc/pagination";
-import { getUsers } from "@/api/users";
+import { getUsers, resetUserCancellation } from "@/api/users";
 
 const User = () => {
 	const [users, setUsers] = useState([]);
@@ -67,6 +67,19 @@ const User = () => {
 		setEditUserPopup(true);
 	};
 
+	const resetCancellationCountFunc = async (user) => {
+		const res = await resetUserCancellation(user.id);
+
+		if (res.status === "Success") {
+			toast.success("Cancellation count reset");
+
+			fetchUsers();
+			return;
+		}
+
+		toast.error(res.message);
+	};
+
 	return (
 		<DashboardLayout>
 			<PageTitle title="Accounts Lists" />
@@ -115,9 +128,19 @@ const User = () => {
 													<FontAwesomeIcon icon={faPen} />
 													Edit
 												</p>
-												<p>
+												{/* <p>
 													<FontAwesomeIcon icon={faTrash} /> Delete
-												</p>
+												</p> */}
+
+												{user.role.role_id == 2 && user.cancellation_count > 0 && (
+													<p
+														onClick={() => {
+															resetCancellationCountFunc(user);
+														}}
+													>
+														<FontAwesomeIcon icon={faRefresh} /> Reset Cancellation count
+													</p>
+												)}
 											</ActionContainer>
 										)}
 									</TableData>
@@ -143,3 +166,26 @@ const User = () => {
 };
 
 export default User;
+
+import cookie from "cookie";
+import { toast } from "react-toastify";
+
+export async function getServerSideProps(context) {
+	const { req } = context;
+	const parsedCookies = cookie.parse(req.headers.cookie || "").permissions;
+
+	if (!parsedCookies.includes("View Users:users")) {
+		return {
+			redirect: {
+				destination: "/",
+				permanent: false,
+			},
+		};
+	}
+
+	return {
+		props: {
+			permissions: parsedCookies ? JSON.parse(parsedCookies) : [],
+		}, // will be passed to the page component as props
+	};
+}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import DashboardLayout from "@/components/misc/dashboardLayout";
 import PageTitle from "@/components/misc/pageTitle";
 import Table, { ActionContainer, TableContainer, TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
@@ -14,6 +14,7 @@ import EditOrder from "@/components/orders/editOrder";
 import styled from "styled-components";
 import OrdersInfo from "@/components/orders/ordersInfo";
 // import EditOrder from "@/components/orders/EditOrders";
+import { WebSocketContext } from "@/components/context/WebsocketContext";
 
 import { useAppContext } from "@/components/context/AppContext";
 
@@ -21,7 +22,16 @@ const Circle = styled.span`
 	width: 10px;
 	height: 10px;
 	border-radius: 50%;
-	background-color: ${({ status }) => (status === "PENDING" ? "#FFC107" : status === "DONE" ? "#4CAF50" : "#F44336")};
+	background-color: ${({ status }) =>
+		status === "AWAITING PAYMENT"
+			? "#FFC107"
+			: status === "RELEASED"
+			? "#4CAF50"
+			: status === "UNDER REVIEW"
+			? "#f49236"
+			: status === "PAID"
+			? "#36b8f4"
+			: "#F44336"};
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -43,7 +53,7 @@ const Animated = styled.div`
 
 	//add animation
 	/* animation: fadeInFadeOut 1s ease-in-out infinite; */
-	animation: ${({ status }) => (status === "PENDING" ? "fadeInFadeOut 1s ease-in-out infinite" : "")};
+	animation: ${({ status }) => (status === "AWAITING PAYMENT" ? "fadeInFadeOut 1s ease-in-out infinite" : "")};
 	display: block;
 	padding: 0.5rem 1rem;
 
@@ -51,7 +61,7 @@ const Animated = styled.div`
 `;
 
 const Orders = () => {
-	const [transactions, setTransactions] = useState([]);
+	// const [transactions, setTransactions] = useState([]);
 	const [transactionsDisplay, setTransactionsDisplay] = useState([]);
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
 	const [isEditPopUpOpen, setIsEditPopUpOpen] = useState(false);
@@ -70,9 +80,7 @@ const Orders = () => {
 
 	const { setOrders } = useAppContext();
 
-	useEffect(() => {
-		getAllTransactions();
-	}, []);
+	const { transactions, getTransactionsFunc } = useContext(WebSocketContext);
 
 	const handleClickOutside = (event) => {
 		if (!event.target.closest(".action-container") && !event.target.closest(".ellipsis")) {
@@ -109,17 +117,29 @@ const Orders = () => {
 		return formattedDate;
 	};
 
-	const getAllTransactions = async () => {
-		setTransactionsLoading(true);
-		const res = await getTransactions();
-		res.transactions ? setTransactions(res.transactions) : setTransactions([]);
-		res.transactions ? setTransactionsDisplay(res.transactions) : setTransactionsDisplay([]);
-		setTransactionsLoading(false);
-		console.log(res.transactions);
-		res.transactions = res.transactions.filter((order) => order.status == "AWAITING PAYMENT");
+	// const getAllTransactions = async () => {
+	// 	setTransactionsLoading(true);
+	// 	const res = await getTransactions();
+	// 	res.transactions ? setTransactions(res.transactions) : setTransactions([]);
+	// 	res.transactions ? setTransactionsDisplay(res.transactions) : setTransactionsDisplay([]);
+	// 	setTransactionsLoading(false);
+	// 	console.log(res.transactions);
+	// 	res.transactions = res.transactions.filter((order) => order.status == "AWAITING PAYMENT");
 
-		setOrders(res.transactions);
+	// 	setOrders(res.transactions);
+	// };
+
+	const getAllTransactions = async (transactionsObject) => {
+		// if (transactionsDisplay.length == 0) {
+		// 	setTransactionsDisplay(transactionsObject || []);
+		// }
+		setTransactionsLoading(false);
+		console.log("transactionsObject", transactionsObject);
 	};
+
+	useEffect(() => {
+		getAllTransactions(transactions);
+	}, [transactions]);
 
 	return (
 		<DashboardLayout>
@@ -180,15 +200,17 @@ const Orders = () => {
 														<FontAwesomeIcon icon={faPen} />
 														View
 													</p>
-
-													<p
-														onClick={() => {
-															generatePDF(transaction);
-															console.log("receipt clicked");
-														}}
-													>
-														<FontAwesomeIcon icon={faReceipt} /> Receipt
-													</p>
+													{transaction.status === "RELEASED" ||
+														(transaction.status === "PAID" && (
+															<p
+																onClick={() => {
+																	generatePDF(transaction);
+																	console.log("receipt clicked");
+																}}
+															>
+																<FontAwesomeIcon icon={faReceipt} /> Receipt
+															</p>
+														))}
 												</ActionContainer>
 											)}
 										</TableData>
@@ -204,7 +226,7 @@ const Orders = () => {
 					<EditOrder setIsEditPopUpOpen={setIsEditPopUpOpen} selectedTransactionId={selectedTransactionId} transaction={selectedTransaction} />
 				)}
 				{isOrdersInfoOpen && (
-					<OrdersInfo setIsOrdersInfoOpen={setIsOrdersInfoOpen} selectedTransaction={selectedTransactionId} fetchTransactions={getAllTransactions} />
+					<OrdersInfo setIsOrdersInfoOpen={setIsOrdersInfoOpen} selectedTransaction={selectedTransactionId} fetchTransactions={getTransactionsFunc} />
 				)}
 
 				<Pagination

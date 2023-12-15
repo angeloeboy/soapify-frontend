@@ -8,7 +8,7 @@ import { getTransactions } from "@/api/transaction";
 import { getUsers } from "@/api/users";
 import { getProductCategories } from "@/api/products";
 import DashboardLayout from "@/components/misc/dashboardLayout";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { connectToWebSocket, getHomeData } from "@/api/home";
 import Widget from "@/components/home/widget";
 import ProductPerformance from "@/components/home/productPerformance";
@@ -18,22 +18,23 @@ import { toast } from "react-toastify";
 import styled from "styled-components";
 
 import { usePermissions } from "@/components/context/PermissionsContext";
+import { WebSocketContext } from "@/components/context/WebsocketContext";
 
 const DashboardGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-  margin: 20px;
-  display: grid;
-  grid-template-rows: auto; /* Set initial rows to auto */
- 
-  @media screen and (max-width: 768px) {
-    grid-template-columns: 1fr; /* Change to a single column layout on smaller screens */
-  }
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+	gap: 20px;
+	margin: 20px;
+	display: grid;
+	grid-template-rows: auto; /* Set initial rows to auto */
+
+	@media screen and (max-width: 768px) {
+		grid-template-columns: 1fr; /* Change to a single column layout on smaller screens */
+	}
 `;
 const CenteredProductPerformance = styled.div`
-  display: flex;
-  justify-content: center;
+	display: flex;
+	justify-content: center;
 `;
 
 const DashboardCard = styled.div`
@@ -44,7 +45,7 @@ const DashboardCard = styled.div`
 	transition: transform 0.3s ease-in-out;
 
 	@media screen and (max-width: 768px) {
-    width: 100%; /* Adjust card width for smaller screens */
+		width: 100%; /* Adjust card width for smaller screens */
 	}
 	&:hover {
 		transform: translateY(-5px);
@@ -56,8 +57,6 @@ const DashboardCard = styled.div`
 	align-items: center;
 	text-align: center;
 `;
-
- 
 
 const Count = styled.span`
 	color: #555;
@@ -80,37 +79,37 @@ const Button = styled.button`
 	}
 `;
 const CenteredGraphContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%; /* Adjust as needed */
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100%; /* Adjust as needed */
 `;
 
 const SelectContainer = styled.div`
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
-  margin-left: 20px;
+	display: flex;
+	align-items: center;
+	margin-bottom: 20px;
+	margin-left: 20px;
 `;
 
 const Title = styled.h3`
-  color: #333;
-  font-size: 1.2em;
-  margin-right: 20px;
+	color: #333;
+	font-size: 1.2em;
+	margin-right: 20px;
 `;
 
 const Select = styled.select`
-  padding: 8px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  font-size: 1em;
-  outline: none;
-  transition: border-color 0.3s ease-in-out;
+	padding: 8px;
+	border-radius: 5px;
+	border: 1px solid #ccc;
+	font-size: 1em;
+	outline: none;
+	transition: border-color 0.3s ease-in-out;
 
-  &:hover,
-  &:focus {
-    border-color: #3498db;
-  }
+	&:hover,
+	&:focus {
+		border-color: #3498db;
+	}
 `;
 
 const Dashboard = () => {
@@ -127,12 +126,14 @@ const Dashboard = () => {
 	const [subcategoriesCount, setsubcategoriesCount] = useState(0);
 	const [selectedReport, setSelectedReport] = useState("productSalesGraph");
 
- 	const [startDate, setStartDate] = useState("");
+	const [startDate, setStartDate] = useState("");
 	const [endDate, setEndDate] = useState("");
 
 	const [showGraph, setShowGraph] = useState(false);
 
 	const { fetchPermissions } = usePermissions();
+
+	const { getNotificationsFunc } = useContext(WebSocketContext);
 
 	useEffect(() => {
 		fetchPermissions();
@@ -146,21 +147,20 @@ const Dashboard = () => {
 		fetchTransactionCount();
 		fetchPaymentMethodCount();
 		fetchSubcategoriesCount();
+
+		getNotificationsFunc();
 	}, []);
 
 	useEffect(() => {
 		if (
-		  selectedReport === "annualSalesGraph" ||
-		  ((selectedReport === "productPerformance" || selectedReport === "productSalesGraph") &&
-		  startDate &&
-		  endDate)
+			selectedReport === "annualSalesGraph" ||
+			((selectedReport === "productPerformance" || selectedReport === "productSalesGraph") && startDate && endDate)
 		) {
-		  setShowGraph(true);
+			setShowGraph(true);
 		} else {
-		  setShowGraph(false);
+			setShowGraph(false);
 		}
-	  }, [selectedReport, startDate, endDate]);
-	
+	}, [selectedReport, startDate, endDate]);
 
 	useEffect(() => {
 		setSalesData(getSalesData());
@@ -173,16 +173,15 @@ const Dashboard = () => {
 		setData(homeData.data);
 	};
 
-	
 	const handleReportChange = (event) => {
 		setSelectedReport(event.target.value);
-	  };
-	  const handleDateRangeSelection = () => {
+	};
+	const handleDateRangeSelection = () => {
 		// Perform actions based on selectedReport, startDate, and endDate
 		// Example: Fetch data for the selected report with the selected date range
 		// Once data is fetched, set showGraph to true to display the graph
 		setShowGraph(true);
-	  };
+	};
 	const fetchProductCount = async () => {
 		try {
 			const productsData = await getProducts();
@@ -365,43 +364,38 @@ const Dashboard = () => {
 
 	return (
 		<DashboardLayout>
-
-			
 			<div style={{ display: "flex" }}>
 				<Widget title="Reports Overview" width="50%" data={salesData} />
 				<Widget title="Orders Overview" width="50%" data={ordersData} />
 			</div>
-			<div style={{ display: "flex" }}>
-			 
-			 </div>
-			 <div style={{ display: "flex", alignItems: "center" }}>
-			 <SelectContainer>
-				<Title>Select a Report:</Title>
+			<div style={{ display: "flex" }}></div>
+			<div style={{ display: "flex", alignItems: "center" }}>
+				<SelectContainer>
+					<Title>Select a Report:</Title>
 					<Select value={selectedReport} onChange={handleReportChange}>
-					<option value="annualSalesGraph">Annual Sales Graph</option>
-					<option value="productSalesGraph">Product Sales Graph</option>
-					<option value="productPerformance">Product Performance</option>
+						<option value="annualSalesGraph">Annual Sales Graph</option>
+						<option value="productSalesGraph">Product Sales Graph</option>
+						<option value="productPerformance">Product Performance</option>
 					</Select>
 				</SelectContainer>
-	  			</div>
-
+			</div>
 
 			{/* Display graphs based on report selection */}
 			{selectedReport === "annualSalesGraph" && data && data.annual_sales_stats && (
 				<CenteredGraphContainer>
-				<AnnualSalesGraph annualSalesData={data.annual_sales_stats} />
+					<AnnualSalesGraph annualSalesData={data.annual_sales_stats} />
 				</CenteredGraphContainer>
 			)}
 
 			{selectedReport === "productSalesGraph" && (
 				<CenteredGraphContainer>
-				<ProductSalesGraph />
+					<ProductSalesGraph />
 				</CenteredGraphContainer>
 			)}
 
 			{selectedReport === "productPerformance" && (
 				<CenteredProductPerformance>
-				<ProductPerformance />
+					<ProductPerformance />
 				</CenteredProductPerformance>
 			)}
 			<DashboardGrid>

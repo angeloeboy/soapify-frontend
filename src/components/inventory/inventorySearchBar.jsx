@@ -98,12 +98,11 @@ const InventorySearchBar = ({ setIsAddPopUpOpen, inventory, setinventoryDisplay,
 				<p>Area</p>
 				<DropdownArea areas={areas} handleAreaChange={handleAreaChange} />
 			</div>
-			{hasAddinventory && (
-				<div>
-					<p> Add </p>
-					<Button onClick={() => setIsAddPopUpOpen(true)}>+ Add Inventory</Button>
-				</div>
-			)}
+
+			<div>
+				<p> Add </p>
+				<Button onClick={() => setIsAddPopUpOpen(true)}>+ Add Inventory</Button>
+			</div>
 		</TableControlPanel>
 	);
 };

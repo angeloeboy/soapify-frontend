@@ -242,3 +242,18 @@ export const issueReturn = async (id, transaction) => {
 		return data;
 	} catch (error) {}
 };
+
+export const adminCancelOrder = async (id) => {
+	try {
+		const response = await fetch(`/api/transactions/cancel/${id}`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			credentials: "include",
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {}
+};

@@ -1,6 +1,6 @@
 export const getAllAnnouncements = async () => {
 	try {
-		const res = await fetch("/api/announcements/all", {
+		const res = await fetch("/api/announcements/", {
 			method: "GET",
 			credentials: "include",
 		});
@@ -16,7 +16,10 @@ export const addAnnouncement = async (announcement) => {
 	try {
 		const res = await fetch("/api/announcements/", {
 			method: "POST",
-			body: announcement,
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(announcement),
 			credentials: "include",
 		});
 
@@ -43,9 +46,12 @@ export const deleteAnnouncement = async (id) => {
 
 export const editAnnouncement = async (announcement) => {
 	try {
-		const res = await fetch("/api/announcements/" + aannouncement.announcement_id, {
+		const res = await fetch("/api/announcements/" + announcement.announcement_id, {
 			method: "PUT",
-			body: announcement,
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(announcement),
 			credentials: "include",
 		});
 

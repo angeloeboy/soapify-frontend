@@ -140,7 +140,7 @@ const Categories = ({ hasAddPermission, hasEditPermission, hasDeletePermission }
 
 											{activeActionContainer === index && (
 												<ActionContainer onClick={() => setActiveActionContainer(-1)}>
-													{hasEditPermission && (
+													{hasEditPermission && category.name !== "Uncategorized" && (
 														<p
 															onClick={() => {
 																setSelectedCategory(category);
@@ -152,7 +152,7 @@ const Categories = ({ hasAddPermission, hasEditPermission, hasDeletePermission }
 														</p>
 													)}
 
-													{hasDeletePermission && (
+													{hasDeletePermission && category.name !== "Uncategorized" && (
 														<p
 															onClick={() => {
 																//GAWIN MO TO

@@ -54,12 +54,11 @@ const AttributeSearchBar = ({ setPopUpOpen, hasAddPermission, fetchAttributes })
 				{/* <p> Category</p>
 				<Dropdown productCategories={productCategories} handleCategoryChange={handleCategoryChange} /> */}
 			</div>
-			{hasAddPermission && (
-				<div>
-					<p> Add </p>
-					<Button onClick={() => setPopUpOpen(true)}>+ Add Attribute</Button>
-				</div>
-			)}
+
+			<div>
+				<p> Add </p>
+				<Button onClick={() => setPopUpOpen(true)}>+ Add Attribute</Button>
+			</div>
 		</TableControlPanel>
 	);
 };

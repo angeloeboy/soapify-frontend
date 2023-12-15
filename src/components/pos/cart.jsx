@@ -12,6 +12,7 @@ import { PDFDocument, rgb } from "pdf-lib";
 import { getTransaction } from "@/api/transaction";
 import { TransactionContext } from "../context/TransactionContext";
 import PromoCode from "./promo_code";
+import { toast } from "react-toastify";
 
 const CartTable = styled.table`
 	width: 100%;
@@ -248,7 +249,7 @@ const PromoCodeDiscount = styled.div`
 `;
 
 const Cart = ({ setActiveAction }) => {
-	const { cart, setCart, updateCart, transaction, promoCodeResponse } = useContext(TransactionContext);
+	const { cart, setCart, updateCart, transaction, promoCodeResponse, setTransaction } = useContext(TransactionContext);
 
 	const total = useMemo(() => {
 		return cart.reduce((acc, item) => acc + item.quantity * (item.product_price / 100), 0).toFixed(2);
@@ -406,8 +407,12 @@ const Cart = ({ setActiveAction }) => {
 			<Button
 				width={"100%"}
 				onClick={() => {
-					if (cart.length <= 0) return;
+					if (cart.length <= 0) toast.warning("Please add items to cart first");
 					setActiveAction("payment");
+
+					if (!promoCodeResponse.isValid) {
+						setTransaction((prev) => ({ ...prev, promo_code: "" }));
+					}
 				}}
 			>
 				Confirm

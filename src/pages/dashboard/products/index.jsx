@@ -41,6 +41,8 @@ const Products = ({ hasAddProduct, hasDeactivateProduct, hasDeleteProduct, hasEd
 	const [clickedName, setClickedName] = useState(null);
 	const [showDeactivate, setShowDeactivate] = useState(false);
 
+	const [isAddInventoryPopUpOpen, setIsAddInventoryPopUpOpen] = useState(false);
+
 	const [showDeactivateModal, setShowDeactivateModal] = useState(false);
 	const [showReactivateModal, setShowReactivateModal] = useState(false);
 
@@ -239,39 +241,40 @@ const Products = ({ hasAddProduct, hasDeactivateProduct, hasDeleteProduct, hasEd
 
 											{activeActionContainer === index && (
 												<ActionContainer onClick={() => setActiveActionContainer(-1)}>
-													{hasEditProduct && (
+													<p
+														onClick={() => {
+															setSelectedProductId(product.product_id);
+															openEditPopUp(true);
+														}}
+													>
+														<FontAwesomeIcon icon={faPen} />
+														Edit
+													</p>
+
+													<p
+														onClick={() => {
+															setShowDeactivate(true);
+															setClickedName(product.product_name);
+															setSelectedProductId(product.product_id);
+														}}
+													>
+														<FontAwesomeIcon icon={faTrash} /> Delete
+													</p>
+
+													{product.isActive && (
 														<p
 															onClick={() => {
 																setSelectedProductId(product.product_id);
-																openEditPopUp(true);
+																setIsAddInventoryPopUpOpen(true);
 															}}
 														>
-															<FontAwesomeIcon icon={faPen} />
-															Edit
+															Add Inventory
 														</p>
 													)}
 
-													{hasDeleteProduct && (
-														<p
-															onClick={() => {
-																setShowDeactivate(true);
-																setClickedName(product.product_name);
-																setSelectedProductId(product.product_id);
-															}}
-														>
-															<FontAwesomeIcon icon={faTrash} /> Delete
-														</p>
-													)}
+													{!product.isActive && <p onClick={() => handleReactivate(product.product_id, product.product_name)}>Reactivate</p>}
 
-													{product.isActive && <p onClick={() => goToInventoryPageAndAddInventory(product.product_id)}>Add Inventory</p>}
-
-													{hasReactivateProduct && !product.isActive && (
-														<p onClick={() => handleReactivate(product.product_id, product.product_name)}>Reactivate</p>
-													)}
-
-													{hasDeactivateProduct && product.isActive && (
-														<p onClick={() => handleDeactivate(product.product_id, product.product_name)}>Deactivate</p>
-													)}
+													{product.isActive && <p onClick={() => handleDeactivate(product.product_id, product.product_name)}>Deactivate</p>}
 													{/* <p onClick={() => handleAddInventoryClick(product.product_id)}>Add Inventory</p> */}
 												</ActionContainer>
 											)}
@@ -306,12 +309,24 @@ const Products = ({ hasAddProduct, hasDeactivateProduct, hasDeleteProduct, hasEd
 			{showReactivateModal && (
 				<ReactivateModal type="Product" text={clickedName} close={setShowReactivateModal} confirm={() => activateProductFunc(selectedProductId)} />
 			)}
+
+			{isAddInventoryPopUpOpen && (
+				<AddInventory
+					productId={selectedProductId}
+					close={() => setIsAddInventoryPopUpOpen(false)}
+					setIsAddPopUpOpen={setIsAddInventoryPopUpOpen}
+					openModal={true}
+					fromProducts={true}
+					fetchProductsFunc={fetchProducts}
+				/>
+			)}
 		</DashboardLayout>
 	);
 };
 
 export default Products;
 import cookie, { parse } from "cookie";
+import AddInventory from "@/components/inventory/addInventory";
 export async function getServerSideProps(context) {
 	const { req } = context;
 	const parsedCookies = cookie.parse(req.headers.cookie || "").permissions;

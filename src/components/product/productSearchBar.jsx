@@ -91,12 +91,10 @@ const ProductSearchBar = ({ setIsAddPopUpOpen, products, setProductDisplay, setC
 				<StockStatusDropdown setSelectedProductStatus={setSelectedProductStatus} />
 			</div>
 
-			{hasAddProduct && (
-				<div>
-					<p> Add </p>
-					<Button onClick={() => setIsAddPopUpOpen(true)}>+ Add Product</Button>
-				</div>
-			)}
+			<div>
+				<p> Add </p>
+				<Button onClick={() => setIsAddPopUpOpen(true)}>+ Add Product</Button>
+			</div>
 		</TableControlPanel>
 	);
 };

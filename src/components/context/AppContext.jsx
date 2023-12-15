@@ -2,6 +2,7 @@ import React, { createContext, useState, useContext, useEffect } from "react";
 import { usePermissions } from "./PermissionsContext";
 import { useRouter } from "next/router";
 import { getTransactions } from "@/api/transaction";
+import { WebSocketContext } from "./WebsocketContext";
 
 const AppContext = createContext();
 
@@ -12,16 +13,16 @@ export const AppProvider = ({ children }) => {
 	const router = useRouter();
 	const [loadingPermissions, setLoadingPermissions] = useState(true); // New state to track loading of permissions
 
+	const { transactions, getTransactionsFunc } = useContext(WebSocketContext);
+
 	const hasPermission = (permission) => permissions.includes(permission);
 
 	const getOrders = async () => {
 		try {
-			const response = await getTransactions();
-
+			let response = transactions;
 			//get orders that are "Awating payment"
-			response.transactions = response.transactions.filter((order) => order.status == "AWAITING PAYMENT");
-
-			setOrders(response.transactions);
+			response = response.filter((order) => order.status == "AWAITING PAYMENT");
+			setOrders(response);
 		} catch (error) {
 			console.error("Error fetching orders", error);
 		}
@@ -29,7 +30,7 @@ export const AppProvider = ({ children }) => {
 
 	useEffect(() => {
 		getOrders();
-	}, []);
+	}, [transactions]);
 
 	const generateSidebarData = () => {
 		const sidebarData = [
@@ -38,10 +39,10 @@ export const AppProvider = ({ children }) => {
 				icon: "/sales-icon.png",
 				hasSubmenu: true,
 				submenus: [
-					{ title: "POS", link: "/dashboard/pos" },
+					{ title: "POS", link: "/dashboard/pos", permission: "View Pos:pos" },
 					{ title: "Overview", link: "/dashboard" },
 					{ title: `${orders.length > 0 ? `Orders (${orders.length})` : "Orders"}`, link: "/dashboard/orders", permission: "View Orders:orders" },
-					{ title: "Promos", link: "/dashboard/promos" },
+					{ title: "Promos", link: "/dashboard/promos", permission: "View Promo Codes:promo_codes" },
 				],
 			},
 			{
@@ -62,13 +63,15 @@ export const AppProvider = ({ children }) => {
 				icon: "/settings-icon.png",
 				hasSubmenu: true,
 				submenus: [
-					{ title: "Users", link: "/dashboard/user" },
+					{ title: "Users", link: "/dashboard/user", permission: "View Users:users" },
 					{ title: "Warehouse", link: "/dashboard/warehouse", permission: "View Warehouses:warehouses" },
 					{ title: "Areas", link: "/dashboard/areas", permission: "View Areas:areas" },
-					{ title: "Payments", link: "/dashboard/payment" },
+					{ title: "Payments", link: "/dashboard/payment", permission: "View Payment Methods:payment_methods" },
 					{ title: "Suppliers", link: "/dashboard/suppliers", permission: "View Suppliers:suppliers" },
 					{ title: "Roles", link: "/dashboard/roles" },
+					{ title: "Announcements", link: "/dashboard/announcements" },
 					{ title: "Logs", link: "/dashboard/logs" },
+					{ title: "Site Settings", link: "/dashboard/site-settings" },
 				],
 			},
 		];
@@ -95,7 +98,7 @@ export const AppProvider = ({ children }) => {
 		setPermissions(permissions);
 		setLoadingPermissions(false);
 		setSidebarData(generateSidebarData()); // Update sidebar data when permissions change
-	}, [permissions, orders]);
+	}, [permissions, orders, transactions]);
 
 	useEffect(() => {
 		const currentPath = router.pathname;

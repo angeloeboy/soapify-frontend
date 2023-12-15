@@ -65,7 +65,7 @@ const PaymentMethods = (props) => {
 	const [paymentMethod, setPaymentMethod] = useState(1);
 	const [transactionNo, setTransactionNo] = useState("");
 	const [loading, setLoading] = useState(false);
-	const { setTransaction, transaction, cart, setOrderFromBackend } = useContext(TransactionContext);
+	const { setTransaction, transaction, cart, setOrderFromBackend, promoCodeResponse } = useContext(TransactionContext);
 	const [transactionSuccess, setTransactionSuccess] = useState(false);
 
 	const [selectedPaymentName, setSelectedPaymentName] = useState("");
@@ -75,6 +75,7 @@ const PaymentMethods = (props) => {
 
 	const initiateTransaction = async () => {
 		const response = await addTransaction(transaction);
+
 		console.log(response);
 		if (response.status == "Success") {
 			toast.success("Transaction Successful");
@@ -99,8 +100,16 @@ const PaymentMethods = (props) => {
 
 			let activePaymentMethod = res.paymentMethods.filter((payment) => payment.isActive);
 			res ? setPaymentMethods(activePaymentMethod) : setPaymentMethods([]);
+			setPaymentMethods(activePaymentMethod);
+			setPaymentMethod(activePaymentMethod[0].payment_method_id);
 
-			setTransaction((prev) => ({ ...prev, payment_method_id: res.paymentMethods[0].payment_method_id }));
+			if (activePaymentMethod.length > 0) {
+				setTransaction((prev) => ({
+					...prev,
+					payment_method_id: activePaymentMethod[0].payment_method_id,
+				}));
+				setSelectedPaymentName(activePaymentMethod[0].name);
+			}
 		});
 	};
 
@@ -149,7 +158,7 @@ const PaymentMethods = (props) => {
 			>
 				{loading ? <Image src="/loading.svg" alt="loading" width="20" height="20" /> : "Finish"}
 			</Button>
-			<Receipt />
+			{/* <Receipt /> */}
 		</>
 	);
 };

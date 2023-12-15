@@ -1,13 +1,14 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo, useContext } from "react";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
 import { DropdownHeader, DropdownItem, DropdownMenu, DropdownWrapper, SearchBar, TableControlPanel, Button } from "@/styled-components/TableControlPanel";
 import useOutsideClick from "@/hooks/useOutsideclick";
+import { WebSocketContext } from "../context/WebsocketContext";
 
-const OrdersSearchBar = ({ setTransactionsDisplay, transactions, setCurrentPage }) => {
+const OrdersSearchBar = ({ setTransactionsDisplay, transactions, setCurrentPage, user }) => {
 	const [searchQuery, setSearchQuery] = useState("");
-	const [selectedOrderStatus, setSelectedOrderStatus] = useState("AWAITING PAYMENT");
+	const [selectedOrderStatus, setSelectedOrderStatus] = useState(user ? "All" : "Awaiting Payment");
 
 	const handleSearch = () => {
 		let query = searchQuery;
@@ -38,7 +39,7 @@ const OrdersSearchBar = ({ setTransactionsDisplay, transactions, setCurrentPage 
 
 	useEffect(() => {
 		handleSearch();
-	}, [searchQuery, selectedOrderStatus, transactions]);
+	}, [searchQuery, selectedOrderStatus, transactions, user]);
 
 	return (
 		<TableControlPanel>
@@ -48,45 +49,81 @@ const OrdersSearchBar = ({ setTransactionsDisplay, transactions, setCurrentPage 
 			</SearchBar>
 			<div>
 				<p> Status</p>
-				<OrderStatus setSelectedOrderStatus={setSelectedOrderStatus} transactions={transactions} />
+				<OrderStatus setSelectedOrderStatus={setSelectedOrderStatus} transactions={transactions} user={user} />
 			</div>
 		</TableControlPanel>
 	);
 };
 
-const OrderStatus = ({ setSelectedOrderStatus, transactions }) => {
+const OrderStatus = ({ setSelectedOrderStatus, transactions, user }) => {
 	const [isOpen, setIsOpen] = useState(false);
-	const [selectedItem, setSelectedItem] = useState("Awaiting Payment");
+	const [selectedItem, setSelectedItem] = useState(user ? "All" : "Awaiting Payment");
 	const [status, setStatus] = useState(["Awaiting Payment", "Paid", "Cancelled", "Refunded", "Released", "Under Review"]);
-	const [statusCount, setStatusCount] = useState([0, 0, 0, 0, 0]);
+	const [statusCount, setStatusCount] = useState([0, 0, 0, 0, 0, 0]);
 	const dropdownRef = useRef(null);
 
 	useOutsideClick(dropdownRef, () => {
 		if (isOpen) setIsOpen(false);
 	});
 
-	//count the number of orders depending on the status
-
 	useEffect(() => {
-		let awaitingPayment = 0;
-		let paid = 0;
-		let cancelled = 0;
-		let refunded = 0;
-		let released = 0;
-		let under_review = 0;
+		let counts = {
+			awaitingPayment: 0,
+			paid: 0,
+			cancelled: 0,
+			refunded: 0,
+			released: 0,
+			under_review: 0,
+		};
 
 		transactions.forEach((transaction) => {
-			if (transaction.status === "AWAITING PAYMENT") awaitingPayment++;
-			else if (transaction.status === "PAID") paid++;
-			else if (transaction.status === "CANCELLED") cancelled++;
-			else if (transaction.status === "REFUNDED") refunded++;
-			else if (transaction.status === "RELEASED") released++;
-			else if (transaction.status === "UNDER REVIEW") under_review++;
+			switch (transaction.status) {
+				case "AWAITING PAYMENT":
+					counts.awaitingPayment++;
+					break;
+				case "PAID":
+					counts.paid++;
+					break;
+				case "CANCELLED":
+					counts.cancelled++;
+					break;
+				case "REFUNDED":
+					counts.refunded++;
+					break;
+				case "RELEASED":
+					counts.released++;
+					break;
+				case "UNDER REVIEW":
+					counts.under_review++;
+					break;
+				default:
+					break;
+			}
 		});
 
-		// setStatus([`Awaiting Payment (${awaitingPayment})`, `Paid (${paid})`, `Cancelled (${cancelled})`, `Refunded (${refunded})`, `Released (${released})`]);
-		setStatusCount([awaitingPayment, paid, cancelled, refunded, released, under_review]);
-		setSelectedItem("Awaiting Payment" + ` (${awaitingPayment})`);
+		setStatusCount([counts.awaitingPayment, counts.paid, counts.cancelled, counts.refunded, counts.released, counts.under_review]);
+		let newcount = [counts.awaitingPayment, counts.paid, counts.cancelled, counts.refunded, counts.released, counts.under_review];
+
+		const statusInSelectedItem = selectedItem.includes("(") ? selectedItem.substring(0, selectedItem.indexOf("(")).trim() : selectedItem;
+
+		// Find the index of this status in the status array
+		let index = status.findIndex((s) => s === statusInSelectedItem);
+		console.log("index id", index);
+		console.log("index", statusInSelectedItem);
+		console.log("count", newcount[0]);
+		if (index !== -1) {
+			//if selected item is All
+			if (selectedItem.includes("All")) {
+				setSelectedItem("All" + ` (${transactions.length})`);
+				return;
+			}
+
+			let updatedSelectedItem = `${status[index]} (${newcount[index]})`;
+			setSelectedItem(updatedSelectedItem);
+			setSelectedOrderStatus(status[index].toUpperCase());
+		}
+
+		console.log("Status Count changed");
 	}, [transactions]);
 
 	return (

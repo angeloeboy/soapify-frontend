@@ -15,9 +15,10 @@ export const UserAppProvider = ({ children }) => {
 			icon: "/home-icon.png",
 			hasSubmenu: true,
 			submenus: [
-				{ title: "Products", link: "/" },
+				{ title: "Products", link: "/user" },
 				{ title: "Orders", link: "/user/orders" },
 				{ title: "User Settings", link: "/user/user-settings" },
+				{ title: "Announcements", link: "/user/announcements" },
 			],
 		},
 	];

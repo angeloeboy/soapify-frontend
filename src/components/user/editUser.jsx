@@ -119,16 +119,16 @@ const EditUser = ({ selectedUser, onClose, fetchUsers }) => {
 							>
 								{roles.map((role) => (
 									<Option value={role.role_id} key={role.role_id}>
-										{role.role_name}
+										{role.role_name} {role.role_id}
 									</Option>
 								))}
 							</Select>
 						</div>
-						{user.role_id !== 1 && user.role_id !== 2 && (
+						{Number(user.role_id) !== 1 && Number(user.role_id) !== 2 && (
 							<>
 								<div>
 									<LabelContainer notfirst>
-										<Label>Password</Label>
+										<Label>Password {user.role_id}</Label>
 									</LabelContainer>
 									<FieldTitleLabel>Change Password</FieldTitleLabel>
 									<InputHolder

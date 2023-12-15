@@ -30,6 +30,19 @@ const Roles = () => {
 	const endIndex = currentPage * pagePerItem;
 	const paginatedRoles = rolesDisplay.slice(startIndex, endIndex);
 
+	useEffect(() => {
+		document.addEventListener("click", handleClickOutside);
+		return () => {
+			document.removeEventListener("click", handleClickOutside);
+		};
+	}, [currentPage, pagePerItem]);
+
+	const handleClickOutside = (event) => {
+		if (!event.target.closest(".action-container") && !event.target.closest(".ellipsis")) {
+			setActiveActionContainer(null);
+		}
+	};
+
 	const fetchRoles = async () => {
 		setRolesLoading(true);
 		const res = await getRoles();
@@ -94,23 +107,27 @@ const Roles = () => {
 											<FontAwesomeIcon
 												className="ellipsis"
 												icon={faEllipsis}
-												onClick={() => (activeActionContainer === index ? setActivecAtionContainer(-1) : setActiveActionContainer(index))}
+												onClick={() => (activeActionContainer === index ? setActiveActionContainer(-1) : setActiveActionContainer(index))}
 											/>
 
 											{activeActionContainer === index && (
 												<ActionContainer onClick={() => setActiveActionContainer(-1)}>
-													<p
-														onClick={() => {
-															setClickedRole(role);
-															setIsEditPopUpOpen(true);
-														}}
-													>
-														<FontAwesomeIcon icon={faPen} />
-														Edit
-													</p>
-													<p onClick={() => deleteRolefunc(role.role_id)}>
-														<FontAwesomeIcon icon={faTrash} /> Delete
-													</p>
+													{role.role_id !== 1 && role.role_id !== 2 && (
+														<>
+															<p
+																onClick={() => {
+																	setClickedRole(role);
+																	setIsEditPopUpOpen(true);
+																}}
+															>
+																<FontAwesomeIcon icon={faPen} />
+																Edit
+															</p>
+															<p onClick={() => deleteRolefunc(role.role_id)}>
+																<FontAwesomeIcon icon={faTrash} /> Delete
+															</p>
+														</>
+													)}
 												</ActionContainer>
 											)}
 										</TableData>

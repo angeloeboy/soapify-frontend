@@ -61,3 +61,20 @@ export const createUser = async (user) => {
 		return data;
 	} catch (error) {}
 };
+
+export const resetUserCancellation = async (user_id) => {
+	try {
+		const res = await fetch(`/api/users/resetCancellationCount/${user_id}`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			credentials: "include",
+		});
+
+		const data = await res.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};

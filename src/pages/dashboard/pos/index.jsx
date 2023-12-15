@@ -147,6 +147,13 @@ const Pos = () => {
 		const response = await getProducts();
 		const filteredProducts = response.products.filter((product) => product.isActive);
 
+		console.log(filteredProducts);
+
+		filteredProducts.forEach((product) => {
+			//deduct the quantity_in_awaiting payment from the quantity_in_stock
+			product.quantity_in_stock -= product.quantity_in_awaiting_payment;
+		});
+
 		setProducts(filteredProducts || []);
 	};
 
@@ -224,7 +231,8 @@ const Pos = () => {
 							{parentProducts.length !== 0 &&
 								parentProductsDisplay.map((parentProduct, index) => {
 									if (parentProduct.products.length <= 0) return null;
-
+									// if (parentProduct.products[0].quantity_in_stock <= 0) return null;
+									if (parentProduct.products.filter((product) => product.quantity_in_stock > 0).length <= 0) return null;
 									return <ParentProductDisplay key={index} parentProduct={parentProduct} updateCart={updateCart} />;
 								})}
 							{productDisplay.map((product, index) => {
@@ -261,3 +269,24 @@ const Pos = () => {
 };
 
 export default Pos;
+
+import cookie from "cookie";
+export async function getServerSideProps(context) {
+	const { req } = context;
+	const parsedCookies = cookie.parse(req.headers.cookie || "").permissions;
+
+	if (!parsedCookies.includes("View Pos:pos")) {
+		return {
+			redirect: {
+				destination: "/",
+				permanent: false,
+			},
+		};
+	}
+
+	return {
+		props: {
+			permissions: parsedCookies ? JSON.parse(parsedCookies) : [],
+		}, // will be passed to the page component as props
+	};
+}

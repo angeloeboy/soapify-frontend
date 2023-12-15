@@ -70,14 +70,19 @@ const EditAttribute = ({ onClose, fetchAttributes, selectedAttr }) => {
 	const handleFormSubmit = (e) => {
 		e.preventDefault();
 
+		if (attribute.attribute_name == "") return toast.error("Attribute name is required");
+		//check if values is empty
+		if (attribute.values.length == 0) return toast.error("Attribute values is required");
+
 		console.log(attribute);
 		editAttribute(selectedAttr.attribute_id, attribute)
 			.then((res) => {
 				console.log(res);
-				fetchAttributes();
 
 				if (res.error) return toast.error(res.error);
 				toast.success("Attribute edited successfully");
+				fetchAttributes();
+				onClose();
 			})
 			.then(() => {});
 	};
@@ -175,7 +180,14 @@ const EditAttribute = ({ onClose, fetchAttributes, selectedAttr }) => {
 					</FieldContainer>
 
 					<ButtonsContainer>
-						<CloseButton onClick={onClose}>Close</CloseButton>
+						<CloseButton
+							onClick={() => {
+								fetchAttributes();
+								onClose();
+							}}
+						>
+							Close
+						</CloseButton>
 						<Button type="submit">Save</Button>
 					</ButtonsContainer>
 				</form>

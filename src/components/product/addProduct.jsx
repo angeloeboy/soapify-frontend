@@ -75,6 +75,12 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 			return;
 		}
 
+		//check if subcategory id is empty or 0
+		if (product.subcategory_id === 0 || product.subcategory_id === null || product.subcategory_id === undefined) {
+			toast.error("Subcategory cannot be empty");
+			return;
+		}
+
 		//check if the minimum reorder level is 0
 		if (product.addAsBox && product.boxDetails.minimum_reorder_level === 0) {
 			toast.error("Minimum reorder level cannot be 0");
@@ -333,26 +339,36 @@ const AddProduct = ({ setIsAddPopUpOpen, onButtonClick, GetProducts }) => {
 									))}
 							</Select>
 						</div>
-
-						<div>
-							<FieldTitleLabel>Sub category</FieldTitleLabel>
-							<Select
-								value={product.template_id}
-								onChange={(e) => {
-									handleSubCategoryChange(e);
-								}}
-							>
-								{subCategories.map((subcategory) => (
-									<Option value={subcategory.subcategory_id} key={subcategory.subcategory_id}>
-										{subcategory.subcategory_name}
+						{subCategories.length > 0 ? (
+							<div>
+								<FieldTitleLabel>Sub category</FieldTitleLabel>
+								<Select
+									value={product.template_id}
+									onChange={(e) => {
+										handleSubCategoryChange(e);
+									}}
+								>
+									{subCategories.map((subcategory) => (
+										<Option value={subcategory.subcategory_id} key={subcategory.subcategory_id}>
+											{subcategory.subcategory_name}
+										</Option>
+									))}
+									<Option value={100} key={"adfasdfasdf"}>
+										{subCategories.length}
 									</Option>
-								))}
-							</Select>
-						</div>
+								</Select>
+							</div>
+						) : (
+							<Link className="sml-link" href="/dashboard/products/subcategories">
+								A product needs a subcategory. Add subcategory first
+							</Link>
+						)}
 
-						<LabelContainer>
-							<Label>Attributes</Label>
-						</LabelContainer>
+						{attributes?.length > 0 && (
+							<LabelContainer>
+								<Label>Attributes</Label>
+							</LabelContainer>
+						)}
 
 						{attributes?.map((attribute, index) => {
 							return (

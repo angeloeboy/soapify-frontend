@@ -108,8 +108,12 @@ const AddPromo = ({ setIsAddPopUpOpen, getPromotionsFunc }) => {
 		console.log(res);
 
 		if (res) {
-			toast.success("Successfully added promo");
-			setIsAddPopUpOpen(false);
+			if (res.status === "Success") {
+				toast.success("Promo added successfully");
+				setIsAddPopUpOpen(false);
+			} else {
+				toast.error(res.errors[0].message);
+			}
 		} else {
 			toast.error("Failed to add promo");
 		}

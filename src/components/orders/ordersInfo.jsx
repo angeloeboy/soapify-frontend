@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
 	Button,
 	FieldContainer,
@@ -13,12 +13,13 @@ import {
 	OrdersWrapper,
 } from "@/styled-components/ItemActionModal";
 import { CloseButton } from "../styled-components/PopUp";
-import { acceptCancelTransaction, acceptOrderReturnRefund, acceptTransaction, setTransactionStatus } from "@/api/transaction";
+import { acceptCancelTransaction, acceptOrderReturnRefund, acceptTransaction, adminCancelOrder, setTransactionStatus } from "@/api/transaction";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import styled from "styled-components";
 import Image from "next/image";
 import IssueReturn from "./issueReturnModal";
+import { WebSocketContext } from "../context/WebsocketContext";
 
 const Product = styled.div`
 	/* display: flex; */
@@ -183,6 +184,8 @@ const Input = styled.input`
 const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransactions }) => {
 	const [isIssueReturnOpen, setIsIssueReturnOpen] = useState(false);
 
+	const { getTransactionsFunc } = useContext(WebSocketContext);
+
 	useEffect(() => {
 		console.log(selectedTransaction.items);
 	}, []);
@@ -195,7 +198,7 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 			toast.success("Transaction status updated");
 			setIsOrdersInfoOpen(false);
 			console.log("Success");
-			fetchTransactions();
+			getTransactionsFunc();
 			return;
 		}
 
@@ -259,6 +262,39 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 		toast.error(res.errors[0].message);
 	};
 
+	const adminCancelOrderFunc = async () => {
+		const res = await adminCancelOrder(selectedTransaction.transaction_id);
+
+		if (!res) return toast.error("Something went wrong");
+		if (res.status == "Success") {
+			toast.success("Order cancelled successfully");
+			setIsOrdersInfoOpen(false);
+			fetchTransactions();
+			return;
+		}
+
+		toast.error(res.errors[0].message);
+	};
+
+	//check if the product is discounted based on the promo code object
+	const isDiscounted = (product_id) => {
+		//check if the product is discounted based on the promo_code_object.promos
+
+		let isDiscounted = false;
+
+		if (selectedTransaction.promo_code_object) {
+			selectedTransaction.promo_code_object.products.forEach((promo) => {
+				if (promo.product_id === product_id) {
+					isDiscounted = true;
+				}
+			});
+		}
+
+		console.log(product_id);
+
+		return isDiscounted;
+	};
+
 	return (
 		<PopupOverlay>
 			<PopupContent>
@@ -283,7 +319,16 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 											<p>
 												{item.product.product_code} | {item.product.product_name}
 											</p>
-											<p>PHP {item.price / 100}</p>
+
+											<p>
+												PHP {item.price / 100}
+												{isDiscounted(item.product_id) &&
+													` ${
+														selectedTransaction.promo_code_object.promo_code_type == "PERCENTAGE"
+															? "(Discounted by " + selectedTransaction.promo_code_object.promo_code_value + "%)"
+															: ""
+													}`}
+											</p>
 											<p>Quantity: {item.quantity}</p>
 										</div>
 
@@ -305,6 +350,8 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 							</Product>
 						))}
 
+						{selectedTransaction.promo_code_object && <PromoCodedisplay promo_code={selectedTransaction.promo_code_object} />}
+
 						<p className="total">Total: P{selectedTransaction.total_amount / 100}</p>
 					</OrdersWrapper>
 
@@ -314,7 +361,7 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 					<OrdersWrapper>
 						<h5>Payment Details</h5>
 						<p>Payment method: {selectedTransaction.payment_method ? selectedTransaction.payment_method.name : "Deleted"}</p>
-						<p>Transaction number: {selectedTransaction.transaction_number ? selectedTransaction.transaction_number : "N/A"}</p>
+						<p>Reference number: {selectedTransaction.transaction_number ? selectedTransaction.transaction_number : "N/A"}</p>
 						{selectedTransaction.transaction_screenshot && (
 							<>
 								<p>Screenshot of payment</p>
@@ -351,7 +398,7 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 								) : (
 									<>
 										<ButtonAccept onClick={() => acceptReturnRefundFunc()}>Issue Refund</ButtonAccept>
-										<ButtonAccept onClick={() => acceptCancellationFunc()}>Modify Items</ButtonAccept>
+										{/* <ButtonAccept onClick={() => acceptCancellationFunc()}>Modify Items</ButtonAccept> */}
 										<ButtonAccept onClick={() => setIsIssueReturnOpen(true)}>Issue Return</ButtonAccept>
 									</>
 								)}
@@ -359,6 +406,9 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 						)}
 
 						{selectedTransaction.status === "PAID" && <ButtonAccept onClick={() => updateStatus("RELEASED")}>Mark as released</ButtonAccept>}
+						{selectedTransaction.transaction_user_name.role_id !== 2 && selectedTransaction.status === "RELEASED" && (
+							<ButtonAccept onClick={() => adminCancelOrderFunc(true)}>Cancel Order</ButtonAccept>
+						)}
 					</OrdersWrapper>
 				</FieldContainer>
 
@@ -371,6 +421,20 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 				<IssueReturn setIsIssueReturnOpen={setIsIssueReturnOpen} selectedTransaction={selectedTransaction} fetchTransactions={fetchTransactions} />
 			)}
 		</PopupOverlay>
+	);
+};
+
+const PromoCodedisplay = ({ promo_code }) => {
+	return (
+		<div>
+			<p className="total">Promo code: {promo_code?.promo_code}</p>
+
+			{promo_code?.promo_code_type !== "PERCENTAGE" && (
+				<p className="total">
+					Value: {promo_code?.promo_code_value} {promo_code?.promo_code_type == "PERCENTAGE" ? "%" : "PHP"}
+				</p>
+			)}
+		</div>
 	);
 };
 

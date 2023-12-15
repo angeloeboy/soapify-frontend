@@ -38,7 +38,7 @@ const ApplyButton = styled.button`
 
 const PromoCode = () => {
 	const [promoCode, setPromoCode] = useState("");
-	const { setTransaction, transaction, cart, setPromoCodeResponse } = useContext(TransactionContext);
+	const { setTransaction, transaction, cart, setCart, setPromoCodeResponse, promoCodeResponse } = useContext(TransactionContext);
 
 	const validate = async () => {
 		console.log(transaction);
@@ -51,6 +51,17 @@ const PromoCode = () => {
 		console.log(res);
 
 		if (res.isValid) {
+			//check if the value is less than the total
+			if (res.discountType === "PERCENTAGE") {
+				// if (res.totalDiscountAmount > 100) {
+				// 	return toast.error("Discount value cannot be greater than 100%");
+				// }
+			} else {
+				if (res.totalDiscountAmount > transaction.total_amount) {
+					return toast.error("Discount value cannot be greater than the total");
+				}
+			}
+
 			setTransaction((prev) => ({ ...prev, promo_code: promoCode }));
 			setPromoCodeResponse(res);
 			toast.success("Promo code applied!");
@@ -61,21 +72,42 @@ const PromoCode = () => {
 		toast.error(res.errorMessage);
 	};
 
-	const applyPromoToCart = (promo) => {
-		let newCart = cart.map((item) => {
-			if (item.product_id == promo.product_id) {
-				return {
-					...item,
-					promo_id: promo.promo_id,
-					promo_name: promo.promo_name,
-					promo_discount: promo.promo_discount,
-					promo_type: promo.promo_type,
-				};
-			}
-			return item;
-		});
-		setTransaction((prev) => ({ ...prev, cart: newCart }));
+	const removePromo = async () => {
+		//if the transaction is discounted in percentage then we need to add the discount amount back to the total
+		if (promoCodeResponse.discountType === "PERCENTAGE") {
+			//return the discount amount back to the total
+
+			//get the original price of products that were discounted
+			let discountedItems = promoCodeResponse.discountedItems;
+			let totalDiscountAmount = 0;
+			discountedItems.forEach((item) => {
+				totalDiscountAmount += item.discountAmount;
+			});
+
+			//update the cart with the original price of the discounted items and remove the isDiscounted flag
+			let updatedCart = cart.map((cartItem) => {
+				const discountInfo = discountedItems.find((di) => di.product_id === cartItem.product_id);
+				if (discountInfo) {
+					return {
+						...cartItem,
+						product_price: cartItem.orig_price,
+						isDiscounted: false,
+						orig_price: null,
+					};
+				}
+				return cartItem;
+			});
+
+			setCart(updatedCart);
+		}
+
+		setTransaction((prev) => ({ ...prev, promo_code: "" }));
+		setPromoCodeResponse({});
+		setTransaction((prev) => ({ ...prev, promo_codeApplied: false }));
+		console.log(cart);
+		console.log(transaction);
 	};
+
 	//check if cart is empty
 	if (cart.length !== 0) {
 		return (
@@ -90,6 +122,7 @@ const PromoCode = () => {
 					placeholder="Apply voucher "
 				/>
 				<ApplyButton onClick={() => validate()}>Apply</ApplyButton>
+				{transaction.promo_codeApplied && <ApplyButton onClick={() => removePromo()}>Remove Promo</ApplyButton>}
 			</div>
 		);
 	}

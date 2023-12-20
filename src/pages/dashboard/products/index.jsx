@@ -58,18 +58,23 @@ const Products = ({ hasAddProduct, hasDeactivateProduct, hasDeleteProduct, hasEd
 
 	const fetchProducts = () => {
 		getProducts().then((res) => {
+			console.log("Fetch products response", res.products);
+
 			if (res.products) {
 				let products = res.products;
 
 				products.map((product) => {
 					//check product status and add to product object
-					if (product.quantity_in_stock <= product.minimum_reorder_level) {
+					if (calculateStocksBasedOnInventoryObject(product.Inventories) <= product.minimum_reorder_level) {
 						product.status = "Low";
 					}
-					if (product.quantity_in_stock > product.minimum_reorder_level && product.quantity_in_stock < 2 * product.minimum_reorder_level) {
+					if (
+						calculateStocksBasedOnInventoryObject(product.Inventories) > product.minimum_reorder_level &&
+						calculateStocksBasedOnInventoryObject(product.Inventories) < 2 * product.minimum_reorder_level
+					) {
 						product.status = "Moderate";
 					}
-					if (product.quantity_in_stock >= 2 * product.minimum_reorder_level) {
+					if (calculateStocksBasedOnInventoryObject(product.Inventories) >= 2 * product.minimum_reorder_level) {
 						product.status = "High";
 					}
 				});
@@ -79,7 +84,6 @@ const Products = ({ hasAddProduct, hasDeactivateProduct, hasDeleteProduct, hasEd
 				setProducts([]);
 			}
 
-			console.log(res.products);
 			setProductsLoading(false);
 		});
 	};
@@ -164,6 +168,15 @@ const Products = ({ hasAddProduct, hasDeactivateProduct, hasDeleteProduct, hasEd
 		setShowReactivateModal(true);
 	};
 
+	const calculateStocksBasedOnInventoryObject = (inventoryObject) => {
+		let totalStock = 0;
+		inventoryObject.forEach((inventory) => {
+			totalStock += inventory.current_quantity;
+		});
+
+		return totalStock;
+	};
+
 	return (
 		<DashboardLayout>
 			<PageTitle title="Products List" />
@@ -175,6 +188,7 @@ const Products = ({ hasAddProduct, hasDeactivateProduct, hasDeleteProduct, hasEd
 					products={products}
 					setCurrentPage={setCurrentPage}
 					hasAddProduct={hasAddProduct}
+					calculateStocksBasedOnInventoryObject={calculateStocksBasedOnInventoryObject}
 				/>
 
 				<TableContainer>
@@ -186,7 +200,7 @@ const Products = ({ hasAddProduct, hasDeactivateProduct, hasDeleteProduct, hasEd
 								<TableHeadings>Name</TableHeadings>
 								{/* <TableHeadings>Attributes</TableHeadings> */}
 								<TableHeadings>Stock</TableHeadings>
-								<TableHeadings>Price</TableHeadings>
+								<TableHeadings>Unit Price</TableHeadings>
 								<TableHeadings>Stock Status</TableHeadings>
 								<TableHeadings>Actions</TableHeadings>
 							</TableRows>
@@ -211,7 +225,7 @@ const Products = ({ hasAddProduct, hasDeactivateProduct, hasDeleteProduct, hasEd
 										</TableData>
 										<TableData>{product.product_name}</TableData>
 
-										<TableData>{product.quantity_in_stock}</TableData>
+										<TableData>{calculateStocksBasedOnInventoryObject(product.Inventories)}</TableData>
 										<TableData>{product.product_price / 100}</TableData>
 										<TableData>
 											{product.status === "Low" && (
@@ -275,7 +289,6 @@ const Products = ({ hasAddProduct, hasDeactivateProduct, hasDeleteProduct, hasEd
 													{!product.isActive && <p onClick={() => handleReactivate(product.product_id, product.product_name)}>Reactivate</p>}
 
 													{product.isActive && <p onClick={() => handleDeactivate(product.product_id, product.product_name)}>Deactivate</p>}
-													{/* <p onClick={() => handleAddInventoryClick(product.product_id)}>Add Inventory</p> */}
 												</ActionContainer>
 											)}
 										</TableData>
@@ -317,7 +330,7 @@ const Products = ({ hasAddProduct, hasDeactivateProduct, hasDeleteProduct, hasEd
 					setIsAddPopUpOpen={setIsAddInventoryPopUpOpen}
 					openModal={true}
 					fromProducts={true}
-					fetchProductsFunc={fetchProducts}
+					fetchProductsFunc={() => fetchProducts()}
 				/>
 			)}
 		</DashboardLayout>

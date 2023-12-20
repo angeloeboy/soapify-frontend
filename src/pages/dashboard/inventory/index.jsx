@@ -104,7 +104,7 @@ const InventoryPage = ({ hasAddinventory }) => {
 			console.log(res);
 
 			if (!res) return;
-			// res.inventory = res.inventory.filter((inventory) => inventory.current_quantity > 0);
+			res.inventory = res.inventory.filter((inventory) => inventory.current_quantity > 0);
 			res.inventory ? setInventory(res.inventory) : setInventory([]);
 			res.inventory ? setinventoryDisplay(res.inventory) : setinventoryDisplay([]);
 			setInventoryLoading(false);
@@ -215,11 +215,8 @@ const InventoryPage = ({ hasAddinventory }) => {
 								{/* <TableHeadings>Attributes</TableHeadings> */}
 								<TableHeadings>SKU</TableHeadings>
 								<TableHeadings>Quantity</TableHeadings>
-								<TableHeadings>Quantity Remaining</TableHeadings>
+								<TableHeadings>Quantity On hand</TableHeadings>
 								<TableHeadings>Date Received</TableHeadings>
-								<TableHeadings>Expiration</TableHeadings>
-
-								<TableHeadings>Status</TableHeadings>
 								<TableHeadings>Actions</TableHeadings>
 							</TableRows>
 							{inventory.length === 0 ? (
@@ -238,9 +235,6 @@ const InventoryPage = ({ hasAddinventory }) => {
 										<TableData>{inventory.quantity}</TableData>
 										<TableData>{inventory.current_quantity}</TableData>
 										<TableData>{convertToDateFormat(inventory.date_added)}</TableData>
-										<TableData>{convertToDateFormat(inventory.expiry_date)}</TableData>
-
-										<TableData>{checkIfAboutToExpire(inventory.expiry_date)}</TableData>
 
 										<TableData>
 											<FontAwesomeIcon
@@ -251,18 +245,6 @@ const InventoryPage = ({ hasAddinventory }) => {
 
 											{activeActionContainer === index && (
 												<ActionContainer onClick={() => setActiveActionContainer(-1)}>
-													{/* <p
-														onClick={() => {
-															setSelectedInventory(inventory);
-															setIsEditPopUpOpen(selectedInventory);
-														}}
-													>
-														<FontAwesomeIcon icon={faPen} />
-														Edit
-													</p>
-													<p>
-														<FontAwesomeIcon icon={faTrash} /> Delete
-													</p> */}
 													<p
 														onClick={(e) => {
 															setIsMovePopUpOpen(true);

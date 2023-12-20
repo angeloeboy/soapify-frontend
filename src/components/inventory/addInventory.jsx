@@ -96,13 +96,6 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId, openModa
 		e.preventDefault();
 		setLoading(true);
 
-		//make sure expiry date is not before date added
-		if (inventory.expiry_date && inventory.date_added >= inventory.expiry_date) {
-			toast.error("Invalid expiration date");
-			setLoading(false);
-			return;
-		}
-
 		const res = await addInventory(inventory);
 
 		if (res.status && res.status == "Success") {
@@ -110,7 +103,7 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId, openModa
 			setIsAddPopUpOpen(false);
 
 			if (fromProducts) {
-				fetchProductsFunc();
+				await fetchProductsFunc();
 				return;
 			}
 
@@ -188,30 +181,6 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId, openModa
 								placeholder="Enter your minimum stock"
 								onChange={(e) => setInventory({ ...inventory, quantity: e.target.value })}
 								value={inventory.quantity}
-							/>
-						</div>
-						{/* <div>
-							<FieldTitleLabel notFirst>Date Received</FieldTitleLabel>
-							<InputHolder
-								type="date"
-								placeholder="Enter your Quantity Remaining"
-								onChange={(e) =>
-									setInventory({
-										...inventory,
-										date_added: appendCurrentTime(e.target.value),
-									})
-								}
-								value={inventory.date_added.split(" ")[0]} // Display only the date part in the input
-							/>
-						</div> */}
-
-						<div>
-							<FieldTitleLabel notFirst>Expiration date</FieldTitleLabel>
-							<InputHolder
-								type="date"
-								placeholder=""
-								onChange={(e) => setInventory({ ...inventory, expiry_date: appendCurrentTime(e.target.value) })}
-								value={inventory.expiry_date.split(" ")[0]}
 							/>
 						</div>
 

@@ -22,13 +22,19 @@ const WarehouseSearchBar = ({ setAddPopUpOpen, warehouses, setWarehouseDisplay, 
 	};
 
 	const handleSearch = () => {
-		const filteredWarehouses = warehouses.filter((warehouse) => {
-			const matchCategory = selectedCategory === "All" || warehouse.category === selectedCategory;
-			const matchSearchQuery = warehouse.warehouse_name.toLowerCase().includes(searchQuery.toLowerCase());
-			return matchCategory && matchSearchQuery;
+		const query = searchQuery;
+		const category = selectedCategory;
+
+		let filteredWarehouses = warehouses.filter((warehouse) => {
+			if (category === "All") {
+				return warehouse.warehouse_name.toLowerCase().includes(query.toLowerCase());
+			} else {
+				return warehouse.warehouse_name.toLowerCase().includes(query.toLowerCase()) && warehouse.warehouse_type === category;
+			}
 		});
 
 		setWarehouseDisplay(filteredWarehouses);
+		setCurrentPage(1);
 	};
 
 	return (

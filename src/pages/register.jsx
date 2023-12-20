@@ -9,17 +9,28 @@ import Link from "next/link";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Image from "next/image";
+import NavBar from "@/components/misc/navbar";
 const BgContainer = styled.div`
 	min-height: 100vh;
-	background-image: url("/bg.png");
-	/* background-position: center 50%; */
-	//opsition background to right
+
 	background-position-x: right;
 	background-repeat: no-repeat;
 	background-size: contain;
 	background-attachment: fixed;
-`;
+	display: flex;
+	justify-content: space-between;
+	img {
+		width: 50%;
+		max-width: 800px;
+		margin-right: 100px;
+	}
 
+	@media (max-width: 800px) {
+		img {
+			display: none;
+		}
+	}
+`;
 const RegisterContainer = styled.div`
 	min-height: 100vh;
 	width: 100%;
@@ -29,6 +40,7 @@ const RegisterContainer = styled.div`
 	padding-bottom: 100px;
 	height: 100%;
 	background-color: #f5f5f5;
+	padding-top: 150px;
 
 	.appTitle {
 		text-transform: uppercase;
@@ -180,129 +192,134 @@ let Register = () => {
 	};
 
 	return (
-		<BgContainer>
-			<RegisterContainer>
-				<h2 className="appTitle">Soapify</h2>
-				<ToastContainer
-					position="top-right"
-					autoClose={2000}
-					hideProgressBar={false}
-					newestOnTop={false}
-					closeOnClick
-					rtl={false}
-					pauseOnFocusLoss
-					draggable
-					pauseOnHover
-					theme="light"
-					className="toast-container"
-				/>
+		<>
+			<BgContainer>
+				<NavBar />
+				<RegisterContainer>
+					<h2 className="appTitle">Soapify</h2>
+					<ToastContainer
+						position="top-right"
+						autoClose={2000}
+						hideProgressBar={false}
+						newestOnTop={false}
+						closeOnClick
+						rtl={false}
+						pauseOnFocusLoss
+						draggable
+						pauseOnHover
+						theme="light"
+						className="toast-container"
+					/>
 
-				<Form onSubmit={(e) => handleLogin(e)}>
-					<h3>Register</h3>
-					<p>
-						Enter your email and password to register. Then <Link href="/login"> Login </Link>
-					</p>
+					<Form onSubmit={(e) => handleLogin(e)}>
+						<h3>Register</h3>
+						<p>
+							Enter your email and password to register. Then <Link href="/login"> Login </Link>
+						</p>
 
-					<div className="formsContainer">
-						<label htmlFor="username">First Name</label>
-						<FormField
-							type="text"
-							onChange={(e) => {
-								setCredentials({ ...credentials, firstName: e.target.value });
-							}}
-							value={credentials.firstName}
-							id="firstName"
-							name="firstName"
-							required
-							error={errorMessages.firstName ? true : false}
-						/>
-						{errorMessages.firstName && <Error>{errorMessages.firstName}</Error>}
+						<div className="formsContainer">
+							<label htmlFor="username">First Name</label>
+							<FormField
+								type="text"
+								onChange={(e) => {
+									setCredentials({ ...credentials, firstName: e.target.value });
+								}}
+								value={credentials.firstName}
+								id="firstName"
+								name="firstName"
+								required
+								error={errorMessages.firstName ? true : false}
+							/>
+							{errorMessages.firstName && <Error>{errorMessages.firstName}</Error>}
 
-						<label htmlFor="username">Last Name</label>
-						<FormField
-							type="text"
-							onChange={(e) => {
-								setCredentials({ ...credentials, lastName: e.target.value });
-							}}
-							value={credentials.lastName}
-							id="lastName"
-							name="lastName"
-							required
-							error={errorMessages.lastName ? true : false}
-						/>
-						{errorMessages.lastName && <Error>{errorMessages.lastName}</Error>}
+							<label htmlFor="username">Last Name</label>
+							<FormField
+								type="text"
+								onChange={(e) => {
+									setCredentials({ ...credentials, lastName: e.target.value });
+								}}
+								value={credentials.lastName}
+								id="lastName"
+								name="lastName"
+								required
+								error={errorMessages.lastName ? true : false}
+							/>
+							{errorMessages.lastName && <Error>{errorMessages.lastName}</Error>}
 
-						<label htmlFor="username">Email</label>
-						<FormField
-							type="email"
-							onChange={(e) => {
-								setCredentials({ ...credentials, email: e.target.value });
-								setErrorMessages({ ...errorMessages, email: "" });
-							}}
-							value={credentials.email}
-							id="email"
-							name="email"
-							error={errorMessages.email ? true : false}
-							required
-						/>
-						{errorMessages.email && <Error>{errorMessages.email}</Error>}
+							<label htmlFor="username">Email</label>
+							<FormField
+								type="email"
+								onChange={(e) => {
+									setCredentials({ ...credentials, email: e.target.value });
+									setErrorMessages({ ...errorMessages, email: "" });
+								}}
+								value={credentials.email}
+								id="email"
+								name="email"
+								error={errorMessages.email ? true : false}
+								required
+							/>
+							{errorMessages.email && <Error>{errorMessages.email}</Error>}
 
-						<label htmlFor="phone_number">Phone Number</label>
-						<FormField
-							type="text"
-							onChange={(e) => {
-								const value = e.target.value;
-								///remove anything that is not a digit and limit it to 12 digits
-								const sanitizedValue = value.replace(/\D/g, "").slice(0, 12);
-								setCredentials({ ...credentials, phone_number: sanitizedValue });
-							}}
-							value={credentials.phone_number}
-							id="phone_number"
-							name="phone_number"
-							required
-							error={errorMessages.phone_number ? true : false}
-						/>
-						{errorMessages.phone_number && <Error>{errorMessages.phone_number}</Error>}
-						<label htmlFor="password">Password</label>
-						<FormField
-							type="password"
-							onChange={(e) => {
-								setCredentials({ ...credentials, password: e.target.value });
-								setErrorMessages({ ...errorMessages, password: "" });
-							}}
-							value={credentials.password}
-							id="password"
-							name="password"
-							error={errorMessages.password ? true : false}
-							required
-						/>
-						{errorMessages.password && <Error>{errorMessages.password}</Error>}
+							<label htmlFor="phone_number">Phone Number</label>
+							<FormField
+								type="text"
+								onChange={(e) => {
+									const value = e.target.value;
+									///remove anything that is not a digit and limit it to 12 digits
+									const sanitizedValue = value.replace(/\D/g, "").slice(0, 12);
+									setCredentials({ ...credentials, phone_number: sanitizedValue });
+								}}
+								value={credentials.phone_number}
+								id="phone_number"
+								name="phone_number"
+								required
+								error={errorMessages.phone_number ? true : false}
+							/>
+							{errorMessages.phone_number && <Error>{errorMessages.phone_number}</Error>}
+							<label htmlFor="password">Password</label>
+							<FormField
+								type="password"
+								onChange={(e) => {
+									setCredentials({ ...credentials, password: e.target.value });
+									setErrorMessages({ ...errorMessages, password: "" });
+								}}
+								value={credentials.password}
+								id="password"
+								name="password"
+								error={errorMessages.password ? true : false}
+								required
+							/>
+							{errorMessages.password && <Error>{errorMessages.password}</Error>}
 
-						<label htmlFor="confirmPassword">Confirm Password</label>
-						<FormField
-							type="password"
-							onChange={(e) => {
-								setCredentials({ ...credentials, confirmPassword: e.target.value });
-								setErrorMessages({ ...errorMessages, confirmPassword: "" });
-							}}
-							value={credentials.confirmPassword}
-							id="confirmPassword"
-							name="confirmPassword"
-							error={errorMessages.confirmPassword ? true : false}
-							required
-						/>
-						{errorMessages.confirmPassword && <Error>{errorMessages.confirmPassword}</Error>}
+							<label htmlFor="confirmPassword">Confirm Password</label>
+							<FormField
+								type="password"
+								onChange={(e) => {
+									setCredentials({ ...credentials, confirmPassword: e.target.value });
+									setErrorMessages({ ...errorMessages, confirmPassword: "" });
+								}}
+								value={credentials.confirmPassword}
+								id="confirmPassword"
+								name="confirmPassword"
+								error={errorMessages.confirmPassword ? true : false}
+								required
+							/>
+							{errorMessages.confirmPassword && <Error>{errorMessages.confirmPassword}</Error>}
 
-						<Button className="loginBtn" width="100%" onClick={(e) => handleRegister(e)}>
-							{loggingIn ? <Image src="/loading.svg" alt="loading" width="20" height="20" /> : "Register"}
-						</Button>
-					</div>
-				</Form>
+							<Button className="loginBtn" width="100%" onClick={(e) => handleRegister(e)}>
+								{loggingIn ? <Image src="/loading.svg" alt="loading" width="20" height="20" /> : "Register"}
+							</Button>
+						</div>
+					</Form>
 
-				{/* <Button onClick={(e) => handleTest(e)}>Test</Button>
+					{/* <Button onClick={(e) => handleTest(e)}>Test</Button>
 				<Button onClick={() => handleLogout()}>Logout</Button> */}
-			</RegisterContainer>
-		</BgContainer>
+				</RegisterContainer>
+
+				<img src="/bg1.svg" />
+			</BgContainer>
+		</>
 	);
 };
 

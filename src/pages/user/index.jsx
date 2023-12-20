@@ -227,6 +227,7 @@ const UserDashboard = () => {
 							{parentProducts.length !== 0 &&
 								parentProductsDisplay.map((parentProduct, index) => {
 									if (parentProduct.products.length <= 0) return null;
+									if (parentProduct.products.filter((product) => product.quantity_in_stock > 0).length <= 0) return null;
 
 									return <ParentProductDisplay key={index} parentProduct={parentProduct} updateCart={updateCart} />;
 								})}

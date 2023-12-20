@@ -72,12 +72,16 @@ const AddAttribute = ({ setPopUpOpen, fetchAttributes }) => {
 
 		if (attribute.attribute_name == "") return toast.error("Attribute name is required");
 
-		await addAttribute(attribute).then((res) => {
-			console.log(res);
-			fetchAttributes();
+		const res = await addAttribute(attribute);
+		if (!res) return;
+		console.log(res);
+		if (res.status == "Success") {
 			toast.success("Attribute added successfully");
 			setPopUpOpen(false);
-		});
+			fetchAttributes();
+		}
+
+		toast.error(res.errors[0].msg);
 	};
 
 	const addValue = (value) => {

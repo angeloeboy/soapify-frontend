@@ -144,7 +144,7 @@ const TopBar = () => {
 	const [notificationsList, setNotificationsList] = useState([]);
 	const [showNotificationModal, setShowNotificationModal] = useState(false);
 
-	const { notifications, getNotificationsFunc } = useContext(WebSocketContext);
+	const { notifications, getNotificationsFunc, user } = useContext(WebSocketContext);
 
 	const getDate = () => {
 		let date = new Date();
@@ -191,7 +191,10 @@ const TopBar = () => {
 
 	return (
 		<TopBarContainer>
-			<h3>{getDate()}</h3>
+			<h3>
+				Hello {user?.first_name} {user?.last_name}
+			</h3>
+
 			<div
 				className="alert-container"
 				onClick={() => {

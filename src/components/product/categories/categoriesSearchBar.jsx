@@ -48,12 +48,11 @@ const CategoriesSearchBar = ({ setIsAddPopUpOpen, products, setCategoriesDisplay
 				<p> Category</p>
 				<Dropdown productCategories={productCategories} handleCategoryChange={handleCategoryChange} />
 			</div> */}
-			{hasAddPermission && (
-				<div>
-					<p> Add </p>
-					<Button onClick={() => setIsAddPopUpOpen(true)}>+ Add Category</Button>
-				</div>
-			)}
+
+			<div>
+				<p> Add </p>
+				<Button onClick={() => setIsAddPopUpOpen(true)}>+ Add Category</Button>
+			</div>
 		</TableControlPanel>
 	);
 };

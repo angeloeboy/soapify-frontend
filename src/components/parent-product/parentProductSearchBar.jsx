@@ -30,9 +30,9 @@ const ParentProductSearchBar = ({ setParentProductDisplay, parentProducts, setCu
 		setSearchQuery(e.target.value);
 	};
 
-	// useEffect(() => {
-	// 	handleSearch();
-	// }, [searchQuery]);
+	useEffect(() => {
+		handleSearch();
+	}, [searchQuery]);
 
 	return (
 		<TableControlPanel>

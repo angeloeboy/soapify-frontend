@@ -38,9 +38,16 @@ const AddWarehouse = ({ setAddPopUpOpen, fetchWarehouses }) => {
 			return;
 		}
 
-		setAddPopUpOpen(false);
-		toast.success("Warehouse added successfully!");
-		fetchWarehouses();
+		//if success then close popup and show toast
+
+		if (response.status == "Success") {
+			setAddPopUpOpen(false);
+			toast.success("Warehouse added successfully!");
+			fetchWarehouses();
+			return;
+		}
+
+		toast.error(response.errors[0].message);
 	};
 	return (
 		<PopupOverlay>

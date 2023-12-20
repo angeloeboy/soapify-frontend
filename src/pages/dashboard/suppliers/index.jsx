@@ -9,7 +9,7 @@ import Table, { ActionContainer, TableContainer, TableData, TableHeadings, Table
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
 import WarehouseSearchBarComponent from "@/components/warehouse/warehouseSearchBar";
-import { getSuppliers } from "@/api/supplier";
+import { deleteSupplier, getSuppliers } from "@/api/supplier";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import AddSupplier from "@/components/suppliers/addSupplier";
@@ -17,6 +17,8 @@ import EditSupplier from "@/components/suppliers/editSupplier";
 import SupplierSearchBar from "@/components/suppliers/supplierSearchBar";
 import { PaginationControl } from "@/styled-components/ItemActionModal";
 import Pagination from "@/components/misc/pagination";
+import DeleteModal from "@/components/misc/delete";
+import { toast } from "react-toastify";
 
 const Suppliers = () => {
 	const [searchQuery, setSearchQuery] = useState(""); // Initialize searchQuery
@@ -36,6 +38,8 @@ const Suppliers = () => {
 	const endIndex = currentPage * itemsPerPage;
 	const paginatedSuppliers = suppliersDisplay.slice(startIndex, endIndex);
 
+	const [isDeletePopUpOpen, setIsDeletePopUpOpen] = useState(false);
+	const [selectedName, setSelectedName] = useState("");
 	const handleSearchChange = (event) => {
 		setSearchQuery(event.target.value);
 		// You can perform any other actions related to search here
@@ -66,6 +70,19 @@ const Suppliers = () => {
 		fetchSuppliers();
 	}, []);
 
+	useEffect(() => {
+		document.addEventListener("click", handleClickOutside);
+		return () => {
+			document.removeEventListener("click", handleClickOutside);
+		};
+	}, [currentPage, itemsPerPage]);
+
+	const handleClickOutside = (event) => {
+		if (!event.target.closest(".action-container") && !event.target.closest(".ellipsis")) {
+			setActiveActionContainer(null);
+		}
+	};
+
 	const fetchSuppliers = () => {
 		setSupplierLoading(true);
 		getSuppliers().then((res) => {
@@ -87,6 +104,22 @@ const Suppliers = () => {
 		}
 	}, []);
 
+	const deleteSupplierFunc = async (id) => {
+		const res = await deleteSupplier(id);
+		console.log(res);
+		if (!res) {
+			return;
+		}
+
+		if (res.status === "Success") {
+			toast.success("Supplier deleted");
+			fetchSuppliers();
+			return;
+		}
+
+		toast.error(res.errors[0].message);
+	};
+
 	return (
 		<DashboardLayout>
 			<PageTitle title="Suppliers" />
@@ -97,6 +130,7 @@ const Suppliers = () => {
 					handleOpenPopup={handleOpenPopup}
 					suppliers={suppliers}
 					setSuppliersDisplay={setSuppliersDisplay}
+					setCurrentPage={setCurrentPage}
 				/>
 				<TableContainer>
 					<Table id="suppliers-table">
@@ -148,7 +182,13 @@ const Suppliers = () => {
 															<FontAwesomeIcon icon={faPen} />
 															Edit
 														</p>
-														<p>
+														<p
+															onClick={() => {
+																setSelectedSupplierId(supplier.supplier_id);
+																setIsDeletePopUpOpen(true);
+																setSelectedName(supplier.supplier_name);
+															}}
+														>
 															<FontAwesomeIcon icon={faTrash} /> Delete
 														</p>
 													</ActionContainer>
@@ -171,7 +211,7 @@ const Suppliers = () => {
 					setItemsPerPage={setItemsPerPage}
 				/>
 			</StyledPanel>
-			{isPopupOpen && <AddSupplier onClose={handleClosePopup} fetchSuppliers={fetchSuppliers} />}
+			{isPopupOpen && <AddSupplier onClose={handleClosePopup} fetchSuppliers={fetchSuppliers} suppliers={suppliers} />}
 			{isEditSupplierPopupOpen && (
 				<EditSupplier
 					onClose={closeEditSupplier}
@@ -180,6 +220,10 @@ const Suppliers = () => {
 					//   onButtonClick={onButtonClick}
 					//   GetProducts={fetchProducts}
 				/>
+			)}
+
+			{isDeletePopUpOpen && (
+				<DeleteModal type="supplier" text={selectedName} close={setIsDeletePopUpOpen} confirm={() => deleteSupplierFunc(selectedSupplierId)} />
 			)}
 		</DashboardLayout>
 	);

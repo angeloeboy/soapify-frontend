@@ -67,3 +67,17 @@ export const getSupplier = async (supplier_id) => {
 		console.log(error);
 	}
 };
+
+export const deleteSupplier = async (supplier_id) => {
+	try {
+		const res = await fetch(`/api/supplier/${supplier_id}`, {
+			method: "DELETE",
+			credentials: "include",
+		});
+
+		const data = await res.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};

@@ -14,36 +14,36 @@ const LineGraphContainer = styled.div`
 	height: auto; /* Change the height to auto or adjust to a larger value */
 	margin: 10px; /* Adjust margin for spacing */
 
-.selection {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-}
+	.selection {
+		display: flex;
+		align-items: center;
+		margin-bottom: 10px;
+	}
 
-.selection label {
-  margin-right: 10px;
-  font-size: 14px;
-  font-weight: bold;
-}
+	.selection label {
+		margin-right: 10px;
+		font-size: 14px;
+		font-weight: bold;
+	}
 
-.selection select,
-.selection input[type="date"] {
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-}
+	.selection select,
+	.selection input[type="date"] {
+		padding: 8px;
+		border-radius: 4px;
+		border: 1px solid #ccc;
+		font-size: 14px;
+	}
 
-.selection select {
-  flex: 1;
-  max-width: 200px; /* Adjust as needed */
-}
+	.selection select {
+		flex: 1;
+		max-width: 200px; /* Adjust as needed */
+	}
 
-.selection input[type="date"] {
-  width: 150px; /* Adjust as needed */
-}
+	.selection input[type="date"] {
+		width: 150px; /* Adjust as needed */
+	}
 
-// ... (rest of your code)
+	// ... (rest of your code)
 
 	.title {
 		color: #000;
@@ -51,7 +51,6 @@ const LineGraphContainer = styled.div`
 		font-weight: 700;
 		margin-bottom: 0px;
 		text-align: center; /* Center the title */
-
 	}
 	.totalSales {
 		font-weight: bold;
@@ -85,10 +84,10 @@ const ProductSalesGraph = () => {
 	//   const [productsList, setProductsList] = useState(null);
 	const [monthData, setMonthData] = useState(null);
 	const [selectedYear, setSelectedYear] = useState(new Date().getFullYear()); // Initial year
-	const [selectedProductId, setSelectedProductId] = useState(1); // New state for selected product
- 
-	const [startDate, setStartDate] = useState('2023-01-01');  
-	const [endDate, setEndDate] = useState('2023-12-31'); 
+	const [selectedProductId, setSelectedProductId] = useState(null); // New state for selected product
+
+	const [startDate, setStartDate] = useState("2023-01-01");
+	const [endDate, setEndDate] = useState("2023-12-31");
 
 	const selectableYears = [selectedYear];
 
@@ -113,35 +112,146 @@ const ProductSalesGraph = () => {
 
 	useEffect(() => {
 		fetchProducts();
-	  }, []);
-	
-	  const fetchProducts = () => {
+	}, []);
+
+	const fetchProducts = () => {
 		getProducts()
-		  .then((res) => {
-			if (Array.isArray(res.products)) {
-			  setProductData(res.products);
-	
-			  // Set the default product ID only if it's not already set
-			  if (selectedProductId === 4 && res.products.length > 0) {
-				setSelectedProductId(res.products[0].product_id);
-			  }
-			} else {
-			  setProductData([]);
-			}
-		  })
-		  .catch((error) => {
-			console.log(error);
-		  });
-	  };
+			.then((res) => {
+				if (Array.isArray(res.products)) {
+					setProductData(res.products);
+
+					// Set the default product ID only if it's not already set
+					if (selectedProductId == null && res.products.length > 0) {
+						setSelectedProductId(res.products[0].product_id);
+					}
+				} else {
+					setProductData([]);
+				}
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	};
+
+	// const fetchData = async () => {
+	// 	try {
+	// 		const monthResponse = await getProductStats(selectedProductId, selectedYear);
+	// 		console.log(monthResponse);
+	// 		setMonthData(monthResponse);
+	// 	} catch (error) {
+	// 		console.error("Error fetching data", error);
+	// 	}
+	// };
+
+	// const generateChartData = async () => {
+	// 	if (!productData || !monthData || !selectedProductId || !startDate || !endDate) {
+	// 		return null;
+	// 	}
+
+	// 	const selectedProduct = productData.find((product) => product.product_id === selectedProductId);
+	// 	if (!selectedProduct) {
+	// 		console.error(`Product with product_id ${selectedProductId} not found`);
+	// 		return null;
+	// 	}
+
+	// 	const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEPT", "OCT", "NOV", "DEC"];
+	// 	const prices = Array(months.length).fill(selectedProduct.product_price);
+
+	// 	const resultArray = Object.entries(monthData.transactions_with_items).map(([key, value]) => value);
+
+	// 	const salesData = resultArray.map((monthTransaction) => {
+	// 		let totalSalesForMonth = 0;
+	// 		monthTransaction.forEach((item) => {
+	// 			totalSalesForMonth += (item.price / 100) * item.quantity;
+	// 		});
+	// 		return totalSalesForMonth;
+	// 	});
+
+	// 	console.log("salesData", salesData);
+
+	// 	const start = new Date(startDate);
+	// 	const end = new Date(endDate);
+
+	// 	const chartData = {
+	// 		labels: months.slice(start.getMonth(), end.getMonth() + 1),
+	// 		datasets: [
+	// 			{
+	// 				label: "Sales",
+	// 				data: salesData.slice(start.getMonth(), end.getMonth() + 1),
+	// 				backgroundColor: "rgba(255, 99, 132, 0.2)",
+	// 				borderColor: "rgba(255, 99, 132, 1)",
+	// 				borderWidth: 1,
+	// 			},
+	// 		],
+	// 	};
+
+	// 	setChartData(chartData);
+	// };
 
 	const fetchData = async () => {
 		try {
-			const monthResponse = await getProductStats(selectedProductId, selectedYear);
-			console.log(monthResponse);
-			setMonthData(monthResponse);
+			const startYear = new Date(startDate).getFullYear();
+			const endYear = new Date(endDate).getFullYear();
+			let allMonthData = {};
+
+			for (let year = startYear; year <= endYear; year++) {
+				const response = await getProductStats(selectedProductId, year);
+				if (response.status === "Success") {
+					allMonthData[year] = response.transactions;
+				} else {
+					throw new Error(`Failed to fetch data for year ${year}`);
+				}
+			}
+			console.log(allMonthData);
+
+			setMonthData(allMonthData);
 		} catch (error) {
 			console.error("Error fetching data", error);
 		}
+	};
+
+	const generateChartData = () => {
+		if (!productData || !monthData || !selectedProductId || !startDate || !endDate) {
+			return;
+		}
+
+		const selectedProduct = productData.find((product) => product.product_id === selectedProductId);
+		if (!selectedProduct) {
+			console.error(`Product with product_id ${selectedProductId} not found`);
+			return;
+		}
+
+		const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEPT", "OCT", "NOV", "DEC"];
+		const start = new Date(startDate);
+		const end = new Date(endDate);
+		let labels = [];
+		let salesData = [];
+
+		for (let year = start.getFullYear(); year <= end.getFullYear(); year++) {
+			let startMonth = year === start.getFullYear() ? start.getMonth() : 0;
+			let endMonth = year === end.getFullYear() ? end.getMonth() : 11;
+
+			for (let month = startMonth; month <= endMonth; month++) {
+				labels.push(`${months[month]} ${year}`);
+				let monthSales = monthData[year] && monthData[year][month + 1] ? monthData[year][month + 1] : 0;
+				salesData.push(monthSales);
+			}
+		}
+
+		const chartData = {
+			labels: labels,
+			datasets: [
+				{
+					label: "Sales",
+					data: salesData,
+					backgroundColor: "rgba(255, 99, 132, 0.2)",
+					borderColor: "rgba(255, 99, 132, 1)",
+					borderWidth: 1,
+				},
+			],
+		};
+
+		setChartData(chartData);
 	};
 
 	const options = {
@@ -149,9 +259,9 @@ const ProductSalesGraph = () => {
 		responsive: true,
 		layout: {
 			padding: {
-			  bottom: 40, // Add space at the bottom
+				bottom: 40, // Add space at the bottom
 			},
-		  },
+		},
 
 		scales: {
 			x: {
@@ -170,14 +280,14 @@ const ProductSalesGraph = () => {
 				},
 				title: {
 					display: true,
-					text:"Product Sales",
+					text: "Product Sales",
 					font: {
 						size: 16,
 						weight: "bold",
 					},
 				},
 				beginAtZero: true,
-				// max: 5000,
+				// max: ,
 			},
 		},
 		height: 500,
@@ -187,84 +297,6 @@ const ProductSalesGraph = () => {
 		const newYear = selectableYears[selectableYears.length - 1] + 1;
 		selectableYears.push(newYear);
 		setSelectedYear(newYear); // Update selectedYear to the new year
-	};
-
-	const generateChartData = async () => {
-		if (!productData || !monthData || !selectedProductId || !startDate || !endDate) {
-			return null;
-		}
-
-		const selectedProduct = productData.find((product) => product.product_id === selectedProductId);
-		if (!selectedProduct) {
-			console.error(`Product with product_id ${selectedProductId} not found`);
-			return null;
-		}
-
-		const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEPT", "OCT", "NOV", "DEC"];
-		const prices = Array(months.length).fill(selectedProduct.product_price);
-
-		// Logic to filter data within the specified date range
-		// const filteredTransactions = Array.isArray(monthData.transactions)
-		// 	? monthData.transactions.filter((transaction) => {
-		// 			const transactionDate = new Date(transaction.date); // Replace 'date' with your actual date field
-		// 			const startDateObj = new Date(startDate);
-		// 			const endDateObj = new Date(endDate);
-
-		// 			return transactionDate >= startDateObj && transactionDate <= endDateObj;
-		// 	  })
-		// 	: [];
-
-		// console.log("Filtered transactions", filteredTransactions);
-
-		// const salesData = months.map((month) => {
-		// 	const monthTransactions = filteredTransactions.filter((transaction) => transaction.month === month);
-		// 	const totalSalesForMonth = monthTransactions.reduce((total, transaction) => {
-		// 		// Calculate total sales for the month based on your transaction structure
-		// 		return total + transaction.amount; // Replace 'amount' with your transaction amount field
-		// 	}, 0);
-		// 	return totalSalesForMonth;
-		// });
-
-		// const salesData = months.map((month, i) => {
-		// 	let index = i + 1;
-
-		// 	const monthTransaction = monthData.transaction_with_items[index];
-
-		// 	console.log("monthTransaction", monthTransaction);
-		// });
-
-		//make transaction_with_items an array
-
-		// const resultArray = [].concat(...Object.values(monthData.transactions_with_items));
-		const resultArray = Object.entries(monthData.transactions_with_items).map(([key, value]) => value);
-
-		const salesData = resultArray.map((monthTransaction) => {
-			let totalSalesForMonth = 0;
-			monthTransaction.forEach((item) => {
-				totalSalesForMonth += (item.price / 100) * item.quantity;
-			});
-			return totalSalesForMonth;
-		});
-
-		console.log("salesData", salesData);
-
-		const start = new Date(startDate);
-		const end = new Date(endDate);
-
-		const chartData = {
-			labels: months.slice(start.getMonth(), end.getMonth() + 1),
-			datasets: [
-				{
-					label: "Sales",
-					data: salesData.slice(start.getMonth(), end.getMonth() + 1),
-					backgroundColor: "rgba(255, 99, 132, 0.2)",
-					borderColor: "rgba(255, 99, 132, 1)",
-					borderWidth: 1,
-				},
-			],
-		};
-
-		setChartData(chartData);
 	};
 
 	const handleProductChange = (e) => {
@@ -291,7 +323,7 @@ const ProductSalesGraph = () => {
 						) : (
 							productData.map((product) => (
 								<option value={product.product_id} key={product.product_id}>
-									{product.product_name}
+									{product.product_name} ({product.product_code})
 								</option>
 							))
 						)}

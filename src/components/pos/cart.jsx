@@ -407,7 +407,7 @@ const Cart = ({ setActiveAction }) => {
 			<Button
 				width={"100%"}
 				onClick={() => {
-					if (cart.length <= 0) toast.warning("Please add items to cart first");
+					if (cart.length <= 0) return toast.warning("Please add items to cart first");
 					setActiveAction("payment");
 
 					if (!promoCodeResponse.isValid) {

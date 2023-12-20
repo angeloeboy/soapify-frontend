@@ -155,7 +155,13 @@ const PaymentTable = () => {
 		<DashboardLayout>
 			<PageTitle title="Payment" />
 			<StyledPanel>
-				<PaymentMethodSearchBar fetchPaymentMethods={fetchPaymentMethods} setAddPaymentOpen={setAddPaymentOpen} />
+				<PaymentMethodSearchBar
+					fetchPaymentMethods={fetchPaymentMethods}
+					setAddPaymentOpen={setAddPaymentOpen}
+					paymentMethods={paymentMethods}
+					setPaymentMethodDisplay={setPaymentMethodsDisplay}
+					setCurrentPage={setCurrentPage}
+				/>
 
 				<TableContainer>
 					<Table id="payment-table">
@@ -280,7 +286,7 @@ const PaymentTable = () => {
 };
 
 export default PaymentTable;
-
+import cookie, { parse } from "cookie";
 export async function getServerSideProps(context) {
 	const { req } = context;
 	const parsedCookies = cookie.parse(req.headers.cookie || "").permissions;

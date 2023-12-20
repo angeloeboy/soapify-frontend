@@ -97,8 +97,8 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId, openModa
 		setLoading(true);
 
 		//make sure expiry date is not before date added
-		if (inventory.expiry_date && inventory.date_added > inventory.expiry_date) {
-			toast.error("Expiry date cannot be before date added");
+		if (inventory.expiry_date && inventory.date_added >= inventory.expiry_date) {
+			toast.error("Invalid expiration date");
 			setLoading(false);
 			return;
 		}

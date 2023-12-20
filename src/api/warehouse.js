@@ -94,6 +94,23 @@ export const addArea = async (warehouse_id, area) => {
 	}
 };
 
+export const deleteArea = async (area_id) => {
+	try {
+		const response = await fetch(`/api/area/${area_id}`, {
+			method: "DELETE",
+			credentials: "include",
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};
+
 export const deactivateWarehouse = async (warehouse_id, warehouse) => {
 	try {
 		const response = await fetch(`/api/warehouse/deactivate/${warehouse_id}`, {

@@ -183,15 +183,24 @@ const Input = styled.input`
 
 const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransactions }) => {
 	const [isIssueReturnOpen, setIsIssueReturnOpen] = useState(false);
-
+	const [userTransactions, setUserTransactions] = useState(selectedTransaction);
 	const { getTransactionsFunc } = useContext(WebSocketContext);
+
+	const { transactions } = useContext(WebSocketContext);
+
+	useEffect(() => {
+		//get the transaction fomr transaction list
+		const transaction = transactions.find((transaction) => transaction.transaction_id == selectedTransaction.transaction_id);
+
+		setUserTransactions(transaction);
+	}, [transactions]);
 
 	useEffect(() => {
 		console.log(selectedTransaction.items);
 	}, []);
 
 	const updateStatus = async (status) => {
-		const res = await setTransactionStatus(selectedTransaction.transaction_id, status);
+		const res = await setTransactionStatus(userTransactions.transaction_id, status);
 		console.log(res);
 
 		if (res.status === "Success") {
@@ -221,7 +230,7 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 	};
 
 	const acceptTransactionFunc = async () => {
-		const res = await acceptTransaction(selectedTransaction.transaction_id);
+		const res = await acceptTransaction(userTransactions.transaction_id);
 		console.log(res.message);
 
 		if (res.status === "Success") {
@@ -235,7 +244,7 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 	};
 
 	const acceptCancellationFunc = async () => {
-		const res = await acceptCancelTransaction(selectedTransaction.transaction_id);
+		const res = await acceptCancelTransaction(userTransactions.transaction_id);
 		console.log(res.message);
 
 		if (res.status === "Success") {
@@ -249,7 +258,7 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 	};
 
 	const acceptReturnRefundFunc = async () => {
-		const res = await acceptOrderReturnRefund(selectedTransaction.transaction_id);
+		const res = await acceptOrderReturnRefund(userTransactions.transaction_id);
 		console.log(res.message);
 
 		if (res.status === "Success") {
@@ -263,7 +272,7 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 	};
 
 	const adminCancelOrderFunc = async () => {
-		const res = await adminCancelOrder(selectedTransaction.transaction_id);
+		const res = await adminCancelOrder(userTransactions.transaction_id);
 
 		if (!res) return toast.error("Something went wrong");
 		if (res.status == "Success") {
@@ -282,8 +291,8 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 
 		let isDiscounted = false;
 
-		if (selectedTransaction.promo_code_object) {
-			selectedTransaction.promo_code_object.products.forEach((promo) => {
+		if (userTransactions.promo_code_object) {
+			userTransactions.promo_code_object.products.forEach((promo) => {
 				if (promo.product_id === product_id) {
 					isDiscounted = true;
 				}
@@ -298,13 +307,13 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 	return (
 		<PopupOverlay>
 			<PopupContent>
-				<HeaderTitle>Order {selectedTransaction.transaction_unique_id} </HeaderTitle>
+				<HeaderTitle>Order {userTransactions.transaction_unique_id} </HeaderTitle>
 				<FieldContainer>
 					<LabelContainer first>
 						<Label>Items</Label>
 					</LabelContainer>
 					<OrdersWrapper>
-						{selectedTransaction.items.map((item) => (
+						{userTransactions.items.map((item) => (
 							<Product key={item.id} active={item.quantity > 1}>
 								<div className="productInformation">
 									<div className="wrapper">
@@ -324,8 +333,8 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 												PHP {item.price / 100}
 												{isDiscounted(item.product_id) &&
 													` ${
-														selectedTransaction.promo_code_object.promo_code_type == "PERCENTAGE"
-															? "(Discounted by " + selectedTransaction.promo_code_object.promo_code_value + "%)"
+														userTransactions.promo_code_object.promo_code_type == "PERCENTAGE"
+															? "(Discounted by " + userTransactions.promo_code_object.promo_code_value + "%)"
 															: ""
 													}`}
 											</p>
@@ -350,9 +359,9 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 							</Product>
 						))}
 
-						{selectedTransaction.promo_code_object && <PromoCodedisplay promo_code={selectedTransaction.promo_code_object} />}
+						{userTransactions.promo_code_object && <PromoCodedisplay promo_code={userTransactions.promo_code_object} />}
 
-						<p className="total">Total: P{selectedTransaction.total_amount / 100}</p>
+						<p className="total">Total: P{userTransactions.total_amount / 100}</p>
 					</OrdersWrapper>
 
 					<LabelContainer>
@@ -360,40 +369,42 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 					</LabelContainer>
 					<OrdersWrapper>
 						<h5>Payment Details</h5>
-						<p>Payment method: {selectedTransaction.payment_method ? selectedTransaction.payment_method.name : "Deleted"}</p>
-						<p>Reference number: {selectedTransaction.transaction_number ? selectedTransaction.transaction_number : "N/A"}</p>
-						{selectedTransaction.transaction_screenshot && (
+						<p>Payment method: {userTransactions.payment_method ? userTransactions.payment_method.name : "Deleted"}</p>
+						<p>Reference number: {userTransactions.transaction_number ? userTransactions.transaction_number : "N/A"}</p>
+						{userTransactions.transaction_screenshot && (
 							<>
 								<p>Screenshot of payment</p>
 								<ImageScreenshot>
-									<img src={selectedTransaction.transaction_screenshot} alt="Payment image" />
+									<img src={userTransactions.transaction_screenshot} alt="Payment image" />
 								</ImageScreenshot>
 							</>
 						)}
+						<FieldTitleLabel>Contact Number: </FieldTitleLabel>
+						<ContactNumber type="text" maxlength="12" value={userTransactions.contact_number} readOnly />
 
-						{selectedTransaction.status === "AWAITING PAYMENT" && <ButtonAccept onClick={() => acceptTransactionFunc()}>Verify Payment</ButtonAccept>}
+						{userTransactions.status === "AWAITING PAYMENT" && <ButtonAccept onClick={() => acceptTransactionFunc()}>Verify Payment</ButtonAccept>}
 					</OrdersWrapper>
 
 					<LabelContainer>
 						<Label>Order Status</Label>
 					</LabelContainer>
 					<OrdersWrapper>
-						<h5>Status: {selectedTransaction.status}</h5>
-						<p>Pickup date: {convertToDateFormat(selectedTransaction.pickup_date)}</p>
+						<h5>Status: {userTransactions.status}</h5>
+						<p>Pickup date: {convertToDateFormat(userTransactions.pickup_date)}</p>
 
-						{selectedTransaction.status === "UNDER REVIEW" && (
+						{userTransactions.status === "UNDER REVIEW" && (
 							<>
 								<FieldTitleLabel>Notes: </FieldTitleLabel>
 
-								<TextArea type="text" value={selectedTransaction.status_notes} readOnly />
+								<TextArea type="text" value={userTransactions.status_notes} readOnly />
 								<FieldTitleLabel>Contact Number: </FieldTitleLabel>
 
-								<ContactNumber type="text" maxlength="12" value={selectedTransaction.contact_number} readOnly />
+								<ContactNumber type="text" maxlength="12" value={userTransactions.contact_number} readOnly />
 
 								<FieldTitleLabel>Reason: </FieldTitleLabel>
 
-								{selectedTransaction.reason && <Input type="text" value={selectedTransaction.reason} readOnly />}
-								{selectedTransaction.current_stage != 4 ? (
+								{userTransactions.reason && <Input type="text" value={userTransactions.reason} readOnly />}
+								{userTransactions.current_stage != 4 ? (
 									<ButtonAccept onClick={() => acceptCancellationFunc()}>Cancel Order </ButtonAccept>
 								) : (
 									<>
@@ -405,8 +416,8 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 							</>
 						)}
 
-						{selectedTransaction.status === "PAID" && <ButtonAccept onClick={() => updateStatus("RELEASED")}>Mark as released</ButtonAccept>}
-						{selectedTransaction.transaction_user_name.role_id !== 2 && selectedTransaction.status === "RELEASED" && (
+						{userTransactions.status === "PAID" && <ButtonAccept onClick={() => updateStatus("RELEASED")}>Mark as released</ButtonAccept>}
+						{userTransactions.transaction_user_name.role_id !== 2 && userTransactions.status === "RELEASED" && (
 							<ButtonAccept onClick={() => adminCancelOrderFunc(true)}>Cancel Order</ButtonAccept>
 						)}
 					</OrdersWrapper>
@@ -418,7 +429,7 @@ const OrdersInfo = ({ setIsOrdersInfoOpen, selectedTransaction, fetchTransaction
 			</PopupContent>
 
 			{isIssueReturnOpen && (
-				<IssueReturn setIsIssueReturnOpen={setIsIssueReturnOpen} selectedTransaction={selectedTransaction} fetchTransactions={fetchTransactions} />
+				<IssueReturn setIsIssueReturnOpen={setIsIssueReturnOpen} selectedTransaction={userTransactions} fetchTransactions={fetchTransactions} />
 			)}
 		</PopupOverlay>
 	);

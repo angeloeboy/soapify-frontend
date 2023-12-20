@@ -14,10 +14,10 @@ import {
 
 import { useEffect, useState } from "react";
 import { addCategory, addProduct, getProductCategories, getProducts } from "@/api/products";
-import { addSupplier } from "@/api/supplier";
+import { addSupplier, getSuppliers } from "@/api/supplier";
 import { toast } from "react-toastify";
 
-const AddSupplier = ({ onClose, onButtonClick, fetchSuppliers }) => {
+const AddSupplier = ({ onClose, onButtonClick, fetchSuppliers, suppliers }) => {
 	const [category, setCategory] = useState({
 		name: "",
 	});
@@ -32,6 +32,29 @@ const AddSupplier = ({ onClose, onButtonClick, fetchSuppliers }) => {
 
 	let AddSupplier = async (e) => {
 		e.preventDefault();
+
+		if (!supplier.supplier_name) {
+			toast.error("Supplier name is required");
+			return;
+		}
+
+		if (!supplier.supplier_address) {
+			toast.error("Supplier address is required");
+			return;
+		}
+
+		if (!supplier.supplier_phone) {
+			toast.error("Supplier phone is required");
+			return;
+		}
+
+		if (suppliers) {
+			const supplierExists = suppliers.find((s) => s.supplier_name == supplier.supplier_name);
+			if (supplierExists) {
+				toast.error("Supplier already exists");
+				return;
+			}
+		}
 
 		const res = await addSupplier(supplier);
 		if (!res) {

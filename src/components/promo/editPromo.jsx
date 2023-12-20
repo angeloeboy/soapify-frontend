@@ -147,12 +147,12 @@ const EditPromo = ({ setIsEditPopUpOpen, getPromotionsFunc, selectedPromo }) => 
 						</LabelContainer>
 						<div>
 							<FieldTitleLabel>Promo code</FieldTitleLabel>
-							<InputHolder type="text" onChange={(e) => setPromo({ ...promo, promo_code: e.target.value })} value={promo.promo_code} />
+							<InputHolder type="text" onChange={(e) => setPromo({ ...promo, promo_code: e.target.value })} value={promo.promo_code} readOnly />
 						</div>
 
 						<div>
 							<FieldTitleLabel>Promo type</FieldTitleLabel>
-							<Select value={promo.promo_code_type} onChange={(e) => setPromo({ ...promo, promo_code_type: e.target.value })}>
+							<Select value={promo.promo_code_type} readOnly>
 								<Option value="PERCENTAGE">Percentage</Option>
 								<Option value="FIXED">Fixed</Option>
 							</Select>
@@ -160,7 +160,7 @@ const EditPromo = ({ setIsEditPopUpOpen, getPromotionsFunc, selectedPromo }) => 
 
 						<div>
 							<FieldTitleLabel>Code value </FieldTitleLabel>
-							<InputHolder type="number" onChange={(e) => setPromo({ ...promo, promo_code_value: e.target.value })} value={promo.promo_code_value} />
+							<InputHolder type="number" onChange={(e) => setPromo({ ...promo, promo_code_value: e.target.value })} value={promo.promo_code_value} readOnly />
 						</div>
 
 						<div>
@@ -168,15 +168,16 @@ const EditPromo = ({ setIsEditPopUpOpen, getPromotionsFunc, selectedPromo }) => 
 
 							<Select
 								value={isUnli}
-								onChange={(e) => {
-									if (e.target.value == "true") {
-										setPromo({ ...promo, promo_code_max_use: null });
-										setIsUnli(true);
-									} else {
-										setIsUnli(false);
-										setPromo({ ...promo, promo_code_max_use: 1 });
-									}
-								}}
+								// onChange={(e) => {
+								// 	if (e.target.value == "true") {
+								// 		setPromo({ ...promo, promo_code_max_use: null });
+								// 		setIsUnli(true);
+								// 	} else {
+								// 		setIsUnli(false);
+								// 		setPromo({ ...promo, promo_code_max_use: 1 });
+								// 	}
+								// }}
+								readOnly
 							>
 								<Option value={true} key={1}>
 									Yes
@@ -189,7 +190,12 @@ const EditPromo = ({ setIsEditPopUpOpen, getPromotionsFunc, selectedPromo }) => 
 								<>
 									<FieldTitleLabel>Max Use</FieldTitleLabel>
 
-									<InputHolder type="number" onChange={(e) => setPromo({ ...promo, promo_code_max_use: e.target.value })} value={promo.promo_code_max_use} />
+									<InputHolder
+										type="text"
+										onChange={(e) => setPromo({ ...promo, promo_code_max_use: e.target.value })}
+										value={promo.promo_code_max_use === null ? "Unlimited" : promo.promo_code_max_use}
+										readOnly
+									/>
 								</>
 							)}
 						</div>
@@ -200,40 +206,16 @@ const EditPromo = ({ setIsEditPopUpOpen, getPromotionsFunc, selectedPromo }) => 
 								type="date"
 								placeholder="Enter end date"
 								onChange={(e) => setPromo({ ...promo, promo_code_expiry: e.target.value })}
-								value={promo.promo_code_expiry?.split(" ")[0]}
+								value={
+									//display the date in the format yyyy-mm-dd
+									promo.promo_code_expiry?.split("T")[0]
+								}
+								readOnly
 							/>
 						</div>
 
 						<div>
 							<FieldTitleLabel notFirst>Products</FieldTitleLabel>
-							{product !== null && (
-								<>
-									<Select
-										value={product.product_id}
-										onChange={(e) => {
-											setProduct(products.find((product) => product.product_id == e.target.value));
-										}}
-									>
-										{products.map((product) => (
-											<Option value={product.product_id} key={product.product_id}>
-												{product.product_code} - {product.product_name}
-											</Option>
-										))}
-									</Select>
-									<ButtonAdd
-										type="button"
-										onClick={(e) => {
-											if (chosen_products.find((chosen_product) => chosen_product.product_id == product.product_id)) {
-												return;
-											}
-
-											setchosen_products([...chosen_products, product]);
-										}}
-									>
-										Add Product
-									</ButtonAdd>
-								</>
-							)}
 
 							{chosen_products.map((product) => {
 								return (
@@ -241,9 +223,6 @@ const EditPromo = ({ setIsEditPopUpOpen, getPromotionsFunc, selectedPromo }) => 
 										<span>
 											{product.product_code} - {product.product_name}
 										</span>
-										<ButtonAdd onClick={() => setchosen_products(chosen_products.filter((chosen_product) => chosen_product.product_id !== product.product_id))}>
-											Remove
-										</ButtonAdd>
 									</div>
 								);
 							})}
@@ -253,7 +232,7 @@ const EditPromo = ({ setIsEditPopUpOpen, getPromotionsFunc, selectedPromo }) => 
 						<CloseButton type="button" onClick={() => setIsEditPopUpOpen(false)}>
 							Close
 						</CloseButton>
-						<Button type="submit">{isloading ? <Image src="/loading.svg" alt="loading" width="20" height="20" /> : "Save"} </Button>
+						{/* <Button type="submit">{isloading ? <Image src="/loading.svg" alt="loading" width="20" height="20" /> : "Save"} </Button> */}
 					</ButtonsContainer>
 				</form>
 			</PopupContent>

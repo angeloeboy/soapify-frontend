@@ -8,16 +8,28 @@ import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { usePermissions } from "@/components/context/PermissionsContext";
+import NavBar from "@/components/misc/navbar";
 
 const BgContainer = styled.div`
 	min-height: 100vh;
-	background-image: url("/bg.png");
-	/* background-position: center 50%; */
-	//opsition background to right
+
 	background-position-x: right;
 	background-repeat: no-repeat;
 	background-size: contain;
 	background-attachment: fixed;
+	display: flex;
+	justify-content: space-between;
+	img {
+		width: 50%;
+		max-width: 800px;
+		margin-right: 100px;
+	}
+
+	@media (max-width: 800px) {
+		img {
+			display: none;
+		}
+	}
 `;
 
 const LoginContainer = styled.div`
@@ -29,7 +41,7 @@ const LoginContainer = styled.div`
 	padding-bottom: 100px;
 	height: 100%;
 	background-color: #f5f5f5;
-
+	padding-top: 150px;
 	.appTitle {
 		text-transform: uppercase;
 		padding-bottom: 19px;
@@ -174,54 +186,59 @@ let Login = () => {
 	};
 
 	return (
-		<BgContainer>
-			<LoginContainer>
-				<h2 className="appTitle">Soapify</h2>
+		<>
+			<BgContainer>
+				<NavBar />
+				<LoginContainer>
+					<h2 className="appTitle">Soapify</h2>
 
-				<Form onSubmit={(e) => handleLogin(e)}>
-					<h3>Log In</h3>
-					<p>Enter your email and password to sign in!</p>
+					<Form onSubmit={(e) => handleLogin(e)}>
+						<h3>Log In</h3>
+						<p>Enter your email and password to sign in!</p>
 
-					<div className="formsContainer">
-						<label htmlFor="username">Email</label>
-						<FormField
-							type="email"
-							onChange={(e) => {
-								setCredentials({ ...credentials, email: e.target.value });
-								setErrorMessages({ ...errorMessages, email: "" });
-							}}
-							value={credentials.email}
-							id="email"
-							name="email"
-							error={errorMessages.email ? true : false}
-						/>
-						{errorMessages.email && <Error>{errorMessages.email}</Error>}
+						<div className="formsContainer">
+							<label htmlFor="username">Email</label>
+							<FormField
+								type="email"
+								onChange={(e) => {
+									setCredentials({ ...credentials, email: e.target.value });
+									setErrorMessages({ ...errorMessages, email: "" });
+								}}
+								value={credentials.email}
+								id="email"
+								name="email"
+								error={errorMessages.email ? true : false}
+							/>
+							{errorMessages.email && <Error>{errorMessages.email}</Error>}
 
-						<label htmlFor="password">Password</label>
-						<FormField
-							type="password"
-							onChange={(e) => {
-								setCredentials({ ...credentials, password: e.target.value });
-								setErrorMessages({ ...errorMessages, password: "" });
-							}}
-							value={credentials.password}
-							id="password"
-							name="password"
-							error={errorMessages.password ? true : false}
-						/>
-						{errorMessages.password && <Error>{errorMessages.password}</Error>}
-						<LinkContainers>
-							<Link href="/forgot-password">Forgot Password</Link>
-							<Link href="/register">Create an account</Link>
-						</LinkContainers>
+							<label htmlFor="password">Password</label>
+							<FormField
+								type="password"
+								onChange={(e) => {
+									setCredentials({ ...credentials, password: e.target.value });
+									setErrorMessages({ ...errorMessages, password: "" });
+								}}
+								value={credentials.password}
+								id="password"
+								name="password"
+								error={errorMessages.password ? true : false}
+							/>
+							{errorMessages.password && <Error>{errorMessages.password}</Error>}
+							<LinkContainers>
+								<Link href="/forgot-password">Forgot Password</Link>
+								<Link href="/register">Create an account</Link>
+							</LinkContainers>
 
-						<Button className="loginBtn" width="100%" onClick={(e) => handleLogin(e)}>
-							{loggingIn ? <FontAwesomeIcon icon={faSpinner} spin /> : "Log In"}
-						</Button>
-					</div>
-				</Form>
-			</LoginContainer>
-		</BgContainer>
+							<Button className="loginBtn" width="100%" onClick={(e) => handleLogin(e)}>
+								{loggingIn ? <FontAwesomeIcon icon={faSpinner} spin /> : "Log In"}
+							</Button>
+						</div>
+					</Form>
+				</LoginContainer>
+
+				<img src="/bg1.svg" />
+			</BgContainer>
+		</>
 	);
 };
 

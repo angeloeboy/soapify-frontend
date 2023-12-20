@@ -9,14 +9,23 @@ const RolesSearchBar = ({ setIsAddPopUpOpen, roles, setRolesDisplay, setCurrentP
 
 	useEffect(() => {
 		handleSearch();
-	}, [searchQuery, selectedCategory]);
+	}, [searchQuery, selectedCategory, roles]);
 
 	const handleSearchChange = (e) => {
 		setSearchQuery(e.target.value);
 	};
 
 	const handleSearch = () => {
-		// setRolesDisplay(filteredWarehouses);
+		const filteredRoles = roles.filter((role) => {
+			if (selectedCategory === "All") {
+				return role.role_name.toLowerCase().includes(searchQuery.toLowerCase());
+			} else {
+				return role.role_name.toLowerCase().includes(searchQuery.toLowerCase()) && role.category === selectedCategory;
+			}
+		});
+
+		setRolesDisplay(filteredRoles);
+		setCurrentPage(1);
 	};
 
 	return (

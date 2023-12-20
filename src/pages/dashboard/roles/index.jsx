@@ -123,9 +123,11 @@ const Roles = () => {
 																<FontAwesomeIcon icon={faPen} />
 																Edit
 															</p>
-															<p onClick={() => deleteRolefunc(role.role_id)}>
-																<FontAwesomeIcon icon={faTrash} /> Delete
-															</p>
+															{role.users <= 0 && (
+																<p onClick={() => deleteRolefunc(role.role_id)}>
+																	<FontAwesomeIcon icon={faTrash} /> Delete
+																</p>
+															)}
 														</>
 													)}
 												</ActionContainer>
@@ -139,7 +141,17 @@ const Roles = () => {
 				</TableContainer>
 
 				<PdfExporter tableId="roles-table" filename="roles.pdf" />
-				<Pagination totalItems={rolesDisplay.length} itemsPerPage={pagePerItem} currentPage={currentPage} onPageChange={(newPage) => setCurrentPage(newPage)} />
+				{/* <Pagination totalItems={rolesDisplay.length} itemsPerPage={pagePerItem} currentPage={currentPage} onPageChange={(newPage) => setCurrentPage(newPage)} /> */}
+
+				<Pagination
+					totalItems={rolesDisplay.length} // Total number of items
+					itemsPerPage={pagePerItem}
+					currentPage={currentPage}
+					onPageChange={setCurrentPage}
+					itemsPerPageOptions={[5, 10, 15, 20]}
+					defaultItemsPerPage={10}
+					setItemsPerPage={setPagePerItem}
+				/>
 			</StyledPanel>
 
 			{isAddPopUpOpen && <AddRoles setIsAddPopUpOpen={setIsAddPopUpOpen} fetchRoles={fetchRoles} />}

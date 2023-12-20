@@ -84,7 +84,18 @@ const Categories = ({ hasAddPermission, hasEditPermission, hasDeletePermission }
 	};
 
 	const [selectedProductId, setSelectedProductId] = useState(null);
+	useEffect(() => {
+		document.addEventListener("click", handleClickOutside);
+		return () => {
+			document.removeEventListener("click", handleClickOutside);
+		};
+	}, []);
 
+	const handleClickOutside = (event) => {
+		if (!event.target.closest(".action-container") && !event.target.closest(".ellipsis")) {
+			setActiveActionContainer(null);
+		}
+	};
 	return (
 		<DashboardLayout>
 			<PageTitle title="Category List" />
@@ -140,7 +151,7 @@ const Categories = ({ hasAddPermission, hasEditPermission, hasDeletePermission }
 
 											{activeActionContainer === index && (
 												<ActionContainer onClick={() => setActiveActionContainer(-1)}>
-													{hasEditPermission && category.name !== "Uncategorized" && (
+													{category.name !== "Uncategorized" && (
 														<p
 															onClick={() => {
 																setSelectedCategory(category);
@@ -152,7 +163,7 @@ const Categories = ({ hasAddPermission, hasEditPermission, hasDeletePermission }
 														</p>
 													)}
 
-													{hasDeletePermission && category.name !== "Uncategorized" && (
+													{category.name !== "Uncategorized" && (
 														<p
 															onClick={() => {
 																//GAWIN MO TO

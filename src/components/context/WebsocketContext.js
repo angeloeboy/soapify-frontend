@@ -3,6 +3,7 @@ import { connectToWebSocket } from "@/api/home"; // Assuming this is your WebSoc
 import { getNotifications } from "@/api/notifications";
 import { toast } from "react-toastify";
 import { getCustomerTransaction, getTransactions } from "@/api/transaction";
+import { getUser, getUsers } from "@/api/users";
 
 export const WebSocketContext = createContext(null);
 
@@ -11,11 +12,19 @@ export const WebSocketProvider = ({ children }) => {
 	const [transactions, setTransactions] = useState([]);
 	const [userTransactions, setUserTransactions] = useState([]);
 	const [webSocket, setWebSocket] = useState(null);
-
+	const [user, setUser] = useState(null);
 	const getNotificationsFunc = async () => {
 		const res = await getNotifications();
 		if (!res) return;
 		setNotifications(res.notifications);
+	};
+
+	//get user Data from api
+	const getUserFunc = async () => {
+		const res = await getUser();
+
+		if (!res) return;
+		setUser(res.user);
 	};
 
 	//get transactions
@@ -56,6 +65,7 @@ export const WebSocketProvider = ({ children }) => {
 				getNotificationsFunc();
 				getTransactionsFunc();
 				getUserTransaction();
+				getUserFunc();
 			};
 
 			ws.onmessage = (event) => {
@@ -121,6 +131,7 @@ export const WebSocketProvider = ({ children }) => {
 				userTransactions,
 				setUserTransactions,
 				getUserTransaction,
+				user,
 			}}
 		>
 			{children}

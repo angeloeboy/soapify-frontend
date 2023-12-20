@@ -269,7 +269,12 @@ const ParentProductDisplay = ({ parentProduct, updateCart }) => {
 	return (
 		<Product key={parentProduct.parent_product_id} onClick={handleProductClick}>
 			<div>
-				<Image src="/sabon.png" width={200} height={400} alt="Product image" />
+				<Image
+					src={parentProduct?.products[0]?.image_link ? parentProduct?.products[0]?.image_link : "/sabon.png"}
+					width={200}
+					height={400}
+					alt="Product image"
+				/>
 				<ProductTitle>{parentProduct.name}</ProductTitle>
 			</div>
 

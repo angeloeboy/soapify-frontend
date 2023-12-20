@@ -32,9 +32,14 @@ const AddCategories = ({ setIsAddPopUpOpen, fetchCategories }) => {
 
 		addCategory(category).then((res) => {
 			console.log(res);
-			fetchCategories();
-			setIsAddPopUpOpen(false);
-			toast.success("Category added successfully");
+
+			if (res.status == "Success") {
+				setIsAddPopUpOpen(false);
+				toast.success("Category added successfully");
+				return;
+			}
+
+			toast.error(res.errors[0].message);
 		});
 	};
 

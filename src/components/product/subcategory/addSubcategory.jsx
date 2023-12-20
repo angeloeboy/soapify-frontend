@@ -90,10 +90,16 @@ const AddSubCategory = ({ setisAddSubCatOpen, fetchProductSubcategories }) => {
 		e.preventDefault();
 		const res = await addSubCategory(subCategory);
 		console.log(res);
-		fetchProductSubcategories();
-		setisAddSubCatOpen(false);
 
-		toast.success("Subcategory added successfully");
+		if (!res) return;
+		if (res.status == "Success") {
+			toast.success("Subcategory added successfully");
+			setisAddSubCatOpen(false);
+			fetchProductSubcategories();
+			return;
+		}
+
+		toast.error(res.errors[0].msg);
 	};
 
 	return (

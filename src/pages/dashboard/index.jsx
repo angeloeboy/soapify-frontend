@@ -39,18 +39,18 @@ const CenteredProductPerformance = styled.div`
 
 const DashboardCard = styled.div`
 	background-color: #fff;
-	border-radius: 10px;
-	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+	border-radius: 6px;
+	/* box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); */
 	padding: 20px;
 	transition: transform 0.3s ease-in-out;
 
 	@media screen and (max-width: 768px) {
 		width: 100%; /* Adjust card width for smaller screens */
 	}
-	&:hover {
+	/* &:hover {
 		transform: translateY(-5px);
 		box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.15);
-	}
+	} */
 
 	display: flex;
 	flex-direction: column;
@@ -68,14 +68,14 @@ const Button = styled.button`
 	padding: 8px 16px;
 	border: none;
 	border-radius: 5px;
-	background-color: #3498db;
-	color: #fff;
-	font-size: 1em;
+	color: black;
+	font-size: 14px;
+	margin-top: 1rem;
 	cursor: pointer;
 	transition: background-color 0.3s ease-in-out;
 
 	&:hover {
-		background-color: #2980b9;
+		background-color: #e6f5ff;
 	}
 `;
 const CenteredGraphContainer = styled.div`
@@ -94,7 +94,7 @@ const SelectContainer = styled.div`
 
 const Title = styled.h3`
 	color: #333;
-	font-size: 1.2em;
+	font-size: 1em;
 	margin-right: 20px;
 `;
 
@@ -400,40 +400,40 @@ const Dashboard = () => {
 			)}
 			<DashboardGrid>
 				<DashboardCard>
-					<Title>Total Products </Title>
+					<Title>Total Products</Title>
 					<Count>{productCount}</Count>
 					<Button onClick={handleViewProducts}>View Products</Button>
 				</DashboardCard>
 				<DashboardCard>
-					<Title>Total Supplier:</Title>
+					<Title>Total Supplier</Title>
 					<Count>{supplierCount}</Count>
 					<Button onClick={handleViewSuppliers}>View Suppliers</Button>
 				</DashboardCard>
 				<DashboardCard>
-					<Title>Total no of warehouse: </Title>
+					<Title>Total no of warehouse</Title>
 					<Count>{warehouseCount} </Count>
 					<Button onClick={handleViewWarehouses}>View Warehouses</Button>
 				</DashboardCard>
 				<DashboardCard>
-					<Title>Total no of user:</Title>
+					<Title>Total no of user</Title>
 					<Count>{userCount}</Count>
 					<Button onClick={handleViewUser}>View User</Button>
 				</DashboardCard>
 				<DashboardCard>
-					<Title>Total no of product categories: </Title>
+					<Title>Total no of product categories</Title>
 					<Count>{categoriesCount} </Count>
 					<Button onClick={handleViewCategories}>View Categories</Button>
 				</DashboardCard>
 				<DashboardCard>
-					<Title>Total no of orders:</Title> <Count> {TransactionCount}</Count>
+					<Title>Total no of orders</Title> <Count> {TransactionCount}</Count>
 					<Button onClick={handleViewOrders}>View Orders</Button>
 				</DashboardCard>
 				<DashboardCard>
-					<Title> Total no of payment methods: </Title> <Count>{paymentCount} </Count>
+					<Title> Total no of payment methods</Title> <Count>{paymentCount} </Count>
 					<Button onClick={handleViewPaymentMethod}>View Payment Method</Button>
 				</DashboardCard>
 				<DashboardCard>
-					<Title>Total no of product subcategories:</Title>
+					<Title>Total no of product subcategories</Title>
 
 					<Count>{subcategoriesCount}</Count>
 					<Button onClick={handleViewSubcategories}>View Subcategories</Button>

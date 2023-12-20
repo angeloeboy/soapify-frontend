@@ -38,6 +38,19 @@ const PromoPage = () => {
 	const paginatedPromotions = promotionsDisplay.slice(startIndex, endIndex);
 
 	useEffect(() => {
+		document.addEventListener("click", handleClickOutside);
+		return () => {
+			document.removeEventListener("click", handleClickOutside);
+		};
+	}, []);
+
+	const handleClickOutside = (event) => {
+		if (!event.target.closest(".action-container") && !event.target.closest(".ellipsis")) {
+			setActiveActionContainer(null);
+		}
+	};
+
+	useEffect(() => {
 		getPromotionsFunc();
 	}, []);
 
@@ -118,7 +131,9 @@ const PromoPage = () => {
 								<TableHeadings>Value</TableHeadings>
 								<TableHeadings>Max use</TableHeadings>
 								<TableHeadings>Current usage</TableHeadings>
+								<TableHeadings>Status</TableHeadings>
 								<TableHeadings>Expiry</TableHeadings>
+
 								<TableHeadings>Actions</TableHeadings>
 							</TableRows>
 							{paginatedPromotions.map((promo, index) => (
@@ -130,8 +145,10 @@ const PromoPage = () => {
 									</TableData>
 									<TableData>{promo.promo_code_max_use !== null ? promo.promo_code_max_use : "Unlimited"}</TableData>
 									<TableData>{promo.promo_code_current_use}</TableData>
+									<TableData>{promo.isActive ? "Active" : "Inactive"}</TableData>
 
 									<TableData>{convertToDateFormat(promo.promo_code_expiry)}</TableData>
+
 									<TableData>
 										<FontAwesomeIcon
 											className="ellipsis"
@@ -148,11 +165,11 @@ const PromoPage = () => {
 													}}
 												>
 													<FontAwesomeIcon icon={faPen} />
-													Edit
+													View
 												</p>
-												<p>
+												{/* <p>
 													<FontAwesomeIcon icon={faTrash} /> Delete
-												</p>
+												</p> */}
 
 												{promo.isActive ? (
 													<p

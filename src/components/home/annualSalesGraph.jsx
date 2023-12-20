@@ -51,9 +51,9 @@ const AnnualSalesGraph = ({ annualSalesData }) => {
 	const options = {
 		layout: {
 			padding: {
-			  bottom: 40, // Add space at the bottom
+				bottom: 40, // Add space at the bottom
 			},
-		  },
+		},
 		scales: {
 			y: {
 				ticks: {

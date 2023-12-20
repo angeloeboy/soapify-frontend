@@ -9,7 +9,7 @@ import { faEllipsis, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
 import AddShelving from "@/components/shelving/addShelving";
 import ShelvingSearchBar from "@/components/shelving/shelvingSearchBar";
 import Pagination from "@/components/misc/pagination";
-import { getAreas } from "@/api/warehouse";
+import { deleteArea, getAreas } from "@/api/warehouse";
 import EditArea from "@/components/shelving/editArea";
 import styled from "styled-components";
 
@@ -50,7 +50,9 @@ const Areas = () => {
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
 	const [isAddShelfPopupOpen, setIsAddShelfPopupOpen] = useState(false);
 	const [isAddAreaPopupOpen, setIsAddAreaPopupOpen] = useState(false);
-
+	const [selectedAreaId, setSelectedAreaId] = useState("");
+	const [isDeleteAreaPopupOpen, setIsDeleteAreaPopupOpen] = useState(false);
+	const [clickedName, setClickedName] = useState("");
 	const [selectedArea, setSelectedArea] = useState(null);
 	const [isEditAreaPopupOpen, setIsEditAreaPopupOpen] = useState(false);
 	const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -61,7 +63,6 @@ const Areas = () => {
 		if (!res) return;
 		setAreas(res.areas);
 		setFilteredAreas(res.areas);
-		console.log(res.areas);
 	};
 
 	useEffect(() => {
@@ -89,25 +90,35 @@ const Areas = () => {
 			setActiveActionContainer(null);
 		}
 	};
-	// const handleSearchShelves = (searchTerm) => {
-	// 	const lowerCaseSearchTerm = searchTerm.toLowerCase();
 
-	// 	const filteredShelves = shelves.filter((shelf) => shelf.shelfName.toLowerCase().includes(lowerCaseSearchTerm));
+	const deleteAreaFunc = async (area_id) => {
+		const res = await deleteArea(area_id);
+		if (!res) return;
 
-	// 	setFilteredShelves(filteredShelves);
-	// 	setCurrentPage(1); // Reset to the first page when searching.
-	// };
+		if (res.status === "success") {
+			getAreasFunc();
+			toast.success("Area deleted successfully");
+			return;
+		}
+
+		toast.error(res.errors[0].message);
+	};
 
 	const startIndex = (currentPage - 1) * itemsPerPage;
 	const endIndex = currentPage * itemsPerPage;
-	const paginatedAreas = areas.slice(startIndex, endIndex);
+	const paginatedAreas = filteredShelves.slice(startIndex, endIndex);
 
 	return (
 		<DashboardLayout>
 			<PageTitle title="Areas" />
 
 			<StyledPanel>
-				<ShelvingSearchBar setIsAddShelfPopupOpen={setIsAddShelfPopupOpen} setShelvesDisplay={setFilteredShelves} />
+				<ShelvingSearchBar
+					setIsAddShelfPopupOpen={setIsAddShelfPopupOpen}
+					setShelvesDisplay={setFilteredShelves}
+					setCurrentPage={setCurrentPage}
+					shelves={areas}
+				/>
 
 				<Table id="shelving-table">
 					<tbody>
@@ -147,7 +158,14 @@ const Areas = () => {
 												<FontAwesomeIcon icon={faPen} />
 												Edit
 											</p>
-											<p>
+											<p
+												onClick={() => {
+													setIsDeleteAreaPopupOpen(true);
+													setSelectedArea(area);
+
+													setClickedName(area.area_name);
+												}}
+											>
 												<FontAwesomeIcon icon={faTrash} /> Delete
 											</p>
 										</ActionContainer>
@@ -171,6 +189,9 @@ const Areas = () => {
 
 			{isAddShelfPopupOpen && <AddShelving setIsAddShelfPopupOpen={setIsAddShelfPopupOpen} getShelvesFunc={getShelvesFunc} />}
 			{isEditAreaPopupOpen && <EditArea setIsEditAreaPopupOpen={setIsEditAreaPopupOpen} getAreasFunc={getAreasFunc} selectedArea={selectedArea} />}
+			{isDeleteAreaPopupOpen && (
+				<DeleteModal type="area" text={clickedName} close={setIsDeleteAreaPopupOpen} confirm={() => deleteAreaFunc(selectedArea.area_id)} />
+			)}
 		</DashboardLayout>
 	);
 };
@@ -178,6 +199,8 @@ const Areas = () => {
 export default Areas;
 
 import cookie, { parse } from "cookie";
+import { toast } from "react-toastify";
+import DeleteModal from "@/components/misc/delete";
 export async function getServerSideProps(context) {
 	const { req } = context;
 	const parsedCookies = cookie.parse(req.headers.cookie || "").permissions;

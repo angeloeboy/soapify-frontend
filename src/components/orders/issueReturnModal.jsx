@@ -212,7 +212,7 @@ const IssueReturn = ({ setIsIssueReturnOpen, selectedTransaction, fetchTransacti
 				product_id: item.product_id,
 				quantityToReturn: item.batch_info.reduce((total, batch) => total + batch.quantity, 0),
 				isDamaged: item.isDamaged,
-				batch_info: JSON.stringify(item.batch_info.filter((batch) => batch.quantity > 0)),
+				batch_info: JSON.stringify(item.batch_info),
 			})),
 		};
 		console.log(payload);
@@ -269,7 +269,7 @@ const IssueReturn = ({ setIsIssueReturnOpen, selectedTransaction, fetchTransacti
 											value={batch.quantity}
 											onChange={(e) => handleBatchQuantityChange(itemIndex, batchIndex, parseInt(e.target.value))}
 											min="0"
-											max={batch.maxQuantity}
+											// max={batch.maxQuantity}
 										/>
 										<p>Quantity of damaged items (wont be returned to inventory)</p>
 										<input
@@ -277,7 +277,7 @@ const IssueReturn = ({ setIsIssueReturnOpen, selectedTransaction, fetchTransacti
 											value={batch.damaged}
 											onChange={(e) => handleDamageQuantityChange(itemIndex, batchIndex, parseInt(e.target.value))}
 											min="0"
-											max={batch.maxQuantity - batch.quantity}
+											// max={batch.maxQuantity - batch.quantity}
 										/>
 									</label>
 								</BatchInfo>

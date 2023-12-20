@@ -4,7 +4,7 @@ import DashboardLayout from "@/components/misc/dashboardLayout";
 import PageTitle from "@/components/misc/pageTitle";
 import Table, { ActionContainer, Status, TableContainer, TableData, TableHeadings, TableRows } from "@/styled-components/TableComponent";
 import StyledPanel from "@/styled-components/StyledPanel";
-import { faBox, faBoxOpen, faEllipsis, faFilter, faPen, faPlus, faPlusCircle, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faArrowsSpin, faBox, faBoxOpen, faEllipsis, faFilter, faPen, faPlus, faPlusCircle, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TableControlPanel from "@/styled-components/TableControlPanel";
 import PdfExporter from "@/components/misc/pdfExporter";
@@ -218,6 +218,8 @@ const InventoryPage = ({ hasAddinventory }) => {
 								<TableHeadings>Quantity Remaining</TableHeadings>
 								<TableHeadings>Date Received</TableHeadings>
 								<TableHeadings>Expiration</TableHeadings>
+
+								<TableHeadings>Status</TableHeadings>
 								<TableHeadings>Actions</TableHeadings>
 							</TableRows>
 							{inventory.length === 0 ? (
@@ -236,6 +238,8 @@ const InventoryPage = ({ hasAddinventory }) => {
 										<TableData>{inventory.quantity}</TableData>
 										<TableData>{inventory.current_quantity}</TableData>
 										<TableData>{convertToDateFormat(inventory.date_added)}</TableData>
+										<TableData>{convertToDateFormat(inventory.expiry_date)}</TableData>
+
 										<TableData>{checkIfAboutToExpire(inventory.expiry_date)}</TableData>
 
 										<TableData>
@@ -247,7 +251,7 @@ const InventoryPage = ({ hasAddinventory }) => {
 
 											{activeActionContainer === index && (
 												<ActionContainer onClick={() => setActiveActionContainer(-1)}>
-													<p
+													{/* <p
 														onClick={() => {
 															setSelectedInventory(inventory);
 															setIsEditPopUpOpen(selectedInventory);
@@ -258,14 +262,14 @@ const InventoryPage = ({ hasAddinventory }) => {
 													</p>
 													<p>
 														<FontAwesomeIcon icon={faTrash} /> Delete
-													</p>
+													</p> */}
 													<p
 														onClick={(e) => {
 															setIsMovePopUpOpen(true);
 															setSelectedInventory(inventory);
 														}}
 													>
-														<FontAwesomeIcon icon={faTrash} /> Move Inventory
+														<FontAwesomeIcon icon={faArrowsSpin} /> Move Inventory
 													</p>
 													{inventory.Product.isBox ? (
 														<p

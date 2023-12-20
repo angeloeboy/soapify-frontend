@@ -166,7 +166,7 @@ const Warehouse = () => {
 								<TableHeadings>Actions </TableHeadings>
 							</TableRows>
 
-							{warehouses.map((warehouse, index) => (
+							{paginatedWarehouses.map((warehouse, index) => (
 								<React.Fragment key={index}>
 									<TableRows onClick={() => showAreasFunc(warehouse.warehouse_id)}>
 										<TableData>{warehouse.warehouse_name}</TableData>

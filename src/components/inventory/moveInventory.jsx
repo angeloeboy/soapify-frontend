@@ -155,7 +155,7 @@ const DeactivateModal = ({ type, text, close, confirm }) => {
 	);
 };
 
-const MoveInventory = ({ setIsMovePopUpOpen, getInventoryFunc, selectedInventory }) => {
+const MoveInventory = ({ setIsMovePopUpOpen, getInventoryFunc, selectedInventory, inventoryList }) => {
 	const [loading, setLoading] = useState(false);
 	const [inventory, setInventory] = useState({
 		inventory_id: 0,
@@ -178,6 +178,37 @@ const MoveInventory = ({ setIsMovePopUpOpen, getInventoryFunc, selectedInventory
 
 			if (warehouse && warehouse.inventory?.length > 0) {
 				const inventory = warehouse.inventory.find((inv) => inv.product_id === selectedInventory.product_id);
+
+				//get all the inventory that has the same product id
+				const inventoryWithSameProductId = inventoryList.filter((inv) => inv.product_id === selectedInventory.product_id);
+
+				// inventoryWithSameProductId.forEach((inv) => {
+				// 	if (inv.date_added < selectedInventory.date_added || inv.inventory_id < selectedInventory.inventory_id) {
+				// 		toast.warning("You cannot move this inventory to Front store because there is an older inventory of this product");
+				// 		return;
+				// 	}
+				// });
+
+				// if (inventory) {
+				// 	setWarning(true);
+				// 	return;
+				// }
+
+				let warningIssued = false;
+
+				inventoryWithSameProductId.forEach((inv) => {
+					if (inv.date_added < selectedInventory.date_added || inv.inventory_id < selectedInventory.inventory_id) {
+						//check if the inventory is in the front store
+						if (inv.warehouse_id === 1) return;
+						toast.warning("You cannot move this inventory to Front store because there is an older inventory of this product");
+						warningIssued = true;
+						return;
+					}
+				});
+
+				if (warningIssued) {
+					return; // Exit the function if the warning has already been issued
+				}
 
 				if (inventory) {
 					setWarning(true);
@@ -261,7 +292,7 @@ const MoveInventory = ({ setIsMovePopUpOpen, getInventoryFunc, selectedInventory
 		<PopupOverlay>
 			<PopupContent>
 				<form onSubmit={(e) => moveInventoryFunc(e)}>
-					<HeaderTitle>Add Inventory</HeaderTitle>
+					<HeaderTitle>Move Inventory</HeaderTitle>
 					<FieldContainer>
 						<LabelContainer first>
 							<Label>General Information</Label>{" "}

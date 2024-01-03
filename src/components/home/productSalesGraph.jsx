@@ -4,6 +4,7 @@ import { styled } from "styled-components";
 
 import { getProductStats } from "@/api/home"; // Adjust the import path
 import { getProducts } from "@/api/products";
+import { getAllTransactions, getTransactions } from "@/api/transaction";
 
 const LineGraphContainer = styled.div`
 	border-radius: 8px;
@@ -88,17 +89,19 @@ const ProductSalesGraph = () => {
 
 	const [startDate, setStartDate] = useState("2023-01-01");
 	const [endDate, setEndDate] = useState("2023-12-31");
-
+	const [transactions, setTransactions] = useState([]); // New state for selected product
+	const [salesByPrice, setSalesByPrice] = useState([]); // New state for selected product
 	const selectableYears = [selectedYear];
 
 	useEffect(() => {
 		fetchData();
 		fetchProducts();
+		getAllTransactionFunc();
 	}, [selectedProductId, selectedYear, startDate, endDate]);
 
 	useEffect(() => {
 		generateChartData();
-	}, [productData, monthData, selectedProductId, startDate, endDate]);
+	}, [productData, monthData, selectedProductId, startDate, endDate, transactions]);
 
 	const handleStartDateChange = (e) => {
 		setStartDate(e.target.value);
@@ -112,6 +115,7 @@ const ProductSalesGraph = () => {
 
 	useEffect(() => {
 		fetchProducts();
+		getAllTransactionFunc();
 	}, []);
 
 	const fetchProducts = () => {
@@ -133,60 +137,14 @@ const ProductSalesGraph = () => {
 			});
 	};
 
-	// const fetchData = async () => {
-	// 	try {
-	// 		const monthResponse = await getProductStats(selectedProductId, selectedYear);
-	// 		console.log(monthResponse);
-	// 		setMonthData(monthResponse);
-	// 	} catch (error) {
-	// 		console.error("Error fetching data", error);
-	// 	}
-	// };
+	const getAllTransactionFunc = async () => {
+		const res = await getTransactions();
+		if (!res) return;
 
-	// const generateChartData = async () => {
-	// 	if (!productData || !monthData || !selectedProductId || !startDate || !endDate) {
-	// 		return null;
-	// 	}
-
-	// 	const selectedProduct = productData.find((product) => product.product_id === selectedProductId);
-	// 	if (!selectedProduct) {
-	// 		console.error(`Product with product_id ${selectedProductId} not found`);
-	// 		return null;
-	// 	}
-
-	// 	const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEPT", "OCT", "NOV", "DEC"];
-	// 	const prices = Array(months.length).fill(selectedProduct.product_price);
-
-	// 	const resultArray = Object.entries(monthData.transactions_with_items).map(([key, value]) => value);
-
-	// 	const salesData = resultArray.map((monthTransaction) => {
-	// 		let totalSalesForMonth = 0;
-	// 		monthTransaction.forEach((item) => {
-	// 			totalSalesForMonth += (item.price / 100) * item.quantity;
-	// 		});
-	// 		return totalSalesForMonth;
-	// 	});
-
-	// 	console.log("salesData", salesData);
-
-	// 	const start = new Date(startDate);
-	// 	const end = new Date(endDate);
-
-	// 	const chartData = {
-	// 		labels: months.slice(start.getMonth(), end.getMonth() + 1),
-	// 		datasets: [
-	// 			{
-	// 				label: "Sales",
-	// 				data: salesData.slice(start.getMonth(), end.getMonth() + 1),
-	// 				backgroundColor: "rgba(255, 99, 132, 0.2)",
-	// 				borderColor: "rgba(255, 99, 132, 1)",
-	// 				borderWidth: 1,
-	// 			},
-	// 		],
-	// 	};
-
-	// 	setChartData(chartData);
-	// };
+		if (res && res.transactions) {
+			setTransactions(res.transactions);
+		}
+	};
 
 	const fetchData = async () => {
 		try {
@@ -196,13 +154,13 @@ const ProductSalesGraph = () => {
 
 			for (let year = startYear; year <= endYear; year++) {
 				const response = await getProductStats(selectedProductId, year);
+				console.log(response);
 				if (response.status === "Success") {
-					allMonthData[year] = response.transactions;
+					allMonthData[year] = response.transactions_with_items;
 				} else {
 					throw new Error(`Failed to fetch data for year ${year}`);
 				}
 			}
-			console.log(allMonthData);
 
 			setMonthData(allMonthData);
 		} catch (error) {
@@ -210,10 +168,12 @@ const ProductSalesGraph = () => {
 		}
 	};
 
-	const generateChartData = () => {
-		if (!productData || !monthData || !selectedProductId || !startDate || !endDate) {
+	const generateChartData = async () => {
+		if (!productData || !monthData || !selectedProductId || !startDate || !endDate || !transactions || !transactions.length > 0) {
 			return;
 		}
+
+		let salesByPrice = {}; // Initialize salesByPrice here
 
 		const selectedProduct = productData.find((product) => product.product_id === selectedProductId);
 		if (!selectedProduct) {
@@ -225,7 +185,9 @@ const ProductSalesGraph = () => {
 		const start = new Date(startDate);
 		const end = new Date(endDate);
 		let labels = [];
-		let salesData = [];
+		let regularSalesData = [];
+		let discountedProductSalesData = [];
+		let transactionLevelDiscountedSalesData = [];
 
 		for (let year = start.getFullYear(); year <= end.getFullYear(); year++) {
 			let startMonth = year === start.getFullYear() ? start.getMonth() : 0;
@@ -233,8 +195,65 @@ const ProductSalesGraph = () => {
 
 			for (let month = startMonth; month <= endMonth; month++) {
 				labels.push(`${months[month]} ${year}`);
-				let monthSales = monthData[year] && monthData[year][month + 1] ? monthData[year][month + 1] : 0;
-				salesData.push(monthSales);
+
+				let monthlyTransactions = monthData[year] && monthData[year][month + 1];
+				let monthlyRegularSales = 0;
+				let monthlyDiscountedProductSales = 0;
+				let monthlyTransactionLevelDiscountedSales = 0;
+
+				if (monthlyTransactions) {
+					monthlyTransactions.forEach((transactionItem) => {
+						const transactionPrice = transactionItem.price * transactionItem.quantity;
+						const isFixedPromo = transactionItem.transaction?.promo_code?.promo_code_type === "FIXED";
+
+						if (transactionItem.discounted && isFixedPromo) {
+							// Calculate prorated discount
+							const transaction = transactions.find((t) => t.transaction_id === transactionItem.transaction.transaction_id);
+
+							let totalPrice = 0;
+							if (transaction && transaction.items) {
+								totalPrice = transaction.items.reduce((total, item) => {
+									return total + item.price * item.quantity;
+								}, 0);
+							}
+
+							const totalTransactionAmount = totalPrice;
+
+							const discountValue = transactionItem.transaction.promo_code.promo_code_value;
+							const proratedDiscount = (transactionPrice / totalTransactionAmount) * discountValue;
+							const proratedPricePerUnit = transactionItem.price - proratedDiscount / transactionItem.quantity;
+							monthlyTransactionLevelDiscountedSales += proratedPricePerUnit * transactionItem.quantity;
+
+							// Updating salesByPrice
+							const effectivePrice = Math.round(proratedPricePerUnit * 100) / 100; // Rounding to two decimal places
+
+							if (salesByPrice[effectivePrice]) {
+								salesByPrice[effectivePrice] += transactionItem.quantity;
+							} else {
+								salesByPrice[effectivePrice] = transactionItem.quantity;
+							}
+						} else if (transactionItem.discounted) {
+							monthlyDiscountedProductSales += transactionPrice;
+							if (salesByPrice[transactionItem.price]) {
+								salesByPrice[transactionItem.price] += transactionItem.quantity;
+							} else {
+								salesByPrice[transactionItem.price] = transactionItem.quantity;
+							}
+						} else {
+							monthlyRegularSales += transactionPrice;
+
+							if (salesByPrice[transactionItem.price]) {
+								salesByPrice[transactionItem.price] += transactionItem.quantity;
+							} else {
+								salesByPrice[transactionItem.price] = transactionItem.quantity;
+							}
+						}
+					});
+				}
+
+				regularSalesData.push(monthlyRegularSales / 100);
+				discountedProductSalesData.push(monthlyDiscountedProductSales / 100);
+				transactionLevelDiscountedSalesData.push(monthlyTransactionLevelDiscountedSales / 100);
 			}
 		}
 
@@ -242,14 +261,30 @@ const ProductSalesGraph = () => {
 			labels: labels,
 			datasets: [
 				{
-					label: "Sales",
-					data: salesData,
-					backgroundColor: "rgba(255, 99, 132, 0.2)",
-					borderColor: "rgba(255, 99, 132, 1)",
+					label: "Regular Sales",
+					data: regularSalesData,
+					backgroundColor: "rgba(54, 162, 235, 0.2)",
+					borderColor: "rgba(54, 162, 235, 1)",
+					borderWidth: 1,
+				},
+				{
+					label: "Discounted Product Sales",
+					data: discountedProductSalesData,
+					backgroundColor: "rgba(255, 206, 86, 0.2)",
+					borderColor: "rgba(255, 206, 86, 1)",
+					borderWidth: 1,
+				},
+				{
+					label: "Transaction-Level Discounted Sales",
+					data: transactionLevelDiscountedSalesData,
+					backgroundColor: "rgba(75, 192, 192, 0.2)",
+					borderColor: "rgba(75, 192, 192, 1)",
 					borderWidth: 1,
 				},
 			],
 		};
+
+		setSalesByPrice(salesByPrice);
 
 		setChartData(chartData);
 	};
@@ -341,6 +376,15 @@ const ProductSalesGraph = () => {
 			<div className="chart-container">
 				<Bar data={chartData} options={options} />
 			</div>
+
+			<h3>Yearly Sales Summary by Price</h3>
+			<ul>
+				{Object.entries(salesByPrice).map(([price, quantity]) => (
+					<li key={price}>
+						Price: P{price / 100}, Quantity Sold: {quantity}
+					</li>
+				))}
+			</ul>
 		</LineGraphContainer>
 	);
 };

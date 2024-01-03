@@ -27,10 +27,6 @@ const InventoryLogs = ({ inventory }) => {
 		return formattedDate;
 	};
 
-	useEffect(() => {
-		getLogs();
-	}, [inventory]);
-
 	return (
 		<div>
 			<PageTitle>Inventory Logs</PageTitle>
@@ -44,11 +40,11 @@ const InventoryLogs = ({ inventory }) => {
 							<TableHeadings>Date</TableHeadings>
 						</TableRows>
 
-						{inventoryLogs &&
-							inventoryLogs.map((log) => (
+						{inventory &&
+							inventory.inventory_logs.map((log) => (
 								<TableRows key={log.log_id}>
 									<TableData $bold>{log.action}</TableData>
-									<TableData>{`${log.user_name.first_name} ${log.user_name.last_name}`} </TableData>
+									{/* <TableData>{`${log.user_name.first_name} ${log.user_name.last_name}`} </TableData> */}
 
 									<TableData>{convertToDateFormat(log.created_at)}</TableData>
 								</TableRows>

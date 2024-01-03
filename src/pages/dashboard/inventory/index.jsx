@@ -68,7 +68,7 @@ const InventoryPage = ({ hasAddinventory }) => {
 	const [inventoryLoading, setInventoryLoading] = useState(true);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [itemsPerPage, setItemsPerPage] = useState(10);
-
+	const [showLogs, setShowLogs] = useState(false);
 	const startIndex = (currentPage - 1) * itemsPerPage;
 	const endIndex = Math.min(currentPage * itemsPerPage, inventoryDisplay.length);
 	const paginatedInventory = inventoryDisplay.slice(startIndex, endIndex);
@@ -267,13 +267,20 @@ const InventoryPage = ({ hasAddinventory }) => {
 															onClick={() => {
 																setSelectedInventory(inventory);
 																setIsPackPopUpOpen(true);
-
-																// convertPcsToBoxFunc(inventory, 300);
 															}}
 														>
 															<FontAwesomeIcon icon={faBox} /> Pack
 														</p>
 													)}
+
+													<p
+														onClick={() => {
+															setSelectedInventory(inventory);
+															setShowLogs(true);
+														}}
+													>
+														Show Logs
+													</p>
 												</ActionContainer>
 											)}
 										</TableData>
@@ -297,11 +304,20 @@ const InventoryPage = ({ hasAddinventory }) => {
 
 			{isAddPopUpOpen && <AddInventory setIsAddPopUpOpen={setIsAddPopUpOpen} getInventoryFunc={fetchInventory} productId={productId} openModal={openModal} />}
 			{isEditPopUpOpen && <EditInventoryComponent setIsEditPopUpOpen={setIsEditPopUpOpen} getInventoryFunc={fetchInventory} />}
-			{isMovePopUpOpen && <MoveInventory setIsMovePopUpOpen={setIsMovePopUpOpen} getInventoryFunc={fetchInventory} selectedInventory={selectedInventory} />}
+			{isMovePopUpOpen && (
+				<MoveInventory
+					setIsMovePopUpOpen={setIsMovePopUpOpen}
+					getInventoryFunc={fetchInventory}
+					selectedInventory={selectedInventory}
+					inventoryList={inventory}
+				/>
+			)}
 			{isPackPopUpOpen && <PackInventory setIsPackPopUpOpen={setIsPackPopUpOpen} getInventoryFunc={fetchInventory} selectedInventory={selectedInventory} />}
 			{isUnpackPopUpOpen && (
 				<UnpackInventory setIsUnpackPopUpOpen={setIsUnpackPopUpOpen} getInventoryFunc={fetchInventory} selectedInventory={selectedInventory} />
 			)}
+
+			{showLogs && <InventoryLogs inventory={selectedInventory} />}
 		</DashboardLayout>
 	);
 };

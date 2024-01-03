@@ -19,7 +19,7 @@ import { addProduct, getProducts } from "@/api/products";
 import { addInventory } from "@/api/inventory";
 import { toast } from "react-toastify";
 import Image from "next/image";
-import { getAllWarehouse } from "@/api/warehouse";
+import { getAllWarehouse, getWarehouse } from "@/api/warehouse";
 import Link from "next/link";
 import { getSuppliers } from "@/api/supplier";
 
@@ -95,6 +95,29 @@ const AddInventory = ({ setIsAddPopUpOpen, getInventoryFunc, productId, openModa
 	const addInventoryFunc = async (e) => {
 		e.preventDefault();
 		setLoading(true);
+
+		if (inventory.warehouse_id === 1) {
+			let warehouse = await getWarehouse(1);
+			warehouse = warehouse.warehouse;
+
+			if (warehouse && warehouse.inventory?.length > 0) {
+				console.log(warehouse.inventory);
+
+				let theresStillinventory = false;
+
+				warehouse.inventory.forEach((inv) => {
+					if (inv.product_id === inventory.product_id && inv.current_quantity > 0) {
+						theresStillinventory = true;
+					}
+				});
+
+				if (theresStillinventory) {
+					toast.warning("You cannot add this inventory to Front store because there is an older inventory of this product");
+					setLoading(false);
+					return;
+				}
+			}
+		}
 
 		const res = await addInventory(inventory);
 

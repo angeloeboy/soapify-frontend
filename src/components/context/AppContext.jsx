@@ -52,6 +52,8 @@ export const AppProvider = ({ children }) => {
 				submenus: [
 					{ title: "Overview", link: "/dashboard/inventory", permission: "View Inventory:inventory" },
 					{ title: "Products", link: "/dashboard/products", permission: "View Products:products" },
+					{ title: "Purchase Order", link: "/dashboard/purchase-order" },
+
 					{ title: "Attributes", link: "/dashboard/attributes", permission: "View Attributes:attributes" },
 					{ title: "Categories", link: "/dashboard/products/categories", permission: "View Categories:categories" },
 					{ title: "Subcategories", link: "/dashboard/products/subcategories", permission: "View Subcategories:subcategories" },

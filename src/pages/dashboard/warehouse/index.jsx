@@ -176,43 +176,49 @@ const Warehouse = () => {
 											<FontAwesomeIcon className="ellipsis" icon={faEllipsis} onClick={() => setActiveActionContainer(index)} />
 											{activeActionContainer === index && (
 												<ActionContainer ref={actionContainerRef}>
-													<p
-														onClick={() => {
-															setClickedId(warehouse.warehouse_id);
-															setEditPopUpOpen(true);
-														}}
-													>
-														<FontAwesomeIcon icon={faPen} />
-														Edit
-													</p>
-													<p
-														onClick={() => {
-															// setShowDeactivate(true);
-															// setClickedName(warehouse.warehouse_name);
-															deleteWarehouseFunc(warehouse.warehouse_id);
-															console.log("Delete warehouse with ID:", warehouse.warehouse_id);
-														}}
-													>
-														<FontAwesomeIcon icon={faTrash} /> Delete
-													</p>
+													{warehouse.warhouse_id !== 1 ||
+														warehouse.warhouse_id !==
+															2(
+																<>
+																	<p
+																		onClick={() => {
+																			setClickedId(warehouse.warehouse_id);
+																			setEditPopUpOpen(true);
+																		}}
+																	>
+																		<FontAwesomeIcon icon={faPen} />
+																		Edit
+																	</p>
+																	<p
+																		onClick={() => {
+																			// setShowDeactivate(true);
+																			// setClickedName(warehouse.warehouse_name);
+																			deleteWarehouseFunc(warehouse.warehouse_id);
+																			console.log("Delete warehouse with ID:", warehouse.warehouse_id);
+																		}}
+																	>
+																		<FontAwesomeIcon icon={faTrash} /> Delete
+																	</p>
 
-													{warehouse.isActive && (
-														<p
-															onClick={() => {
-																setShowDeactivate(true);
-																setClickedName(warehouse.warehouse_name);
-																setSelectedWarehouseId(warehouse.warehouse_id);
-															}}
-														>
-															<FontAwesomeIcon icon={faXmarkCircle} /> Deactivate
-														</p>
-													)}
+																	{warehouse.isActive && (
+																		<p
+																			onClick={() => {
+																				setShowDeactivate(true);
+																				setClickedName(warehouse.warehouse_name);
+																				setSelectedWarehouseId(warehouse.warehouse_id);
+																			}}
+																		>
+																			<FontAwesomeIcon icon={faXmarkCircle} /> Deactivate
+																		</p>
+																	)}
 
-													{!warehouse.isActive && (
-														<p onClick={() => handleReactivateModal(warehouse.warehouse_id, warehouse.warehouse_name)}>
-															<FontAwesomeIcon icon={faCheckCircle} /> Activate
-														</p>
-													)}
+																	{!warehouse.isActive && (
+																		<p onClick={() => handleReactivateModal(warehouse.warehouse_id, warehouse.warehouse_name)}>
+																			<FontAwesomeIcon icon={faCheckCircle} /> Activate
+																		</p>
+																	)}
+																</>
+															)}
 
 													<p
 														onClick={() => {

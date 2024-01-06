@@ -1,31 +1,35 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
 import { DropdownHeader, DropdownItem, DropdownMenu, DropdownWrapper, SearchBar, TableControlPanel, Button } from "@/styled-components/TableControlPanel";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import PurchaseOrder from "@/pages/dashboard/purchase-order";
+import useOutsideClick from "@/hooks/useOutsideclick";
 
-const PurchaseOrderSearchBar = ({ setIsAddPopUpOpen, setPromotionsDisplay, promotions, setCurrentPage }) => {
+const PurchaseOrderSearchBar = ({ setIsAddPopUpOpen, setCurrentPage, purchaseOrders, setPurchaseOrdersDisplay }) => {
 	const [query, setQuery] = useState("");
 	const [isloading, setIsLoading] = useState(false);
-
+	const [selectedStatus, setSelectedStatus] = useState("All");
 	useEffect(() => {
-		// handleSearch();
-	}, [query]);
+		handleSearch();
+	}, [query, selectedStatus]);
 
-	// const handleSearch = (e) => {
-	// 	const searchValue = query.toLowerCase();
-	// 	const filteredPromos = promotions.filter((promo) => {
-	// 		return (
-	// 			promo.promo_code?.toLowerCase().includes(searchValue) ||
-	// 			promo.promo_code_type?.toLowerCase().includes(searchValue) ||
-	// 			promo.promo_code_value?.toString().includes(searchValue) ||
-	// 			promo.promo_code_max_use?.toString().includes(searchValue) ||
-	// 			promo.promo_code_expiry?.toLowerCase().includes(searchValue)
-	// 		);
-	// 	});
-	// 	setPromotionsDisplay(filteredPromos);
-	// 	setCurrentPage(1);
-	// };
+	const handleSearch = () => {
+		const searchQuery = query;
+
+		let filteredPurchaseOrders;
+		//convert int to string
+
+		filteredPurchaseOrders = searchQuery
+			? purchaseOrders.filter((purchaseOrder) => `PO00${purchaseOrder.purchase_order_id.toString()}`.toLowerCase().includes(searchQuery.toLowerCase()))
+			: purchaseOrders;
+
+		if (selectedStatus !== "All") {
+			filteredPurchaseOrders = filteredPurchaseOrders.filter((purchaseOrder) => purchaseOrder.status === selectedStatus);
+		}
+
+		setPurchaseOrdersDisplay(filteredPurchaseOrders);
+		setCurrentPage(1);
+	};
 
 	return (
 		<TableControlPanel>
@@ -35,57 +39,50 @@ const PurchaseOrderSearchBar = ({ setIsAddPopUpOpen, setPromotionsDisplay, promo
 			</SearchBar>
 
 			<div>
-				<p> Add Purchase Order </p>
-				<Button onClick={() => setIsAddPopUpOpen(true)}>+ Create Purchase Order</Button>
+				<p>Status</p>
+				<Dropdown setSelectedStatus={setSelectedStatus} />
 			</div>
 
-			{/* Dropdown component (you can uncomment this part if needed) */}
-			{/* <Dropdown /> */}
+			<div>
+				<p> Create Purchase Order </p>
+				<Button onClick={() => setIsAddPopUpOpen(true)}>+ Create Purchase Order</Button>
+			</div>
 		</TableControlPanel>
 	);
 };
 
-// const Dropdown = ({ products, handleProductChange }) => {
-// 	const [isOpen, setIsOpen] = useState(false);
-// 	const [selectedItem, setSelectedItem] = useState("All");
-// 	const dropdownRef = useRef(null);
+const Dropdown = ({ setSelectedStatus }) => {
+	const [isOpen, setIsOpen] = useState(false);
+	const [selectedItem, setSelectedItem] = useState("All");
+	const [choices, setChoices] = useState(["All", "Pending", "Has Back Order", "Delivered"]);
+	const dropdownRef = useRef(null);
 
-// 	useOutsideClick(dropdownRef, () => {
-// 		if (isOpen) setIsOpen(false);
-// 	});
+	useOutsideClick(dropdownRef, () => {
+		if (isOpen) setIsOpen(false);
+	});
 
-// 	return (
-// 		<DropdownWrapper ref={dropdownRef} onClick={() => setIsOpen(!isOpen)}>
-// 			<DropdownHeader>
-// 				<FontAwesomeIcon icon={faFilter} />
-// 				{selectedItem}
-// 			</DropdownHeader>
-// 			<DropdownMenu $isOpen={isOpen}>
-// 				<DropdownItem
-// 					key={0}
-// 					onClick={() => {
-// 						setSelectedItem("All");
-// 						setIsOpen(false);
-// 						handleProductChange("All");
-// 					}}
-// 				>
-// 					All
-// 				</DropdownItem>
-// 				{products.map((option) => (
-// 					<DropdownItem
-// 						key={option.id}
-// 						onClick={() => {
-// 							setSelectedItem(option.product_name);
-// 							setIsOpen(false);
-// 							handleProductChange(option.product_name);
-// 						}}
-// 					>
-// 						{option.product_name}
-// 					</DropdownItem>
-// 				))}
-// 			</DropdownMenu>
-// 		</DropdownWrapper>
-// 	);
-// };
+	return (
+		<DropdownWrapper ref={dropdownRef} onClick={() => setIsOpen(!isOpen)}>
+			<DropdownHeader>
+				<FontAwesomeIcon icon={faFilter} />
+				{selectedItem}
+			</DropdownHeader>
+			<DropdownMenu $isOpen={isOpen}>
+				{choices.map((option, index) => (
+					<DropdownItem
+						key={index}
+						onClick={() => {
+							setSelectedItem(option);
+							setIsOpen(false);
+							setSelectedStatus(option);
+						}}
+					>
+						{option}
+					</DropdownItem>
+				))}
+			</DropdownMenu>
+		</DropdownWrapper>
+	);
+};
 
 export default PurchaseOrderSearchBar;

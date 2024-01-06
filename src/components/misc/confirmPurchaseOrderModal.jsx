@@ -1,22 +1,7 @@
 import styled from "styled-components";
 import { useState } from "react";
 import ReportDiscrepancyModal from "./reportDiscrepancyModal";
-import {
-	Label,
-	Button,
-	LabelContainer,
-	FieldContainer,
-	Centered,
-	CloseButton,
-	ButtonsContainer,
-	PopupOverlay,
-	PopupContent,
-	HeaderTitle,
-	FieldTitleLabel,
-	InputHolder,
-	Select,
-	Option,
-} from "@/styled-components/ItemActionModal";
+import { Button, HeaderTitle } from "@/styled-components/ItemActionModal";
 
 const ConfirmPurchaseOrderModalContainer = styled.div`
 	backdrop-filter: blur(2px);
@@ -31,7 +16,6 @@ const ConfirmPurchaseOrderModalContainer = styled.div`
 	.inner {
 		background-color: white;
 		width: 641px;
-		height: 941px;
 		padding: 1.75rem;
 		border-radius: 0.5rem;
 		position: absolute;
@@ -111,16 +95,8 @@ const NewCloseButton = styled(Button)`
 	margin: 0px;
 `;
 
-const ConfirmPurchaseOrder = ({ purchaseOrderId, close, report }) => {
+const ConfirmPurchaseOrder = ({ purchaseOrderId, close, report, confirmPurchaseOrderFunc, purchaseOrder, fetchPurchaseOrders, closePopup }) => {
 	const [isReportDiscrepancyOpen, setIsReportDiscrepancyOpen] = useState(false);
-
-	// const [receivedQuantity, setReceivedQuantity] = useState("");
-	// const [additionalDetails, setAdditionalDetails] = useState("");
-
-	const handleReport = () => {
-		report({ purchaseOrderId, receivedQuantity, additionalDetails });
-		close();
-	};
 
 	return (
 		<ConfirmPurchaseOrderModalContainer>
@@ -137,10 +113,10 @@ const ConfirmPurchaseOrder = ({ purchaseOrderId, close, report }) => {
 						></path>
 					</svg>
 				</div>
-				<HeaderTitle className="modal-header">Confirm receiving PO-001?</HeaderTitle>
+				<HeaderTitle className="modal-header">Confirm receiving POO{purchaseOrder.purchase_order_id}?</HeaderTitle>
 				<p className="modal-description">
-					You are about to confirm the receipt of Purchase Order PO-001. Please verify that you have received all items in the order and that the quantities
-					match the original purchase order.
+					You are about to confirm the receipt of Purchase Order POO{purchaseOrder.purchase_order_id}. Please verify that you have received all items in the
+					order and that the quantities match the original purchase order.
 				</p>
 
 				<div className="buttons-container">
@@ -149,7 +125,9 @@ const ConfirmPurchaseOrder = ({ purchaseOrderId, close, report }) => {
 							Report Discrepancy
 						</Button>
 
-						<Button width="49%">Confirm</Button>
+						<Button onClick={() => confirmPurchaseOrderFunc()} width="49%">
+							Confirm
+						</Button>
 					</div>
 
 					<NewCloseButton className="cancel" width="49%" onClick={() => close(false)}>
@@ -159,9 +137,11 @@ const ConfirmPurchaseOrder = ({ purchaseOrderId, close, report }) => {
 			</div>
 			{isReportDiscrepancyOpen && (
 				<ReportDiscrepancyModal
-					purchaseOrderId={"Your Purchase Order ID"} // pass the relevant ID
-					close={() => setIsReportDiscrepancyOpen(false)}
-					// report={/* Function to handle discrepancy report */}
+					close={() => close(false)}
+					purchaseOrder={purchaseOrder}
+					fetchPurchaseOrders={fetchPurchaseOrders}
+					setIsReportDiscrepancyOpen={setIsReportDiscrepancyOpen}
+					closePopup={closePopup}
 				/>
 			)}
 		</ConfirmPurchaseOrderModalContainer>

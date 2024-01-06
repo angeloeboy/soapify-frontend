@@ -25,7 +25,7 @@ import ProductComponent from "../pos/product";
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
-import { addPurchaseOrder } from "@/api/purchaseOrder";
+import { addPurchaseOrder, confirmPurchaseOrder } from "@/api/purchaseOrder";
 import { toast } from "react-toastify";
 
 const NewButton = styled(Button)`
@@ -160,42 +160,17 @@ const Product = styled.div`
 	}
 `;
 
-const AddPurchaseOrder = ({ setIsAddPurchaseOrderPopUpOpen, setIsAddPopUpOpen, fetchPurchaseOrders }) => {
+const ViewPurchaseOrder = ({ selectedPurchaseOrder, setIsAddPopUpOpen, fetchPurchaseOrders }) => {
 	const [isConfirmReceivedOpen, setIsReceiveConfirmOpen] = useState(false);
 
 	const [suppliers, setSuppliers] = useState([]);
 	const [selectedSupplier, setSelectedSupplier] = useState(0);
 	const [productList, setProductList] = useState([]);
-	const [purchaseOrder, setPurchaseOrder] = useState({
-		items: [],
-	});
-
-	const [items, setItems] = useState([]);
+	const [purchaseOrder, setPurchaseOrder] = useState(selectedPurchaseOrder);
 
 	useEffect(() => {
 		fetchSuppliers();
 	}, []);
-
-	useEffect(() => {
-		//for items get only the id and quantity
-
-		// if (!selectedSupplier) return;
-		// if (!productList.length <= 0) return;
-
-		const newproductList = productList.map((item) => {
-			return {
-				product_id: item.product_id,
-				quantity: item.quantity,
-			};
-		});
-
-		setPurchaseOrder({
-			...purchaseOrder,
-			supplier_id: selectedSupplier,
-			notes: "Test",
-			items: newproductList,
-		});
-	}, [selectedSupplier, productList, items]);
 
 	const fetchSuppliers = async () => {
 		const res = await getSuppliers();
@@ -204,40 +179,87 @@ const AddPurchaseOrder = ({ setIsAddPurchaseOrderPopUpOpen, setIsAddPopUpOpen, f
 		console.log(res.suppliers);
 	};
 
-	const savePurchaseOrder = async () => {
-		if (!selectedSupplier) return toast.error("Please select a supplier");
-		if (!productList.length) return toast.error("Please select a product");
+	const confirmPurchaseOrderFunc = async () => {
+		console.log(purchaseOrder.purchase_order_items);
 
-		console.log(purchaseOrder);
-		const res = await addPurchaseOrder(purchaseOrder);
+		//compare the purchase_order_item_quantity and purchase_order_item_current_quantity
 
-		if (res.status === "Success") {
-			fetchPurchaseOrders();
+		const purchaseOrderObject = {
+			purchaseOrderId: purchaseOrder.purchase_order_id,
+			itemsReceived: purchaseOrder.purchase_order_items.map((item) => {
+				return {
+					itemId: item.purchase_order_item_id,
+					receivedQuantity:
+						item.purchase_order_item_current_quantity > 0
+							? item.purchase_order_item_quantity - item.purchase_order_item_current_quantity
+							: item.purchase_order_item_quantity,
+				};
+			}),
+			warehouse_id: 2,
+			area_id: 1,
+		};
+
+		console.log(purchaseOrderObject);
+
+		const res = await confirmPurchaseOrder(purchaseOrderObject);
+		console.log(res);
+
+		if (res.status == "Success") {
+			setIsReceiveConfirmOpen(false);
 			setIsAddPopUpOpen(false);
-			return toast.success("Purchase Order Created");
+			fetchPurchaseOrders();
+			toast.success("Purchase Order Confirmed");
+			return;
 		}
 
-		toast.error("Error creating Purchase Order");
+		toast.error("Error Confirming Purchase Order");
+	};
+
+	const checkStatus = (po) => {
+		if (po.purchase_order_items.length === 0) {
+			return "Pending";
+		}
+
+		let allDelivered = true;
+		let hasBackOrder = false;
+
+		po.purchase_order_items.forEach((item) => {
+			if (item.purchase_order_item_current_quantity !== item.purchase_order_item_quantity) {
+				allDelivered = false;
+				// Check for back order
+				if (item.purchase_order_item_current_quantity > 0) {
+					hasBackOrder = true;
+				}
+			}
+		});
+
+		if (allDelivered) {
+			return "Delivered";
+		} else if (hasBackOrder) {
+			return "Has Back Order";
+		} else {
+			return "Pending";
+		}
 	};
 
 	return (
 		<PopupOverlay>
 			<PopupContent>
 				<form>
-					<HeaderTitle>Create Purchase Order</HeaderTitle>
+					<HeaderTitle>View Purchase Order</HeaderTitle>
 					<FieldContainer>
 						<LabelContainer first>
 							<Label>Product</Label>
 						</LabelContainer>
 						<div>
-							<ProductList productList={productList} setProductList={setProductList} />
+							<ProductList productList={productList} setProductList={setProductList} purchaseOrder={purchaseOrder} />
 						</div>
 						<LabelContainer first>
 							<Label>Supplier</Label>
 						</LabelContainer>
 						<div>
 							<FieldTitleLabel>Supplier</FieldTitleLabel>
-							<Select value={selectedSupplier} onChange={(e) => setSelectedSupplier(e.target.value)}>
+							<Select value={purchaseOrder.supplier_id}>
 								<Option value="">Select a supplier</Option>
 								{suppliers.map((supplier) => (
 									<Option key={supplier.supplier_id} value={supplier.supplier_id}>
@@ -253,9 +275,11 @@ const AddPurchaseOrder = ({ setIsAddPurchaseOrderPopUpOpen, setIsAddPopUpOpen, f
 							Close
 						</CloseButton>
 
-						<Button onClick={() => savePurchaseOrder()} type="button">
-							Save
-						</Button>
+						{checkStatus(purchaseOrder) !== "Delivered" && (
+							<Button onClick={() => setIsReceiveConfirmOpen(true)} type="button">
+								Receive
+							</Button>
+						)}
 					</ButtonsContainer>
 				</form>
 			</PopupContent>
@@ -264,13 +288,17 @@ const AddPurchaseOrder = ({ setIsAddPurchaseOrderPopUpOpen, setIsAddPopUpOpen, f
 				<ConfirmPurchaseOrderModalContainer
 					purchaseOrderId={"Your Purchase Order ID"} // pass the relevant ID
 					close={() => setIsReceiveConfirmOpen(false)}
+					confirmPurchaseOrderFunc={confirmPurchaseOrderFunc}
+					purchaseOrder={selectedPurchaseOrder}
+					fetchPurchaseOrders={fetchPurchaseOrders}
+					closePopup={() => setIsAddPopUpOpen(false)}
 				/>
 			)}
 		</PopupOverlay>
 	);
 };
 
-const ProductList = ({ productList, setProductList }) => {
+const ProductList = ({ productList, setProductList, purchaseOrder }) => {
 	const [products, setProducts] = useState([]);
 
 	const [selectedProduct, setSelectedProduct] = useState(0);
@@ -284,113 +312,23 @@ const ProductList = ({ productList, setProductList }) => {
 		setProducts(res.products);
 
 		console.log(res.products);
-	};
 
-	// const addProduct = (productId) => {
-	// 	if (!selectedProduct) return;
-
-	// 	const product = products.find((product) => product.product_id == selectedProduct);
-	// 	if (!product) return;
-
-	// 	//if product already exists in the list, just increment the quantity
-	// 	const existingProduct = productList.find((p) => p.product_id === product.product_id);
-	// 	if (existingProduct) {
-	// 		const updatedList = productList.map((p) => {
-	// 			if (p.product_id === product.product_id) {
-	// 				return { ...p, quantity: p.quantity + 1 };
-	// 			}
-	// 			return p;
-	// 		});
-
-	// 		return;
-	// 	}
-	// 	product.quantity = 1;
-	// 	setProductList([...productList, product]);
-	// 	setSelectedProduct(0);
-	// };
-
-	const addProduct = (productId) => {
-		// Check if a product is actually selected
-		if (!productId) return;
-
-		// Find the product in the products array
-		const productToAdd = products.find((product) => product.product_id === Number(productId));
-		if (!productToAdd) return;
-
-		// Check if the product already exists in the productList
-		const existingProductIndex = productList.findIndex((p) => p.product_id === productToAdd.product_id);
-
-		if (existingProductIndex !== -1) {
-			// Product exists, increase quantity
-			const updatedList = productList.map((product, index) => {
-				if (index === existingProductIndex) {
-					return { ...product, quantity: product.quantity + 1 };
-				}
-				return product;
-			});
-
-			setProductList(updatedList);
-		} else {
-			// Product doesn't exist, add to list
-			setProductList([...productList, { ...productToAdd, quantity: 1 }]);
-		}
-
-		// Reset the selectedProduct
-		setSelectedProduct("");
-	};
-
-	const updateProductQuantity = (product, action) => {
-		let updatedList = productList.map((p) => {
-			if (p.product_id === product.product_id) {
-				let newQuantity = p.quantity;
-
-				switch (action) {
-					case "add":
-						newQuantity = p.quantity + 1;
-						break;
-					case "subtract":
-						newQuantity = p.quantity > 0 ? p.quantity - 1 : 0;
-						break;
-					default:
-						break;
-				}
-
-				return { ...p, quantity: newQuantity };
-			}
-			return p;
+		const NewproductList = purchaseOrder.purchase_order_items.map((item) => {
+			//loop throught list of products
+			const product = res.products.find((product) => product.product_id == item.product_id);
+			return {
+				...product,
+				quantity: item.purchase_order_item_quantity,
+				current_quantity: item.purchase_order_item_current_quantity,
+			};
 		});
 
-		// Remove products with zero quantity
-		updatedList = updatedList.filter((p) => p.quantity > 0);
-		setProductList(updatedList);
-	};
-
-	const handleQuantityChange = (product, valueAsString) => {
-		const valueAsNumber = Number(valueAsString);
-
-		if (!isNaN(valueAsNumber) && valueAsNumber >= 0) {
-			const updatedList = productList.map((p) => (p.product_id === product.product_id ? { ...p, quantity: valueAsNumber } : p));
-			setProductList(updatedList);
-		}
+		setProductList(NewproductList);
 	};
 
 	return (
 		<div>
 			<div>
-				<Select
-					value={selectedProduct}
-					onChange={(e) => {
-						setSelectedProduct(e.target.value);
-						addProduct(e.target.value); // Call addProduct with the selected product ID
-					}}
-				>
-					<Option value="">Select a Product</Option>
-					{products.map((product) => (
-						<Option key={product.product_id} value={product.product_id}>
-							{product.product_code} | {product.product_name}
-						</Option>
-					))}
-				</Select>
 				{productList.map((item) => (
 					<div key={item.product_id}>
 						<Product key={item.product_id} active={item.quantity > 1}>
@@ -407,24 +345,8 @@ const ProductList = ({ productList, setProductList }) => {
 										</p>
 
 										<div className="quantity">
-											<span onClick={() => updateProductQuantity(item, "subtract")} className="minus">
-												<FontAwesomeIcon icon={faMinus} />
-											</span>
-											<input
-												type="text"
-												value={item.quantity}
-												onChange={(e) => handleQuantityChange(item, e.target.value)}
-												onBlur={(e) => {
-													if (e.target.value === "0") {
-														const updatedList = productList.filter((p) => p.product_id !== item.product_id);
-														setProductList(updatedList);
-													}
-												}}
-											/>
-
-											<span onClick={() => updateProductQuantity(item, "add")}>
-												<FontAwesomeIcon icon={faPlus} />
-											</span>
+											<p>Quantity: {item.quantity}</p>
+											<p>Quantity received: {item.current_quantity}</p>
 										</div>
 									</div>
 								</div>
@@ -437,4 +359,4 @@ const ProductList = ({ productList, setProductList }) => {
 	);
 };
 
-export default AddPurchaseOrder;
+export default ViewPurchaseOrder;

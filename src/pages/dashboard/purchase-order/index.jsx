@@ -19,25 +19,10 @@ import { toast } from "react-toastify";
 import ReactivateModal from "@/components/misc/reactivate";
 import PurchaseOrderSearchBar from "@/components/purchase-order/purchaseOrderSearchbar";
 import AddPurchaseOrder from "@/components/purchase-order/addPurchaseOrder";
+import { getPurchaseOrders } from "@/api/purchaseOrder";
+import ViewPurchaseOrder from "@/components/purchase-order/ViewPurchaseOrder";
+
 const PurchaseOrder = () => {
-	// const [promotions, setPromotions] = useState([]);
-	// const [promotionsDisplay, setPromotionsDisplay] = useState([]);
-	// const [activeActionContainer, setActiveActionContainer] = useState(-1);
-	// const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false); // State to control the popup
-	// const [isEditPopUpOpen, setIsEditPopUpOpen] = useState(false); // State to control the popup
-	// const [showDeactivatePopUp, setShowDeactivatePopUp] = useState(false); // State to control the popup\
-	// const [showActivatePopUp, setShowActivatePopUp] = useState(false); // State to control the popup\
-	// const [clickedName, setClickedName] = useState("");
-
-	// const [selectedPromo, setSelectedPromo] = useState(null);
-	// const [isLoading, setIsLoading] = useState(false);
-
-	// const [currentPage, setCurrentPage] = useState(1);
-	// const [itemsPerPage, setItemsPerPage] = useState(10);
-	// const startIndex = (currentPage - 1) * itemsPerPage;
-	// const endIndex = currentPage * itemsPerPage;
-	// const paginatedPromotions = promotionsDisplay.slice(startIndex, endIndex);
-
 	const [purchaseOrders, setPurchaseOrders] = useState([]);
 	const [filteredPurchaseOrders, setFilteredPurchaseOrders] = useState([]); // Initialize with an empty array
 	const [activeActionContainer, setActiveActionContainer] = useState(-1);
@@ -47,12 +32,15 @@ const PurchaseOrder = () => {
 
 	const [currentPage, setCurrentPage] = useState(1);
 	const [itemsPerPage, setItemsPerPage] = useState(10);
-
+	const [viewPurchaseOrder, setViewPurchaseOrder] = useState(false);
+	const [selectedPurchaseOrder, setSelectedPurchaseOrder] = useState(null);
 	const startIndex = (currentPage - 1) * itemsPerPage;
 	const endIndex = currentPage * itemsPerPage;
 	const paginatedPurchaseOrders = filteredPurchaseOrders.slice(startIndex, endIndex);
 
 	useEffect(() => {
+		fetchPurchaseOrders();
+
 		document.addEventListener("click", handleClickOutside);
 		return () => {
 			document.removeEventListener("click", handleClickOutside);
@@ -75,33 +63,110 @@ const PurchaseOrder = () => {
 		return formattedDate;
 	};
 
+	const fetchPurchaseOrders = async () => {
+		setIsLoading(true);
+		console.log("fetching purchase orders");
+
+		const response = await getPurchaseOrders();
+		console.log(response.purchaseOrders);
+
+		// Add status to each purchase order
+		const purchaseOrdersWithStatus = response.purchaseOrders.map((po) => {
+			const status = checkStatus(po);
+			return { ...po, status }; // Spread the existing purchase order and add the status
+		});
+
+		setPurchaseOrders(purchaseOrdersWithStatus);
+		setFilteredPurchaseOrders(purchaseOrdersWithStatus);
+		setIsLoading(false);
+	};
+
+	const checkStatus = (po) => {
+		if (po.purchase_order_items.length === 0) {
+			return "Pending";
+		}
+
+		let allDelivered = true;
+		let hasBackOrder = false;
+
+		po.purchase_order_items.forEach((item) => {
+			if (item.purchase_order_item_current_quantity !== item.purchase_order_item_quantity) {
+				allDelivered = false;
+				// Check for back order
+				if (item.purchase_order_item_current_quantity > 0) {
+					hasBackOrder = true;
+				}
+			}
+		});
+
+		if (allDelivered) {
+			return "Delivered";
+		} else if (hasBackOrder) {
+			return "Has Back Order";
+		} else {
+			return "Pending";
+		}
+	};
+
 	return (
 		<DashboardLayout>
 			<PageTitle title="Purchase Order " />
 
 			<StyledPanel>
-				<PurchaseOrderSearchBar setIsAddPopUpOpen={setIsAddPopUpOpen} setPurchaseOrdersDisplay={setPurchaseOrders} />
+				<PurchaseOrderSearchBar
+					setIsAddPopUpOpen={setIsAddPopUpOpen}
+					setPurchaseOrdersDisplay={setFilteredPurchaseOrders}
+					purchaseOrders={purchaseOrders}
+					setCurrentPage={setCurrentPage}
+				/>
 				<TableContainer>
 					<Table id="promos-table">
 						<tbody>
 							<TableRows $heading>
-								<TableHeadings>Product ID</TableHeadings>
-								<TableHeadings>Product Name</TableHeadings>
-								<TableHeadings>Unit Price </TableHeadings>
-								<TableHeadings>Quantity</TableHeadings>
-								{/* <TableHeadings>Current usage</TableHeadings>
-								<TableHeadings>Status</TableHeadings>
-								<TableHeadings>Expiry</TableHeadings> */}
+								<TableHeadings>PO ID</TableHeadings>
+								<TableHeadings>Products</TableHeadings>
+								<TableHeadings>Status </TableHeadings>
 
 								<TableHeadings>Actions</TableHeadings>
 							</TableRows>
-							{paginatedPurchaseOrders.map((promo, index) => (
-								<TableRows key={product.id}></TableRows>
+							{paginatedPurchaseOrders.map((po, index) => (
+								<TableRows key={po.index}>
+									<TableData>PO00{po.purchase_order_id}</TableData>
+									<TableData>{po.purchase_order_items.length}</TableData>
+									<TableData>{po.status}</TableData>
+
+									<TableData>
+										<FontAwesomeIcon
+											className="ellipsis"
+											icon={faEllipsis}
+											onClick={() => (activeActionContainer === index ? setActiveActionContainer(-1) : setActiveActionContainer(index))}
+										/>
+
+										{activeActionContainer === index && (
+											<ActionContainer onClick={() => setActiveActionContainer(-1)}>
+												<p
+													onClick={() => {
+														setViewPurchaseOrder(true);
+														setSelectedPurchaseOrder(po);
+													}}
+												>
+													<FontAwesomeIcon icon={faPen} />
+													View
+												</p>
+											</ActionContainer>
+										)}
+									</TableData>
+								</TableRows>
 							))}
 						</tbody>
 					</Table>
 				</TableContainer>
-				{isAddPopUpOpen && <AddPurchaseOrder setIsAddPopUpOpen={setIsAddPopUpOpen} setPurchaseOrdersDisplay={setPurchaseOrders} />}
+				{isAddPopUpOpen && (
+					<AddPurchaseOrder setIsAddPopUpOpen={setIsAddPopUpOpen} setPurchaseOrdersDisplay={setPurchaseOrders} fetchPurchaseOrders={fetchPurchaseOrders} />
+				)}
+				{viewPurchaseOrder && (
+					<ViewPurchaseOrder setIsAddPopUpOpen={setViewPurchaseOrder} selectedPurchaseOrder={selectedPurchaseOrder} fetchPurchaseOrders={fetchPurchaseOrders} />
+				)}
 				<PdfExporter tableId="purchaser-order" fileName="purchaseorder.pdf" />
 				<Pagination
 					setItemsPerPage={setItemsPerPage}

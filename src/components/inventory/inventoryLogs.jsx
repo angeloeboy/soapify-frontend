@@ -36,7 +36,6 @@ const InventoryLogs = ({ inventory }) => {
 					<tbody>
 						<TableRows $heading>
 							<TableHeadings>Action</TableHeadings>
-							<TableHeadings>User</TableHeadings>
 							<TableHeadings>Date</TableHeadings>
 						</TableRows>
 
